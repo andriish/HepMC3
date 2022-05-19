@@ -148,6 +148,8 @@ debian-salsa:
 .pythoninstall: &pythoninstall
     -  yum -y install  python3 python3-devel python2 python2-devel 
 .pythonupdate: &pythonupdate
+    - yum -y install *dnf*
+    -  dnf -y copr enable @python/python3.11 
     -  yum -y update  python3 python3-devel python2 python2-devel --enablerepo=*update*
 ########################################################################
 .pypyinstall: &pypyinstall
