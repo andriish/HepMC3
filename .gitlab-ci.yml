@@ -209,6 +209,14 @@ Fedora33-gcc-pypy:
     - ctest --output-on-failure
     - make -j $(nproc) install
 ########################################################################
+Fedora37-gcc:
+  image: fedora:37
+  extends: .Fedora-gcc
+########################################################################
+Fedora37-clang:
+  image: fedora:37
+  extends: .Fedora-clang
+########################################################################
 Fedora35-gcc:
   image: fedora:35
   extends: .Fedora-gcc
