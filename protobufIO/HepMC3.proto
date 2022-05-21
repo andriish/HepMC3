@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package HepMC3_pb;
+
+
+message Header {
+    string version = 1;
+}
+
+message Footer {
+    uint32 nevents = 1;
+}
+
+message MessageDigest {
+    enum MessageType {
+        unknown = 0;
+        Header = 1;
+        RunInfo = 2;
+        Event = 3;
+        Footer = 4;
+    }
+
+    fixed32 bytes = 1;
+    fixed32 message_type = 2;
+}
+
+message FourVector {
+    double m_v1 = 1;
+    double m_v2 = 2;
+    double m_v3 = 3;
+    double m_v4 = 4;
+}
+
+message GenEventData {
+    int32 event_number = 1;
+
+    enum MomentumUnit {
+        GEV = 0;
+        MEV = 1;
+    }
+    MomentumUnit momentum_unit = 2;
+
+    enum LengthUnit {
+        MM = 0;
+        CM = 1;
+    }
+    LengthUnit length_unit = 3;
+
+    message GenParticleData {
+        int32 pid = 1;
+        int32 status = 2;
+        bool is_mass_set = 3;
+        double mass = 4;
+        FourVector momentum = 5;
+    }
+
+    message GenVertexData {
+        int32 status = 1;
+
+        FourVector position = 2;
+    }
+
+    repeated GenParticleData particles = 4;
+    repeated GenVertexData vertices = 5;
+    repeated double weights = 6;
+
+    FourVector event_pos = 7;
+
+    repeated int32 links1 = 8;
+    repeated int32 links2 = 9;
+
+    repeated int32 attribute_id = 10;
+    repeated string attribute_name = 11;
+    repeated string attribute_string = 12;
+}
+
+message GenRunInfoData {
+
+    repeated string weight_names = 1;
+
+    repeated string tool_name = 2;
+    repeated string tool_version = 3;
+    repeated string tool_description = 4;
+
+    repeated string attribute_name = 5;
+    repeated string attribute_string = 6;
+}

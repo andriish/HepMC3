@@ -24,6 +24,7 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
 option(HEPMC3_ENABLE_SEARCH      "Enables building of search library" ON)
 option(HEPMC3_ENABLE_ROOTIO      "Enables building with ROOT O/I." ON)
+option(HEPMC3_ENABLE_PROTOBUFIO  "Enables building with protobuf O/I." ON)
 option(HEPMC3_ENABLE_PYTHON      "Enables building of Python  bindings, master switch" ON)
 option(HEPMC3_BUILD_DOCS         "Enables building of documentation" OFF)
 option(HEPMC3_BUILD_EXAMPLES     "Enables building of examples." OFF)
@@ -40,6 +41,10 @@ if (NOT HEPMC3_ROOTIO_INSTALL_LIBDIR)
   set(HEPMC3_ROOTIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 endif()
 
+if (NOT HEPMC3_PROTOBUFIO_INSTALL_LIBDIR)
+  set(HEPMC3_PROTOBUFIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+endif()
+
 message(STATUS "HepMC3: HEPMC3_ENABLE_SEARCH         ${HEPMC3_ENABLE_SEARCH}")
 message(STATUS "HepMC3: HEPMC3_ENABLE_ROOTIO         ${HEPMC3_ENABLE_ROOTIO}")
 message(STATUS "HepMC3: HEPMC3_ENABLE_PYTHON         ${HEPMC3_ENABLE_PYTHON}")
@@ -49,6 +54,7 @@ message(STATUS "HepMC3: HEPMC3_BUILD_DOCS            ${HEPMC3_BUILD_DOCS}")
 message(STATUS "HepMC3: HEPMC3_BUILD_EXAMPLES        ${HEPMC3_BUILD_EXAMPLES}")
 message(STATUS "HepMC3: HEPMC3_INSTALL_INTERFACES    ${HEPMC3_INSTALL_INTERFACES}")
 message(STATUS "HepMC3: HEPMC3_ROOTIO_INSTALL_LIBDIR ${HEPMC3_ROOTIO_INSTALL_LIBDIR}")
+message(STATUS "HepMC3: HEPMC3_PROTOBUFIO_INSTALL_LIBDIR ${HEPMC3_PROTOBUFIO_INSTALL_LIBDIR}")
 
 
 if(HEPMC3_ENABLE_ROOTIO)
@@ -292,6 +298,11 @@ endif()
 # ROOT support
 if(ROOT_FOUND)
    add_subdirectory(rootIO)
+endif()
+
+find_package(Protobuf)
+if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND)
+  add_subdirectory(protobufIO)
 endif()
 
 # Add the examples subdirectories
