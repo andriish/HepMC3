@@ -2,10 +2,11 @@
 
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
-#include "HepMC3/GenVertex.h"
 #include "HepMC3/GenRunInfo.h"
+#include "HepMC3/GenVertex.h"
+#include "HepMC3/Print.h"
 
-int main(int argc, char * const argv[]) {
+int main(int argc, char *const argv[]) {
 
   // Create some four vectors for the electrons
   double ele_mass_sqr = 0.000511 * 0.000511;
@@ -50,6 +51,7 @@ int main(int argc, char * const argv[]) {
   HepMC3::GenEvent hepmc;
 
   hepmc.add_vertex(vertex);
+  hepmc.weights() = std::vector<double>{1., 0., 2.};
 
   std::shared_ptr<HepMC3::GenRunInfo> gri(new HepMC3::GenRunInfo());
   HepMC3::GenRunInfo::ToolInfo ti;
@@ -57,17 +59,17 @@ int main(int argc, char * const argv[]) {
   ti.version = "0.0.1";
   ti.description = "dummy tool for testing protobufIO";
   gri->tools().push_back(ti);
-    HepMC3::GenRunInfo::ToolInfo ti2;
+  HepMC3::GenRunInfo::ToolInfo ti2;
   ti2.name = "protobufdummy2";
   ti2.version = "0.0.2";
   ti2.description = "other dummy tool for testing protobufIO";
   gri->tools().push_back(ti2);
+  gri->set_weight_names({"weight1", "weight2", "weight3"});
 
   std::unique_ptr<HepMC3::Writerprotobuf> writer =
       std::make_unique<HepMC3::Writerprotobuf>(argv[1], gri);
 
   writer->write_event(hepmc);
-  writer->write_event(hepmc);
-  writer->write_event(hepmc);
-  writer->write_event(hepmc);
+
+  HepMC3::Print::listing(hepmc);
 }

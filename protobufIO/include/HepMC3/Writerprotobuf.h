@@ -67,6 +67,7 @@ private:
   std::unique_ptr<std::ofstream> out_file;
 
   size_t number_of_events_written;
+  size_t event_bytes_written;
 };
 
 } // namespace HepMC3

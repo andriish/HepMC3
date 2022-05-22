@@ -11,70 +11,16 @@
 #include "HepMC3/Readerprotobuf.h"
 #include "HepMC3/Version.h"
 
+#include "HepMC3/Data/GenRunInfoData.h"
+
 // protobuf header files
 #include "HepMC3/HepMC3.pb.h"
 
 namespace HepMC3 {
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf);
 
-void Readerprotobuf::read_message() {
-  in_file->read(md_buffer.data(), 10);
-
-  if (failed()) {
-    return;
-  }
-
-  bytes_read += 10;
-
-  HepMC3_pb::MessageDigest md;
-  md.ParseFromString(md_buffer);
-
-  // std::cout << "[MessageDigest]:\n>>>>>>>>>>>>>>>>>>\n"
-  //           << md.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-
-  // std::cout << "--read " << bytes_read << " bytes" << std::endl;
-
-  msg_buffer.resize(md.bytes());
-  in_file->read(msg_buffer.data(), md.bytes());
-  bytes_read += md.bytes();
-
-  switch (md.message_type()) {
-  case HepMC3_pb::MessageDigest::Header: {
-    HepMC3_pb::Header hdr;
-    hdr.ParseFromString(msg_buffer);
-    // std::cout << "--MSG type HepMC3_pb::MessageDigest::Header" << std::endl;
-    // std::cout << ">>>>>>>>>>>>>>>>>>\n"
-    //           << hdr.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-    break;
-  }
-  case HepMC3_pb::MessageDigest::RunInfo: {
-    HepMC3_pb::GenRunInfoData gri;
-    gri.ParseFromString(msg_buffer);
-    // std::cout << "--MSG type HepMC3_pb::MessageDigest::RunInfo" << std::endl;
-    // std::cout << ">>>>>>>>>>>>>>>>>>\n"
-    //           << gri.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-    break;
-  }
-  case HepMC3_pb::MessageDigest::Event: {
-    HepMC3_pb::GenEventData ev;
-    ev.ParseFromString(msg_buffer);
-    // std::cout << "--MSG type HepMC3_pb::MessageDigest::Event" << std::endl;
-    // std::cout << ">>>>>>>>>>>>>>>>>>\n"
-    //           << ev.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-    break;
-  }
-  case HepMC3_pb::MessageDigest::Footer: {
-    HepMC3_pb::Footer ftr;
-    ftr.ParseFromString(msg_buffer);
-    // std::cout << "--MSG type HepMC3_pb::MessageDigest::Footer" << std::endl;
-    // std::cout << ">>>>>>>>>>>>>>>>>>\n"
-    //           << ftr.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-    break;
-  }
-  }
-}
-
-Readerprotobuf::Readerprotobuf(const std::string &filename) : bytes_read(0) {
+Readerprotobuf::Readerprotobuf(const std::string &filename)
+    : bytes_read(0), msg_type(HepMC3_pb::MessageDigest::unknown) {
 
   md_buffer.resize(10);
 
@@ -83,38 +29,275 @@ Readerprotobuf::Readerprotobuf(const std::string &filename) : bytes_read(0) {
   in_file = std::make_unique<ifstream>(filename, ios::in | ios::binary);
 
   if (!in_file->is_open()) {
-    HEPMC3_ERROR("Readerprotobuf: problem opening file: " << filename)
+    HEPMC3_ERROR("Readerprotobuf: Problem opening file: " << filename)
     return;
   }
 
-  while (!failed()) {
-    read_message();
+  if (!read_Header()) {
+    HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
+                 "find Header, but instead found message type: "
+                 << msg_type);
+    in_file->close();
+    in_file.reset();
   }
 
-  // std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
+  if (!read_GenRunInfo()) {
+    HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
+                 "find RunInfo, but instead found message type: "
+                 << msg_type);
+    in_file->close();
+    in_file.reset();
+  }
 
-  // GenRunInfoData run;
+  buffer_message(); // check that we can find an event message
+  if (msg_type != HepMC3_pb::MessageDigest::Event) {
+    HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
+                 "find Event, but instead found message type: "
+                 << msg_type);
+    in_file->close();
+    in_file.reset();
+  }
+}
 
-  // ri->read_data(*run);
-  // set_run_info(ri);
+bool Readerprotobuf::buffer_message() {
+  if (msg_buffer.size()) {
+    return false;
+  }
+
+  msg_type = HepMC3_pb::MessageDigest::unknown;
+
+  in_file->read(md_buffer.data(), 10);
+
+  if (failed()) {
+    return false;
+  }
+
+  bytes_read += 10;
+
+  HepMC3_pb::MessageDigest md;
+  md.ParseFromString(md_buffer);
+
+  msg_type = md.message_type();
+  msg_buffer.resize(md.bytes());
+  in_file->read(msg_buffer.data(), md.bytes());
+
+  if (failed()) {
+    return false;
+  }
+
+  bytes_read += md.bytes();
+  return true;
+}
+
+bool Readerprotobuf::read_Header() {
+  buffer_message();
+  if (msg_type != HepMC3_pb::MessageDigest::Header) {
+    return false;
+  }
+  msg_buffer.clear();
+  return true;
+}
+
+bool Readerprotobuf::read_GenRunInfo() {
+  buffer_message();
+  if (msg_type != HepMC3_pb::MessageDigest::RunInfo) {
+    return false;
+  }
+
+  set_run_info(std::shared_ptr<HepMC3::GenRunInfo>(new HepMC3::GenRunInfo()));
+
+  HepMC3_pb::GenRunInfoData GenRunInfo_pb;
+  GenRunInfo_pb.ParseFromString(msg_buffer);
+  msg_buffer.clear();
+
+  // std::cout << "Read:\n>>>>>>>>>>>>>>>>>>\n"
+  //           << GenRunInfo_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
+
+  HepMC3::GenRunInfoData gridata;
+
+  int vector_size = 0;
+
+  vector_size = GenRunInfo_pb.weight_names_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.weight_names.push_back(GenRunInfo_pb.weight_names(it));
+  }
+
+  vector_size = GenRunInfo_pb.tool_name_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.tool_name.push_back(GenRunInfo_pb.tool_name(it));
+  }
+
+  vector_size = GenRunInfo_pb.tool_version_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.tool_version.push_back(GenRunInfo_pb.tool_version(it));
+  }
+
+  vector_size = GenRunInfo_pb.tool_description_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.tool_description.push_back(GenRunInfo_pb.tool_description(it));
+  }
+
+  vector_size = GenRunInfo_pb.attribute_name_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.attribute_name.push_back(GenRunInfo_pb.attribute_name(it));
+  }
+
+  vector_size = GenRunInfo_pb.attribute_string_size();
+  for (int it = 0; it < vector_size; ++it) {
+    gridata.attribute_string.push_back(GenRunInfo_pb.attribute_string(it));
+  }
+
+  run_info()->read_data(gridata);
+  return true;
+}
+
+bool Readerprotobuf::read_GenEvent(bool skip) {
+  buffer_message();
+  if (msg_type != HepMC3_pb::MessageDigest::Event) {
+    return false;
+  }
+
+  if (skip) { // Don't parse to HepMC3 if skipping
+    msg_buffer.clear();
+    return true;
+  }
+
+  HepMC3_pb::GenEventData ged_pb;
+  ged_pb.ParseFromString(msg_buffer);
+  // std::cout << "Read:\n>>>>>>>>>>>>>>>>>>\n"
+  //           << ged_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
+
+  evdata.event_number = ged_pb.event_number();
+
+  switch (ged_pb.momentum_unit()) {
+  case HepMC3_pb::GenEventData::MEV: {
+    evdata.momentum_unit = HepMC3::Units::MEV;
+    break;
+  }
+  case HepMC3_pb::GenEventData::GEV: {
+    evdata.momentum_unit = HepMC3::Units::GEV;
+    break;
+  }
+  default: {
+    HEPMC3_ERROR("Unknown momentum unit: " << ged_pb.momentum_unit());
+    abort();
+  }
+  }
+
+  switch (ged_pb.length_unit()) {
+  case HepMC3_pb::GenEventData::MM: {
+    evdata.length_unit = HepMC3::Units::MM;
+    break;
+  }
+  case HepMC3_pb::GenEventData::CM: {
+    evdata.length_unit = HepMC3::Units::CM;
+    break;
+  }
+  default: {
+    HEPMC3_ERROR("Unknown length unit: " << ged_pb.length_unit());
+    abort();
+  }
+  }
+
+  int vector_size = 0;
+
+  evdata.particles.clear();
+  vector_size = ged_pb.particles_size();
+  for (int it = 0; it < vector_size; ++it) {
+    auto particle_pb = ged_pb.particles(it);
+
+    HepMC3::GenParticleData pdata;
+
+    pdata.pid = particle_pb.pid();
+    pdata.status = particle_pb.status();
+    pdata.is_mass_set = particle_pb.is_mass_set();
+    pdata.mass = particle_pb.mass();
+
+    pdata.momentum = HepMC3::FourVector{
+        particle_pb.momentum().m_v1(), particle_pb.momentum().m_v2(),
+        particle_pb.momentum().m_v3(), particle_pb.momentum().m_v4()};
+
+    evdata.particles.push_back(pdata);
+  }
+
+  evdata.vertices.clear();
+  vector_size = ged_pb.vertices_size();
+  for (int it = 0; it < vector_size; ++it) {
+    auto vertex_pb = ged_pb.vertices(it);
+
+    HepMC3::GenVertexData vdata;
+
+    vdata.status = vertex_pb.status();
+
+    vdata.position = HepMC3::FourVector{
+        vertex_pb.position().m_v1(), vertex_pb.position().m_v2(),
+        vertex_pb.position().m_v3(), vertex_pb.position().m_v4()};
+
+    evdata.vertices.push_back(vdata);
+  }
+
+  evdata.weights.clear();
+  vector_size = ged_pb.weights_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.weights.push_back(ged_pb.weights(it));
+  }
+
+  evdata.links1.clear();
+  vector_size = ged_pb.links1_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.links1.push_back(ged_pb.links1(it));
+  }
+
+  evdata.links2.clear();
+  vector_size = ged_pb.links2_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.links2.push_back(ged_pb.links2(it));
+  }
+
+  evdata.event_pos =
+      HepMC3::FourVector{ged_pb.event_pos().m_v1(), ged_pb.event_pos().m_v2(),
+                         ged_pb.event_pos().m_v3(), ged_pb.event_pos().m_v4()};
+
+  evdata.attribute_id.clear();
+  vector_size = ged_pb.attribute_id_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.attribute_id.push_back(ged_pb.attribute_id(it));
+  }
+
+  evdata.attribute_name.clear();
+  vector_size = ged_pb.attribute_name_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.attribute_name.push_back(ged_pb.attribute_name(it));
+  }
+
+  evdata.attribute_string.clear();
+  vector_size = ged_pb.attribute_string_size();
+  for (int it = 0; it < vector_size; ++it) {
+    evdata.attribute_string.push_back(ged_pb.attribute_string(it));
+  }
+
+  msg_buffer.clear();
+  return true;
 }
 
 bool Readerprotobuf::skip(const int n) {
-  // GenEvent evt;
-  // for (int nn = n; nn > 0; --nn) {
-  //   if (!read_event(evt))
-  //     return false;
-  //   evt.clear();
-  // }
+
+  for (int nn = n; nn > 0; --nn) {
+    if (!read_GenEvent(true)) {
+      return false;
+    }
+  }
   return !failed();
 }
 
 bool Readerprotobuf::read_event(GenEvent &evt) {
-  // Skip object of different type than GenEventData
-  // GenEventData data;
 
-  // evt.read_data(*data);
-  // evt.set_run_info(run_info());
+  if (!read_GenEvent(false)) {
+    return false;
+  }
+
+  evt.read_data(evdata);
+  evt.set_run_info(run_info());
 
   return true;
 }

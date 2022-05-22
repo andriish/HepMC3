@@ -21,6 +21,7 @@
  */
 
 #include "HepMC3/GenEvent.h"
+#include "HepMC3/Data/GenEventData.h"
 #include "HepMC3/Reader.h"
 
 #include <array>
@@ -60,12 +61,19 @@ public:
   // Fields
   //
 private:
-  void read_message();
+  bool buffer_message();
+  bool read_GenRunInfo();
+  bool read_GenEvent(bool skip = false);
+  bool read_Header();
 
   size_t bytes_read;
+  
   std::unique_ptr<std::ifstream> in_file;
   std::string msg_buffer;
   std::string md_buffer;
+  int msg_type;
+
+  HepMC3::GenEventData evdata;
 };
 
 } // namespace HepMC3

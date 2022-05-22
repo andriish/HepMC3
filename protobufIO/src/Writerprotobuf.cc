@@ -20,8 +20,8 @@ namespace HepMC3 {
 HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf)
 
 template <typename T>
-void write_message(std::unique_ptr<std::ofstream> &out_file, T &msg,
-                   HepMC3_pb::MessageDigest::MessageType type) {
+size_t write_message(std::unique_ptr<std::ofstream> &out_file, T &msg,
+                     HepMC3_pb::MessageDigest::MessageType type) {
 
   std::string msg_str;
   msg.SerializeToString(&msg_str);
@@ -46,13 +46,15 @@ void write_message(std::unique_ptr<std::ofstream> &out_file, T &msg,
   //           << " bytes\n>>>>>>>>>>>>>>>>>>\n"
   //           << msg.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
 
-  md.SerializeToOstream(out_file.get());
+  (*out_file) << md_str;
+
   (*out_file) << msg_str;
+  return md_str.size() + msg_str.size();
 }
 
 Writerprotobuf::Writerprotobuf(const std::string &filename,
                                std::shared_ptr<GenRunInfo> run)
-    : out_file(nullptr), number_of_events_written(0) {
+    : out_file(nullptr), number_of_events_written(0), event_bytes_written(0) {
 
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -73,7 +75,10 @@ Writerprotobuf::Writerprotobuf(const std::string &filename,
   }
 
   HepMC3_pb::Header hdr;
-  (*hdr.mutable_version()) = HepMC3::version();
+  (*hdr.mutable_version_str()) = HepMC3::version();
+  hdr.set_version_maj((HEPMC3_VERSION_CODE / 1000000) % 1000);
+  hdr.set_version_min((HEPMC3_VERSION_CODE / 1000) % 1000);
+  hdr.set_version_patch(HEPMC3_VERSION_CODE % 1000);
   write_message(out_file, hdr, HepMC3_pb::MessageDigest::Header);
 
   write_run_info();
@@ -166,7 +171,8 @@ void Writerprotobuf::write_event(const GenEvent &evt) {
     ged_pb.add_attribute_string(s);
   }
 
-  write_message(out_file, ged_pb, HepMC3_pb::MessageDigest::Event);
+  event_bytes_written +=
+      write_message(out_file, ged_pb, HepMC3_pb::MessageDigest::Event);
   number_of_events_written++;
 }
 
@@ -198,7 +204,7 @@ void Writerprotobuf::write_run_info() {
     GenRunInfo_pb.add_attribute_string(s);
   }
 
-  write_message(out_file, GenRunInfo_pb, HepMC3_pb::MessageDigest::RunInfo);
+      write_message(out_file, GenRunInfo_pb, HepMC3_pb::MessageDigest::RunInfo);
 }
 
 void Writerprotobuf::close() {
@@ -213,12 +219,11 @@ void Writerprotobuf::close() {
 
   HepMC3_pb::Footer ftr;
   ftr.set_nevents(number_of_events_written);
-  write_message(out_file, ftr, HepMC3_pb::MessageDigest::Footer);
+  ftr.set_event_bytes_written(event_bytes_written);
+      write_message(out_file, ftr, HepMC3_pb::MessageDigest::Footer);
 
   out_file->close();
   out_file.reset();
-
-  google::protobuf::ShutdownProtobufLibrary();
 }
 
 bool Writerprotobuf::failed() {

@@ -4,11 +4,15 @@ package HepMC3_pb;
 
 
 message Header {
-    string version = 1;
+    string version_str = 1;
+    uint32 version_maj = 2;
+    uint32 version_min = 3;
+    uint32 version_patch = 4;
 }
 
 message Footer {
     uint32 nevents = 1;
+    uint64 event_bytes_written = 2;
 }
 
 message MessageDigest {
@@ -75,7 +79,6 @@ message GenEventData {
 }
 
 message GenRunInfoData {
-
     repeated string weight_names = 1;
 
     repeated string tool_name = 2;
