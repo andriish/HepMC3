@@ -10,10 +10,10 @@
  *  @brief Definition of \b class Writerprotobuf
  *
  *  @class HepMC3::Writerprotobuf
- *  @brief GenEvent I/O serialization for root files
+ *  @brief GenEvent I/O serialization for protobuf-based binary files
  *
- *  If HepMC was compiled with path to ROOT available, this class can be used
- *  for root writing in the same manner as with HepMC::WriterAscii class.
+ *  If HepMC was compiled with protobuf available, this class can be used
+ *  for writing in the same manner as with HepMC::WriterAscii class.
  *
  *  @ingroup IO
  *
@@ -40,6 +40,9 @@ public:
       const std::string &filename,
       std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
 
+  Writerprotobuf(std::ostream &out_stream, std::shared_ptr<GenRunInfo> run =
+                                               std::shared_ptr<GenRunInfo>());
+
   //
   // Functions
   //
@@ -63,8 +66,10 @@ public:
 private:
   /** @brief Write the GenRunInfo object to file. */
   void write_run_info();
+  void start_file();
 
   std::unique_ptr<std::ofstream> out_file;
+  std::ostream *out_stream;
 
   size_t number_of_events_written;
   size_t event_bytes_written;

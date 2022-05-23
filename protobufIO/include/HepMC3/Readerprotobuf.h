@@ -10,9 +10,9 @@
  *  @brief Definition of \b class Readerprotobuf
  *
  *  @class HepMC3::Readerprotobuf
- *  @brief GenEvent I/O parsing and serialization for protobuf files
+ *  @brief GenEvent I/O parsing and serialization for protobuf-based binary files
  *
- *  If HepMC was compiled with path to protobuf available, this class can be
+ * If HepMC was compiled with path to protobuf available, this class can be
  * used for protobuf file I/O in the same manner as with HepMC::ReaderAscii
  * class.
  *
@@ -38,6 +38,8 @@ class Readerprotobuf : public Reader {
 public:
   /** @brief Default constructor */
   Readerprotobuf(const std::string &filename);
+  /** @brief Default constructor */
+  Readerprotobuf(std::istream &stream);
 
   //
   // Functions
@@ -66,9 +68,13 @@ private:
   bool read_GenEvent(bool skip = false);
   bool read_Header();
 
+  bool read_file_start();
+
   size_t bytes_read;
   
   std::unique_ptr<std::ifstream> in_file;
+  std::istream *in_stream;
+
   std::string msg_buffer;
   std::string md_buffer;
   int msg_type;

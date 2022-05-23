@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of HepMC
-// Copyright (C) 2014-2019 The HepMC collaboration (see AUTHORS for details)
+// Copyright (C) 2014-2022 The HepMC collaboration (see AUTHORS for details)
 //
 /**
  *  @file Readerprotobuf.cc
@@ -18,9 +18,11 @@
 
 namespace HepMC3 {
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf);
+HEPMC3_DECLARE_READER_STREAM(Readerprotobuf);
 
 Readerprotobuf::Readerprotobuf(const std::string &filename)
-    : bytes_read(0), msg_type(HepMC3_pb::MessageDigest::unknown) {
+    : in_file(nullptr), bytes_read(0),
+      msg_type(HepMC3_pb::MessageDigest::unknown) {
 
   md_buffer.resize(10);
 
@@ -33,20 +35,54 @@ Readerprotobuf::Readerprotobuf(const std::string &filename)
     return;
   }
 
+  in_stream = in_file.get();
+
+  read_file_start();
+}
+
+Readerprotobuf::Readerprotobuf(std::istream &stream)
+    : in_file(nullptr), bytes_read(0),
+      msg_type(HepMC3_pb::MessageDigest::unknown) {
+
+  if (!stream.good()) {
+    HEPMC3_ERROR(
+        "Cannot initialize Readerprotobuf on istream which is not good().");
+    return;
+  }
+
+  md_buffer.resize(10);
+
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  in_stream = &stream;
+  read_file_start();
+}
+
+bool Readerprotobuf::read_file_start() {
+
+  // Read the first 16 bytes, it should read "HepMC3::Protobuf"
+  std::string MagicIntro;
+  MagicIntro.resize(16);
+  in_stream->read(MagicIntro.data(), 16);
+
+  if (MagicIntro != "HepMC3::Protobuf") {
+    HEPMC3_ERROR("Failed to find expected Magic first 16 bytes, is this reall "
+                 "a HepMC3::Protobuf file?");
+    return false;
+  }
+
   if (!read_Header()) {
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find Header, but instead found message type: "
                  << msg_type);
-    in_file->close();
-    in_file.reset();
+    return false;
   }
 
   if (!read_GenRunInfo()) {
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find RunInfo, but instead found message type: "
                  << msg_type);
-    in_file->close();
-    in_file.reset();
+    return false;
   }
 
   buffer_message(); // check that we can find an event message
@@ -54,9 +90,10 @@ Readerprotobuf::Readerprotobuf(const std::string &filename)
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find Event, but instead found message type: "
                  << msg_type);
-    in_file->close();
-    in_file.reset();
+    return false;
   }
+
+  return true;
 }
 
 bool Readerprotobuf::buffer_message() {
@@ -66,7 +103,7 @@ bool Readerprotobuf::buffer_message() {
 
   msg_type = HepMC3_pb::MessageDigest::unknown;
 
-  in_file->read(md_buffer.data(), 10);
+  in_stream->read(md_buffer.data(), 10);
 
   if (failed()) {
     return false;
@@ -79,7 +116,7 @@ bool Readerprotobuf::buffer_message() {
 
   msg_type = md.message_type();
   msg_buffer.resize(md.bytes());
-  in_file->read(msg_buffer.data(), md.bytes());
+  in_stream->read(msg_buffer.data(), md.bytes());
 
   if (failed()) {
     return false;
@@ -111,7 +148,8 @@ bool Readerprotobuf::read_GenRunInfo() {
   msg_buffer.clear();
 
   // std::cout << "Read:\n>>>>>>>>>>>>>>>>>>\n"
-  //           << GenRunInfo_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
+  //           << GenRunInfo_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" <<
+  //           std::endl;
 
   HepMC3::GenRunInfoData gridata;
 
@@ -302,10 +340,18 @@ bool Readerprotobuf::read_event(GenEvent &evt) {
   return true;
 }
 
-void Readerprotobuf::close() { in_file->close(); }
+void Readerprotobuf::close() {
+  if (in_file) {
+    in_file->close();
+    in_file.reset();
+  }
+}
 
 bool Readerprotobuf::failed() {
-  return !in_file || !in_file->is_open() || !in_file->good();
+  if (in_file) {
+    return !in_file || !in_file->is_open() || !in_file->good();
+  }
+  return !in_stream || !in_stream->good();
 }
 
 } // namespace HepMC3
