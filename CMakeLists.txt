@@ -160,6 +160,12 @@ if(HEPMC3_ENABLE_ROOTIO)
   endif()
 endif()
 
+if(HEPMC3_ENABLE_PROTOBUFIO)
+  set(HEPMC3_PROTOBUFIO_LIBRARY "-lHepMC3protobufIO" )
+  find_package(Protobuf 3 REQUIRED)
+endif()
+
+
 #Workarounds for gcc/clang
 set(CMAKE_CXX_STANDARD ${HEPMC3_CXX_STANDARD})
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -217,12 +223,12 @@ set( hepmc3core_sources
   ${PROJECT_SOURCE_DIR}/src/WriterPlugin.cc
 )
 
-#We need to export all symbols on WIn to build .lib files
+#We need to export all symbols on Win to build .lib files
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(HepMC3 SHARED ${hepmc3core_sources})
 target_include_directories(HepMC3 PUBLIC ${PROJECT_SOURCE_DIR}/include)
-set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3  SOVERSION 3
+set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 3
                                                ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
                                                LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
                                                RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>)
@@ -263,9 +269,22 @@ configure_package_config_file(cmake/Templates/HepMC3Config.cmake.in
   PATH_VARS CMAKE_INSTALL_INCLUDEDIR
             CMAKE_INSTALL_LIBDIR
             HEPMC3_ROOTIO_INSTALL_LIBDIR
+            HEPMC3_PROTOBUFIO_INSTALL_LIBDIR
             INTERFACES_INSTALL_DIR)
 
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config-version.cmake COMPATIBILITY SameMajorVersion VERSION ${PROJECT_VERSION})
+
+set(HEPMC3_FEATURE_DEFINES)
+if(HEPMC3_ENABLE_SEARCH)
+  LIST(APPEND HEPMC3_FEATURE_DEFINES -DHEPMC3_ENABLE_SEARCH)
+endif()
+if(HEPMC3_ENABLE_ROOTIO)
+  LIST(APPEND HEPMC3_FEATURE_DEFINES -DHEPMC3_ENABLE_ROOTIO)
+endif()
+if(HEPMC3_ENABLE_PROTOBUFIO)
+  LIST(APPEND HEPMC3_FEATURE_DEFINES -DHEPMC3_ENABLE_PROTOBUFIO)
+endif()
+STRING(REPLACE ";" " " HEPMC3_FEATURE_DEFINES "${HEPMC3_FEATURE_DEFINES}")
 
 configure_package_config_file(HepMC3-config.in
   ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
@@ -273,6 +292,7 @@ configure_package_config_file(HepMC3-config.in
   PATH_VARS CMAKE_INSTALL_INCLUDEDIR
             CMAKE_INSTALL_LIBDIR
             HEPMC3_ROOTIO_INSTALL_LIBDIR
+            HEPMC3_PROTOBUFIO_INSTALL_LIBDIR
             INTERFACES_INSTALL_DIR)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config.cmake
@@ -301,8 +321,7 @@ if(ROOT_FOUND)
    add_subdirectory(rootIO)
 endif()
 
-find_package(Protobuf)
-if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND)
+if(Protobuf_FOUND)
   add_subdirectory(protobufIO)
 endif()
 
@@ -351,6 +370,7 @@ if (ASTYLE)
     COMMAND ${ASTYLE}  --keep-one-line-blocks
     src/*cc
     rootIO/src/*cc
+    protobufIO/src/*cc
     search/src/*cc
     include/HepMC3/Reader*h
     include/HepMC3/Writer*h
@@ -380,6 +400,7 @@ if(CPPCHECK)
       src/*.cc
       search/src/*.cc
       rootIO/src/*.cc
+      protobufIO/src/*.cc
       include/HepMC3/Reader*h
       include/HepMC3/Writer*h
       include/HepMC3/HEPEVT*h
@@ -435,5 +456,9 @@ if(ROOT_FOUND)
   if (HEPMC3_ENABLE_PYTHON)
     list(APPEND CPACK_COMPONENTS_ALL   pythonrootIO)
   endif()
+endif()
+
+if(Protobuf_FOUND)
+  list(APPEND CPACK_COMPONENTS_ALL protobufIOdevel protobufIOlibs)
 endif()
 INCLUDE(CPack)
