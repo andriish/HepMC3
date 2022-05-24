@@ -24,7 +24,7 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
 option(HEPMC3_ENABLE_SEARCH      "Enables building of search library" ON)
 option(HEPMC3_ENABLE_ROOTIO      "Enables building with ROOT O/I." ON)
-option(HEPMC3_ENABLE_PROTOBUFIO  "Enables building with protobuf O/I." ON)
+option(HEPMC3_ENABLE_PROTOBUFIO  "Enables building with protobuf O/I." OFF)
 option(HEPMC3_ENABLE_PYTHON      "Enables building of Python  bindings, master switch" ON)
 option(HEPMC3_BUILD_DOCS         "Enables building of documentation" OFF)
 option(HEPMC3_BUILD_EXAMPLES     "Enables building of examples." OFF)
