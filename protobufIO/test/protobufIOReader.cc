@@ -1,5 +1,3 @@
-#define private public
-
 #include "HepMC3/ReaderFactory.h"
 
 #include "HepMC3/Print.h"
