@@ -27,15 +27,11 @@ int main(int argc, char *const argv[]) {
                                    +7.50000000e-01, +2.75000005e+00);
   // Although the code for HepMC2 would work (thanks to backward compatibility)
   // we don't want to use deprecated functions
-  HepMC3::GenParticlePtr e1 =
-      std::make_shared<HepMC3::GenParticle>(momentum_e1, -11, 2);
-  HepMC3::GenParticlePtr e2 =
-      std::make_shared<HepMC3::GenParticle>(momentum_e2, 11, 2);
-  HepMC3::GenParticlePtr tau1 =
-      std::make_shared<HepMC3::GenParticle>(momentum_tau1, -15, 1);
-  HepMC3::GenParticlePtr tau2 =
-      std::make_shared<HepMC3::GenParticle>(momentum_tau2, 15, 1);
-  HepMC3::GenVertexPtr vertex = std::make_shared<HepMC3::GenVertex>();
+  HepMC3::GenParticlePtr e1(new HepMC3::GenParticle(momentum_e1, -11, 2));
+  HepMC3::GenParticlePtr e2(new HepMC3::GenParticle(momentum_e2, 11, 2));
+  HepMC3::GenParticlePtr tau1(new HepMC3::GenParticle(momentum_tau1, -15, 1));
+  HepMC3::GenParticlePtr tau2(new HepMC3::GenParticle(momentum_tau2, 15, 1));
+  HepMC3::GenVertexPtr vertex(new HepMC3::GenVertex());
   // Set masses
   e1->set_generated_mass(0.000511);
   e2->set_generated_mass(0.000511);
@@ -66,8 +62,8 @@ int main(int argc, char *const argv[]) {
   gri->tools().push_back(ti2);
   gri->set_weight_names({"weight1", "weight2", "weight3"});
 
-  std::unique_ptr<HepMC3::Writerprotobuf> writer =
-      std::make_unique<HepMC3::Writerprotobuf>(argv[1], gri);
+  std::unique_ptr<HepMC3::Writerprotobuf> writer(
+      new HepMC3::Writerprotobuf(argv[1], gri));
 
   writer->write_event(hepmc);
 

@@ -60,13 +60,13 @@ Writerprotobuf::Writerprotobuf(const std::string &filename,
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   if (!run) {
-    run = std::make_shared<GenRunInfo>();
+    run = std::shared_ptr<GenRunInfo>(new GenRunInfo());
   }
   set_run_info(run);
 
   // open file
-  out_file =
-      std::make_unique<ofstream>(filename, ios::out | ios::trunc | ios::binary);
+  out_file = std::unique_ptr<ofstream>(
+      new ofstream(filename, ios::out | ios::trunc | ios::binary));
 
   // check that it is open
   if (!out_file->is_open()) {
@@ -255,6 +255,7 @@ void Writerprotobuf::close() {
     out_file->close();
     out_file.reset();
   }
+  out_stream = nullptr;
 }
 
 bool Writerprotobuf::failed() {

@@ -2,7 +2,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/in
 
 add_custom_target(compile_proto
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  COMMAND protoc -I ${CMAKE_CURRENT_SOURCE_DIR} HepMC3.proto --cpp_out=. 
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/HepMC3.proto . && protoc HepMC3.proto --cpp_out=. 
     && mkdir -p include/HepMC3 
     && mv HepMC3.pb.h include/HepMC3/
   DEPENDS HepMC3.proto 
@@ -12,6 +12,7 @@ add_custom_target(compile_proto
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/include/HepMC3)
 
 add_library(HepMC3protobufIO SHARED src/Writerprotobuf.cc src/Readerprotobuf.cc HepMC3.pb.cc)
+add_dependencies(HepMC3protobufIO compile_proto)
 set_property(TARGET HepMC3protobufIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 target_compile_definitions(HepMC3protobufIO PUBLIC
   -DHEPMC3_VERSION_MAJOR=${HEPMC3_VERSION_MAJOR}

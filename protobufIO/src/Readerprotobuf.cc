@@ -9,6 +9,7 @@
  *
  */
 #include "HepMC3/Readerprotobuf.h"
+#include "HepMC3/Print.h"
 #include "HepMC3/Version.h"
 
 #include "HepMC3/Data/GenRunInfoData.h"
@@ -28,7 +29,8 @@ Readerprotobuf::Readerprotobuf(const std::string &filename)
 
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  in_file = std::make_unique<ifstream>(filename, ios::in | ios::binary);
+  in_file = std::unique_ptr<std::ifstream>(
+      new std::ifstream(filename, ios::in | ios::binary));
 
   if (!in_file->is_open()) {
     HEPMC3_ERROR("Readerprotobuf: Problem opening file: " << filename)
@@ -63,7 +65,7 @@ bool Readerprotobuf::read_file_start() {
   // Read the first 16 bytes, it should read "HepMC3::Protobuf"
   std::string MagicIntro;
   MagicIntro.resize(16);
-  in_stream->read(MagicIntro.data(), 16);
+  in_stream->read(&MagicIntro[0], 16);
 
   if (MagicIntro != "HepMC3::Protobuf") {
     HEPMC3_ERROR("Failed to find expected Magic first 16 bytes, is this reall "
@@ -103,7 +105,7 @@ bool Readerprotobuf::buffer_message() {
 
   msg_type = HepMC3_pb::MessageDigest::unknown;
 
-  in_stream->read(md_buffer.data(), 10);
+  in_stream->read(&md_buffer[0], 10);
 
   if (failed()) {
     return false;
@@ -116,7 +118,7 @@ bool Readerprotobuf::buffer_message() {
 
   msg_type = md.message_type();
   msg_buffer.resize(md.bytes());
-  in_stream->read(msg_buffer.data(), md.bytes());
+  in_stream->read(&msg_buffer[0], md.bytes());
 
   if (failed()) {
     return false;
@@ -202,8 +204,6 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
 
   HepMC3_pb::GenEventData ged_pb;
   ged_pb.ParseFromString(msg_buffer);
-  // std::cout << "Read:\n>>>>>>>>>>>>>>>>>>\n"
-  //           << ged_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
 
   evdata.event_number = ged_pb.event_number();
 
@@ -345,6 +345,7 @@ void Readerprotobuf::close() {
     in_file->close();
     in_file.reset();
   }
+  in_stream = nullptr;
 }
 
 bool Readerprotobuf::failed() {
