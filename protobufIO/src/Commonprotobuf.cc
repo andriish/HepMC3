@@ -13,6 +13,6 @@
 #include "HepMC3/Commonprotobuf.h"
 
 namespace HepMC3 {
-  std::string const ProtobufMagicHeader = "HepMC3::Protobuf";
-  size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
+std::string const ProtobufMagicHeader = "HepMC3::Protobuf";
+size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
 }
