@@ -191,7 +191,7 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
         libHepMC3protobufIO = "HepMC3protobufIO.dll";
 #endif
-        
+
         return std::make_shared<ReaderPlugin>(stream,libHepMC3protobufIO,std::string("newReaderprotobufstream"));
     }
 
@@ -269,7 +269,7 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream)
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
         libHepMC3protobufIO = "HepMC3protobufIO.dll";
 #endif
-        
+
         return std::make_shared<ReaderPlugin>(*stream,libHepMC3protobufIO,std::string("newReaderprotobufstream"));
     }
 
