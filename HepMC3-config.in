@@ -81,7 +81,7 @@ tmp=$( echo "$*" | egrep -- '--\<rootIO\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_HEPMC3_ROOTIO_INSTALL_LIBDIR@ @HEPMC3_ROOTIO_LIBRARY@"
 
 tmp=$( echo "$*" | egrep -- '--\<protobufIO\>')
-test -n "$tmp" && OUT="$OUT -L@PACKAGE_HEPMC3_PROTOBUFIO_INSTALL_LIBDIR@ @HEPMC3_PROTOBUFIO_LIBRARY@"
+test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ @HEPMC3_PROTOBUFIO_LIBRARY@"
 
 tmp=$( echo "$*" | egrep -- '--\<optionalflags\>')
 test -n "$tmp" && OUT="$OUT @HEPMC3_FEATURE_DEFINES@"
