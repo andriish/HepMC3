@@ -522,6 +522,7 @@ CentOS8s-gcc:
     - dnf config-manager --set-enabled appstream  
     - dnf config-manager --set-enabled epel-testing    
     - yum -y install json-devel
+    - rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-17.el8.x86_64.rpm --nodeps
     - *commoninstall
     - *clanginstall
     - *pythoninstall 
@@ -543,6 +544,7 @@ CentOS8s-clang:
     - dnf config-manager --set-enabled appstream  
     - dnf config-manager --set-enabled epel-testing
     - yum -y install json-devel 
+    - rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-17.el8.x86_64.rpm --nodeps
     - *commoninstall
     - *clanginstall
     - *pythoninstall 
