@@ -9,12 +9,16 @@
  *
  */
 #include "HepMC3/Writerprotobuf.h"
-#include "HepMC3/Data/GenEventData.h"
-#include "HepMC3/Data/GenRunInfoData.h"
+
 #include "HepMC3/Version.h"
 
+#include "HepMC3/Data/GenEventData.h"
+#include "HepMC3/Data/GenRunInfoData.h"
+
+#include "HepMC3/Commonprotobuf.h"
+
 // protobuf header files
-#include "HepMC3/HepMC3.pb.h"
+#include "HepMC3.pb.h"
 
 namespace HepMC3 {
 HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf);
@@ -39,13 +43,6 @@ size_t write_message(std::ostream *out_stream, T &msg,
                  "the expected length (10 bytes), but was instead "
                  << md_str.size() << " bytes.");
   }
-
-  // std::cout << "[MessageDigest]: size " << md_str.size()
-  //           << " bytes\n>>>>>>>>>>>>>>>>>>\n"
-  //           << md.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
-  // std::cout << "[Message]: size " << msg_str.size()
-  //           << " bytes\n>>>>>>>>>>>>>>>>>>\n"
-  //           << msg.DebugString() << "<<<<<<<<<<<<<<<<<<" << std::endl;
 
   (*out_stream) << md_str;
 
@@ -100,8 +97,8 @@ Writerprotobuf::Writerprotobuf(std::ostream &stream,
 }
 
 void Writerprotobuf::start_file() {
-  (*out_stream) << std::string(
-      "HepMC3::Protobuf"); // The first 16 bytes of a HepMC protobuf file
+  // The first 16 bytes of a HepMC protobuf file
+  (*out_stream) << ProtobufMagicHeader;
 
   HepMC3_pb::Header hdr;
   (*hdr.mutable_version_str()) = HepMC3::version();
@@ -260,7 +257,7 @@ void Writerprotobuf::close() {
 
 bool Writerprotobuf::failed() {
   if (out_file) {
-    return !out_file || !out_file->is_open() || !out_file->good();
+    return !out_file->is_open() || !out_file->good();
   }
   return !out_stream || !out_stream->good();
 }

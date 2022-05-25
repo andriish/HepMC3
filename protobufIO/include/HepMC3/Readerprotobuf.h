@@ -20,9 +20,11 @@
  *
  */
 
-#include "HepMC3/GenEvent.h"
-#include "HepMC3/Data/GenEventData.h"
 #include "HepMC3/Reader.h"
+
+#include "HepMC3/GenEvent.h"
+
+#include "HepMC3/Data/GenEventData.h"
 
 #include <array>
 #include <string>

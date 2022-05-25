@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package HepMC3_pb;
 
-
 message Header {
     string version_str = 1;
     uint32 version_maj = 2;

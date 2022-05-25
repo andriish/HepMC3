@@ -9,23 +9,28 @@
  *
  */
 #include "HepMC3/Readerprotobuf.h"
+
 #include "HepMC3/Print.h"
 #include "HepMC3/Version.h"
 
 #include "HepMC3/Data/GenRunInfoData.h"
 
+#include "HepMC3/Commonprotobuf.h"
+
 // protobuf header files
-#include "HepMC3/HepMC3.pb.h"
+#include "HepMC3.pb.h"
 
 namespace HepMC3 {
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf);
 HEPMC3_DECLARE_READER_STREAM(Readerprotobuf);
 
+static size_t const MDBytesLength = 10;
+
 Readerprotobuf::Readerprotobuf(const std::string &filename)
     : in_file(nullptr), bytes_read(0),
       msg_type(HepMC3_pb::MessageDigest::unknown) {
 
-  md_buffer.resize(10);
+  md_buffer.resize(MDBytesLength);
 
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -52,7 +57,7 @@ Readerprotobuf::Readerprotobuf(std::istream &stream)
     return;
   }
 
-  md_buffer.resize(10);
+  md_buffer.resize(MDBytesLength);
 
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -64,12 +69,14 @@ bool Readerprotobuf::read_file_start() {
 
   // Read the first 16 bytes, it should read "HepMC3::Protobuf"
   std::string MagicIntro;
-  MagicIntro.resize(16);
-  in_stream->read(&MagicIntro[0], 16);
+  MagicIntro.resize(ProtobufMagicHeaderBytes);
+  in_stream->read(&MagicIntro[0], ProtobufMagicHeaderBytes);
 
-  if (MagicIntro != "HepMC3::Protobuf") {
-    HEPMC3_ERROR("Failed to find expected Magic first 16 bytes, is this reall "
-                 "a HepMC3::Protobuf file?");
+  if (MagicIntro != ProtobufMagicHeader) {
+    HEPMC3_ERROR("Failed to find expected Magic first "
+                 << ProtobufMagicHeaderBytes
+                 << " bytes, is this really "
+                    "a HepMC3::Protobuf file?");
     return false;
   }
 
@@ -105,13 +112,13 @@ bool Readerprotobuf::buffer_message() {
 
   msg_type = HepMC3_pb::MessageDigest::unknown;
 
-  in_stream->read(&md_buffer[0], 10);
+  in_stream->read(&md_buffer[0], MDBytesLength);
 
   if (failed()) {
     return false;
   }
 
-  bytes_read += 10;
+  bytes_read += MDBytesLength;
 
   HepMC3_pb::MessageDigest md;
   md.ParseFromString(md_buffer);
@@ -148,10 +155,6 @@ bool Readerprotobuf::read_GenRunInfo() {
   HepMC3_pb::GenRunInfoData GenRunInfo_pb;
   GenRunInfo_pb.ParseFromString(msg_buffer);
   msg_buffer.clear();
-
-  // std::cout << "Read:\n>>>>>>>>>>>>>>>>>>\n"
-  //           << GenRunInfo_pb.DebugString() << "<<<<<<<<<<<<<<<<<<" <<
-  //           std::endl;
 
   HepMC3::GenRunInfoData gridata;
 
@@ -350,7 +353,7 @@ void Readerprotobuf::close() {
 
 bool Readerprotobuf::failed() {
   if (in_file) {
-    return !in_file || !in_file->is_open() || !in_file->good();
+    return !in_file->is_open() || !in_file->good();
   }
   return !in_stream || !in_stream->good();
 }
