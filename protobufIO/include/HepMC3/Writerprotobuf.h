@@ -19,8 +19,9 @@
  *
  */
 
-#include "HepMC3/GenEvent.h"
 #include "HepMC3/Writer.h"
+
+#include "HepMC3/GenEvent.h"
 
 #include <fstream>
 #include <memory>
