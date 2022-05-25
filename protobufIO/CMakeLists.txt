@@ -60,3 +60,7 @@ if (HEPMC3_BUILD_STATIC_LIBS)
   install(TARGETS HepMC3protobufIO_static DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT protobufIOlibs)
 endif()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/protobufIO7
