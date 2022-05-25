@@ -34,14 +34,3 @@ set_target_properties(HepMC3protobufIO PROPERTIES SOVERSION 3)
 install(TARGETS HepMC3protobufIO DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT protobufIOlibs)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/Writerprotobuf.h ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/Readerprotobuf.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/include/HepMC3 COMPONENT protobufIOdevel)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/HepMC3/HepMC3.pb.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/include/HepMC3 COMPONENT protobufIOdevel)
-
-
-add_executable(protobufIOWriter_test test/protobufIOWriter.cc)
-target_link_libraries(protobufIOWriter_test HepMC3protobufIO)
-
-install(TARGETS protobufIOWriter_test DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-add_executable(protobufIOReader_test test/protobufIOReader.cc)
-target_link_libraries(protobufIOReader_test HepMC3protobufIO)
-
-install(TARGETS protobufIOReader_test DESTINATION ${CMAKE_INSTALL_BINDIR})

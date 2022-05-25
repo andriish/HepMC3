@@ -38,6 +38,27 @@ macro( hepmc_root_test testname )
 endmacro( hepmc_root_test )
 
 
+macro( hepmc_protobuf_test testname )
+  message( STATUS "HepMC3 test: building protobuf test ${testname} " )
+  find_file( ${testname}_source ${testname}.cc ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
+  ADD_EXECUTABLE(${testname} ${${testname}_source}  ${ARGN} )
+  target_include_directories(${testname} BEFORE
+  PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src   ${CMAKE_CURRENT_SOURCE_DIR}/../include/ ${CMAKE_CURRENT_SOURCE_DIR}/../protobufIO/include/ )
+  target_link_libraries(${testname} PRIVATE HepMC3 HepMC3protobufIO)
+
+  set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
+  set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
+  add_test( ${testname} ${testname} )
+  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{PATH}")
+  file(GLOB INPUT${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/input${testname}*" )
+  file(COPY ${INPUT${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  string(REPLACE "test" "" ${testname} name)
+  file(GLOB INPUT${name}  "${CMAKE_CURRENT_SOURCE_DIR}/input${name}*" )
+  file(COPY ${INPUT${name}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endmacro( hepmc_protobuf_test )
+
+
 set( CMAKE_INCLUDE_DIRECTORIES_BEFORE ON )
 cmake_policy(SET CMP0057 NEW)
 
@@ -127,6 +148,11 @@ set( HepMC_search_tests
 
         )
 
+set( HepMC_protobuf_tests
+        testIO20
+        testIO21
+        )
+
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
 if ("Threads" IN_LIST HEPMC3_TEST_PACKAGES_LIST)
   set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -178,8 +204,8 @@ if(HEPMC3_ENABLE_SEARCH )
   target_link_libraries(${test} PRIVATE HepMC3search)
   target_include_directories(${test} BEFORE PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/../search/include)
   endforeach ( test ${HepMC_search_tests} )
-  
 endif()
+
 
 ## Treatment of special needs in the HepMC tests
 if(Threads_FOUND AND NOT (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI") AND NOT (${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC") )
@@ -250,7 +276,11 @@ if(HEPMC3_ENABLE_ROOTIO AND (NOT WIN32) )
   target_link_libraries(testIO4 PRIVATE ${ROOT_Hist_LIBRARY})
 endif()
 
-
+if(HEPMC3_ENABLE_PROTOBUFIO )
+  foreach ( test ${HepMC_protobuf_tests} )
+    hepmc_protobuf_test( ${test} )
+  endforeach ( test ${HepMC_protobuf_tests} )
+endif()
 
 set( libMCEG_sources ValidationControl.cc   SimpleEventTool.cc OutputValidationTool.cc)
 set( libMCEG_sources_HEPMC3  )
@@ -490,7 +520,7 @@ endmacro(add_memcheck_test)
 
 
 if(MEMORYCHECK_COMMAND)
-  set( HepMC_memcheck_tests ${HepMC_tests} )
+  set( HepMC_memcheck_tests ${HepMC_tests} ${HepMC_protobuf_tests} )
   list(REMOVE_ITEM HepMC_memcheck_tests testFourVector )
 #The story behind is complicated. It seems that on some platforms valgind dislikes the comparison of infinities.
   foreach ( test ${HepMC_memcheck_tests} )
