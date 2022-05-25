@@ -32,8 +32,6 @@ Readerprotobuf::Readerprotobuf(const std::string &filename)
 
   md_buffer.resize(MDBytesLength);
 
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
   in_file = std::unique_ptr<std::ifstream>(
       new std::ifstream(filename, ios::in | ios::binary));
 
@@ -58,8 +56,6 @@ Readerprotobuf::Readerprotobuf(std::istream &stream)
   }
 
   md_buffer.resize(MDBytesLength);
-
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   in_stream = &stream;
   read_file_start();
