@@ -6,7 +6,7 @@
 #include "HepMC3/GenVertex.h"
 #include "HepMC3/Print.h"
 
-int main(int argc, char *const argv[]) {
+int main() {
 
   // Create some four vectors for the electrons
   double ele_mass_sqr = 0.000511 * 0.000511;
@@ -67,7 +67,7 @@ int main(int argc, char *const argv[]) {
   gri->set_weight_names({"weight1", "weight2", "weight3"});
 
   std::unique_ptr<HepMC3::Writerprotobuf> writer(
-      new HepMC3::Writerprotobuf(argv[1], gri));
+      new HepMC3::Writerprotobuf("outputIO21.proto", gri));
 
   if(writer->failed()){
     return 1;
@@ -81,7 +81,7 @@ int main(int argc, char *const argv[]) {
 
   HepMC3::Print::listing(hepmc);
 
-  writer.reset();
-
-  return 0;
+  writer->close();
+  exit(0);
 }
+
