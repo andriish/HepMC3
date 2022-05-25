@@ -30,7 +30,6 @@ if (MSVC)
   set_target_properties(HepMC3protobufIO PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>)
 endif()
 
-
 set_target_properties(HepMC3protobufIO 
   PROPERTIES
     SOVERSION 3
