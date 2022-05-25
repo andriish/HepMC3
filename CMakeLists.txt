@@ -162,7 +162,7 @@ endif()
 
 if(HEPMC3_ENABLE_PROTOBUFIO)
   set(HEPMC3_PROTOBUFIO_LIBRARY "-lHepMC3protobufIO" )
-  find_package(Protobuf 3 REQUIRED)
+  find_package(Protobuf 2.4 REQUIRED)
 endif()
 
 
