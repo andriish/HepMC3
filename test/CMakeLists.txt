@@ -520,7 +520,10 @@ endmacro(add_memcheck_test)
 
 
 if(MEMORYCHECK_COMMAND)
-  set( HepMC_memcheck_tests ${HepMC_tests} ${HepMC_protobuf_tests} )
+  set( HepMC_memcheck_tests ${HepMC_tests} )
+  if(HEPMC3_ENABLE_PROTOBUFIO )
+    set( HepMC_memcheck_tests ${HepMC_memcheck_tests} ${HepMC_protobuf_tests} )
+  endif()
   list(REMOVE_ITEM HepMC_memcheck_tests testFourVector )
 #The story behind is complicated. It seems that on some platforms valgind dislikes the comparison of infinities.
   foreach ( test ${HepMC_memcheck_tests} )

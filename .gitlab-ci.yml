@@ -141,7 +141,7 @@ debian-salsa:
     - cat /etc/issue
     - yum -y install  cmake make binutils sed gawk grep
     - yum -y install  doxygen 
-    - yum -y install  valgrind HepMC HepMC-devel xz xz-devel bzip2 bzip2-devel zlib zlib-devel zlib-static  graphviz graphviz-devel pythia8 pythia8-devel  root --skip-broken
+    - yum -y install  valgrind HepMC HepMC-devel xz xz-devel bzip2 bzip2-devel zlib zlib-devel zlib-static  graphviz graphviz-devel pythia8 pythia8-devel  root 
 #    - yum -y install  glibc-debuginfo --enablerepo=*debug*
 ########################################################################
 .pythoninstall: &pythoninstall
@@ -516,7 +516,7 @@ CentOS8s-gcc:
     - set -x
     - uname -a 
     - cat /etc/issue
-    - yum -y install epel-release libarchive
+    - yum -y install epel-release epel-next-release libarchive
     - dnf -y install 'dnf-command(config-manager)'
     - dnf config-manager --set-enabled powertools  
     - dnf config-manager --set-enabled appstream  
@@ -538,7 +538,7 @@ CentOS8s-clang:
     - set -x
     - uname -a 
     - cat /etc/issue
-    - yum -y install epel-release libarchive
+    - yum -y install epel-release epel-next-release libarchive
     - dnf -y install 'dnf-command(config-manager)'
     - dnf config-manager --set-enabled powertools  
     - dnf config-manager --set-enabled appstream  
