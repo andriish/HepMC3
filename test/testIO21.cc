@@ -66,21 +66,9 @@ int main() {
     gri->tools().push_back(ti2);
     gri->set_weight_names({"weight1", "weight2", "weight3"});
 
-    std::unique_ptr<HepMC3::Writerprotobuf> writer(
-        new HepMC3::Writerprotobuf("outputIO21.proto", gri));
-
-    if(writer->failed()) {
-        return 1;
-    }
-
+    auto writer = std::make_shared<HepMC3::Writerprotobuf>("outputIO21.proto", gri);
     writer->write_event(hepmc);
-
-    if(writer->failed()) {
-        return 1;
-    }
-
     HepMC3::Print::listing(hepmc);
-
     writer->close();
     exit(0);
 }
