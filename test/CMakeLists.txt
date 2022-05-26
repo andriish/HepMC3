@@ -151,6 +151,11 @@ set( HepMC_search_tests
 set( HepMC_protobuf_tests
         testIO20
         testIO21
+        testIO22
+        testIO23
+        testIO24
+        testIO25
+        testIO26
         )
 
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )

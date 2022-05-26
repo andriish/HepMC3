@@ -7,6 +7,10 @@ message Header {
     uint32 version_maj = 2;
     uint32 version_min = 3;
     uint32 version_patch = 4;
+
+    uint32 protobuf_version_maj = 5;
+    uint32 protobuf_version_min = 6;
+    uint32 protobuf_version_patch = 7;
 }
 
 message Footer {
