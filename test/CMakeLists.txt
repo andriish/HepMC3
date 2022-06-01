@@ -215,6 +215,14 @@ if(HEPMC3_ENABLE_SEARCH )
   endforeach ( test ${HepMC_search_tests} )
 endif()
 
+if(HEPMC3_ENABLE_PROTOBUFIO )
+  foreach ( test ${HepMC_protobuf_tests} )
+    hepmc_protobuf_test( ${test} )
+  target_link_libraries(${test} PRIVATE HepMC3protobufIO)
+  target_include_directories(${test} BEFORE PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/../protobufIO/include)
+  endforeach ( test ${HepMC_protobuf_tests} )
+endif()
+
 
 ## Treatment of special needs in the HepMC tests
 if(Threads_FOUND AND NOT (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI") AND NOT (${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC") )
@@ -285,11 +293,6 @@ if(HEPMC3_ENABLE_ROOTIO AND (NOT WIN32) )
   target_link_libraries(testIO4 PRIVATE ${ROOT_Hist_LIBRARY})
 endif()
 
-if(HEPMC3_ENABLE_PROTOBUFIO )
-  foreach ( test ${HepMC_protobuf_tests} )
-    hepmc_protobuf_test( ${test} )
-  endforeach ( test ${HepMC_protobuf_tests} )
-endif()
 
 set( libMCEG_sources ValidationControl.cc   SimpleEventTool.cc OutputValidationTool.cc)
 set( libMCEG_sources_HEPMC3  )

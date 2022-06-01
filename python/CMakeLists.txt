@@ -9,9 +9,9 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 option(USE_INSTALLED_HEPMC3 "Use HepMC3 bindings as a standalone package" OFF)
 option(RERUN_BINDER "Rerun binder" OFF)
 if (USE_INSTALLED_HEPMC3)
-  set(${PROJECT_NAME}_VERSION 3.2.3)
+  set(${PROJECT_NAME}_VERSION 3.2.6)
   set(THIS_PROJECT_NAME ${PROJECT_NAME})
-  set(THIS_PROJECT_NAME_VERSION 3.2.3)
+  set(THIS_PROJECT_NAME_VERSION 3.2.6)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
 
   find_package(HepMC3  REQUIRED  )
@@ -111,8 +111,8 @@ else()
   set(THIS_PROJECT_NAME pyHepMC3)
   set(THIS_PROJECT_NAME_VERSION ${HEPMC3_VERSION_MAJOR}.${HEPMC3_VERSION_MINOR}.${HEPMC3_VERSION_PATCH})
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/)
-  set (HEPMC3_INCLUDE_FLAGS -I${PROJECT_SOURCE_DIR}/include   -I${PROJECT_SOURCE_DIR}/rootIO/include  -I${PROJECT_SOURCE_DIR}/search/include)
-  set (HEPMC3_INCLUDE_DIRECTORIES  ${PROJECT_SOURCE_DIR}/include   ${PROJECT_SOURCE_DIR}/rootIO/include  ${PROJECT_SOURCE_DIR}/search/include)
+  set (HEPMC3_INCLUDE_FLAGS -I${PROJECT_SOURCE_DIR}/include   -I${PROJECT_SOURCE_DIR}/rootIO/include  -I${PROJECT_SOURCE_DIR}/search/include -I${PROJECT_SOURCE_DIR}/protobufIO/include)
+  set (HEPMC3_INCLUDE_DIRECTORIES  ${PROJECT_SOURCE_DIR}/include   ${PROJECT_SOURCE_DIR}/rootIO/include  ${PROJECT_SOURCE_DIR}/search/include ${PROJECT_SOURCE_DIR}/protobufIO/include)
   set ( HEPMC3_LIB HepMC3)
   set ( HEPMC3_SEARCH_LIB HepMC3search)
   #CMAKE_POSITION_INDEPENDENT_CODE should be ON or the static libraries should be compilled with -fPIC
@@ -159,6 +159,9 @@ endif()
 if(ROOT_FOUND)
   configure_file("pyHepMC3.rootIO.egg-info.in" "pyHepMC3.rootIO.egg-info" IMMEDIATE @ONLY)
 endif()
+if(HEPMC3_ENABLE_PROTOBUFIO)
+  configure_file("pyHepMC3.protobufIO.egg-info.in" "pyHepMC3.protobufIO.egg-info" IMMEDIATE @ONLY)
+endif()
 
 set(autoBN       ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_1.cpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_2.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_4.cpp
@@ -170,9 +173,11 @@ set(autoBN       ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3.cpp ${CMAKE_CURRENT_SO
 )
 set(autoBNrootIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_1.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_2.cpp)
 set(autoBNsearch ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_1.cpp)
+set(autoBNprotobufIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO_0.cpp )
 set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp)
 set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/root_binders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/search_binders.cpp)
+set(BNprotobufIO ${autoBNprotobufIO} )
 if (RERUN_BINDER)
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
   if(BINDER)
@@ -186,7 +191,7 @@ if (RERUN_BINDER)
                         --root-module pyHepMC3
                         --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                         --config src/pyHepMC3.binder   ${CMAKE_CURRENT_BINARY_DIR}/all_includes.hpp
-                        --  -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS}
+                        --  -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS} -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       VERBATIM
     )
@@ -199,7 +204,7 @@ if (RERUN_BINDER)
                           --root-module pyHepMC3rootIO
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                           --config src/pyHepMC3rootIO.binder   ${CMAKE_CURRENT_BINARY_DIR}/root_includes.hpp
-                          --  -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS} -I${ROOT_INCLUDE_DIRS}
+                          --  -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS} -I${ROOT_INCLUDE_DIRS} -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM
       )
@@ -213,10 +218,24 @@ if (RERUN_BINDER)
                           --root-module pyHepMC3search
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                           --config src/pyHepMC3search.binder   ${CMAKE_CURRENT_BINARY_DIR}/search_includes.hpp
-                          -- -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS}
+                          -- -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS} -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM)
     endif()
+    if(HEPMC3_ENABLE_PROTOBUFIO)
+      configure_file("protobuf_includes.hpp.in" "protobuf_includes.hpp" IMMEDIATE @ONLY)
+      add_custom_command(
+        OUTPUT  ${autoBNprotobufIO}
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/protobuf_includes.hpp src/pyHepMC3protobufIO.binder
+        COMMAND ${BINDER} --flat --max-file-size=5000
+                          --root-module pyHepMC3protobufIO
+                          --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+                          --config src/pyHepMC3protobufIO.binder   ${CMAKE_CURRENT_BINARY_DIR}/protobuf_includes.hpp
+                          -- -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include -I${CMAKE_CURRENT_SOURCE_DIR}/../protobufIO/include ${HEPMC3_INCLUDE_FLAGS} -I/usr/lib/gcc/x86_64-redhat-linux/8/include/ -I${CMAKE_CURRENT_BINARY_DIR}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        VERBATIM)
+    endif()
+
   else()
     message(FATAL_ERROR "HepMC3  python: binder not found!  Automatic generatin of code for python bindings is not possible.")
   endif()
@@ -333,6 +352,13 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
           PREFIX ""
           OUTPUT_NAME pyHepMC3search.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
     endif()
+    if(HEPMC3_ENABLE_PROTOBUFIO)
+      add_library(pyHepMC3protobufIO${Python_VERSION} MODULE  ${BNprotobufIO} )
+      set_target_properties(pyHepMC3protobufIO${Python_VERSION}
+        PROPERTIES
+          PREFIX ""
+          OUTPUT_NAME pyHepMC3protobufIO.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
+    endif()
   endif()
 
 #Compilation with CPython2
@@ -350,6 +376,11 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set_target_properties(pyHepMC3search${Python_VERSION}
         PROPERTIES  OUTPUT_NAME pyHepMC3search  )
     endif()
+    if(HEPMC3_ENABLE_PROTOBUFIO)
+      Python2_add_library(pyHepMC3protobufIO${Python_VERSION} MODULE  ${BNprotobufIO}   )
+      set_target_properties(pyHepMC3protobufIO${Python_VERSION}
+        PROPERTIES  OUTPUT_NAME pyHepMC3protobufIO  )
+    endif()
   endif()
 
 #Compilation with CPython3
@@ -366,6 +397,11 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       Python3_add_library(pyHepMC3search${Python_VERSION} MODULE  ${BNsearch})
       set_target_properties(pyHepMC3search${Python_VERSION}
         PROPERTIES  OUTPUT_NAME pyHepMC3search  )
+    endif()
+    if(HEPMC3_ENABLE_PROTOBUFIO)
+      Python3_add_library(pyHepMC3protobufIO${Python_VERSION} MODULE  ${BNprotobufIO})
+      set_target_properties(pyHepMC3protobufIO${Python_VERSION}
+        PROPERTIES  OUTPUT_NAME pyHepMC3protobufIO  )
     endif()
   endif()
   set_target_properties(pyHepMC3${Python_VERSION}
@@ -401,7 +437,17 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     target_include_directories(pyHepMC3search${Python_VERSION}
       PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} )
   endif()
-
+  if(HEPMC3_ENABLE_PROTOBUFIO)
+    set_target_properties(pyHepMC3protobufIO${Python_VERSION}
+      PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/$<0:>
+        MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/$<0:>
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/$<0:>)
+    target_link_libraries(pyHepMC3protobufIO${Python_VERSION}
+      PUBLIC  ${HEPMC3_LIB} ${HEPMC3_PROTOBUFIO_LIB} )
+    target_include_directories(pyHepMC3protobufIO${Python_VERSION}
+      PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} )
+  endif()
   add_custom_target(
         foo${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/
@@ -419,6 +465,13 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         foosearch${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/search/
         COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/src/search/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/search/__init__.py
+                )
+  endif()
+  if(HEPMC3_ENABLE_PROTOBUFIO)
+    add_custom_target(
+        fooprotobufIO${Python_VERSION} ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/
+        COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIO/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/__init__.py
                 )
   endif()
   message(STATUS "HepMC3 python: For this platforrm CMAKE_SHARED_LIBRARY_PREFIX=${CMAKE_SHARED_LIBRARY_PREFIX}, CMAKE_SHARED_LIBRARY_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}") 
@@ -450,6 +503,19 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3search${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3search${CMAKE_SHARED_LIBRARY_SUFFIX}
         COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3search${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/search/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3search${CMAKE_IMPORT_LIBRARY_SUFFIX}
         COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3search${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_SBINARY_DIR}/test/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3search${CMAKE_IMPORT_LIBRARY_SUFFIX}        DEPENDS HepMC3search
+                )
+      endif()
+      if(HEPMC3_ENABLE_PROTOBUFIO)
+        message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+        message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+        add_custom_target(
+        copyprotobufIO${Python_VERSION} ALL
+        COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX}
+        COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_SHARED_LIBRARY_SUFFIX}
+        COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/protobufIO/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX}
+        COMMAND ${CMAKE_COMMAND}  -E copy  ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_SBINARY_DIR}/test/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3protobufIO${CMAKE_IMPORT_LIBRARY_SUFFIX}        DEPENDS HepMC3protobufIO
                 )
       endif()
     endif()
@@ -513,7 +579,18 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       RENAME pyHepMC3.search-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
       COMPONENT pythonsearch)
   endif()
-
+  if(HEPMC3_ENABLE_PROTOBUFIO)
+    install(TARGETS pyHepMC3protobufIO${Python_VERSION}
+      DESTINATION ${HEPMC3_Python_SITEARCH}/pyHepMC3/protobufIO
+      COMPONENT pythonprotobufIO)
+    install(FILES src/protobufIO/__init__.py
+      DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/protobufIO
+      COMPONENT pythonprotobufIO)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3.protobufIO.egg-info
+      DESTINATION  ${HEPMC3_Python_SITEARCH}
+      RENAME pyHepMC3.protobufIO-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
+      COMPONENT pythonprotobufIO)
+  endif()
   set( HepMC_python_tests
         test_IO1
         test_Boost

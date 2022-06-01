@@ -66,7 +66,7 @@ tmp=$( echo "$*" | egrep -- '--\<search\>')
 test -n "$tmp" && OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3search_static.a"
 
 tmp=$( echo "$*" | egrep -- '--\<protobufIO\>')
-test -n "$tmp" && OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3protobufIO-static.a"
+test -n "$tmp" && OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3protobufIO_static.a"
 
 else
 
@@ -78,10 +78,14 @@ test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ -lHepMC3search"
 
 tmp=$( echo "$*" | egrep -- '--\<protobufIO\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ -lHepMC3protobufIO"
+
 fi
 
 tmp=$( echo "$*" | egrep -- '--\<rootIO\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_HEPMC3_ROOTIO_INSTALL_LIBDIR@ @HEPMC3_ROOTIO_LIBRARY@"
+
+tmp=$( echo "$*" | egrep -- '--\<features\>')
+test -n "$tmp" && OUT="$OUT @HEPMC3_FEATURES@"
 
 tmp=$( echo "$*" | egrep -- '--\<version\>')
 test -n "$tmp" && echo @PROJECT_VERSION@ && exit 0
