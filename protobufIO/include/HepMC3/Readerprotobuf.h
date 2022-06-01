@@ -40,25 +40,26 @@ class Readerprotobuf : public Reader {
   //
 public:
   struct FileHeader {
-    std::string version_str;
-    unsigned int version_maj;
-    unsigned int version_min;
-    unsigned int version_patch;
+    std::string m_version_str;
+    unsigned int m_version_maj;
+    unsigned int m_version_min;
+    unsigned int m_version_patch;
 
-    unsigned int protobuf_version_maj;
-    unsigned int protobuf_version_min;
-    unsigned int protobuf_version_patch;
+    unsigned int m_protobuf_version_maj;
+    unsigned int m_protobuf_version_min;
+    unsigned int m_protobuf_version_patch;
   };
 
   //
   // Constructors
   //
 public:
-  /** @brief Default constructor */
+  /** @brief */
   Readerprotobuf(const std::string &filename);
-  /** @brief Default constructor */
+  /** @brief */
   Readerprotobuf(std::istream &stream);
-
+  /** @brief */
+  Readerprotobuf(std::shared_ptr<std::istream> stream);
   //
   // Functions
   //
@@ -75,7 +76,7 @@ public:
   /** @brief Close file stream */
   void close() override;
 
-  FileHeader const &file_header() { return fheader; }
+  FileHeader const &file_header() { return m_file_header; }
 
   /** @brief Get stream error state */
   bool failed() override;
@@ -90,18 +91,18 @@ private:
 
   bool read_file_start();
 
-  size_t bytes_read;
+  size_t m_bytes_read;
 
-  std::unique_ptr<std::ifstream> in_file;
-  std::istream *in_stream;
+  std::unique_ptr<std::ifstream> m_in_file;
+  std::istream *m_in_stream;
 
-  std::string msg_buffer;
-  std::string md_buffer;
-  int msg_type;
+  std::string m_msg_buffer;
+  std::string m_md_buffer;
+  int m_msg_type;
 
-  HepMC3::GenEventData evdata;
+  HepMC3::GenEventData m_evdata;
 
-  FileHeader fheader;
+  FileHeader m_file_header;
 };
 
 } // namespace HepMC3

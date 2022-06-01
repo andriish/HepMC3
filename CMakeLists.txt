@@ -160,6 +160,10 @@ endif()
 if(HEPMC3_ENABLE_PROTOBUFIO)
   set(HEPMC3_PROTOBUFIO_LIBRARY "-lHepMC3protobufIO" )
   find_package(Protobuf 2.4 REQUIRED)
+
+  if(Protobuf_PROTOC_EXECUTABLE STREQUAL "Protobuf_PROTOC_EXECUTABLE-NOTFOUND" OR NOT EXISTS ${Protobuf_PROTOC_EXECUTABLE})
+    message(FATAL_ERROR "Found libprotobuf, but cannot find proto compiler, protoc, which is required.")
+  endif()
 endif()
 
 

@@ -29,27 +29,27 @@ HEPMC3_DECLARE_READER_STREAM(Readerprotobuf);
 static size_t const MDBytesLength = 10;
 
 Readerprotobuf::Readerprotobuf(const std::string &filename)
-    : in_file(nullptr), bytes_read(0),
-      msg_type(HepMC3_pb::MessageDigest::unknown) {
+    : m_in_file(nullptr), m_bytes_read(0),
+      m_msg_type(HepMC3_pb::MessageDigest::unknown) {
 
-  md_buffer.resize(MDBytesLength);
+  m_md_buffer.resize(MDBytesLength);
 
-  in_file = std::unique_ptr<std::ifstream>(
+  m_in_file = std::unique_ptr<std::ifstream>(
       new std::ifstream(filename, ios::in | ios::binary));
 
-  if (!in_file->is_open()) {
+  if (!m_in_file->is_open()) {
     HEPMC3_ERROR("Readerprotobuf: Problem opening file: " << filename)
     return;
   }
 
-  in_stream = in_file.get();
+  m_in_stream = m_in_file.get();
 
   read_file_start();
 }
 
 Readerprotobuf::Readerprotobuf(std::istream &stream)
-    : in_file(nullptr), bytes_read(0),
-      msg_type(HepMC3_pb::MessageDigest::unknown) {
+    : m_in_file(nullptr), m_bytes_read(0),
+      m_msg_type(HepMC3_pb::MessageDigest::unknown) {
 
   if (!stream.good()) {
     HEPMC3_ERROR(
@@ -57,18 +57,21 @@ Readerprotobuf::Readerprotobuf(std::istream &stream)
     return;
   }
 
-  md_buffer.resize(MDBytesLength);
+  m_md_buffer.resize(MDBytesLength);
 
-  in_stream = &stream;
+  m_in_stream = &stream;
   read_file_start();
 }
+
+Readerprotobuf::Readerprotobuf(std::shared_ptr<std::istream> stream)
+    : Readerprotobuf(*stream) {}
 
 bool Readerprotobuf::read_file_start() {
 
   // Read the first 16 bytes, it should read "HepMC3::Protobuf"
   std::string MagicIntro;
   MagicIntro.resize(ProtobufMagicHeaderBytes);
-  in_stream->read(&MagicIntro[0], ProtobufMagicHeaderBytes);
+  m_in_stream->read(&MagicIntro[0], ProtobufMagicHeaderBytes);
 
   if (MagicIntro != ProtobufMagicHeader) {
     HEPMC3_ERROR("Failed to find expected Magic first "
@@ -81,22 +84,22 @@ bool Readerprotobuf::read_file_start() {
   if (!read_Header()) {
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find Header, but instead found message type: "
-                 << msg_type);
+                 << m_msg_type);
     return false;
   }
 
   if (!read_GenRunInfo()) {
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find RunInfo, but instead found message type: "
-                 << msg_type);
+                 << m_msg_type);
     return false;
   }
 
   buffer_message(); // check that we can find an event message
-  if (msg_type != HepMC3_pb::MessageDigest::Event) {
+  if (m_msg_type != HepMC3_pb::MessageDigest::Event) {
     HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
                  "find Event, but instead found message type: "
-                 << msg_type);
+                 << m_msg_type);
     return false;
   }
 
@@ -104,67 +107,67 @@ bool Readerprotobuf::read_file_start() {
 }
 
 bool Readerprotobuf::buffer_message() {
-  if (msg_buffer.size()) {
+  if (m_msg_buffer.size()) {
     return false;
   }
 
-  msg_type = HepMC3_pb::MessageDigest::unknown;
+  m_msg_type = HepMC3_pb::MessageDigest::unknown;
 
-  in_stream->read(&md_buffer[0], MDBytesLength);
+  m_in_stream->read(&m_md_buffer[0], MDBytesLength);
 
   if (failed()) {
     return false;
   }
 
-  bytes_read += MDBytesLength;
+  m_bytes_read += MDBytesLength;
 
   HepMC3_pb::MessageDigest md;
-  md.ParseFromString(md_buffer);
+  md.ParseFromString(m_md_buffer);
 
-  msg_type = md.message_type();
-  msg_buffer.resize(md.bytes());
-  in_stream->read(&msg_buffer[0], md.bytes());
+  m_msg_type = md.message_type();
+  m_msg_buffer.resize(md.bytes());
+  m_in_stream->read(&m_msg_buffer[0], md.bytes());
 
   if (failed()) {
     return false;
   }
 
-  bytes_read += md.bytes();
+  m_bytes_read += md.bytes();
   return true;
 }
 
 bool Readerprotobuf::read_Header() {
   buffer_message();
-  if (msg_type != HepMC3_pb::MessageDigest::Header) {
+  if (m_msg_type != HepMC3_pb::MessageDigest::Header) {
     return false;
   }
 
   HepMC3_pb::Header Header_pb;
-  Header_pb.ParseFromString(msg_buffer);
-  msg_buffer.clear();
+  Header_pb.ParseFromString(m_msg_buffer);
+  m_msg_buffer.clear();
 
-  fheader.version_str = Header_pb.version_str();
-  fheader.version_maj = Header_pb.version_maj();
-  fheader.version_min = Header_pb.version_min();
-  fheader.version_patch = Header_pb.version_patch();
-  fheader.protobuf_version_maj = Header_pb.protobuf_version_maj();
-  fheader.protobuf_version_min = Header_pb.protobuf_version_min();
-  fheader.protobuf_version_patch = Header_pb.protobuf_version_patch();
+  m_file_header.m_version_str = Header_pb.version_str();
+  m_file_header.m_version_maj = Header_pb.version_maj();
+  m_file_header.m_version_min = Header_pb.version_min();
+  m_file_header.m_version_patch = Header_pb.version_patch();
+  m_file_header.m_protobuf_version_maj = Header_pb.protobuf_version_maj();
+  m_file_header.m_protobuf_version_min = Header_pb.protobuf_version_min();
+  m_file_header.m_protobuf_version_patch = Header_pb.protobuf_version_patch();
 
   return true;
 }
 
 bool Readerprotobuf::read_GenRunInfo() {
   buffer_message();
-  if (msg_type != HepMC3_pb::MessageDigest::RunInfo) {
+  if (m_msg_type != HepMC3_pb::MessageDigest::RunInfo) {
     return false;
   }
 
   set_run_info(std::shared_ptr<HepMC3::GenRunInfo>(new HepMC3::GenRunInfo()));
 
   HepMC3_pb::GenRunInfoData GenRunInfo_pb;
-  GenRunInfo_pb.ParseFromString(msg_buffer);
-  msg_buffer.clear();
+  GenRunInfo_pb.ParseFromString(m_msg_buffer);
+  m_msg_buffer.clear();
 
   HepMC3::GenRunInfoData gridata;
 
@@ -206,27 +209,27 @@ bool Readerprotobuf::read_GenRunInfo() {
 
 bool Readerprotobuf::read_GenEvent(bool skip) {
   buffer_message();
-  if (msg_type != HepMC3_pb::MessageDigest::Event) {
+  if (m_msg_type != HepMC3_pb::MessageDigest::Event) {
     return false;
   }
 
   if (skip) { // Don't parse to HepMC3 if skipping
-    msg_buffer.clear();
+    m_msg_buffer.clear();
     return true;
   }
 
   HepMC3_pb::GenEventData ged_pb;
-  ged_pb.ParseFromString(msg_buffer);
+  ged_pb.ParseFromString(m_msg_buffer);
 
-  evdata.event_number = ged_pb.event_number();
+  m_evdata.event_number = ged_pb.event_number();
 
   switch (ged_pb.momentum_unit()) {
   case HepMC3_pb::GenEventData::MEV: {
-    evdata.momentum_unit = HepMC3::Units::MEV;
+    m_evdata.momentum_unit = HepMC3::Units::MEV;
     break;
   }
   case HepMC3_pb::GenEventData::GEV: {
-    evdata.momentum_unit = HepMC3::Units::GEV;
+    m_evdata.momentum_unit = HepMC3::Units::GEV;
     break;
   }
   default: {
@@ -237,11 +240,11 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
 
   switch (ged_pb.length_unit()) {
   case HepMC3_pb::GenEventData::MM: {
-    evdata.length_unit = HepMC3::Units::MM;
+    m_evdata.length_unit = HepMC3::Units::MM;
     break;
   }
   case HepMC3_pb::GenEventData::CM: {
-    evdata.length_unit = HepMC3::Units::CM;
+    m_evdata.length_unit = HepMC3::Units::CM;
     break;
   }
   default: {
@@ -252,7 +255,7 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
 
   int vector_size = 0;
 
-  evdata.particles.clear();
+  m_evdata.particles.clear();
   vector_size = ged_pb.particles_size();
   for (int it = 0; it < vector_size; ++it) {
     auto particle_pb = ged_pb.particles(it);
@@ -268,10 +271,10 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
         particle_pb.momentum().m_v1(), particle_pb.momentum().m_v2(),
         particle_pb.momentum().m_v3(), particle_pb.momentum().m_v4()};
 
-    evdata.particles.push_back(pdata);
+    m_evdata.particles.push_back(pdata);
   }
 
-  evdata.vertices.clear();
+  m_evdata.vertices.clear();
   vector_size = ged_pb.vertices_size();
   for (int it = 0; it < vector_size; ++it) {
     auto vertex_pb = ged_pb.vertices(it);
@@ -284,50 +287,50 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
         vertex_pb.position().m_v1(), vertex_pb.position().m_v2(),
         vertex_pb.position().m_v3(), vertex_pb.position().m_v4()};
 
-    evdata.vertices.push_back(vdata);
+    m_evdata.vertices.push_back(vdata);
   }
 
-  evdata.weights.clear();
+  m_evdata.weights.clear();
   vector_size = ged_pb.weights_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.weights.push_back(ged_pb.weights(it));
+    m_evdata.weights.push_back(ged_pb.weights(it));
   }
 
-  evdata.links1.clear();
+  m_evdata.links1.clear();
   vector_size = ged_pb.links1_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.links1.push_back(ged_pb.links1(it));
+    m_evdata.links1.push_back(ged_pb.links1(it));
   }
 
-  evdata.links2.clear();
+  m_evdata.links2.clear();
   vector_size = ged_pb.links2_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.links2.push_back(ged_pb.links2(it));
+    m_evdata.links2.push_back(ged_pb.links2(it));
   }
 
-  evdata.event_pos =
+  m_evdata.event_pos =
       HepMC3::FourVector{ged_pb.event_pos().m_v1(), ged_pb.event_pos().m_v2(),
                          ged_pb.event_pos().m_v3(), ged_pb.event_pos().m_v4()};
 
-  evdata.attribute_id.clear();
+  m_evdata.attribute_id.clear();
   vector_size = ged_pb.attribute_id_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.attribute_id.push_back(ged_pb.attribute_id(it));
+    m_evdata.attribute_id.push_back(ged_pb.attribute_id(it));
   }
 
-  evdata.attribute_name.clear();
+  m_evdata.attribute_name.clear();
   vector_size = ged_pb.attribute_name_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.attribute_name.push_back(ged_pb.attribute_name(it));
+    m_evdata.attribute_name.push_back(ged_pb.attribute_name(it));
   }
 
-  evdata.attribute_string.clear();
+  m_evdata.attribute_string.clear();
   vector_size = ged_pb.attribute_string_size();
   for (int it = 0; it < vector_size; ++it) {
-    evdata.attribute_string.push_back(ged_pb.attribute_string(it));
+    m_evdata.attribute_string.push_back(ged_pb.attribute_string(it));
   }
 
-  msg_buffer.clear();
+  m_msg_buffer.clear();
   return true;
 }
 
@@ -347,25 +350,25 @@ bool Readerprotobuf::read_event(GenEvent &evt) {
     return false;
   }
 
-  evt.read_data(evdata);
+  evt.read_data(m_evdata);
   evt.set_run_info(run_info());
 
   return true;
 }
 
 void Readerprotobuf::close() {
-  if (in_file) {
-    in_file->close();
-    in_file.reset();
+  if (m_in_file) {
+    m_in_file->close();
+    m_in_file.reset();
   }
-  in_stream = nullptr;
+  m_in_stream = nullptr;
 }
 
 bool Readerprotobuf::failed() {
-  if (in_file) {
-    return !in_file->is_open() || !in_file->good();
+  if (m_in_file) {
+    return !m_in_file->is_open() || !m_in_file->good();
   }
-  return !in_stream || !in_stream->good();
+  return !m_in_stream || !m_in_stream->good();
 }
 
 } // namespace HepMC3

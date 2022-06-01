@@ -44,6 +44,9 @@ public:
   Writerprotobuf(std::ostream &out_stream, std::shared_ptr<GenRunInfo> run =
                                                std::shared_ptr<GenRunInfo>());
 
+  Writerprotobuf(
+      std::shared_ptr<std::ostream> out_stream,
+      std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
   //
   // Functions
   //
@@ -69,11 +72,11 @@ private:
   void write_run_info();
   void start_file();
 
-  std::unique_ptr<std::ofstream> out_file;
-  std::ostream *out_stream;
+  std::unique_ptr<std::ofstream> m_out_file;
+  std::ostream *m_out_stream;
 
-  size_t number_of_events_written;
-  size_t event_bytes_written;
+  size_t m_events_written;
+  size_t m_event_bytes_written;
 };
 
 } // namespace HepMC3

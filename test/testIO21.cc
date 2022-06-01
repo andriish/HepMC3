@@ -14,18 +14,18 @@
 int main() {
   HepMC3::Readerprotobuf rdr2("inputIO21_libprotobuf2.proto");
   std::cout << "File inputIO21_libprotobuf2.proto was written by libprotobuf v"
-            << rdr2.file_header().protobuf_version_maj << "."
-            << rdr2.file_header().protobuf_version_min << "."
-            << rdr2.file_header().protobuf_version_patch << std::endl;
-  assert(rdr2.file_header().protobuf_version_maj == 2);
+            << rdr2.file_header().m_protobuf_version_maj << "."
+            << rdr2.file_header().m_protobuf_version_min << "."
+            << rdr2.file_header().m_protobuf_version_patch << std::endl;
+  assert(rdr2.file_header().m_protobuf_version_maj == 2);
   rdr2.close();
 
   HepMC3::Readerprotobuf rdr3("inputIO21_libprotobuf3.proto");
   std::cout << "File inputIO21_libprotobuf3.proto was written by libprotobuf v"
-            << rdr3.file_header().protobuf_version_maj << "."
-            << rdr3.file_header().protobuf_version_min << "."
-            << rdr3.file_header().protobuf_version_patch << std::endl;
-  assert(rdr3.file_header().protobuf_version_maj == 3);
+            << rdr3.file_header().m_protobuf_version_maj << "."
+            << rdr3.file_header().m_protobuf_version_min << "."
+            << rdr3.file_header().m_protobuf_version_patch << std::endl;
+  assert(rdr3.file_header().m_protobuf_version_maj == 3);
   rdr3.close();
 
   exit(0);

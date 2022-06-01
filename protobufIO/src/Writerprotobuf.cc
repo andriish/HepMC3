@@ -54,7 +54,7 @@ size_t write_message(std::ostream *out_stream, T &msg,
 
 Writerprotobuf::Writerprotobuf(const std::string &filename,
                                std::shared_ptr<GenRunInfo> run)
-    : out_file(nullptr), number_of_events_written(0), event_bytes_written(0) {
+    : m_out_file(nullptr), m_events_written(0), m_event_bytes_written(0) {
 
   if (!run) {
     run = std::shared_ptr<GenRunInfo>(new GenRunInfo());
@@ -62,22 +62,22 @@ Writerprotobuf::Writerprotobuf(const std::string &filename,
   set_run_info(run);
 
   // open file
-  out_file = std::unique_ptr<ofstream>(
+  m_out_file = std::unique_ptr<ofstream>(
       new ofstream(filename, ios::out | ios::trunc | ios::binary));
 
   // check that it is open
-  if (!out_file->is_open()) {
+  if (!m_out_file->is_open()) {
     HEPMC3_ERROR("Writerprotobuf: problem opening file: " << filename)
     return;
   }
 
-  out_stream = out_file.get();
+  m_out_stream = m_out_file.get();
   start_file();
 }
 
 Writerprotobuf::Writerprotobuf(std::ostream &stream,
                                std::shared_ptr<GenRunInfo> run)
-    : out_file(nullptr), number_of_events_written(0), event_bytes_written(0) {
+    : m_out_file(nullptr), m_events_written(0), m_event_bytes_written(0) {
 
   if (!stream.good()) {
     HEPMC3_ERROR(
@@ -90,13 +90,17 @@ Writerprotobuf::Writerprotobuf(std::ostream &stream,
   }
   set_run_info(run);
 
-  out_stream = &stream;
+  m_out_stream = &stream;
   start_file();
 }
 
+Writerprotobuf::Writerprotobuf(std::shared_ptr<std::ostream> stream,
+                               std::shared_ptr<GenRunInfo> run)
+    : Writerprotobuf(*stream, run) {}
+
 void Writerprotobuf::start_file() {
   // The first 16 bytes of a HepMC protobuf file
-  (*out_stream) << ProtobufMagicHeader;
+  (*m_out_stream) << ProtobufMagicHeader;
 
   HepMC3_pb::Header hdr;
 
@@ -109,7 +113,7 @@ void Writerprotobuf::start_file() {
   hdr.set_protobuf_version_min((GOOGLE_PROTOBUF_VERSION / 1000) % 1000);
   hdr.set_protobuf_version_patch(GOOGLE_PROTOBUF_VERSION % 1000);
 
-  write_message(out_stream, hdr, HepMC3_pb::MessageDigest::Header);
+  write_message(m_out_stream, hdr, HepMC3_pb::MessageDigest::Header);
 
   write_run_info();
 }
@@ -201,9 +205,9 @@ void Writerprotobuf::write_event(const GenEvent &evt) {
     ged_pb.add_attribute_string(s);
   }
 
-  event_bytes_written +=
-      write_message(out_stream, ged_pb, HepMC3_pb::MessageDigest::Event);
-  number_of_events_written++;
+  m_event_bytes_written +=
+      write_message(m_out_stream, ged_pb, HepMC3_pb::MessageDigest::Event);
+  m_events_written++;
 }
 
 void Writerprotobuf::write_run_info() {
@@ -234,7 +238,7 @@ void Writerprotobuf::write_run_info() {
     GenRunInfo_pb.add_attribute_string(s);
   }
 
-  write_message(out_stream, GenRunInfo_pb, HepMC3_pb::MessageDigest::RunInfo);
+  write_message(m_out_stream, GenRunInfo_pb, HepMC3_pb::MessageDigest::RunInfo);
 }
 
 void Writerprotobuf::close() {
@@ -242,28 +246,28 @@ void Writerprotobuf::close() {
     return;
   }
 
-  if (!number_of_events_written) {
+  if (!m_events_written) {
     HEPMC3_ERROR(
         "No events were written, the output file will not be parseable.");
   }
 
   HepMC3_pb::Footer ftr;
-  ftr.set_nevents(number_of_events_written);
-  ftr.set_event_bytes_written(event_bytes_written);
-  write_message(out_stream, ftr, HepMC3_pb::MessageDigest::Footer);
+  ftr.set_nevents(m_events_written);
+  ftr.set_event_bytes_written(m_event_bytes_written);
+  write_message(m_out_stream, ftr, HepMC3_pb::MessageDigest::Footer);
 
-  if (out_file) {
-    out_file->close();
-    out_file.reset();
+  if (m_out_file) {
+    m_out_file->close();
+    m_out_file.reset();
   }
-  out_stream = nullptr;
+  m_out_stream = nullptr;
 }
 
 bool Writerprotobuf::failed() {
-  if (out_file) {
-    return !out_file->is_open() || !out_file->good();
+  if (m_out_file) {
+    return !m_out_file->is_open() || !m_out_file->good();
   }
-  return !out_stream || !out_stream->good();
+  return !m_out_stream || !m_out_stream->good();
 }
 
 } // namespace HepMC3
