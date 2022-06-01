@@ -175,8 +175,12 @@ CHECK_CXX_COMPILER_FLAG("-Wno-strict-aliasing" COMPILER_SUPPORTS_-Wno-strict-ali
 if (COMPILER_SUPPORTS_-Wno-strict-aliasing)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")
 endif()
+#Workarounds for Intel
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -diag-disable=2196")
+endif()
 #Workarounds for nvc++
-  if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
     set(CMAKE_CXX_EXTENSIONS ON)
     #Workaround for pybind11 templates
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc,--pending_instantiations=0 ")
