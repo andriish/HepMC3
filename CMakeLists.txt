@@ -263,6 +263,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT dev
 ########################################################################
 ## Optional packages
 ########################################################################
+set(INTERFACES_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/interfaces)
+
 #Search engine
 if(HEPMC3_ENABLE_SEARCH)
   add_subdirectory(search)
@@ -329,7 +331,6 @@ STRING(REPLACE ";" " " HEPMC3_FEATURES "${HEPMC3_FEATURES}")
 
 include(CMakePackageConfigHelpers)
 
-set(INTERFACES_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/interfaces)
 set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/cmake)
 
 configure_package_config_file(cmake/Templates/HepMC3Config.cmake.in
