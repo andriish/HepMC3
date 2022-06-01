@@ -199,25 +199,25 @@ struct PyCallBack_HepMC3_ReaderHEPEVT : public HepMC3::ReaderHEPEVT {
 
 void bind_pyHepMC3_13(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // HepMC3::GenParticlePtr_greater file: line:63
+	{ // HepMC3::GenParticlePtr_greater file: line:72
 		pybind11::class_<HepMC3::GenParticlePtr_greater, std::shared_ptr<HepMC3::GenParticlePtr_greater>> cl(M("HepMC3"), "GenParticlePtr_greater", "comparison of two particles ");
 		cl.def( pybind11::init( [](){ return new HepMC3::GenParticlePtr_greater(); } ) );
 		cl.def( pybind11::init( [](HepMC3::GenParticlePtr_greater const &o){ return new HepMC3::GenParticlePtr_greater(o); } ) );
 		cl.def("__call__", (bool (HepMC3::GenParticlePtr_greater::*)(class std::shared_ptr<const class HepMC3::GenParticle>, class std::shared_ptr<const class HepMC3::GenParticle>) const) &HepMC3::GenParticlePtr_greater::operator(), "comparison of two particles \n\nC++: HepMC3::GenParticlePtr_greater::operator()(class std::shared_ptr<const class HepMC3::GenParticle>, class std::shared_ptr<const class HepMC3::GenParticle>) const --> bool", pybind11::arg("lx"), pybind11::arg("rx"));
 	}
-	{ // HepMC3::pair_GenVertexPtr_int_greater file: line:69
+	{ // HepMC3::pair_GenVertexPtr_int_greater file: line:78
 		pybind11::class_<HepMC3::pair_GenVertexPtr_int_greater, std::shared_ptr<HepMC3::pair_GenVertexPtr_int_greater>> cl(M("HepMC3"), "pair_GenVertexPtr_int_greater", "Order vertices with equal paths. ");
 		cl.def( pybind11::init( [](){ return new HepMC3::pair_GenVertexPtr_int_greater(); } ) );
 		cl.def( pybind11::init( [](HepMC3::pair_GenVertexPtr_int_greater const &o){ return new HepMC3::pair_GenVertexPtr_int_greater(o); } ) );
 		cl.def("__call__", (bool (HepMC3::pair_GenVertexPtr_int_greater::*)(const struct std::pair<class std::shared_ptr<const class HepMC3::GenVertex>, int> &, const struct std::pair<class std::shared_ptr<const class HepMC3::GenVertex>, int> &) const) &HepMC3::pair_GenVertexPtr_int_greater::operator(), "Order vertices with equal paths. If the paths are equal, order in other quantities.\n We cannot use id, as it can be assigned in different way\n\nC++: HepMC3::pair_GenVertexPtr_int_greater::operator()(const struct std::pair<class std::shared_ptr<const class HepMC3::GenVertex>, int> &, const struct std::pair<class std::shared_ptr<const class HepMC3::GenVertex>, int> &) const --> bool", pybind11::arg("lx"), pybind11::arg("rx"));
 	}
-	// HepMC3::calculate_longest_path_to_top(class std::shared_ptr<const class HepMC3::GenVertex>, class std::map<class std::shared_ptr<const class HepMC3::GenVertex>, int> &) file: line:76
+	// HepMC3::calculate_longest_path_to_top(class std::shared_ptr<const class HepMC3::GenVertex>, class std::map<class std::shared_ptr<const class HepMC3::GenVertex>, int> &) file: line:85
 	M("HepMC3").def("calculate_longest_path_to_top", (void (*)(class std::shared_ptr<const class HepMC3::GenVertex>, class std::map<class std::shared_ptr<const class HepMC3::GenVertex>, int> &)) &HepMC3::calculate_longest_path_to_top, "Calculates the path to the top (beam) particles \n\nC++: HepMC3::calculate_longest_path_to_top(class std::shared_ptr<const class HepMC3::GenVertex>, class std::map<class std::shared_ptr<const class HepMC3::GenVertex>, int> &) --> void", pybind11::arg("v"), pybind11::arg("pathl"));
 
-	// HepMC3::HEPEVT_to_GenEvent_nonstatic(class HepMC3::GenEvent *, const class HepMC3::HEPEVT_Wrapper_Runtime *) file: line:81
+	// HepMC3::HEPEVT_to_GenEvent_nonstatic(class HepMC3::GenEvent *, const class HepMC3::HEPEVT_Wrapper_Runtime *) file: line:90
 	M("HepMC3").def("HEPEVT_to_GenEvent_nonstatic", (bool (*)(class HepMC3::GenEvent *, const class HepMC3::HEPEVT_Wrapper_Runtime *)) &HepMC3::HEPEVT_to_GenEvent_nonstatic<const HepMC3::HEPEVT_Wrapper_Runtime>, "C++: HepMC3::HEPEVT_to_GenEvent_nonstatic(class HepMC3::GenEvent *, const class HepMC3::HEPEVT_Wrapper_Runtime *) --> bool", pybind11::arg("evt"), pybind11::arg("A"));
 
-	// HepMC3::GenEvent_to_HEPEVT_nonstatic(const class HepMC3::GenEvent *, class HepMC3::HEPEVT_Wrapper_Runtime *) file: line:152
+	// HepMC3::GenEvent_to_HEPEVT_nonstatic(const class HepMC3::GenEvent *, class HepMC3::HEPEVT_Wrapper_Runtime *) file: line:161
 	M("HepMC3").def("GenEvent_to_HEPEVT_nonstatic", (bool (*)(const class HepMC3::GenEvent *, class HepMC3::HEPEVT_Wrapper_Runtime *)) &HepMC3::GenEvent_to_HEPEVT_nonstatic<HepMC3::HEPEVT_Wrapper_Runtime>, "C++: HepMC3::GenEvent_to_HEPEVT_nonstatic(const class HepMC3::GenEvent *, class HepMC3::HEPEVT_Wrapper_Runtime *) --> bool", pybind11::arg("evt"), pybind11::arg("A"));
 
 	{ // HepMC3::WriterHEPEVT file:HepMC3/WriterHEPEVT.h line:27

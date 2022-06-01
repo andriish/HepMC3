@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 #----------------------------------------------------------------------------
 project(HepMC3)
-set(PROJECT_VERSION 3.02.05)
-SET(HEPMC3_VERSION 3.02.05)
+set(PROJECT_VERSION 3.02.06)
+SET(HEPMC3_VERSION 3.02.06)
 SET(HEPMC3_VERSION_MAJOR  3)
 SET(HEPMC3_VERSION_MINOR  2)
-SET(HEPMC3_VERSION_PATCH  5)
+SET(HEPMC3_VERSION_PATCH  6)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 #This module respects HFS, e.g. defines lib or lib64 when it is needed.
@@ -101,6 +101,7 @@ include(CheckCXXCompilerFlag)
 if (NOT HEPMC3_CXX_STANDARD)
   set(HEPMC3_CXX_STANDARD 11)
 endif()
+set(HEPMC3_FEATURES "")
 if(HEPMC3_ENABLE_ROOTIO)
   set (ROOT_FIND_COMPONENTS Core RIO Tree)
   list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
@@ -291,20 +292,28 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
 #Search engine
 if(HEPMC3_ENABLE_SEARCH)
   add_subdirectory(search)
+  list(APPEND HEPMC3_FEATURES "search")
 endif()
 
 #Interfaces for some MCEGs
 if (HEPMC3_INSTALL_INTERFACES)
   install(DIRECTORY interfaces/ DESTINATION ${INTERFACES_INSTALL_DIR} COMPONENT devel)
+  list(APPEND HEPMC3_FEATURES "interfaces")
+  list(APPEND HEPMC3_FEATURES "interfaceshepmc2")
+  list(APPEND HEPMC3_FEATURES "interfacespythia6")
+  list(APPEND HEPMC3_FEATURES "interfacespythia8")
 endif()
 
 # ROOT support
 if(ROOT_FOUND)
    add_subdirectory(rootIO)
+   list(APPEND HEPMC3_FEATURES "rootIO")
 endif()
 
 if(Protobuf_FOUND)
   add_subdirectory(protobufIO)
+  list(APPEND HEPMC3_FEATURES "protobufIO")
+  list(APPEND HEPMC3_FEATURES "protobufIO${Protobuf_VERSION}")
 endif()
 
 # Add the examples subdirectories
@@ -319,10 +328,12 @@ if (HEPMC3_INSTALL_EXAMPLES)
           PATTERN "Makefile" EXCLUDE  
           PATTERN "*cmake_install.cmake*" EXCLUDE  
           PATTERN "*libAnalysis*" EXCLUDE )
+  list(APPEND HEPMC3_FEATURES "examples")
 endif()
 
 if(HEPMC3_BUILD_DOCS)
   add_subdirectory(doc)
+  list(APPEND HEPMC3_FEATURES "doc")
 endif()
 
 #test suite
@@ -334,6 +345,7 @@ endif()
 #Python bindings
 if(HEPMC3_ENABLE_PYTHON)
   add_subdirectory(python)
+  list(APPEND HEPMC3_FEATURES "python")
 endif()
 
 # uninstall target
