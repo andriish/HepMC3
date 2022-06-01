@@ -260,40 +260,6 @@ endif()
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT devel)
 
-# Generate config CMake files to be used by other projects
-#
-
-include(CMakePackageConfigHelpers)
-
-set(INTERFACES_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/interfaces)
-set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/cmake)
-
-configure_package_config_file(cmake/Templates/HepMC3Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config.cmake
-  INSTALL_DESTINATION ${CONFIG_INSTALL_DIR}
-  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
-            CMAKE_INSTALL_LIBDIR
-            HEPMC3_ROOTIO_INSTALL_LIBDIR
-            INTERFACES_INSTALL_DIR)
-
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config-version.cmake COMPATIBILITY SameMajorVersion VERSION ${PROJECT_VERSION})
-
-configure_package_config_file(HepMC3-config.in
-  ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
-  INSTALL_DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
-            CMAKE_INSTALL_LIBDIR
-            HEPMC3_ROOTIO_INSTALL_LIBDIR
-            INTERFACES_INSTALL_DIR)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config-version.cmake
-        DESTINATION ${CONFIG_INSTALL_DIR} COMPONENT devel)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
-        DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libs
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-
 ########################################################################
 ## Optional packages
 ########################################################################
@@ -355,6 +321,43 @@ if(HEPMC3_ENABLE_PYTHON)
   add_subdirectory(python)
   list(APPEND HEPMC3_FEATURES "python")
 endif()
+
+STRING(REPLACE ";" " " HEPMC3_FEATURES "${HEPMC3_FEATURES}")
+
+# Generate config CMake files to be used by other projects
+#
+
+include(CMakePackageConfigHelpers)
+
+set(INTERFACES_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/interfaces)
+set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/cmake)
+
+configure_package_config_file(cmake/Templates/HepMC3Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config.cmake
+  INSTALL_DESTINATION ${CONFIG_INSTALL_DIR}
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+            CMAKE_INSTALL_LIBDIR
+            HEPMC3_ROOTIO_INSTALL_LIBDIR
+            INTERFACES_INSTALL_DIR)
+
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config-version.cmake 
+  COMPATIBILITY SameMajorVersion VERSION ${PROJECT_VERSION})
+
+configure_package_config_file(HepMC3-config.in
+  ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
+  INSTALL_DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+            CMAKE_INSTALL_LIBDIR
+            HEPMC3_ROOTIO_INSTALL_LIBDIR
+            INTERFACES_INSTALL_DIR)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3Config-version.cmake
+        DESTINATION ${CONFIG_INSTALL_DIR} COMPONENT devel)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/bin/HepMC3-config
+        DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libs
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 # uninstall target
 if(NOT TARGET uninstall)
