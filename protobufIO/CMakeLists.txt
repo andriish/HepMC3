@@ -14,7 +14,6 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${CMAKE_CURRENT_BINARY_DIR}/HepMC3.p
 set(HepMC3protobufIO_sources
   src/Writerprotobuf.cc 
   src/Readerprotobuf.cc 
-  src/Commonprotobuf.cc 
   ${PROTO_SRCS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} 

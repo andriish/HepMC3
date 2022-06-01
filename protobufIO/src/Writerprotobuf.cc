@@ -15,12 +15,14 @@
 #include "HepMC3/Data/GenEventData.h"
 #include "HepMC3/Data/GenRunInfoData.h"
 
-#include "HepMC3/Commonprotobuf.h"
-
 // protobuf header files
 #include "HepMC3.pb.h"
 
 namespace HepMC3 {
+
+std::string const ProtobufMagicHeader = "HepMC3::Protobuf";
+size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
+
 HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf);
 HEPMC3_DECLARE_WRITER_STREAM(Writerprotobuf);
 
