@@ -3,21 +3,20 @@ name: CMake Build Matrix
 on: [push, pull_request]
 
 jobs:
-  nativeWin:
+  nativeosx:
     if: "contains(github.event.head_commit.message, 'github')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-#        python-version: ["2.7", "3.9"]
         python-version: ["2.7"]
-        config:
+        config: 
         - {
-            name: "Windows Latest MSVC",
-            os: windows-latest,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+            name: "MacOSX",
+            os: macos-11,
+            cc: "clang", 
+            cxx: "clang++"
           }
     steps:
     - uses: actions/checkout@v2
@@ -29,28 +28,36 @@ jobs:
       run:  |
         cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
         cmake --build BUILD 
-        chdir BUILD
-        ctest . -C Debug
-
-  nativeOSX:
-    if: "contains(github.event.head_commit.message, 'github')"
-    name: macOS11
-    runs-on: macos-11
-    cc: "clang", cxx: "clang++"    
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-          python-version: 2.7
-    - name: Build
-      run:  |
-        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
-        cmake --build BUILD 
         cd BUILD
         ctest . 
+  nativewin:
+    if: "contains(github.event.head_commit.message, 'github')"
+    name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["2.7"]
+        config: 
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            cc: "cl", 
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+          }
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Build
+        run:  |
+          cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
+          cmake --build BUILD 
+          chdir BUILD
+          ctest . -C Debug
 
   mingw:
     if: "contains(github.event.head_commit.message, 'github')"
