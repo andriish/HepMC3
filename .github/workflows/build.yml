@@ -39,14 +39,15 @@ jobs:
       with:
           python-version: "${{ matrix.python-version }}"
     - name: Build
-      run:  |
-        brew install protobuf
-        brew install doxygen
-        cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
-        cmake --build BUILD 
-        cmake --install BUILD         
-        cd BUILD
-        ctest . 
+       run: ls
+#      run:  |
+#        brew install protobuf
+#        brew install doxygen
+#        cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+#        cmake --build BUILD 
+#        cmake --install BUILD         
+#        cd BUILD
+#        ctest . 
   nativewin:
     if: "contains(github.event.head_commit.message, 'github')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
