@@ -1,4 +1,4 @@
-name: CMake Build Matrix
+name: HepMC3 Build Matrix for Windows and MacOSX
 
 on: [push, pull_request]
 
