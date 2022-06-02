@@ -74,14 +74,15 @@ jobs:
           python-version: "${{ matrix.python-version }}"
       - name: Set up Protobuf
         run:  |
-          vcpkg install protobuf:x64-windows
+          vcpkg install protobuf protobuf:x64-windows protobuf:x64-windows-static
           dir   C:\vcpkg\packages\protobuf_x64-windows 
           dir   C:\vcpkg\packages\protobuf_x64-windows\lib 
           dir   C:\vcpkg\packages\protobuf_x64-windows\bin 
           dir   C:\vcpkg\packages\protobuf_x64-windows\include 
+          vcpkg list
       - name: Build
         run:  |
-          cmake -S. -B BUILD -DProtobuf_DIR=C:\vcpkg\packages\protobuf_x64-windows -DProtobuf_INCLUDE_DIR=C:\vcpkg\packages\protobuf_x64-windows\include -DProtobuf_LIBRARY=C:\vcpkg\packages\protobuf_x64-windows\lib\protobuf.dll -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF  -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+          cmake -S. -B BUILD -DProtobuf_DIR=C:\vcpkg\packages\protobuf_x64-windows -DProtobuf_INCLUDE_DIR=C:\vcpkg\packages\protobuf_x64-windows\include -DProtobuf_LIBRARY=C:\vcpkg\packages\protobuf_x64-windows\lib\libprotobuf.lib -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF  -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
           cmake --build BUILD 
           cmake --install BUILD 
           chdir BUILD
