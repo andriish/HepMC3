@@ -10,7 +10,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["2.7", "3.9"]
+#        python-version: ["2.7", "3.9"]
+        python-version: ["2.7"]
         config:
         - {
             name: "Windows Latest MSVC",
@@ -18,11 +19,11 @@ jobs:
             cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
-        - {
-            name: "macOS macos-10.15 Clang",
-            os: macos-10.15,
-            cc: "clang", cxx: "clang++"
-          }
+#        - {
+#            name: "macOS macos-10.15 Clang",
+#            os: macos-10.15,
+#            cc: "clang", cxx: "clang++"
+#          }
         - {
             name: "macOS macos-11.0 Clang",
             os: macos-11,
@@ -36,13 +37,14 @@ jobs:
           python-version: "${{ matrix.python-version }}"
     - name: Build
       run:  |
-        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
         cmake --build BUILD 
         chdir BUILD
-        ctest .
+        ctest . 
 
 
   mingw:
+    if: "contains(github.event.head_commit.message, 'github')"
     name: "windows-latest  ${{ matrix.sys }}"
     runs-on: windows-latest
     defaults:
@@ -72,7 +74,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run:  |
-        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
         cmake --build BUILD 
         chdir BUILD
         ctest .
