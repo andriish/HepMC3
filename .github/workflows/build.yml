@@ -40,7 +40,8 @@ jobs:
           python-version: "${{ matrix.python-version }}"
     - name: Build
       run:  |
-        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+        brew install protobuf
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
         cmake --build BUILD 
         cd BUILD
         ctest . 
@@ -67,9 +68,12 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "${{ matrix.python-version }}"
+      - name: Set up Protobuf
+        run:  |
+          vcpkg install protobuf:x64-windows
       - name: Build
         run:  |
-          cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+          cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
           cmake --build BUILD 
           chdir BUILD
           ctest . -C Debug
@@ -102,6 +106,7 @@ jobs:
           mingw-w64-${{matrix.env}}-python-setuptools
           mingw-w64-${{matrix.env}}-cmake
           mingw-w64-${{matrix.env}}-make
+          mingw-w64-${{matrix.env}}-protobuf
     - uses: actions/checkout@v2
     - name: Build
       run:  |
