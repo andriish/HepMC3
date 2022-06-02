@@ -3,7 +3,7 @@ name: CMake Build Matrix
 on: [push, pull_request]
 
 jobs:
-  nativegithub:
+  nativeWin:
     if: "contains(github.event.head_commit.message, 'github')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
     runs-on: ${{ matrix.config.os }}
@@ -19,6 +19,28 @@ jobs:
             cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: "${{ matrix.python-version }}"
+    - name: Build
+      run:  |
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
+        cmake --build BUILD 
+        chdir BUILD
+        ctest . -C Debug
+
+  nativeOSX:
+    if: "contains(github.event.head_commit.message, 'github')"
+    name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+#        python-version: ["2.7", "3.9"]
+        python-version: ["2.7"]
 #        - {
 #            name: "macOS macos-10.15 Clang",
 #            os: macos-10.15,
@@ -41,7 +63,6 @@ jobs:
         cmake --build BUILD 
         chdir BUILD
         ctest . 
-
 
   mingw:
     if: "contains(github.event.head_commit.message, 'github')"
