@@ -35,7 +35,11 @@ jobs:
       with:
           python-version: "${{ matrix.python-version }}"
     - name: Build
-      run:  cmake -S. -B BUILD
+      run:  |
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
+        cmake --build -B BUILD 
+        chdir BUILD
+        ctest .
 
 
   mingw:
@@ -67,4 +71,8 @@ jobs:
           mingw-w64-${{matrix.env}}-make
     - uses: actions/checkout@v2
     - name: Build
-      run:  cmake -S. -B BUILD
+      run:  |
+        cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
+        cmake --build -B BUILD 
+        chdir BUILD
+        ctest .
