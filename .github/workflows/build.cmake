@@ -107,5 +107,5 @@ jobs:
       run:  |
         cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON
         cmake --build BUILD 
-        chdir BUILD
+        cd BUILD
         ctest .
