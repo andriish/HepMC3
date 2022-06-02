@@ -37,7 +37,7 @@ jobs:
     - name: Build
       run:  |
         cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
-        cmake --build -B BUILD 
+        cmake --build BUILD 
         chdir BUILD
         ctest .
 
@@ -73,6 +73,6 @@ jobs:
     - name: Build
       run:  |
         cmake -S. -B BUILD -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF
-        cmake --build -B BUILD 
+        cmake --build BUILD 
         chdir BUILD
         ctest .
