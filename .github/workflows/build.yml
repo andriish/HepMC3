@@ -76,9 +76,12 @@ jobs:
         run:  |
           vcpkg install protobuf:x64-windows
           dir   C:\vcpkg\packages\protobuf_x64-windows 
+          dir   C:\vcpkg\packages\protobuf_x64-windows\lib 
+          dir   C:\vcpkg\packages\protobuf_x64-windows\bin 
+          dir   C:\vcpkg\packages\protobuf_x64-windows\include 
       - name: Build
         run:  |
-          cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF  -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+          cmake -S. -B BUILD -DProtobuf_DIR=C:\vcpkg\packages\protobuf_x64-windows -DProtobuf_INCLUDE_DIR=C:\vcpkg\packages\protobuf_x64-windows\include -DProtobuf_LIBRARY=C:\vcpkg\packages\protobuf_x64-windows\lib\protobuf.dll -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF  -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
           cmake --build BUILD 
           cmake --install BUILD 
           chdir BUILD
