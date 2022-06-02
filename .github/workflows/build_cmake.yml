@@ -4,12 +4,13 @@ on: [push, pull_request]
 
 jobs:
   nativegithub:
+    if: "contains(github.event.head_commit.message, 'github')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["2.7", "3.10"]
+        python-version: ["2.7", "3.9", "3.10"]
         config:
         - {
             name: "Windows Latest MSVC",
