@@ -10,14 +10,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["2.7"]
+        python-version: ["3.9"]
+#        python-version: ["2.7", "3.9"]
         config: 
         - {
-            name: "MacOSX",
-            os: macos-11,
+            name: "MacOSX-12",
+            os: macos-12,
             cc: "clang", 
             cxx: "clang++"
           }
+#        - {
+#            name: "MacOSX-11",
+#            os: macos-11,
+#            cc: "clang", 
+#            cxx: "clang++"
+#          }
+#        - {
+#            name: "MacOSX-10.15",
+#            os: macos-10.15,
+#            cc: "clang", 
+#            cxx: "clang++"
+#          }
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -37,7 +51,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["2.7"]
+        python-version: ["3.9"]
+#        python-version: ["2.7", "3.9"]
         config: 
         - {
             name: "Windows Latest MSVC",
@@ -71,7 +86,7 @@ jobs:
       matrix:
         include:
           - { sys: mingw64, env: x86_64 }
-          - { sys: mingw32, env: i686 }
+#          - { sys: mingw32, env: i686 }
     steps:
     # Force version because of https://github.com/msys2/setup-msys2/issues/167
     - uses: msys2/setup-msys2@v2
