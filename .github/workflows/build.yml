@@ -74,7 +74,7 @@ jobs:
           python-version: "${{ matrix.python-version }}"
       - name: Set up Protobuf
         run:  |
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v21.1/protoc-21.1-win64.zip
+          curl.exe --output protoc-21.1-win64.zip --url https://github.com/protocolbuffers/protobuf/releases/download/v21.1/protoc-21.1-win64.zip
           Expand-Archive -Path 'protoc-21.1-win64.zip' -DestinationPath 'output'
           dir   output 
           vcpkg install protobuf protobuf:x64-windows protobuf:x64-windows-static
