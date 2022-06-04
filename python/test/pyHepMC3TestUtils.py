@@ -66,7 +66,7 @@ def COMPARE_BINARY_FILES(f1, f2):
     print(file1_hash.hexdigest())
     print(file2_hash.hexdigest())    
     if str(file1_hash.hexdigest()) != str(file2_hash.hexdigest()):
-		  return 1
+      return 1
     file1.close()
     file2.close()
     return 0        

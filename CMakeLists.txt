@@ -164,6 +164,7 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
   if(Protobuf_PROTOC_EXECUTABLE STREQUAL "Protobuf_PROTOC_EXECUTABLE-NOTFOUND" OR NOT EXISTS ${Protobuf_PROTOC_EXECUTABLE})
     message(FATAL_ERROR "Found libprotobuf, but cannot find proto compiler, protoc, which is required.")
   endif()
+  add_definitions(-DHEPMC3_PROTOBUFIO)
 endif()
 
 

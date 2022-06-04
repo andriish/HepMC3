@@ -5,13 +5,10 @@
 //
 // -- Purpose: Test graceful failure from reading non-existant file
 //
-
 #include "HepMC3/Readerprotobuf.h"
-
-#include <cassert>
 
 int main() {
   HepMC3::Readerprotobuf rdr("nonexistant.proto");
-  assert(rdr.failed());
-  exit(0);
+  if (!rdr.failed()) return 1;
+  return 0;
 }

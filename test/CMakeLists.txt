@@ -163,6 +163,7 @@ else()
         testIO25
         testIO26
         testIO27
+        testIO28
         )
 endif()
 

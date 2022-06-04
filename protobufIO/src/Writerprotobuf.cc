@@ -215,7 +215,7 @@ void Writerprotobuf::write_run_info() {
   GenRunInfoData data;
   run_info()->write_data(data);
 
-  HepMC3_pb::GenRunInfoData GenRunInfo_pb;
+  HepMC3_pb::GenRunInfoData GenRunInfo_pb;z
 
   for (auto const &s : data.weight_names) {
     GenRunInfo_pb.add_weight_names(s);
