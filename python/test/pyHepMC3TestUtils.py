@@ -48,6 +48,28 @@ def COMPARE_ASCII_FILES(f1, f2):
     file2.close()
     return 0
 
+def COMPARE_BINARY_FILES(f1, f2):
+    file1 = open(f1,'rb')
+    file2 = open(f2,'rb')
+    print("Run comparison")
+    import hashlib
+    file1_hash = hashlib.md5()
+    chunk1 = f1.read(8192)
+    while chunk1:
+        file1_hash.update(chunk1)
+        chunk1 = f1.read(8192)
+    file2_hash = hashlib.md5()
+    chunk2 = f2.read(8192)
+    while chunk2:
+        file2_hash.update(chunk2)
+        chunk2 = f2.read(8192)
+    print(file1_hash.hexdigest())
+    print(file2_hash.hexdigest())    
+    if str(file1_hash.hexdigest()) != str(file2_hash.hexdigest()):
+		  return 1
+    file1.close()
+    file2.close()
+    return 0        
 
 def fuse_equal(a, b, rtol=0.00001, atol=0.000001):
     if abs(1.0 * a - 1.0 * b) < atol:
