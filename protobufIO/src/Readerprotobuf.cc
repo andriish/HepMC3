@@ -95,21 +95,17 @@ bool Readerprotobuf::read_file_start() {
     return false;
   }
 
-  buffer_message(); // check that we can find an event message
-  if (m_msg_type != HepMC3_pb::MessageDigest::Event) {
-    HEPMC3_ERROR("Readerprotobuf: Problem parsing start of file, expected to "
-                 "find Event, but instead found message type: "
-                 << m_msg_type);
-    return false;
-  }
-
   return true;
 }
 
 bool Readerprotobuf::buffer_message() {
+  if (failed()) {
+    return false;
+  }
+
   if (m_msg_buffer.size()) { // if we already have a message that hasn't been
                              // parsed, don't buffer the next one
-    return false;
+    return true;
   }
 
   m_msg_type = HepMC3_pb::MessageDigest::unknown;
@@ -141,11 +137,21 @@ bool Readerprotobuf::buffer_message() {
   }
 
   m_bytes_read += md.bytes();
+
+  if (m_msg_type ==
+      HepMC3_pb::MessageDigest::Footer) { // close the stream if we have read to
+                                          // the end of the file
+    close();
+  }
+
   return true;
 }
 
 bool Readerprotobuf::read_Header() {
-  buffer_message();
+  if (!buffer_message()) {
+    return false;
+  }
+
   if (m_msg_type != HepMC3_pb::MessageDigest::Header) {
     return false;
   }
@@ -166,7 +172,10 @@ bool Readerprotobuf::read_Header() {
 }
 
 bool Readerprotobuf::read_GenRunInfo() {
-  buffer_message();
+  if (!buffer_message()) {
+    return false;
+  }
+
   if (m_msg_type != HepMC3_pb::MessageDigest::RunInfo) {
     return false;
   }
@@ -216,7 +225,10 @@ bool Readerprotobuf::read_GenRunInfo() {
 }
 
 bool Readerprotobuf::read_GenEvent(bool skip) {
-  buffer_message();
+  if (!buffer_message()) {
+    return false;
+  }
+
   if (m_msg_type != HepMC3_pb::MessageDigest::Event) {
     return false;
   }
@@ -226,7 +238,7 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
     return true;
   }
 
-  if(!m_msg_buffer.size()){ // empty event
+  if (!m_msg_buffer.size()) { // empty event
     m_evdata = HepMC3::GenEventData();
     return true;
   }
@@ -375,6 +387,7 @@ void Readerprotobuf::close() {
     m_in_file.reset();
   }
   m_in_stream = nullptr;
+  m_msg_buffer.clear();
 }
 
 bool Readerprotobuf::failed() {

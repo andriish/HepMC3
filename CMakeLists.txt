@@ -164,6 +164,7 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
   if(Protobuf_PROTOC_EXECUTABLE STREQUAL "Protobuf_PROTOC_EXECUTABLE-NOTFOUND" OR NOT EXISTS ${Protobuf_PROTOC_EXECUTABLE})
     message(FATAL_ERROR "Found libprotobuf, but cannot find proto compiler, protoc, which is required.")
   endif()
+  add_definitions(-DHEPMC3_PROTOBUFIO)
 endif()
 
 
@@ -188,7 +189,7 @@ endif()
 #Workarounds for VS
 if (MSVC OR ${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC" )
 #Memory problem and false positive warnings.
-  set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj" "/D_CRT_SECURE_NO_WARNINGS" "/wd4267" "/wd4244" "/wd4477")
+  set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj" "/D_CRT_SECURE_NO_WARNINGS" "/wd4267" "/wd4244" "/wd4477" "/wd4251")
   foreach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
     CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
     if(COMPILER_SUPPORTS_${fl})

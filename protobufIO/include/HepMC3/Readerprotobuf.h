@@ -78,7 +78,7 @@ public:
    * passed istream object
    */
   Readerprotobuf(std::shared_ptr<std::istream> stream);
-  
+
   //
   // Functions
   //
@@ -112,7 +112,8 @@ private:
   /** @brief Read the next protobuf message into the message buffer
    *
    * @details Fills m_msg_buffer with the next message and sets m_msg_type to
-   * signify the message type. 
+   * signify the message type. Returns true if there is a message in the buffer
+   * ready to parse.
    */
   bool buffer_message();
 

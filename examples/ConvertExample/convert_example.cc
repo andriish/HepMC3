@@ -229,7 +229,7 @@ int main(int argc, char** argv)
 #endif
     case proto:
 #ifdef HEPMC3_PROTOBUFIO
-        output_file = std::make_shared<Writerproto>(ai.inputs[1]);
+        output_file = std::make_shared<Writerprotobuf>(ai.inputs[1]);
         break;
 #else
         printf("Output format %s  is not supported\n", ai.output_format_arg);

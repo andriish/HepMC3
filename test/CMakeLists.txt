@@ -151,8 +151,10 @@ set( HepMC_root_tests
 set( HepMC_search_tests
 
         )
-
-set( HepMC_protobuf_tests
+if (WIN32)
+  set( HepMC_protobuf_tests )
+else()
+  set( HepMC_protobuf_tests
         testIO20
         testIO21
         testIO22
@@ -161,8 +163,10 @@ set( HepMC_protobuf_tests
         testIO25
         testIO26
         testIO27
-        testIO28
+        # testIO28
+        testIO29
         )
+endif()
 
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
 if ("Threads" IN_LIST HEPMC3_TEST_PACKAGES_LIST)
