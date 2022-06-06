@@ -68,7 +68,7 @@ int main() {
       "NuDum", "0.99.0", "A dummy neutrino event generator"});
 
   auto writer =
-      std::make_shared<HepMC3::Writerprotobuf>("outputIO21.proto", gri);
+      std::make_shared<HepMC3::Writerprotobuf>("outputIO24.proto", gri);
   writer->write_event(evt);
   HepMC3::Print::listing(evt);
   writer->close();

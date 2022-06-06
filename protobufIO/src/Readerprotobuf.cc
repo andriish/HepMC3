@@ -107,7 +107,8 @@ bool Readerprotobuf::read_file_start() {
 }
 
 bool Readerprotobuf::buffer_message() {
-  if (m_msg_buffer.size()) {
+  if (m_msg_buffer.size()) { // if we already have a message that hasn't been
+                             // parsed, don't buffer the next one
     return false;
   }
 
@@ -125,8 +126,15 @@ bool Readerprotobuf::buffer_message() {
   md.ParseFromString(m_md_buffer);
 
   m_msg_type = md.message_type();
-  m_msg_buffer.resize(md.bytes());
-  m_in_stream->read(&m_msg_buffer[0], md.bytes());
+  // This is a bit of an ugly hack, we include the message digest length in the
+  // framed message length, this means that for empty events we get a reported
+  // length of MDBytesLength and not 0 (which would not get encoded to the wire
+  // format by protobuf, thus changing the size of the message format to be
+  // MDBytesLength - 5)
+  size_t message_size = md.bytes() - MDBytesLength;
+
+  m_msg_buffer.resize(message_size);
+  m_in_stream->read(&m_msg_buffer[0], message_size);
 
   if (failed()) {
     return false;
@@ -215,6 +223,11 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
 
   if (skip) { // Don't parse to HepMC3 if skipping
     m_msg_buffer.clear();
+    return true;
+  }
+
+  if(!m_msg_buffer.size()){ // empty event
+    m_evdata = HepMC3::GenEventData();
     return true;
   }
 

@@ -161,6 +161,7 @@ set( HepMC_protobuf_tests
         testIO25
         testIO26
         testIO27
+        testIO28
         )
 
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )

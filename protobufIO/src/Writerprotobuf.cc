@@ -26,6 +26,8 @@ size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
 HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf);
 HEPMC3_DECLARE_WRITER_STREAM(Writerprotobuf);
 
+static size_t const MDBytesLength = 10;
+
 template <typename T>
 size_t write_message(std::ostream *out_stream, T &msg,
                      HepMC3_pb::MessageDigest::MessageType type) {
@@ -34,15 +36,21 @@ size_t write_message(std::ostream *out_stream, T &msg,
   msg.SerializeToString(&msg_str);
 
   HepMC3_pb::MessageDigest md;
-  md.set_bytes(msg_str.size());
+  // This is a bit of an ugly hack, we include the message digest length in the
+  // framed message length, this means that for empty events we get a reported
+  // length of MDBytesLength and not 0 (which would not get encoded to the wire
+  // format by protobuf, thus changing the size of the message format to be
+  // MDBytesLength - 5)
+  md.set_bytes(msg_str.size() + MDBytesLength);
   md.set_message_type(type);
 
   std::string md_str;
   md.SerializeToString(&md_str);
 
-  if (md_str.size() != 10) {
+  if (md_str.size() != MDBytesLength) {
     HEPMC3_ERROR("When writing protobuf message, the message digest was not "
-                 "the expected length (10 bytes), but was instead "
+                 "the expected length ("
+                 << MDBytesLength << " bytes), but was instead "
                  << md_str.size() << " bytes.");
   }
 
