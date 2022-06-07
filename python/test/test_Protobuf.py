@@ -3,19 +3,19 @@ import sys
 
 sys.path = update_path()
 
-from pyHepMC3TestUtils import COMPARE_BINARY_FILES
+from pyHepMC3TestUtils import COMPARE_ASCII_FILES
 from pyHepMC3 import HepMC3 as hm
 from pyHepMC3.protobufIO import HepMC3 as hmpb
 
 
 def test_IO20():
     print("OK")
-    inputA = hmpb.Readerprotobuf("inputIO20.proto")
+    inputA = hm.ReaderAsciiHepMC2("inputIO26.hepmc")
     if inputA.failed():
-        sys.exit(1)
-    outputA = hm.WriterAscii(python_label() + "frominputIO20.hepmc")
-    if outputA.failed():
         sys.exit(2)
+    outputA = hmpb.Writerprotobuf(python_label() + "frominputIO26.proto")
+    if outputA.failed():
+        sys.exit(3)
     while not inputA.failed():
         evt = hm.GenEvent()
         inputA.read_event(evt)
@@ -27,12 +27,12 @@ def test_IO20():
     inputA.close()
     outputA.close()
 
-    inputB = hm.ReaderAscii(python_label() + "frominputIO20.hepmc")
+    inputB = hmpb.Readerprotobuf(python_label() + "frominputIO26.proto")
     if inputB.failed():
-        sys.exit(3)
-    outputB = hmpb.Writerprotobuf(python_label() + "fromfrominputIO20.proto")
-    if outputB.failed():
         sys.exit(4)
+    outputB = hm.WriterAsciiHepMC2(python_label() + "fromfrominputIO26.hepmc")
+    if outputB.failed():
+        sys.exit(5)
     while not inputB.failed():
         evt = hm.GenEvent()
         inputB.read_event(evt)
@@ -44,15 +44,17 @@ def test_IO20():
     inputB.close()
     outputB.close()
     
-# Fix me later    
-#    assert 0 == COMPARE_BINARY_FILES(python_label() + "fromfrominputIO20.proto", "inputIO20.proto")
+    print("Checking file correspondence")
+    assert 0 == COMPARE_ASCII_FILES(python_label() + "fromfrominputIO26.hepmc", "inputIO26.hepmc")
+    print("Files match")
     return 0
 
 
 if __name__ == "__main__":
+    print("test_Protobuf.py")
     result = 1
     try:
         result = test_IO20()
     except:
-        result = 1
+        result = 6
     sys.exit(result)
