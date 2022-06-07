@@ -20,8 +20,8 @@
 
 namespace HepMC3 {
 
-std::string const ProtobufMagicHeader = "HepMC3::Protobuf";
-size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
+std::string const ProtobufMagicHeader = "hmpb";
+size_t const ProtobufMagicHeaderBytes = 4;
 
 HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf);
 HEPMC3_DECLARE_WRITER_STREAM(Writerprotobuf);
@@ -36,12 +36,7 @@ size_t write_message(std::ostream *out_stream, T &msg,
   msg.SerializeToString(&msg_str);
 
   HepMC3_pb::MessageDigest md;
-  // This is a bit of an ugly hack, we include the message digest length in the
-  // framed message length, this means that for empty events we get a reported
-  // length of MDBytesLength and not 0 (which would not get encoded to the wire
-  // format by protobuf, thus changing the size of the message format to be
-  // MDBytesLength - 5)
-  md.set_bytes(msg_str.size() + MDBytesLength);
+  md.set_bytes(msg_str.size());
   md.set_message_type(type);
 
   std::string md_str;

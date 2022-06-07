@@ -2,14 +2,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include
                     ${CMAKE_CURRENT_SOURCE_DIR}/include 
                     ${Protobuf_INCLUDE_DIRS})
 
-string(REPLACE "." ";" Protobuf_VERSION_LIST ${Protobuf_VERSION})
-list(GET Protobuf_VERSION_LIST 0 Protobuf_VERSION_MAJOR)
-configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/HepMC3_v${Protobuf_VERSION_MAJOR}.proto
-        ${CMAKE_CURRENT_BINARY_DIR}/HepMC3.proto
-        IMMEDIATE @ONLY)
-
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${CMAKE_CURRENT_BINARY_DIR}/HepMC3.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS HepMC3.proto)
 
 set(HepMC3protobufIO_sources
   src/Writerprotobuf.cc 

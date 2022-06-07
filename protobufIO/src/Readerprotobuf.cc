@@ -20,8 +20,8 @@
 
 namespace HepMC3 {
 
-std::string const ProtobufMagicHeader = "HepMC3::Protobuf";
-size_t const ProtobufMagicHeaderBytes = ProtobufMagicHeader.size();
+std::string const ProtobufMagicHeader = "hmpb";
+size_t const ProtobufMagicHeaderBytes = 4;
 
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf);
 HEPMC3_DECLARE_READER_STREAM(Readerprotobuf);
@@ -119,18 +119,14 @@ bool Readerprotobuf::buffer_message() {
   m_bytes_read += MDBytesLength;
 
   HepMC3_pb::MessageDigest md;
-  md.ParseFromString(m_md_buffer);
+  if (!md.ParseFromString(m_md_buffer)) {
+    return false;
+  }
 
   m_msg_type = md.message_type();
-  // This is a bit of an ugly hack, we include the message digest length in the
-  // framed message length, this means that for empty events we get a reported
-  // length of MDBytesLength and not 0 (which would not get encoded to the wire
-  // format by protobuf, thus changing the size of the message format to be
-  // MDBytesLength - 5)
-  size_t message_size = md.bytes() - MDBytesLength;
 
-  m_msg_buffer.resize(message_size);
-  m_in_stream->read(&m_msg_buffer[0], message_size);
+  m_msg_buffer.resize(md.bytes());
+  m_in_stream->read(&m_msg_buffer[0], md.bytes());
 
   if (failed()) {
     return false;
@@ -157,7 +153,12 @@ bool Readerprotobuf::read_Header() {
   }
 
   HepMC3_pb::Header Header_pb;
-  Header_pb.ParseFromString(m_msg_buffer);
+  if (!Header_pb.ParseFromString(m_msg_buffer)) {
+    // if we fail to read a message then close the stream to indicate failed
+    // state
+    close();
+    return false;
+  }
   m_msg_buffer.clear();
 
   m_file_header.m_version_str = Header_pb.version_str();
@@ -183,7 +184,12 @@ bool Readerprotobuf::read_GenRunInfo() {
   set_run_info(std::shared_ptr<HepMC3::GenRunInfo>(new HepMC3::GenRunInfo()));
 
   HepMC3_pb::GenRunInfoData GenRunInfo_pb;
-  GenRunInfo_pb.ParseFromString(m_msg_buffer);
+  if (!GenRunInfo_pb.ParseFromString(m_msg_buffer)) {
+    // if we fail to read a message then close the stream to indicate failed
+    // state
+    close();
+    return false;
+  }
   m_msg_buffer.clear();
 
   HepMC3::GenRunInfoData gridata;
@@ -244,7 +250,12 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
   }
 
   HepMC3_pb::GenEventData ged_pb;
-  ged_pb.ParseFromString(m_msg_buffer);
+  if (!ged_pb.ParseFromString(m_msg_buffer)) {
+    // if we fail to read a message then close the stream to indicate failed
+    // state
+    close();
+    return false;
+  }
 
   m_evdata.event_number = ged_pb.event_number();
 

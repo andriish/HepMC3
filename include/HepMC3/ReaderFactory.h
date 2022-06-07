@@ -110,7 +110,7 @@ std::shared_ptr<Reader> deduce_reader(const std::string &filename)
     if (!remote)
     {
         HEPMC3_DEBUG(0, "deduce_reader: Attempt ProtobufIO for " << filename);
-        if ( strncmp(head.at(0).c_str(),"HepMC3::Protobuf",16) == 0 )
+        if ( strncmp(head.at(0).c_str(),"hmpb",4) == 0 )
             return std::make_shared<ReaderPlugin>(filename,libHepMC3protobufIO,std::string("newReaderprotobuffile"));
 #if HEPMC3_USE_COMPRESSION
         HEPMC3_DEBUG(0, "Attempt ReaderGZ for " << filename);
@@ -182,7 +182,7 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
 
     for (size_t i = 0; i < back; i++)  stream.unget();
 
-    if ( strncmp(head.at(0).c_str(),"HepMC3::Protobuf",16) == 0 )
+    if ( strncmp(head.at(0).c_str(),"hmpb",4) == 0 )
     {
         std::string libHepMC3protobufIO = "libHepMC3protobufIO.so.3";
 #if defined(__darwin__) || defined(__APPLE__)
@@ -260,7 +260,7 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream)
 
     for (size_t i = 0; i < back; i++)  stream->unget();
 
-    if ( strncmp(head.at(0).c_str(),"HepMC3::Protobuf",16) == 0 )
+    if ( strncmp(head.at(0).c_str(),"hmpb",4) == 0 )
     {
         std::string libHepMC3protobufIO = "libHepMC3protobufIO.so.3";
 #if defined(__darwin__) || defined(__APPLE__)
