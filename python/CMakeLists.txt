@@ -184,7 +184,7 @@ set(autoBNprotobufIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO.cpp ${CM
 set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp)
 set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/root_binders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/search_binders.cpp)
-set(BNprotobufIO ${autoBNprotobufIO} )
+set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf_binders.cpp)
 if (RERUN_BINDER)
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
   if(BINDER)

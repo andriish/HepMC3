@@ -74,22 +74,23 @@ public:
   /** @brief Get stream error state flag */
   bool failed() override;
 
+  /** @brief Standard destructor */
   virtual ~Writerprotobuf() { close(); }
-  //
-  // Fields
-  //
-private:
+
   /** @brief Write the GenRunInfo object to file. */
   void write_run_info();
+
+private:
+
   
   /** @brief Write non-event front matter to the output stream. */
   void start_file();
 
-  std::unique_ptr<std::ofstream> m_out_file;
-  std::ostream *m_out_stream;
+  std::unique_ptr<std::ofstream> m_out_file;//!< Document me
+  std::ostream *m_out_stream;//!< Document me
 
-  size_t m_events_written;
-  size_t m_event_bytes_written;
+  size_t m_events_written;//!< Document me
+  size_t m_event_bytes_written;//!< Document me
 };
 
 } // namespace HepMC3

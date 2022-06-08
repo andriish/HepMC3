@@ -60,7 +60,7 @@ Writerprotobuf::Writerprotobuf(const std::string &filename,
     : m_out_file(nullptr), m_events_written(0), m_event_bytes_written(0) {
 
   if (!run) {
-    run = std::shared_ptr<GenRunInfo>(new GenRunInfo());
+    run = std::make_shared<GenRunInfo>();
   }
   set_run_info(run);
 
@@ -140,7 +140,7 @@ void Writerprotobuf::write_event(const GenEvent &evt) {
   }
   default: {
     HEPMC3_ERROR("Unknown momentum unit: " << data.momentum_unit);
-    abort();
+    return;
   }
   }
 
@@ -155,7 +155,7 @@ void Writerprotobuf::write_event(const GenEvent &evt) {
   }
   default: {
     HEPMC3_ERROR("Unknown length unit: " << data.length_unit);
-    abort();
+    return;
   }
   }
 

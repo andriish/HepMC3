@@ -8,7 +8,7 @@
 
 +include <HepMC3/Writerprotobuf.h>
 +include <HepMC3/Readerprotobuf.h>
-#+include <src/protobuf_binders.h>
++include <src/protobuf_binders.h>
 
 
 -class std::istream
@@ -30,5 +30,5 @@
 
 
 
-#+binder HepMC3::Writerprotobuf  binder::Writerprotobuf_binder
-#+binder HepMC3::Readerprotobuf  binder::Readerprotobuf_binder
++binder HepMC3::Writerprotobuf  binder::Writerprotobuf_binder
++binder HepMC3::Readerprotobuf  binder::Readerprotobuf_binder

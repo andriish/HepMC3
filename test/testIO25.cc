@@ -59,8 +59,7 @@ int main() {
   evt.weights() = std::vector<double>{1.23456789, 9.87654321};
   evt.set_event_number(1337);
   evt.set_units(HepMC3::Units::MEV, HepMC3::Units::CM);
-  evt.add_attribute("HardScatterMode", std::shared_ptr<HepMC3::IntAttribute>(
-                                           new HepMC3::IntAttribute(1)));
+  evt.add_attribute("HardScatterMode", std::make_shared<HepMC3::IntAttribute>(1));
 
   std::shared_ptr<HepMC3::GenRunInfo> gri =
       std::make_shared<HepMC3::GenRunInfo>();
@@ -101,5 +100,5 @@ int main() {
     return 3;
   }
 
-  exit(0);
+  return 0;
 }

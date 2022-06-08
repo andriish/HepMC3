@@ -35,9 +35,6 @@
 namespace HepMC3 {
 
 class Readerprotobuf : public Reader {
-  //
-  // Types
-  //
 public:
   /**
    * @class HepMC3::Readerprotobuf::FileHeader
@@ -142,18 +139,18 @@ private:
    */
   bool read_file_start();
 
-  size_t m_bytes_read;
+  size_t m_bytes_read; //!< Document me
 
-  std::unique_ptr<std::ifstream> m_in_file;
-  std::istream *m_in_stream;
+  std::unique_ptr<std::ifstream> m_in_file;//!< Document me
+  std::istream *m_in_stream;//!< Document me
 
-  std::string m_msg_buffer;
-  std::string m_md_buffer;
-  int m_msg_type;
+  std::string m_msg_buffer;//!< Document me
+  std::string m_md_buffer;//!< Document me
+  int m_msg_type;//!< Document me
 
-  HepMC3::GenEventData m_evdata;
+  HepMC3::GenEventData m_evdata;//!< Document me
 
-  FileHeader m_file_header;
+  FileHeader m_file_header;//!< Document me
 };
 
 } // namespace HepMC3

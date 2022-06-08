@@ -181,7 +181,7 @@ bool Readerprotobuf::read_GenRunInfo() {
     return false;
   }
 
-  set_run_info(std::shared_ptr<HepMC3::GenRunInfo>(new HepMC3::GenRunInfo()));
+  set_run_info(std::make_shared<HepMC3::GenRunInfo>());
 
   HepMC3_pb::GenRunInfoData GenRunInfo_pb;
   if (!GenRunInfo_pb.ParseFromString(m_msg_buffer)) {
@@ -270,7 +270,7 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
   }
   default: {
     HEPMC3_ERROR("Unknown momentum unit: " << ged_pb.momentum_unit());
-    abort();
+    return false;
   }
   }
 
@@ -285,7 +285,7 @@ bool Readerprotobuf::read_GenEvent(bool skip) {
   }
   default: {
     HEPMC3_ERROR("Unknown length unit: " << ged_pb.length_unit());
-    abort();
+    return false;
   }
   }
 

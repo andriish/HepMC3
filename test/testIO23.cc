@@ -8,11 +8,9 @@
 
 #include "HepMC3/Writerprotobuf.h"
 
-#include <cassert>
-
 int main() {
   HepMC3::Writerprotobuf wrtr(
       "/path/to/invalid/place/erihreiuhgeihgir/test.proto");
-  assert(wrtr.failed());
-  exit(0);
+  if (!wrtr.failed()) return 1;
+  return 0;
 }

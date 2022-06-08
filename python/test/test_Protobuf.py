@@ -9,13 +9,16 @@ from pyHepMC3.protobufIO import HepMC3 as hmpb
 
 
 def test_IO20():
-    print("OK")
+    print("OK1")
     inputA = hm.ReaderAsciiHepMC2("inputIO26.hepmc")
+    print("OK2")
     if inputA.failed():
         sys.exit(2)
+    print(dir(hmpb))
     outputA = hmpb.Writerprotobuf(python_label() + "frominputIO26.proto")
     if outputA.failed():
         sys.exit(3)
+    print("OK3")
     while not inputA.failed():
         evt = hm.GenEvent()
         inputA.read_event(evt)
@@ -26,11 +29,12 @@ def test_IO20():
         evt.clear()
     inputA.close()
     outputA.close()
-
+    print("OK31")
     inputB = hmpb.Readerprotobuf(python_label() + "frominputIO26.proto")
     if inputB.failed():
         sys.exit(4)
     outputB = hm.WriterAsciiHepMC2(python_label() + "fromfrominputIO26.hepmc")
+    print("OK4")
     if outputB.failed():
         sys.exit(5)
     while not inputB.failed():
@@ -43,7 +47,7 @@ def test_IO20():
         evt.clear()
     inputB.close()
     outputB.close()
-    
+    print("OK5")
     print("Checking file correspondence")
     assert 0 == COMPARE_ASCII_FILES(python_label() + "fromfrominputIO26.hepmc", "inputIO26.hepmc")
     print("Files match")

@@ -72,5 +72,5 @@ int main() {
     return 1;
   }
 
-  exit(0);
+  return 0;
 }
