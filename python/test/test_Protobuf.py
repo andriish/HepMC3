@@ -12,7 +12,6 @@ def test_IO20():
     inputA = hm.ReaderAsciiHepMC2("inputIO26.hepmc")
     if inputA.failed():
         sys.exit(2)
-    print(dir(hmpb))
     outputA = hmpb.Writerprotobuf(python_label() + "frominputIO26.proto")
     if outputA.failed():
         sys.exit(3)
