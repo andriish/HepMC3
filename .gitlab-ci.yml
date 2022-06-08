@@ -433,7 +433,7 @@ Fedora24-gcc:
     - ctest --output-on-failure 
     - make -j $(nproc) install
 ########################################################################
-Fedora23-clang-noroot-nopython:
+Fedora23-clang-noroot-nopython-noprotobuf:
   image: fedora:23
   extends: .Fedora
   before_script:
@@ -452,7 +452,7 @@ Fedora23-clang-noroot-nopython:
     - ctest --output-on-failure
     - make -j $(nproc) install 
 ########################################################################
-Fedora23-gcc-noroot-nopython:
+Fedora23-gcc-noroot-nopython-noprotobuf:
   image: fedora:23
   extends: .Fedora
   before_script:
