@@ -626,7 +626,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
   if(HEPMC3_ENABLE_SEARCH)
     list( APPEND HepMC_python_tests test_Pythonization_Search)
   endif()
-  if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND)
+  if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND AND NOT WIN32)
     list( APPEND HepMC_python_tests test_Protobuf)
   endif()
   if(HEPMC3_ENABLE_TEST)
@@ -643,6 +643,13 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         COMMAND ${Python_EXECUTABLE} ${ptest}.py
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test"
       )
+      if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND AND NOT WIN32)
+        get_filename_component(pcdir ${Protobuf_PROTOC_EXECUTABLE} DIRECTORY)
+        SET_TESTS_PROPERTIES(  python${Python_VERSION}_${ptest} 
+                  PROPERTIES 
+                  ENVIRONMENT "PATH=${pcdir};${Protobuf_INCLUDE_DIR}/../lib;${Protobuf_INCLUDE_DIR}/../lib64;${Protobuf_INCLUDE_DIR}/../bin;$ENV{PATH}"
+                  )
+      endif()
     endforeach ( ptest ${HepMC_python_tests} )
   endif()
 else()
