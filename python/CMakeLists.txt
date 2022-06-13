@@ -198,7 +198,12 @@ if (RERUN_BINDER)
                         --root-module pyHepMC3
                         --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                         --config src/pyHepMC3.binder   ${CMAKE_CURRENT_BINARY_DIR}/all_includes.hpp
-                        --  -std=c++${HEPMC3_CXX_STANDARD} -I. -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_FLAGS} -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
+                        --  -std=c++${HEPMC3_CXX_STANDARD} 
+                             -I. 
+                             -I${CMAKE_CURRENT_SOURCE_DIR} 
+                             -I${CMAKE_CURRENT_SOURCE_DIR}/include 
+                             ${HEPMC3_INCLUDE_FLAGS} 
+                             -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       VERBATIM
     )
