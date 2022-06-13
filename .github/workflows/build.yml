@@ -46,7 +46,7 @@ jobs:
         cmake --build BUILD 
         cmake --install BUILD         
         cd BUILD
-        ctest . 
+        ctest . --output-on-failure
   nativewin:
     if: "contains(github.event.head_commit.message, 'githubwinci')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
@@ -85,7 +85,7 @@ jobs:
           cmake --build BUILD 
           cmake --install BUILD 
           chdir BUILD
-          ctest . -C Debug
+          ctest . -C Debug --output-on-failure
 
   mingw:
     if: "contains(github.event.head_commit.message, 'githubmingwci')"
