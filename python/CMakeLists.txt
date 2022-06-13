@@ -647,7 +647,8 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         get_filename_component(pcdir ${Protobuf_PROTOC_EXECUTABLE} DIRECTORY)
         SET_TESTS_PROPERTIES(  python${Python_VERSION}_${ptest} 
                   PROPERTIES 
-                  ENVIRONMENT "PATH=${pcdir};${Protobuf_INCLUDE_DIR}/../lib;${Protobuf_INCLUDE_DIR}/../lib64;${Protobuf_INCLUDE_DIR}/../bin;$ENV{PATH}"
+                  ENVIRONMENT 
+                  "PATH=${pcdir};${Protobuf_INCLUDE_DIR}/../lib;${Protobuf_INCLUDE_DIR}/../lib64;${Protobuf_INCLUDE_DIR}/../bin;$ENV{PATH}"
                   )
       endif()
     endforeach ( ptest ${HepMC_python_tests} )
