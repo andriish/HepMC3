@@ -208,7 +208,7 @@ void WriterAscii::write_event(const GenEvent &evt) {
             if (alreadywrittenvertex.count(v->id()) == 0 && parent_object < 0) { 
             write_vertex(v); 
             alreadywrittenvertex[v->id()] = true; 
-            for (auto pp:  v->particles_out()) { if (alreadywrittenparticle.count(pp->id()) == 0) {write_particle(p, parent_object); alreadywrittenparticle[pp->id()] = true;} }
+            for (auto pp:  v->particles_out()) { if (alreadywrittenparticle.count(pp->id()) == 0) {write_particle(pp, parent_object); alreadywrittenparticle[pp->id()] = true;} }
             }
         }
 
