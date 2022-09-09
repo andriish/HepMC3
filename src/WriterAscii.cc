@@ -188,8 +188,10 @@ void WriterAscii::write_event(const GenEvent &evt) {
 
 
     // Print particles
-    std::map<int, bool> alreadywritten;
+    std::map<int, bool> alreadywrittenvertex;
+    std::map<int, bool> alreadywrittenparticle;
     for (ConstGenParticlePtr p: evt.particles()) {
+        if (alreadywrittenparticle.count(p->id()) != 0) continue;
         // Check to see if we need to write a vertex first
         ConstGenVertexPtr v = p->production_vertex();
         int parent_object = 0;
@@ -203,13 +205,17 @@ void WriterAscii::write_event(const GenEvent &evt) {
             else if ( v->particles_in().size() == 1 )                   parent_object = v->particles_in().front()->id();
             else if ( v->particles_in().size() == 0 ) HEPMC3_DEBUG(30, "WriterAscii::write_event - found a vertex without incoming particles: " << v->id());
             // Usage of map instead of simple counter helps to deal with events with random ids of vertices.
-            if (alreadywritten.count(v->id()) == 0 && parent_object < 0)
-            { write_vertex(v); alreadywritten[v->id()] = true; }
+            if (alreadywrittenvertex.count(v->id()) == 0 && parent_object < 0) { 
+            write_vertex(v); 
+            alreadywrittenvertex[v->id()] = true; 
+            for (auto pp:  v->particles_out()) { if (alreadywrittenparticle.count(pp->id()) == 0) {write_particle(p, parent_object); alreadywrittenparticle[pp->id()] = true;} }
+            }
         }
 
-        write_particle(p, parent_object);
+         if (alreadywrittenparticle.count(p->id()) == 0) { write_particle(p, parent_object); alreadywrittenparticle[p->id()] = true;}
     }
-    alreadywritten.clear();
+    alreadywrittenvertex.clear();
+    alreadywrittenparticle.clear();
 
     // Flush rest of the buffer to file
     forced_flush();
