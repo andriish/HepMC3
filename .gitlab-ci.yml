@@ -176,12 +176,21 @@ debian-salsa:
 .fixrootcmake: &fixrootcmake
     - sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake
 ########################################################################
+.llvminstall: &llvminstall
+    - yum -y install  clang flang
+########################################################################
+.llvmexport:  &llvmexport
+    - export CXX=clang++
+    - export CC=clang
+    - export FC=flang
+########################################################################
 .clanginstall: &clanginstall
-    - yum -y install  clang
+    - yum -y install  clang gcc-gfortran
 ########################################################################
 .clangexport:  &clangexport
     - export CXX=clang++
     - export CC=clang
+    - export FC=gfortran    
 ########################################################################
 .gccinstall: &gccinstall
     - yum -y install  gcc gcc-c++ gcc-gfortran
@@ -212,7 +221,17 @@ debian-salsa:
   script:
     - *clangexport
     - *fullbuild
-
+########################################################################
+.Fedora-llvm:
+  extends: .Fedora
+  before_script:
+    - *commoninstall
+    - *llvminstall
+    - *pythoninstall
+    - *protobufinstall
+  script:
+    - *llvmexport
+    - *fullbuild
 ############################The Pipelines###############################
 ########################################################################
 Fedora33-gcc-pypy:
@@ -246,6 +265,10 @@ Fedora37-gcc-python311:
   script:
     - *gccexport
     - *fullbuild
+########################################################################
+Fedora36-llvm:
+  image: fedora:36
+  extends: .Fedora-llvm
 ########################################################################
 Fedora37-gcc:
   image: fedora:37
