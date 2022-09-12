@@ -333,6 +333,10 @@ public:
     void add_beam_particle(GenParticlePtr p1);
 
 
+    /// @brief reorder particles inside the event
+    
+    void reorder();
+
     /// @}
 
 #endif // __CINT__
@@ -441,6 +445,24 @@ std::shared_ptr<T> GenEvent::attribute(const std::string &name,  const int& id) 
     else return std::dynamic_pointer_cast<T>(i2->second);
 }
 #endif // __CINT__
+
+/** @brief comparison of two particles */
+struct GenParticlePtr_greater
+{
+    /** @brief comparison of two particles */
+    bool operator()(ConstGenParticlePtr lx, ConstGenParticlePtr rx) const;
+};
+/** @brief  Order vertices with equal paths. */
+struct pair_GenVertexPtr_int_greater
+{
+    /** @brief  Order vertices with equal paths. If the paths are equal, order in other quantities.
+     * We cannot use id, as it can be assigned in different way*/
+    bool operator()(const std::pair<ConstGenVertexPtr, int>& lx, const std::pair<ConstGenVertexPtr, int>& rx) const;
+};
+
+/** @brief Calculates the path to the top (beam) particles */
+void calculate_longest_path_to_top(ConstGenVertexPtr v, std::map<ConstGenVertexPtr, int>& pathl);
+
 
 } // namespace HepMC3
 #endif

@@ -895,4 +895,136 @@ void GenEvent::add_attributes(const std::string& name, const std::vector<std::pa
     }
 }
 
+
+
+
+/** @brief comparison of two particles */
+bool GenParticlePtr_greater::operator()(ConstGenParticlePtr lx, ConstGenParticlePtr rx) const
+{
+    /* Cannot use id as it could be different.*/
+    if (lx->pid() != rx->pid()) return (lx->pid() < rx->pid());
+    if (lx->status() != rx->status()) return (lx->status() < rx->status());
+    /*Hopefully it will reach this point not too often.*/
+    return (lx->momentum().e() < rx->momentum().e());
+}
+
+/** @brief  Order vertices with equal paths. If the paths are equal, order in other quantities.
+ * We cannot use id, as it can be assigned in different way*/
+bool pair_GenVertexPtr_int_greater::operator()(const std::pair<ConstGenVertexPtr, int>& lx, const std::pair<ConstGenVertexPtr, int>& rx) const
+{
+    if (lx.second != rx.second) return (lx.second < rx.second);
+    if (lx.first->particles_in().size() != rx.first->particles_in().size()) return (lx.first->particles_in().size() < rx.first->particles_in().size());
+    if (lx.first->particles_out().size() != rx.first->particles_out().size()) return (lx.first->particles_out().size() < rx.first->particles_out().size());
+    /* The code below is usefull mainly for debug. Assures strong ordering.*/
+    std::vector<int> lx_id_in;
+    std::vector<int> rx_id_in;
+    for (ConstGenParticlePtr pp: lx.first->particles_in()) lx_id_in.push_back(pp->pid());
+    for (ConstGenParticlePtr pp: rx.first->particles_in()) rx_id_in.push_back(pp->pid());
+    std::sort(lx_id_in.begin(), lx_id_in.end());
+    std::sort(rx_id_in.begin(), rx_id_in.end());
+    for (unsigned int i = 0; i < lx_id_in.size(); i++) if (lx_id_in[i] != rx_id_in[i]) return  (lx_id_in[i] < rx_id_in[i]);
+
+    std::vector<int> lx_id_out;
+    std::vector<int> rx_id_out;
+    for (ConstGenParticlePtr pp: lx.first->particles_in()) lx_id_out.push_back(pp->pid());
+    for (ConstGenParticlePtr pp: rx.first->particles_in()) rx_id_out.push_back(pp->pid());
+    std::sort(lx_id_out.begin(), lx_id_out.end());
+    std::sort(rx_id_out.begin(), rx_id_out.end());
+    for (unsigned int i = 0; i < lx_id_out.size(); i++) if (lx_id_out[i] != rx_id_out[i]) return  (lx_id_out[i] < rx_id_out[i]);
+
+    std::vector<double> lx_mom_in;
+    std::vector<double> rx_mom_in;
+    for (ConstGenParticlePtr pp: lx.first->particles_in()) lx_mom_in.push_back(pp->momentum().e());
+    for (ConstGenParticlePtr pp: rx.first->particles_in()) rx_mom_in.push_back(pp->momentum().e());
+    std::sort(lx_mom_in.begin(), lx_mom_in.end());
+    std::sort(rx_mom_in.begin(), rx_mom_in.end());
+    for (unsigned int i = 0; i < lx_mom_in.size(); i++) if (lx_mom_in[i] != rx_mom_in[i]) return  (lx_mom_in[i] < rx_mom_in[i]);
+
+    std::vector<double> lx_mom_out;
+    std::vector<double> rx_mom_out;
+    for (ConstGenParticlePtr pp: lx.first->particles_in()) lx_mom_out.push_back(pp->momentum().e());
+    for (ConstGenParticlePtr pp: rx.first->particles_in()) rx_mom_out.push_back(pp->momentum().e());
+    std::sort(lx_mom_out.begin(), lx_mom_out.end());
+    std::sort(rx_mom_out.begin(), rx_mom_out.end());
+    for (unsigned int i = 0; i < lx_mom_out.size(); i++) if (lx_mom_out[i] != rx_mom_out[i]) return  (lx_mom_out[i] < rx_mom_out[i]);
+    /* The code above is usefull mainly for debug*/
+
+    return (lx.first < lx.first); /*This  is random. This should never happen*/
+}
+/** @brief Calculates the path to the top (beam) particles */
+void calculate_longest_path_to_top(ConstGenVertexPtr v, std::map<ConstGenVertexPtr, int>& pathl)
+{
+    int p = 0;
+    for (ConstGenParticlePtr pp: v->particles_in()) {
+        ConstGenVertexPtr v2 = pp->production_vertex();
+        if (v2 == v) continue; //LOOP! THIS SHOULD NEVER HAPPEN FOR A PROPER EVENT!
+        if (!v2) p = std::max(p, 1);
+        else
+        {if (pathl.find(v2) == pathl.end())  calculate_longest_path_to_top(v2, pathl); p = std::max(p, pathl[v2]+1);}
+    }
+    pathl[v] = p;
+    return;
+}
+
+
+
+void GenEvent::reorder() {
+
+
+    /*AV Sorting the vertices by the lengths of their longest incoming paths assures the mothers will not go before the daughters*/
+    /* Calculate all paths*/
+    std::map<ConstGenVertexPtr, int> longest_paths;
+    for (auto v: vertices()) calculate_longest_path_to_top(v, longest_paths);
+    /* Sort paths*/
+    std::vector<std::pair<ConstGenVertexPtr, int> > sorted_paths;
+    std::copy(longest_paths.begin(), longest_paths.end(), std::back_inserter(sorted_paths));
+    std::sort(sorted_paths.begin(), sorted_paths.end(), pair_GenVertexPtr_int_greater());
+
+    std::vector<ConstGenParticlePtr> sorted_particles;
+    std::vector<ConstGenParticlePtr> stable_particles;
+    /*For a valid "Trust mothers" HEPEVT record we must  keep mothers together*/
+    for (auto it: sorted_paths)
+    {
+        std::vector<ConstGenParticlePtr> Q = it.first->particles_in();
+        std::sort(Q.begin(), Q.end(), GenParticlePtr_greater());
+        std::copy(Q.begin(), Q.end(), std::back_inserter(sorted_particles));
+        /*For each vertex put all outgoing particles w/o end vertex. Ordering of particles to produces reproduceable record*/
+        for (auto pp: it.first->particles_out())
+            if (!(pp->end_vertex())) stable_particles.push_back(pp);
+    }
+    std::sort(stable_particles.begin(), stable_particles.end(), GenParticlePtr_greater());
+    std::copy(stable_particles.begin(), stable_particles.end(), std::back_inserter(sorted_particles));
+    
+    std::map<int,int> old_new;
+    std::map<int,int> new_old;
+    old_new[0]=0;
+    for (int i=0; i<sorted_paths.size();i++) old_new[sorted_paths.at(i).first->id()]=-i-1;
+    for (int i=0; i<stable_particles.size();i++) old_new[stable_particles.at(i)->id()]=i+1;
+    for (auto o: old_new) new_old[o.second]=o.first;
+    
+    GenEventData olddata;
+    write_data(olddata);
+    GenEventData newdata;
+    
+    newdata.particles.reserve(olddata.particles.size());
+    for (int i = 0; i < olddata.particles.size(); i++) newdata.particles.push_back(olddata.particles.at(new_old[i+1]-1));
+    newdata.vertices.reserve(olddata.vertices.size());
+    for (int i = 0; i < olddata.vertices.size(); i++) newdata.vertices.push_back(olddata.vertices.at(-new_old[-i-1]+1));
+    newdata.attribute_id.reserve(olddata.attribute_id.size());
+    for (int i = 0; i < olddata.attribute_id.size(); i++) newdata.attribute_id.push_back(new_old[i]);
+    newdata.links1.reserve(olddata.links1.size());
+    for (int i = 0; i < olddata.links1.size(); i++) newdata.links1.push_back(old_new[olddata.links1.at(i)]);
+    newdata.links2.reserve(olddata.links2.size());
+    for (int i = 0; i < olddata.links2.size(); i++) newdata.links2.push_back(old_new[olddata.links2.at(i)]);
+    
+    newdata.event_number=olddata.event_number;
+    newdata.momentum_unit=olddata.momentum_unit;
+    newdata.length_unit=olddata.length_unit;
+    newdata.weights=olddata.weights;
+    newdata.event_pos=olddata.event_pos;
+    newdata.attribute_name=olddata.attribute_name;
+    newdata.attribute_string=olddata.attribute_string;
+    read_data(newdata);
+}
+
 } // namespace HepMC3

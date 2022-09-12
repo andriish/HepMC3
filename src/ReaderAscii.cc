@@ -445,7 +445,7 @@ bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     mother_id = atoi(cursor);
 
-    // Parent object is a particle. Particles are always ordered id==position in event.
+    // Parent object is a particle. Particleas are always ordered id==position in event.
     if ( mother_id > 0 && mother_id <= (int)evt.particles().size() ) {
         GenParticlePtr mother = evt.particles()[ mother_id-1 ];
         GenVertexPtr   vertex = mother->end_vertex();
