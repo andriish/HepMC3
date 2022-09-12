@@ -107,10 +107,10 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     {
         ev = m_storage.front();
         m_storage.pop_front();
-        return m_failed;
+        return !m_failed;
     }
     m_failed = !(m_reader->readEvent());
-    if (m_failed) return m_failed;
+    if (m_failed) return !m_failed;
     // To each GenEvent we want to add an attribute corresponding to
     // the HEPEUP. Also here there may be additional non-standard
     // information outside the LHEF <event> tags, which we may want to
@@ -181,7 +181,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     }
     ev = m_storage.front();
     m_storage.pop_front();
-    return m_failed;
+    return !m_failed;
 }
 /// @brief Return status of the stream
 bool ReaderLHEF::failed() { return m_failed;}
