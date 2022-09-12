@@ -178,7 +178,7 @@ debian-salsa:
     - sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake
 ########################################################################
 .llvminstall: &llvminstall
-    - yum -y install  clang flang
+    - yum -y install  clang flang gcc-gfortran
 ########################################################################
 .llvmexport:  &llvmexport
     - export CXX=clang++
