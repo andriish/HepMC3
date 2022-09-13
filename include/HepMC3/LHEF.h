@@ -2916,6 +2916,7 @@ public:
     if ( !heprup.eventfiles.empty() &&
          ++curreventfile < int(heprup.eventfiles.size()) ) {
       openeventfile(curreventfile);
+      XMLTag::deleteAll(tags);
       return readEvent();
     }
 
