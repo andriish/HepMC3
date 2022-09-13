@@ -16,15 +16,16 @@ int main()
     while( !inputA.failed() )
     {
         GenEvent evt(Units::GEV,Units::MM);
-        if (!inputA.read_event(evt)) {
-            printf("Error reading LHE file. Exit.\n");
+        bool read_res =  inputA.read_event(evt);
+        if (!read_res && !inputA.failed()) {
+            printf("Error reading event from LHE file. Exit.\n");
             return 1;
         }
         if( inputA.failed() )  {
             printf("End of file reached. Exit.\n");
             break;
         }
-        outputA.write_event(evt);
+        if (read_res) outputA.write_event(evt);
         evt.clear();
     }
     inputA.close();
