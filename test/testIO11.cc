@@ -11,7 +11,7 @@ int main()
 {
     ReaderLHEF inputA("inputIO11.lhe");
     if(inputA.failed()) return 1;
-    WriterAscii       outputA("frominputIO11.hepmc");
+    WriterAscii outputA("frominputIO11.hepmc");
     if(outputA.failed()) return 2;
     while( !inputA.failed() )
     {
