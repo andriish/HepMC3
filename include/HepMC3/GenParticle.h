@@ -158,10 +158,5 @@ template<class T> std::shared_ptr<T> GenParticle::attribute(const std::string& n
     return parent_event()?
            parent_event()->attribute<T>(name, id()): std::shared_ptr<T>();
 }
-template<class T> bool GenParticle::add_attribute(const std::string& name, const T b) const {
-    
-           add_attribute<std::shared_ptr<T>>(name, std::shared_ptr<T>(b));
-}
-
 }
 #endif
