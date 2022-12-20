@@ -98,8 +98,9 @@ public:
             explicit func_wrapper(func_handle &&hf) noexcept : hfunc(std::move(hf)) {}
             Return operator()(Args... args) const {
                 gil_scoped_acquire acq;
-                // casts the returned object as a rvalue to the return type
-                return hfunc.f(std::forward<Args>(args)...).template cast<Return>();
+                object retval(hfunc.f(std::forward<Args>(args)...));
+                /* Visual studio 2015 parser issue: need parentheses around this expression */
+                return (retval.template cast<Return>());
             }
         };
 
@@ -110,7 +111,7 @@ public:
     template <typename Func>
     static handle cast(Func &&f_, return_value_policy policy, handle /* parent */) {
         if (!f_) {
-            return none().release();
+            return none().inc_ref();
         }
 
         auto result = f_.template target<function_type>();

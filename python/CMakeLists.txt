@@ -281,6 +281,7 @@ endif()
 
 #Compilation with CPython2
 if (${ver} STREQUAL 2)
+  message(STATUS "HepMC3 python: WARNING: The support of Python2 is deprecated and might be removed in the future!")
   unset(Python2_FOUND CACHE)
   unset(Python2_VERSION CACHE)
   unset(Python2_Interpreter_FOUND CACHE)
