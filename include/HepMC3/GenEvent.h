@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of HepMC
-// Copyright (C) 2014-2021 The HepMC collaboration (see AUTHORS for details)
+// Copyright (C) 2014-2022 The HepMC collaboration (see AUTHORS for details)
 //
 ///
 /// @file GenEvent.h
@@ -70,7 +70,6 @@ public:
     /// @brief Get list of vertices (const)
     const std::vector<ConstGenVertexPtr>& vertices() const;
 
-
     /// @brief Get/set list of particles (non-const)
     const std::vector<GenParticlePtr>& particles() { return m_particles; }
     /// @brief Get/set list of vertices (non-const)
@@ -80,16 +79,17 @@ public:
 
 
     /// @name Particle and vertex access
-    //@{
-    ///Particles size, HepMC2 compatiility
+    /// @{
+    /// Particles size, HepMC2 compatibility
     inline int particles_size() const { return m_particles.size(); }
-    ///Particles empty, HepMC2 compatiility
+    /// Particles empty, HepMC2 compatibility
     inline bool particles_empty() const { return m_particles.empty(); }
-    ///Vertices size, HepMC2 compatiility
+    /// Vertices size, HepMC2 compatibility
     inline int vertices_size() const { return m_vertices.size(); }
-    ///Vertices empty, HepMC2 compatiility
+    /// Vertices empty, HepMC2 compatibility
     inline bool vertices_empty() const { return m_vertices.empty(); }
-    //@}
+    /// @}
+
 
     /// @name Event weights
     /// @{
@@ -315,10 +315,12 @@ public:
     /// @{
 
     /// @brief Add particle by raw pointer
+    ///
     /// @deprecated Use GenEvent::add_particle( const GenParticlePtr& ) instead
     void add_particle( GenParticle *p );
 
     /// @brief Add vertex by raw pointer
+    ///
     /// @deprecated Use GenEvent::add_vertex( const GenVertexPtr& ) instead
     void add_vertex  ( GenVertex *v );
 
@@ -401,6 +403,8 @@ private:
 
 };
 
+
+
 #if !defined(__CINT__)
 //
 // Template methods
@@ -408,8 +412,7 @@ private:
 template<class T>
 std::shared_ptr<T> GenEvent::attribute(const std::string &name,  const int& id) const {
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    std::map< std::string, std::map<int, std::shared_ptr<Attribute> > >::iterator i1 =
-        m_attributes.find(name);
+    std::map< std::string, std::map<int, std::shared_ptr<Attribute> > >::iterator i1 = m_attributes.find(name);
     if ( i1 == m_attributes.end() ) {
         if ( id == 0 && run_info() ) {
             return run_info()->attribute<T>(name);
@@ -441,6 +444,7 @@ std::shared_ptr<T> GenEvent::attribute(const std::string &name,  const int& id) 
     else return std::dynamic_pointer_cast<T>(i2->second);
 }
 #endif // __CINT__
+
 
 } // namespace HepMC3
 #endif
