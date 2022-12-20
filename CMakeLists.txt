@@ -32,9 +32,10 @@ option(HEPMC3_INSTALL_EXAMPLES   "Enables installation of examples." ON)
 option(HEPMC3_ENABLE_TEST        "Enables building of tests." OFF)
 option(HEPMC3_INSTALL_INTERFACES "Enables installation of HepMC3 interfaces to MC tools." OFF)
 option(HEPMC3_BUILD_STATIC_LIBS  "Enables building of static libraties." ON)
-
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;--checks=*,-readability-identifier-length,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-non-const-global-variables,-llvmlibc-callee-namespace,-bugprone-easily-swappable-parameters,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-readability-implicit-bool-conversion,-hicpp-braces-around-statements,-readability-braces-around-statements,-cert-err34-c")
-
+option(HEPMC3DEV_ENABLE_CLANG_TIDY  "Enables usage of clang-tidy." OFF)
+if (HEPMC3DEV_ENABLE_CLANG_TIDY)
+  set(CMAKE_CXX_CLANG_TIDY "clang-tidy;--checks=*,-readability-identifier-length,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-non-const-global-variables,-llvmlibc-callee-namespace,-bugprone-easily-swappable-parameters,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-readability-implicit-bool-conversion,-hicpp-braces-around-statements,-readability-braces-around-statements,-cert-err34-c")
+endif()
 
 if (NOT HEPMC3_PYTHON_VERSIONS)
   set(HEPMC3_PYTHON_VERSIONS "2.X,3.X")
