@@ -159,7 +159,7 @@ void GenEvent::remove_particle(GenParticlePtr p) {
             }
         }
 
-        for ( att_val_t val: changed_attributes ) {
+        for ( const att_val_t& val: changed_attributes ) {
             vt1.second.erase(val.first);
             vt1.second[val.first-1] = val.second;
         }
@@ -233,7 +233,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
             }
         }
 
-        for ( att_val_t val: changed_attributes ) {
+        for ( const att_val_t& val: changed_attributes ) {
             vt1.second.erase(val.first);
             vt1.second[val.first+1] = val.second;
         }
@@ -250,9 +250,9 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
 }
 /// @todo This looks dangerously similar to the recusive event traversel that we forbade in the
 ///       Core library due to wories about generator dependence
-static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, ConstGenVertexPtr v)
+static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, const ConstGenVertexPtr& v)
 {
-    for ( ConstGenParticlePtr p: v->particles_out())
+    for (const ConstGenParticlePtr& p: v->particles_out())
         if (p->end_vertex())
         {
             if (a[p->end_vertex()] != 0) return true;
@@ -294,7 +294,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
     std::deque<GenVertexPtr> sorting;
 
     // Find all starting vertices (end vertex of particles that have no production vertex)
-    for (auto p: parts) {
+    for (auto& p: parts) {
         const GenVertexPtr &v = p->production_vertex();
         if ( !v || v->particles_in().size() == 0 ) {
             const GenVertexPtr &v2 = p->end_vertex();
@@ -319,7 +319,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
         bool added = false;
 
         // Add all mothers to the front of the list
-        for ( auto p: v->particles_in() ) {
+        for ( auto& p: v->particles_in() ) {
             GenVertexPtr v2 = p->production_vertex();
             if ( v2 && !v2->in_event() && find(sorting.begin(), sorting.end(), v2) == sorting.end() ) {
                 sorting.push_front(v2);
@@ -336,7 +336,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
             add_vertex(v);
 
             // Add all end vertices to the end of the list
-            for (auto p: v->particles_out()) {
+            for (auto& p: v->particles_out()) {
                 GenVertexPtr v2 = p->end_vertex();
                 if ( v2 && !v2->in_event()&& find(sorting.begin(), sorting.end(), v2) == sorting.end() ) {
                     sorting.push_back(v2);
@@ -356,10 +356,10 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
             std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
             for (auto & vt1: m_attributes) {
                 std::vector< std::pair< int, std::shared_ptr<Attribute> > > changed_attributes;
-                for ( auto vt2 : vt1.second )
+                for ( const auto& vt2 : vt1.second )
                     if ( vt2.first <= rootid )
                         changed_attributes.push_back(vt2);
-                for ( auto val : changed_attributes ) {
+                for ( const auto& val : changed_attributes ) {
                     vt1.second.erase(val.first);
                     vt1.second[val.first == rootid? 0: val.first + 1] = val.second;
                 }
@@ -833,7 +833,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
     ip = std::unique(unames.begin(), unames.end());
     unames.resize(std::distance(unames.begin(), ip));
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    for (auto name: unames)
+    for (const auto& name: unames)
         if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
 
     const int particles_size = int(m_particles.size());
@@ -885,7 +885,7 @@ void GenEvent::add_attributes(const std::string& name, const std::vector<std::pa
     auto& tmap = m_attributes[name];
     const int particles_size = int(m_particles.size());
     const int vertices_size = int(m_vertices.size());
-    for (auto att: atts) {
+    for (const auto& att: atts) {
         ///Disallow empty strings
         if (!att.second)  continue;
         tmap.insert(att);

@@ -251,7 +251,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
         for (auto& v: evt.vertices())
             if (p.second == v->id())
                 v->add_particle_out(p.first);
-    for ( auto v : m_forward_mothers )  for ( auto idpm : v.second )  v.first->add_particle_in(evt.particles()[idpm-1]);
+    for ( auto& v : m_forward_mothers )  for ( auto& idpm : v.second )  v.first->add_particle_in(evt.particles()[idpm-1]);
 
     /* restore ids of vertices using a bank of available ids*/
     std::vector<int> all_ids;

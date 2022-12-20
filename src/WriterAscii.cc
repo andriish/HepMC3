@@ -262,7 +262,7 @@ void WriterAscii::write_vertex(ConstGenVertexPtr v) {
     for (const ConstGenParticlePtr& p: v->particles_in()) pids.push_back(p->id());
     //We order pids to be able to compare ascii files
     std::sort(pids.begin(), pids.end());
-    for (auto p: pids) vlist.append( std::to_string(p).append(",") );
+    for (const auto& p: pids) vlist.append( std::to_string(p).append(",") );
     if ( pids.size() ) vlist.pop_back();
     const FourVector &pos = v->position();
     if ( !pos.is_zero() ) {
@@ -320,7 +320,7 @@ void WriterAscii::write_run_info() {
     }
 
 
-    for ( auto att: run_info()->attributes() ) {
+    for ( const auto& att: run_info()->attributes() ) {
         std::string st;
         if ( !att.second->to_string(st) ) {
             HEPMC3_WARNING("WriterAscii::write_run_info: problem serializing attribute: " << att.first)

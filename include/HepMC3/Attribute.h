@@ -701,7 +701,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -746,7 +746,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -792,7 +792,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -839,7 +839,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -884,7 +884,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -929,7 +929,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -975,7 +975,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -1020,7 +1020,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -1065,7 +1065,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -1110,7 +1110,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -1158,7 +1158,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override{
         att.clear();
-        for (auto a:  m_val) {if (att.length()) att+=" ";  att+=a;}
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=a;}
         return true;
     }
 

@@ -142,7 +142,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
     bool printed_header = false;
 
     // Print out all the incoming particles
-    for (ConstGenParticlePtr p: v->particles_in()) {
+    for (const ConstGenParticlePtr& p: v->particles_in()) {
         if ( !printed_header ) {
             os << " I: ";
             printed_header = true;
@@ -155,7 +155,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
     printed_header = false;
 
     // Print out all the outgoing particles
-    for (ConstGenParticlePtr p: v->particles_out()) {
+    for (const ConstGenParticlePtr& p: v->particles_out()) {
         if ( !printed_header ) {
             os << " O: ";
             printed_header = true;
