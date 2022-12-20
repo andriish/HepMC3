@@ -63,7 +63,7 @@ bool ReaderAsciiHepMC2::skip(const int n)
         if ( (!m_file.is_open()) && (!m_isstream) ) return false;
         m_isstream ? peek = m_stream->peek() : peek = m_file.peek();
         if ( peek =='E' ) nn--;
-        if (nn < 0) return true;
+        if (nn < 0) { return true; }
         m_isstream ? m_stream->getline(buf, max_buffer_size) : m_file.getline(buf, max_buffer_size);
     }
     return true;
@@ -236,8 +236,8 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
             HEPMC3_DEBUG(30, "ReaderAsciiHepMC2::read_event - found a vertex without incoming particles: " << m_vertex_cache[i]->id() );
             //Sometimes the root vertex has no incoming particles.  Here we try to save the event.
             std::vector<GenParticlePtr> beams;
-            for (auto p: m_vertex_cache[i]->particles_out()) if (p->status() == 4 && !(p->end_vertex())) beams.push_back(p);
-            for (auto p: beams)
+            for (auto& p: m_vertex_cache[i]->particles_out()) if (p->status() == 4 && !(p->end_vertex())) beams.push_back(p);
+            for (auto& p: beams)
             {
                 m_vertex_cache[i]->add_particle_in(p);
                 m_vertex_cache[i]->remove_particle_out(p);
@@ -276,9 +276,9 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
     if (cached_attributes.find("flows") != cached_attributes.end()) {
         std::map<int, std::shared_ptr<Attribute> > flows = cached_attributes.at("flows");
         if (m_options.find("particle_flows_are_separated") == m_options.end()) {
-            for (auto f: flows) if (f.first > 0 && f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("flows", f.second);
+            for (const auto& f: flows) if (f.first > 0 && f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("flows", f.second);
         } else  {
-            for (auto f: flows) if (f.first > 0 && f.first <= (int)m_particle_cache.size()) {
+            for (const auto& f: flows) if (f.first > 0 && f.first <= (int)m_particle_cache.size()) {
                     std::shared_ptr<VectorIntAttribute>  casted = std::dynamic_pointer_cast<VectorIntAttribute>(f.second);
                     if (!casted) continue;//Should not happen
                     std::vector<int> this_p_flow = casted->value();
@@ -289,20 +289,20 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
 
     if (cached_attributes.find("phi") != cached_attributes.end()) {
         std::map<int, std::shared_ptr<Attribute> > phi = cached_attributes.at("phi");
-        for (auto f: phi) if (f.first > 0 &&f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("phi", f.second);
+        for (const auto& f: phi) if (f.first > 0 &&f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("phi", f.second);
     }
 
     if (cached_attributes.find("theta") != cached_attributes.end()) {
         std::map<int, std::shared_ptr<Attribute> > theta = cached_attributes.at("theta");
-        for (auto f: theta) if (f.first > 0 && f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("theta", f.second);
+        for (const auto& f: theta) if (f.first > 0 && f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("theta", f.second);
     }
 
     if (cached_attributes.find("weights") != cached_attributes.end()) {
         std::map<int, std::shared_ptr<Attribute> > weights = cached_attributes.at("weights");
         if (m_options.find("vertex_weights_are_separated") == m_options.end()) {
-            for (auto f: weights) if (f.first < 0 && f.first >= -(int)m_vertex_cache.size())  m_vertex_cache[-f.first-1]->add_attribute("weights", f.second);
+            for (const auto& f: weights) if (f.first < 0 && f.first >= -(int)m_vertex_cache.size())  m_vertex_cache[-f.first-1]->add_attribute("weights", f.second);
         } else {
-            for (auto f: weights) if (f.first < 0 && f.first >= -(int)m_vertex_cache.size()) {
+            for (const auto& f: weights) if (f.first < 0 && f.first >= -(int)m_vertex_cache.size()) {
                     std::shared_ptr<VectorDoubleAttribute>  casted = std::dynamic_pointer_cast<VectorDoubleAttribute>(f.second);
                     if (!casted) continue;//Should not happen
                     std::vector<double> this_v_weight = casted->value();
@@ -560,7 +560,7 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
     if (flowsize)
     {
         std::vector<int> vectorflows;
-        for (auto f: flows) vectorflows.push_back(f.second);
+        for (const auto& f: flows) vectorflows.push_back(f.second);
         data_ghost->add_attribute("flows", std::make_shared<VectorIntAttribute>(vectorflows));
     }
     // Set prod_vtx link

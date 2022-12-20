@@ -94,19 +94,19 @@ GenEvent& GenEvent::operator=(const GenEvent& e) {
 
 
 void GenEvent::add_vertex(GenVertexPtr v) {
-    if ( !v|| v->in_event() ) return;
+    if ( !v || v->in_event() ) return;
     m_vertices.push_back(v);
 
     v->m_event = this;
     v->m_id = -(int)vertices().size();
 
     // Add all incoming and outgoing particles and restore their production/end vertices
-    for (auto p: v->particles_in()) {
+    for (auto& p: v->particles_in()) {
         if (!p->in_event()) add_particle(p);
         p->m_end_vertex = v->shared_from_this();
     }
 
-    for (auto p: v->particles_out()) {
+    for (auto& p: v->particles_out()) {
         if (!p->in_event()) add_particle(p);
         p->m_production_vertex = v;
     }
@@ -195,11 +195,11 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     HEPMC3_DEBUG(30, "GenEvent::remove_vertex   - called with vertex:  " << v->id());
     std::shared_ptr<GenVertex> null_vtx;
 
-    for (auto p: v->particles_in()) {
+    for (auto& p: v->particles_in()) {
         p->m_end_vertex = std::weak_ptr<GenVertex>();
     }
 
-    for (auto p: v->particles_out()) {
+    for (auto& p: v->particles_out()) {
         p->m_production_vertex = std::weak_ptr<GenVertex>();
 
         // recursive delete rest of the tree
@@ -214,7 +214,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     // Remove attributes of this vertex
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
     std::vector<std::string> atts = v->attribute_names();
-    for (std::string s: atts) {
+    for (std::string& s: atts) {
         v->remove_attribute(s);
     }
 
@@ -270,7 +270,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
     if (existing_hc)     if (existing_hc->value() != 0) has_cycles = true;
     if (!existing_hc)
     {
-        for (GenParticlePtr p: parts) {
+        for (const GenParticlePtr& p: parts) {
             GenVertexPtr v = p->production_vertex();
             if (v) sortingv[v]=0;
             if ( !v || v->particles_in().size() == 0 ) {
@@ -278,7 +278,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
                 if (v2) {noinv.push_back(v2); sortingv[v2] = 0;}
             }
         }
-        for (GenVertexPtr v: noinv) {
+        for (const GenVertexPtr& v: noinv) {
             std::map<ConstGenVertexPtr, int>  sorting_temp(sortingv.begin(), sortingv.end());
             has_cycles = (has_cycles || visit_children(sorting_temp, v));
         }
@@ -390,7 +390,7 @@ void GenEvent::reserve(const size_t& parts, const size_t& verts) {
 
 void GenEvent::set_units(Units::MomentumUnit new_momentum_unit, Units::LengthUnit new_length_unit) {
     if ( new_momentum_unit != m_momentum_unit ) {
-        for ( GenParticlePtr p: m_particles ) {
+        for ( GenParticlePtr& p: m_particles ) {
             Units::convert(p->m_data.momentum, m_momentum_unit, new_momentum_unit);
             Units::convert(p->m_data.mass, m_momentum_unit, new_momentum_unit);
         }
@@ -399,7 +399,7 @@ void GenEvent::set_units(Units::MomentumUnit new_momentum_unit, Units::LengthUni
     }
 
     if ( new_length_unit != m_length_unit ) {
-        for (GenVertexPtr &v: m_vertices) {
+        for (GenVertexPtr& v: m_vertices) {
             FourVector &fv = v->m_data.position;
             if ( !fv.is_zero() ) Units::convert( fv, m_length_unit, new_length_unit );
         }
@@ -429,7 +429,7 @@ void GenEvent::shift_position_by(const FourVector & delta) {
     m_rootvertex->set_position(event_pos() + delta);
 
     // Offset all vertices
-    for ( GenVertexPtr v: m_vertices ) {
+    for ( GenVertexPtr& v: m_vertices ) {
         if ( v->has_set_position() )
             v->set_position(v->position() + delta);
     }
@@ -437,7 +437,7 @@ void GenEvent::shift_position_by(const FourVector & delta) {
 
 bool GenEvent::rotate(const FourVector&  delta)
 {
-    for ( auto p: m_particles)
+    for ( auto& p: m_particles)
     {
         FourVector mom = p->momentum();
         long double tempX = mom.x();
@@ -477,7 +477,7 @@ bool GenEvent::rotate(const FourVector&  delta)
         FourVector temp(tempX, tempY, tempZ, mom.e());
         p->set_momentum(temp);
     }
-    for (auto v: m_vertices)
+    for (auto& v: m_vertices)
     {
         FourVector pos = v->position();
         long double tempX = pos.x();
@@ -532,20 +532,20 @@ bool GenEvent::reflect(const int axis)
     switch (axis)
     {
     case 0:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setX(-p->momentum().x()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setX(-v->position().x()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setX(-p->momentum().x()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setX(-v->position().x()); v->set_position(temp);}
         break;
     case 1:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setY(-p->momentum().y()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setY(-v->position().y()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setY(-p->momentum().y()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setY(-v->position().y()); v->set_position(temp);}
         break;
     case 2:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setZ(-p->momentum().z()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setZ(-v->position().z()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setZ(-p->momentum().z()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setZ(-v->position().z()); v->set_position(temp);}
         break;
     case 3:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setT(-p->momentum().e()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setT(-v->position().t()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setT(-p->momentum().e()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setT(-v->position().t()); v->set_position(temp);}
         break;
     default:
         return false;
@@ -579,7 +579,7 @@ bool GenEvent::boost(const FourVector&  delta)
     long double deltalength = std::sqrt(deltalength2);
     long double gamma = 1.0/std::sqrt(1.0-deltalength2);
 
-    for ( auto p: m_particles)
+    for ( auto& p: m_particles)
     {
         FourVector mom = p->momentum();
 
@@ -653,20 +653,20 @@ void GenEvent::write_data(GenEventData& data) const {
     // Fill containers
     data.weights = this->weights();
 
-    for (ConstGenParticlePtr p: this->particles()) {
+    for (const ConstGenParticlePtr& p: this->particles()) {
         data.particles.push_back(p->data());
     }
 
-    for (ConstGenVertexPtr v: this->vertices()) {
+    for (const ConstGenVertexPtr& v: this->vertices()) {
         data.vertices.push_back(v->data());
         int v_id = v->id();
 
-        for (ConstGenParticlePtr p: v->particles_in()) {
+        for (const ConstGenParticlePtr& p: v->particles_in()) {
             data.links1.push_back(p->id());
             data.links2.push_back(v_id);
         }
 
-        for (ConstGenParticlePtr p: v->particles_out()) {
+        for (const ConstGenParticlePtr& p: v->particles_out()) {
             data.links1.push_back(v_id);
             data.links2.push_back(p->id());
         }
@@ -736,7 +736,7 @@ void GenEvent::read_data(const GenEventData &data) {
         if ( id1 > 0 ) { m_vertices[ (-id2)-1 ]->add_particle_in ( m_particles[ id1-1 ] ); continue; }
         if ( id1 < 0 ) { m_vertices[ (-id1)-1 ]->add_particle_out( m_particles[ id2-1 ] );   continue; }
     }
-    for (auto p:  m_particles) if (!p->production_vertex()) m_rootvertex->add_particle_out(p);
+    for (auto& p:  m_particles) if (!p->production_vertex()) m_rootvertex->add_particle_out(p);
 
     // Read attributes
     for (unsigned int i = 0; i < data.attribute_id.size(); ++i) {

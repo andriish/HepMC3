@@ -135,14 +135,14 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     std::vector<int> beams;
     beams.reserve(2);
     int idbeam = 0;
-    for (ConstGenVertexPtr v: evt.vertices())
+    for (const ConstGenVertexPtr& v: evt.vertices())
     {
-        for (ConstGenParticlePtr p: v->particles_in())
+        for (const ConstGenParticlePtr& p: v->particles_in())
         {
             if (!p->production_vertex())                { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
             else if (p->production_vertex()->id() == 0) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
         }
-        for (ConstGenParticlePtr p: v->particles_out()) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
+        for (const ConstGenParticlePtr& p: v->particles_out()) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
     }
     //
     int idbeam1 = 10000;
@@ -172,7 +172,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     m_cursor += sprintf(m_cursor, " %zu", evt.weights().size());
     if ( evt.weights().size() )
     {
-        for (double w: evt.weights()) {
+        for (const double& w: evt.weights()) {
             m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), w);
             flush();
         }
@@ -238,12 +238,12 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
 
 
     m_particle_counter = 0;
-    for (ConstGenVertexPtr v: evt.vertices() )
+    for (const ConstGenVertexPtr& v: evt.vertices() )
     {
         int production_vertex = 0;
         production_vertex = v->id();
         write_vertex(v);
-        for (ConstGenParticlePtr p: v->particles_in())
+        for (const ConstGenParticlePtr& p: v->particles_in())
         {
             if (!p->production_vertex()) write_particle( p, production_vertex );
             else
@@ -251,7 +251,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
                 if (p->production_vertex()->id() == 0) write_particle( p, production_vertex );
             }
         }
-        for (ConstGenParticlePtr p: v->particles_out())
+        for (const ConstGenParticlePtr& p: v->particles_out())
             write_particle(p, production_vertex);
     }
 
@@ -322,7 +322,7 @@ void WriterAsciiHepMC2::write_vertex(ConstGenVertexPtr v)
     flush();
     m_cursor += sprintf(m_cursor, "V %i %i", v->id(), v->status());
     int orph = 0;
-    for (ConstGenParticlePtr p: v->particles_in())
+    for (const ConstGenParticlePtr& p: v->particles_in())
     {
         if (!p->production_vertex()) orph++;
         else

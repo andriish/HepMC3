@@ -165,7 +165,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
                 if ( i < 2 ) vertices[vertex_index]->add_particle_in(particles[i]);
                 else vertices[vertex_index]->add_particle_out(particles[i]);
             }
-        for ( auto v: vertices ) evt.add_vertex(v.second);
+        for ( const auto& v: vertices ) evt.add_vertex(v.second);
         if (particles.size() > 1)
         {
             particles[0]->set_status(4);

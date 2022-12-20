@@ -247,8 +247,8 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
         return false;
     }
-    for ( auto p : m_forward_daughters )
-        for (auto v: evt.vertices())
+    for ( auto& p : m_forward_daughters )
+        for (auto& v: evt.vertices())
             if (p.second == v->id())
                 v->add_particle_out(p.first);
     for ( auto v : m_forward_mothers )  for ( auto idpm : v.second )  v.first->add_particle_in(evt.particles()[idpm-1]);
@@ -257,7 +257,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     std::vector<int> all_ids;
     std::vector<int> filled_ids;
     std::vector<int> diff;
-    for (auto v: evt.vertices()) if (v->id() != 0) filled_ids.push_back(v->id());
+    for (auto& v: evt.vertices()) if (v->id() != 0) filled_ids.push_back(v->id());
     for (int i = -((long)evt.vertices().size()); i < 0; i++) all_ids.push_back(i);
     std::sort(all_ids.begin(), all_ids.end());
     std::sort(filled_ids.begin(), filled_ids.end());
@@ -265,7 +265,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     std::set_difference(all_ids.begin(), all_ids.end(), filled_ids.begin(), filled_ids.end(), std::inserter(diff, diff.begin()));
     auto it = diff.rbegin();
     //Set available ids to vertices sequentially.
-    for (auto v: evt.vertices()) if (v->id() == 0) { v->set_id(*it); it++;}
+    for (auto& v: evt.vertices()) if (v->id() == 0) { v->set_id(*it); it++;}
 
     return true;
 }
@@ -466,7 +466,7 @@ bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
     {
         //Vertices are not always ordered, e.g. when one reads HepMC2 event, so we check their ids.
         bool found = false;
-        for (auto v: evt.vertices()) if (v->id() == mother_id) {v->add_particle_out(data); found = true; break; }
+        for (auto& v: evt.vertices()) if (v->id() == mother_id) {v->add_particle_out(data); found = true; break; }
         if (!found)
         {
             //This should happen  in case of unordered event.

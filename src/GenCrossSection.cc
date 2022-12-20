@@ -19,7 +19,7 @@
 namespace HepMC3 {
 
 
-int GenCrossSection::windx(std::string wName) const {
+int GenCrossSection::windx(const std::string& wName) const {
     if ( !event() || !event()->run_info() ) return 0;
     return event()->run_info()->weight_index(wName);
 }
@@ -102,11 +102,11 @@ bool GenCrossSection::operator!=(const GenCrossSection& a) const {
 }
 
 bool GenCrossSection::is_valid() const {
-    if ( cross_sections.size()       == 0 ) return false;
-    if ( cross_section_errors.size() == 0 ) return false;
-    if ( cross_section_errors.size() != cross_sections.size() ) return false;
-    if ( cross_sections.at(0)       != 0 ) return true;
-    if ( cross_section_errors.at(0) != 0 ) return true;
+    if ( cross_sections.size()       == 0 ) { return false; }
+    if ( cross_section_errors.size() == 0 ) { return false; }
+    if ( cross_section_errors.size() != cross_sections.size() ) { return false; }
+    if ( cross_sections.at(0)       != 0 ) { return true; }
+    if ( cross_section_errors.at(0) != 0 ) { return true; }
     return false;
 }
 
