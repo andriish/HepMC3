@@ -21,9 +21,9 @@ void Print::content(std::ostream& os, const GenEvent &event) {
     os << std::endl;
 
     os << "Weights (" << event.weights().size() << "): " << std::endl;
-    for (std::vector<double>::const_iterator w = event.weights().begin(); w != event.weights().end(); ++w )
+    for (std::vector<double>::const_iterator w = event.weights().begin(); w != event.weights().end(); ++w ) {
         os << " " << *w;
-
+    }
 
     os << "Attributes:" << std::endl;
 
@@ -209,8 +209,11 @@ void Print::line(std::ostream& os, const GenEvent &event, bool attributes) {
 
 void Print::line(std::ostream& os, const GenRunInfo &RunInfo, bool attributes) {
     os <<"GenRunInfo: Number of tools:" << RunInfo.tools().size();
-    if (attributes) for (std::string s: RunInfo.attribute_names())
+    if (attributes) {
+        for (std::string s: RunInfo.attribute_names()) {
             os << " " << s << "=" << RunInfo.attribute_as_string(s);
+        }
+    }
 }
 
 void Print::line(std::ostream& os, const GenRunInfo::ToolInfo& t) {
@@ -228,15 +231,16 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
 
     const FourVector &pos = v->position();
     os << " has_set_position: ";
-    if ( v->has_set_position() ) os << "true";
-    else                        os << "false";
+    if ( v->has_set_position() ) { os << "true"; }
+    else  { os << "false"; }
 
     os << " (X,cT): " << pos.x() << ", " <<pos.y() << ", " << pos.z() << ", " << pos.t();
     if (attributes)
     {
         std::vector<std::string> names     = v->attribute_names();
-        for (auto ss: names)
+        for (auto ss: names) {
             os << " " << ss << "=" << (*v).attribute_as_string(ss);
+        }
     }
 }
 
@@ -301,8 +305,9 @@ void Print::line(std::ostream& os, ConstGenParticlePtr p, bool attributes) {
     if (attributes)
     {
         std::vector<std::string> names     = p->attribute_names();
-        for (auto ss: names)
+        for (auto ss: names) {
             os << " " << ss << "=" << (*p).attribute_as_string(ss);
+        }
     }
 }
 

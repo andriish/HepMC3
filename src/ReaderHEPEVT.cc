@@ -15,7 +15,7 @@ namespace HepMC3
 {
 
 ReaderHEPEVT::ReaderHEPEVT(const std::string &filename)
-    : m_file(filename), m_stream(0), m_isstream(false)
+    : m_file(filename), m_stream(nullptr), m_isstream(false)
 {
     if ( !m_file.is_open() ) {
         HEPMC3_ERROR("ReaderHEPEVT: could not open input file: " << filename)
@@ -89,8 +89,8 @@ bool ReaderHEPEVT::read_hepevt_event_header()
         while (!eventline)
         {
             if (!(st_e >> attr)) break;
-            if (attr == ' ') continue;
-            else eventline = false;
+            if (attr == ' ') { continue; }
+            else { eventline = false; }
             if (attr == 'E')
             {
                 eventline = static_cast<bool>(st_e >> m_i >> m_p);
@@ -152,8 +152,9 @@ bool ReaderHEPEVT::read_event(GenEvent& evt)
     evt.clear();
     m_hepevt_interface.zero_everything();
     bool fileok = read_hepevt_event_header();
-    for (int i = 1; (i <= m_hepevt_interface.number_entries()) && fileok; i++)
+    for (int i = 1; (i <= m_hepevt_interface.number_entries()) && fileok; i++) {
         fileok = read_hepevt_particle(i);
+    }
     bool result = false;
     if (fileok)
     {

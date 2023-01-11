@@ -265,8 +265,9 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
         std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
         if (random_states_a) {
             std::vector<long int> random_states_v = random_states_a->value();
-            for (size_t i = 0; i < random_states_v.size(); ++i )
+            for (size_t i = 0; i < random_states_v.size(); ++i ) {
                 evt.add_attribute("random_states" + std::to_string((long long unsigned int)i), std::make_shared<IntAttribute>(random_states_v[i]));
+            }
             evt.remove_attribute("random_states");
         }
 
@@ -326,7 +327,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
     m_particle_cache_ghost.clear();
     m_vertex_cache_ghost.clear();
     m_event_ghost->clear();
-    return 1;
+    return true;
 }
 
 int ReaderAsciiHepMC2::parse_event_information(GenEvent &evt, const char *buf) {
@@ -385,7 +386,7 @@ int ReaderAsciiHepMC2::parse_event_information(GenEvent &evt, const char *buf) {
         random_states[i] = atoi(cursor);
     }
 
-    if (random_states.size()) evt.add_attribute("random_states", std::make_shared<VectorLongIntAttribute>(random_states));
+    if (!random_states.empty()) evt.add_attribute("random_states", std::make_shared<VectorLongIntAttribute>(random_states));
 
     // weights
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
@@ -482,7 +483,7 @@ int ReaderAsciiHepMC2::parse_vertex_information(const char *buf) {
 
     m_event_ghost->add_vertex(data_ghost);
 
-    if (weights.size()) data_ghost->add_attribute("weights", std::make_shared<VectorDoubleAttribute>(weights));
+    if (!weights.empty()) data_ghost->add_attribute("weights", std::make_shared<VectorDoubleAttribute>(weights));
 
     m_vertex_cache_ghost.push_back(data_ghost);
 
@@ -710,12 +711,12 @@ bool ReaderAsciiHepMC2::parse_pdf_info(GenEvent &evt, const char *buf) {
     //For compatibility with original HepMC2
     bool pdfids = true;
     if ( !(cursor = strchr(cursor+1, ' ')) ) pdfids = false;
-    if (pdfids) pi->pdf_id[0] = atoi(cursor);
-    else  pi->pdf_id[0] = 0;
+    if (pdfids) {pi->pdf_id[0] = atoi(cursor);}
+    else  {pi->pdf_id[0] = 0;}
 
     if (pdfids) if ( !(cursor = strchr(cursor+1, ' ')) )  pdfids = false;
-    if (pdfids) pi->pdf_id[1] = atoi(cursor);
-    else  pi->pdf_id[1] = 0;
+    if (pdfids) { pi->pdf_id[1] = atoi(cursor);}
+    else  {pi->pdf_id[1] = 0;}
 
     evt.add_attribute("GenPdfInfo", pi);
 

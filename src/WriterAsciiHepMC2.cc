@@ -170,7 +170,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     }
     flush();
     m_cursor += sprintf(m_cursor, " %zu", evt.weights().size());
-    if ( evt.weights().size() )
+    if ( !evt.weights().empty() )
     {
         for (double w: evt.weights()) {
             m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), w);
@@ -182,10 +182,11 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         const std::vector<std::string> names = run_info()->weight_names();
         for (size_t q = 0; q < evt.weights().size(); q++)
         {
-            if (q < names.size())
+            if (q < names.size()) {
                 write_string(" \""+names[q]+"\"");
-            else
+            } else {
                 write_string(" \""+std::to_string(q)+"\"");
+            }
             flush();
         }
     }
@@ -245,14 +246,15 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         write_vertex(v);
         for (ConstGenParticlePtr p: v->particles_in())
         {
-            if (!p->production_vertex()) write_particle( p, production_vertex );
+            if (!p->production_vertex()) { write_particle( p, production_vertex ); }
             else
             {
                 if (p->production_vertex()->id() == 0) write_particle( p, production_vertex );
             }
         }
-        for (ConstGenParticlePtr p: v->particles_out())
+        for (ConstGenParticlePtr p: v->particles_out()) {
             write_particle(p, production_vertex);
+        }
     }
 
     // Flush rest of the buffer to file
@@ -387,16 +389,16 @@ void WriterAsciiHepMC2::write_particle(ConstGenParticlePtr p, int /*second_field
     m_cursor += sprintf(m_cursor, " %i", p->status() );
     flush();
     int ev = 0;
-    if (p->end_vertex())
+    if (p->end_vertex()) {
         if (p->end_vertex()->id() != 0)
-            ev = p->end_vertex()->id();
-
+        { ev = p->end_vertex()->id(); }
+    }
     std::shared_ptr<DoubleAttribute> A_theta = p->attribute<DoubleAttribute>("theta");
     std:: shared_ptr<DoubleAttribute> A_phi = p->attribute<DoubleAttribute>("phi");
-    if (A_theta) m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_theta->value());
-    else m_cursor += sprintf(m_cursor, " 0");
-    if (A_phi) m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_phi->value());
-    else m_cursor += sprintf(m_cursor, " 0");
+    if (A_theta) { m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_theta->value()); }
+    else { m_cursor += sprintf(m_cursor, " 0");}
+    if (A_phi) { m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_phi->value()); }
+    else { m_cursor += sprintf(m_cursor, " 0");}
     m_cursor += sprintf(m_cursor, " %i", ev);
     flush();
     std::shared_ptr<VectorIntAttribute> A_flows = p->attribute<VectorIntAttribute>("flows");

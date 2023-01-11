@@ -43,15 +43,15 @@ class GenEvent {
 public:
 
     /// @brief Event constructor without a run
-    GenEvent(Units::MomentumUnit momentum_unit = Units::GEV,
-             Units::LengthUnit length_unit = Units::MM);
+    GenEvent(Units::MomentumUnit mu = Units::GEV,
+             Units::LengthUnit lu = Units::MM);
 
 #if !defined(__CINT__)
 
     /// @brief Constructor with associated run
     GenEvent(std::shared_ptr<GenRunInfo> run,
-             Units::MomentumUnit momentum_unit = Units::GEV,
-             Units::LengthUnit length_unit = Units::MM);
+             Units::MomentumUnit mu = Units::GEV,
+             Units::LengthUnit lu = Units::MM);
 
     /// @brief Copy constructor
     GenEvent(const GenEvent&);

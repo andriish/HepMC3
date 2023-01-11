@@ -34,7 +34,7 @@ bool GenHeavyIon::from_string(const std::string &att) {
            >> centrality;
         return !is.fail();
     } else
-        is >> version;
+    { is >> version;}
 
 
 
@@ -90,14 +90,14 @@ bool GenHeavyIon::to_string(std::string &att) const {
 
     os << participant_plane_angles.size();
     for ( std::map<int, double>::const_iterator it = participant_plane_angles.begin();
-            it != participant_plane_angles.end(); ++it )
+            it != participant_plane_angles.end(); ++it ) {
         os << " " << it->first << " " << it->second;
-
+    }
     os << " " << eccentricities.size();
     for ( std::map<int, double>::const_iterator it = eccentricities.begin();
-            it != eccentricities.end(); ++it )
+            it != eccentricities.end(); ++it ) {
         os << " " << it->first << " " << it->second;
-
+    }
     att = os.str();
 
     return true;

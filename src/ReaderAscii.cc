@@ -21,7 +21,7 @@ namespace HepMC3 {
 
 
 ReaderAscii::ReaderAscii(const std::string &filename)
-    : m_file(filename), m_stream(0), m_isstream(false)
+    : m_file(filename), m_stream(nullptr), m_isstream(false)
 {
     if ( !m_file.is_open() ) {
         HEPMC3_ERROR("ReaderAscii: could not open input file: " << filename)
@@ -247,11 +247,13 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
         return false;
     }
-    for ( auto p : m_forward_daughters )
-        for (auto v: evt.vertices())
+    for ( auto p : m_forward_daughters ) {
+        for (auto v: evt.vertices()) {
             if (p.second == v->id())
                 v->add_particle_out(p.first);
-    for ( auto v : m_forward_mothers )  for ( auto idpm : v.second )  v.first->add_particle_in(evt.particles()[idpm-1]);
+        }
+    }
+    for ( auto v : m_forward_mothers )  { for ( auto idpm : v.second )  v.first->add_particle_in(evt.particles()[idpm-1]); }
 
     /* restore ids of vertices using a bank of available ids*/
     std::vector<int> all_ids;
@@ -583,10 +585,10 @@ bool ReaderAscii::parse_tool(const char *buf) {
     ++cursor;
     std::string line = unescape(cursor);
     GenRunInfo::ToolInfo tool;
-    std::string::size_type pos = line.find("\n");
+    std::string::size_type pos = line.find('\n');
     tool.name = line.substr(0, pos);
     line = line.substr(pos + 1);
-    pos = line.find("\n");
+    pos = line.find('\n');
     tool.version = line.substr(0, pos);
     tool.description = line.substr(pos + 1);
     run_info()->tools().push_back(tool);
@@ -601,12 +603,14 @@ std::string ReaderAscii::unescape(const std::string& s) {
     for ( std::string::const_iterator it = s.begin(); it != s.end(); ++it ) {
         if ( *it == '\\' ) {
             ++it;
-            if ( *it == '|' )
+            if ( *it == '|' ) {
                 ret += '\n';
-            else
+            }
+            else {
                 ret += *it;
+            }
         } else
-            ret += *it;
+        {ret += *it;}
     }
 
     return ret;
