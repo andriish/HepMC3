@@ -27,7 +27,7 @@ WriterAscii::WriterAscii(const std::string &filename, std::shared_ptr<GenRunInfo
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024)
+      m_buffer_size(262144)
 {
     set_run_info(run);
     if ( !m_file.is_open() ) {
@@ -55,7 +55,7 @@ WriterAscii::WriterAscii(std::ostream &stream, std::shared_ptr<GenRunInfo> run)
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024)
+      m_buffer_size(262144)
 {
     set_run_info(run);
     const std::string header = "HepMC::Version " + version() + "\nHepMC::Asciiv3-START_EVENT_LISTING\n";
@@ -79,7 +79,7 @@ WriterAscii::WriterAscii(std::shared_ptr<std::ostream> s_stream, std::shared_ptr
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024)
+      m_buffer_size(262144)
 {
     set_run_info(run);
     const std::string header = "HepMC::Version " + version() + "\nHepMC::Asciiv3-START_EVENT_LISTING\n";
@@ -197,11 +197,13 @@ void WriterAscii::write_event(const GenEvent &evt) {
         if (v) {
             // Check if we need this vertex at all
             // Yes, use vertex as parent object
-            if ( v->particles_in().size() > 1 || !v->data().is_zero() ) parent_object = v->id();
+            if ( v->particles_in().size() > 1 || !v->data().is_zero() ) { parent_object = v->id(); }
             // No, use particle as parent object
             // Add check for attributes of this vertex
-            else if ( v->particles_in().size() == 1 )                   parent_object = v->particles_in().front()->id();
-            else if ( v->particles_in().empty() ) HEPMC3_DEBUG(30, "WriterAscii::write_event - found a vertex without incoming particles: " << v->id());
+            else {
+                if ( v->particles_in().size() == 1 )                  { parent_object = v->particles_in().front()->id();}
+                else {if ( v->particles_in().empty() ) {HEPMC3_DEBUG(30, "WriterAscii::write_event - found a vertex without incoming particles: " << v->id());}}
+            }
             // Usage of map instead of simple counter helps to deal with events with random ids of vertices.
             if (alreadywritten.count(v->id()) == 0 && parent_object < 0)
             { write_vertex(v); alreadywritten[v->id()] = true; }

@@ -118,12 +118,12 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     // information outside the LHEF <event> tags, which we may want to
     // add.
     std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
-    if ( m_reader->outsideBlock.length() )
+    if ( m_reader->outsideBlock.length() ) {
         hepe->tags =  LHEF::XMLTag::findXMLTags(m_reader->outsideBlock);
-
+    }
     hepe->hepeup = m_reader->hepeup;
     std::vector<LHEF::HEPEUP*> input;
-    if (m_reader->hepeup.subevents.size() > 0) { input.insert(input.end(), hepe->hepeup.subevents.begin(), hepe->hepeup.subevents.end()); }
+    if (!m_reader->hepeup.subevents.empty()) { input.insert(input.end(), hepe->hepeup.subevents.begin(), hepe->hepeup.subevents.end()); }
     else { input.push_back(&m_reader->hepeup);}
     int first_group_event = m_neve;
     m_neve++;
@@ -152,8 +152,9 @@ bool ReaderLHEF::read_event(GenEvent& ev)
             std::pair<int, int> vertex_index = v.first;
             GenVertexPtr          vertex = v.second;
             for (int i = vertex_index.first-1; i < vertex_index.second; ++i) {
-                if ( i >= 0 && i < (int)particles.size())
+                if ( i >= 0 && i < (int)particles.size()) {
                     vertex->add_particle_in(particles[i]);
+                }
             }
         }
         std::pair<int, int> vertex_index(0, 0);

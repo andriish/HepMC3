@@ -21,8 +21,8 @@ void Print::content(std::ostream& os, const GenEvent &event) {
     os << std::endl;
 
     os << "Weights (" << event.weights().size() << "): " << std::endl;
-    for (std::vector<double>::const_iterator w = event.weights().begin(); w != event.weights().end(); ++w ) {
-        os << " " << *w;
+    for (const auto& w: event.weights()) {
+        os << " " << w;
     }
 
     os << "Attributes:" << std::endl;
@@ -203,8 +203,11 @@ void Print::listing(std::ostream& os, ConstGenParticlePtr p) {
 }
 void Print::line(std::ostream& os, const GenEvent &event, bool attributes) {
     os << "GenEvent: #" << event.event_number();
-    if (attributes) for (std::string s: event.attribute_names())
+    if (attributes) {
+        for (std::string s: event.attribute_names()) {
             os << " " << s << "=" <<event.attribute_as_string(s);
+        }
+    }
 }
 
 void Print::line(std::ostream& os, const GenRunInfo &RunInfo, bool attributes) {

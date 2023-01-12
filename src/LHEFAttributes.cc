@@ -23,11 +23,12 @@ bool HEPRUPAttribute::from_string(const std::string &att) {
     bool found = false;
     clear();
     tags = LHEF::XMLTag::findXMLTags(att);
-    for ( int i = 0, N = tags.size(); i < N; ++i )
+    for ( int i = 0, N = tags.size(); i < N; ++i ) {
         if ( tags[i]->name == "init" ) {
             heprup = LHEF::HEPRUP(*tags[i], 3);
             found = true;
         }
+    }
     return found;
 }
 
@@ -51,8 +52,9 @@ bool HEPEUPAttribute::from_string(const std::string &att) {
     clear();
     tags = LHEF::XMLTag::findXMLTags(att);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
-        if ( tags[i]->name == "event" || tags[i]->name == "eventgroup")
+        if ( tags[i]->name == "event" || tags[i]->name == "eventgroup") {
             return true;
+        }
     }
     return false;
 }
@@ -62,8 +64,9 @@ bool HEPEUPAttribute::to_string(std::string &att) const {
     if ( hepeup.heprup ) hepeup.print(os);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
         if ( !hepeup.heprup ||
-                (tags[i]->name != "event" && tags[i]->name != "eventgroup") )
+                (tags[i]->name != "event" && tags[i]->name != "eventgroup") ) {
             tags[i]->print(os);
+        }
     }
     att = os.str();
     return true;

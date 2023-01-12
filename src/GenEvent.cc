@@ -254,13 +254,14 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
 ///       Core library due to wories about generator dependence
 static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, ConstGenVertexPtr v)
 {
-    for ( ConstGenParticlePtr p: v->particles_out())
+    for ( ConstGenParticlePtr p: v->particles_out()) {
         if (p->end_vertex())
         {
-            if (a[p->end_vertex()] != 0) return true;
-            else a[p->end_vertex()]++;
+            if (a[p->end_vertex()] != 0) { return true; }
+            else {a[p->end_vertex()]++;}
             if (visit_children(a, p->end_vertex())) return true;
         }
+    }
     return false;
 }
 
@@ -358,9 +359,11 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
             std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
             for (auto & vt1: m_attributes) {
                 std::vector< std::pair< int, std::shared_ptr<Attribute> > > changed_attributes;
-                for ( auto vt2 : vt1.second )
-                    if ( vt2.first <= rootid )
+                for ( auto vt2 : vt1.second ) {
+                    if ( vt2.first <= rootid ) {
                         changed_attributes.push_back(vt2);
+                    }
+                }
                 for ( auto val : changed_attributes ) {
                     vt1.second.erase(val.first);
                     vt1.second[val.first == rootid? 0: val.first + 1] = val.second;
@@ -380,7 +383,6 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
                      << this->particles().size() << ", max deque size: "
                      << max_deque_size << ", iterations: " << sorting_loop_count)
     )
-    return;
 }
 
 
@@ -432,8 +434,9 @@ void GenEvent::shift_position_by(const FourVector & delta) {
 
     // Offset all vertices
     for ( GenVertexPtr v: m_vertices ) {
-        if ( v->has_set_position() )
+        if ( v->has_set_position() ) {
             v->set_position(v->position() + delta);
+        }
     }
 }
 
@@ -446,16 +449,11 @@ bool GenEvent::rotate(const FourVector&  delta)
         long double tempY = mom.y();
         long double tempZ = mom.z();
 
-        long double tempX_;
-        long double tempY_;
-        long double tempZ_;
-
-
         long double cosa = std::cos(delta.x());
         long double sina = std::sin(delta.x());
 
-        tempY_ = cosa*tempY+sina*tempZ;
-        tempZ_ = -sina*tempY+cosa*tempZ;
+        long double tempY_ = cosa*tempY+sina*tempZ;
+        long double tempZ_ = -sina*tempY+cosa*tempZ;
         tempY = tempY_;
         tempZ = tempZ_;
 
@@ -463,7 +461,7 @@ bool GenEvent::rotate(const FourVector&  delta)
         long double cosb = std::cos(delta.y());
         long double sinb = std::sin(delta.y());
 
-        tempX_ = cosb*tempX-sinb*tempZ;
+        long double tempX_ = cosb*tempX-sinb*tempZ;
         tempZ_ = sinb*tempX+cosb*tempZ;
         tempX = tempX_;
         tempZ = tempZ_;
@@ -486,16 +484,11 @@ bool GenEvent::rotate(const FourVector&  delta)
         long double tempY = pos.y();
         long double tempZ = pos.z();
 
-        long double tempX_;
-        long double tempY_;
-        long double tempZ_;
-
-
         long double cosa = std::cos(delta.x());
         long double sina = std::sin(delta.x());
 
-        tempY_ = cosa*tempY+sina*tempZ;
-        tempZ_ = -sina*tempY+cosa*tempZ;
+        long double tempY_ = cosa*tempY+sina*tempZ;
+        long double tempZ_ = -sina*tempY+cosa*tempZ;
         tempY = tempY_;
         tempZ = tempZ_;
 
@@ -503,7 +496,7 @@ bool GenEvent::rotate(const FourVector&  delta)
         long double cosb = std::cos(delta.y());
         long double sinb = std::sin(delta.y());
 
-        tempX_ = cosb*tempX-sinb*tempZ;
+        long double tempX_ = cosb*tempX-sinb*tempZ;
         tempZ_ = sinb*tempX+cosb*tempZ;
         tempX = tempX_;
         tempZ = tempZ_;
@@ -774,16 +767,15 @@ void GenEvent::add_beam_particle(GenParticlePtr p1) {
         HEPMC3_WARNING("Attempting to add an empty particle as beam particle. Ignored.")
         return;
     }
-    if (p1->in_event()) if (p1->parent_event() != this)
-        {
-            HEPMC3_WARNING("Attempting to add particle from another event. Ignored.")
-            return;
-        }
+    if (p1->in_event() && p1->parent_event() != this)
+    {
+        HEPMC3_WARNING("Attempting to add particle from another event. Ignored.")
+        return;
+    }
     if (p1->production_vertex())  p1->production_vertex()->remove_particle_out(p1);
     //Particle w/o production vertex is added to root vertex.
     add_particle(p1);
     p1->set_status(4);
-    return;
 }
 
 

@@ -202,10 +202,10 @@ public:
         shift_position_by(delta);
     }
 
-    /// @brief Boost event using x,y,z components of @a v as velocities
-    bool boost( const FourVector&  v );
-    /// @brief Rotate event using x,y,z components of @a v as rotation angles
-    bool rotate( const FourVector&  v );
+    /// @brief Boost event using x,y,z components of @a delta as velocities
+    bool boost( const FourVector&  delta );
+    /// @brief Rotate event using x,y,z components of @a delta as rotation angles
+    bool rotate( const FourVector&  delta );
     /// @brief Change sign of @a axis
     bool reflect(const int axis);
 
@@ -277,7 +277,7 @@ public:
     /// if it is the only incoming particle of this vertex.
     /// It will also production vertex of this particle if this vertex
     /// has no more outgoing particles
-    void remove_particle( GenParticlePtr v );
+    void remove_particle( GenParticlePtr p );
 
     /// @brief Remove a set of particles
     ///
@@ -299,12 +299,12 @@ public:
     ///
     /// @note Any particles on this list that do not belong to the tree
     ///       will be ignored.
-    void add_tree( const std::vector<GenParticlePtr> &particles );
+    void add_tree( const std::vector<GenParticlePtr> &parts );
 
     /// @brief Reserve memory for particles and vertices
     ///
     /// Helps optimize event creation when size of the event is known beforehand
-    void reserve(const size_t& particles, const size_t& vertices = 0);
+    void reserve(const size_t& parts, const size_t& verts = 0);
 
     /// @brief Remove contents of this event
     void clear();

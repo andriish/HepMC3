@@ -48,7 +48,8 @@ bool GenHeavyIon::from_string(const std::string &att) {
     if ( version != "v0" ) is >> user_cent_estimate;
     is >> Nspec_proj_n >> Nspec_targ_n >> Nspec_proj_p >> Nspec_targ_p;
 
-    int N, ord;
+    int N=0;
+    int ord=0;
     is >> N;
     for ( int i = 0; i < N; ++i ) {
         is >> ord;

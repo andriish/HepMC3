@@ -57,11 +57,11 @@ ReaderHEPEVT::ReaderHEPEVT(std::shared_ptr<std::istream> s_stream)
 
 bool ReaderHEPEVT::skip(const int n)
 {
-    const size_t       max_buffer_size = 512*512;
+    const size_t       max_buffer_size = 262144;
     char               buf[max_buffer_size];
     int nn = n;
     while (!failed()) {
-        char peek;
+        char peek(0);
         if ( (!m_file.is_open()) && (!m_isstream) ) { return false; }
         m_isstream ? peek = m_stream->peek() : peek = m_file.peek();
         if ( peek == 'E' ) nn--;
@@ -78,7 +78,8 @@ bool ReaderHEPEVT::read_hepevt_event_header()
     const size_t       max_e_buffer_size = 512;
     char buf_e[max_e_buffer_size];
     bool eventline = false;
-    int m_i = 0, m_p = 0;
+    int m_i = 0;
+    int m_p = 0;
     while (!eventline)
     {
         m_isstream ? m_stream->getline(buf_e, max_e_buffer_size) : m_file.getline(buf_e, max_e_buffer_size);

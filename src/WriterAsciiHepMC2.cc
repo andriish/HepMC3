@@ -27,7 +27,7 @@ WriterAsciiHepMC2::WriterAsciiHepMC2(const std::string &filename, std::shared_pt
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024),
+      m_buffer_size(262144),
       m_particle_counter(0)
 {
     HEPMC3_WARNING("WriterAsciiHepMC2::WriterAsciiHepMC2: HepMC2 IO_GenEvent format is outdated. Please use HepMC3 Asciiv3 format instead.")
@@ -51,7 +51,7 @@ WriterAsciiHepMC2::WriterAsciiHepMC2(std::ostream &stream, std::shared_ptr<GenRu
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024),
+      m_buffer_size(262144),
       m_particle_counter(0)
 {
     HEPMC3_WARNING("WriterAsciiHepMC2::WriterAsciiHepMC2: HepMC2 IO_GenEvent format is outdated. Please use HepMC3 Asciiv3 format instead.")
@@ -69,7 +69,7 @@ WriterAsciiHepMC2::WriterAsciiHepMC2(std::shared_ptr<std::ostream> s_stream, std
       m_precision(16),
       m_buffer(nullptr),
       m_cursor(nullptr),
-      m_buffer_size(256*1024),
+      m_buffer_size(262144),
       m_particle_counter(0)
 {
     HEPMC3_WARNING("WriterAsciiHepMC2::WriterAsciiHepMC2: HepMC2 IO_GenEvent format is outdated. Please use HepMC3 Asciiv3 format instead.")
@@ -140,14 +140,14 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         for (ConstGenParticlePtr p: v->particles_in())
         {
             if (!p->production_vertex())                { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
-            else if (p->production_vertex()->id() == 0) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
+            else {if (p->production_vertex()->id() == 0) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }}
         }
         for (ConstGenParticlePtr p: v->particles_out()) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
     }
     //
     int idbeam1 = 10000;
     int idbeam2 = 10000;
-    if (beams.size() > 0) idbeam1 += beams[0] + 1;
+    if (!beams.empty()) idbeam1 += beams[0] + 1;
     if (beams.size() > 1) idbeam2 += beams[1] + 1;
     m_cursor += sprintf(m_cursor, "E %d %d %e %e %e %d %d %zu %i %i",
                         evt.event_number(),
@@ -326,7 +326,7 @@ void WriterAsciiHepMC2::write_vertex(ConstGenVertexPtr v)
     int orph = 0;
     for (ConstGenParticlePtr p: v->particles_in())
     {
-        if (!p->production_vertex()) orph++;
+        if (!p->production_vertex()) { orph++;}
         else
         {
             if (p->production_vertex()->id() == 0) orph++;
@@ -448,7 +448,7 @@ inline void WriterAsciiHepMC2::write_string(const std::string &str)
 
 void WriterAsciiHepMC2::close()
 {
-    std::ofstream* ofs = dynamic_cast<std::ofstream*>(m_stream);
+    auto* ofs = dynamic_cast<std::ofstream*>(m_stream);
     if (ofs && !ofs->is_open()) return;
     forced_flush();
     const std::string footer("HepMC::IO_GenEvent-END_EVENT_LISTING\n\n");
