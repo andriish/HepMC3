@@ -33,6 +33,9 @@
 -function LHEF::Writer::initComments()
 -function LHEF::Writer::eventComments()
 
+-function void HepMC3::GenCrossSection::set_cross_section(const std::vector<double>&, const std::vector<double>&,const long&, const long&)
+-function HepMC3::GenCrossSection::xsecs
+-function HepMC3::GenCrossSection::xsec_errs
 
 
 -function std::vector<std::shared_ptr<HepMC3::GenVertex>, std::allocator<std::shared_ptr<HepMC3::GenVertex> > >::data()
