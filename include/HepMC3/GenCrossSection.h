@@ -64,6 +64,18 @@ public:
     /** @brief Set all fields */
     void set_cross_section(const double& xs, const double& xs_err,const long& n_acc = -1, const long& n_att = -1);
 
+    /** @brief Set all fields */
+    void set_cross_section(const std::vector<double>& xs, const std::vector<double>& xs_err,const long& n_acc = -1, const long& n_att = -1);
+
+    /** @brief Get the cross-sections
+     */
+    std::vector<double>& xsecs() const { return cross_sections; }
+
+    /** @brief Get the cross-section errors
+     */
+    std::vector<double>& xsec_errs() const { return cross_section_errors; }
+
+
     /** @brief Set the number of accepted events
      */
     void set_accepted_events(const long& n_acc ) {
@@ -126,8 +138,8 @@ public:
     /** @brief Get the cross section corresponding to the weight with index
         \a indx.
      */
-    double xsec(const int& indx = 0) const {
-        return cross_sections[indx];
+    double xsec(const int& index = 0) const {
+        if ( index < cross_sections().size() ) return cross_sections.at(index); else  throw std::runtime_error("GenCrossSection::xsec(const int&): index outside of range"); return 0.0; }
     }
 
     /** @brief Get the cross section error corresponding to the weight
@@ -141,7 +153,7 @@ public:
         with index \a indx.
      */
     double xsec_err(const int& indx = 0) const {
-        return cross_section_errors[indx];
+        if ( index < cross_section_errors().size() ) return cross_section_errors.at(index); else  throw std::runtime_error("GenCrossSection::xsec_err(const int&): index outside of range"); return 0.0; }
     }
 
     bool operator==( const GenCrossSection& ) const; ///< Operator ==

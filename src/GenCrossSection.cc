@@ -36,6 +36,14 @@ void GenCrossSection::set_cross_section(const double& xs, const double& xs_err, 
 }
 
 
+void GenCrossSection::set_cross_section(const std::vector<double>& xs, const std::vector<double>& xs_err, const long& n_acc, const long& n_att) {
+    cross_sections       = xs;
+    cross_section_errors = xs_err;
+    accepted_events     = n_acc;
+    attempted_events    = n_att;
+}
+
+
 bool GenCrossSection::from_string(const std::string &att) {
     const char *cursor = att.data();
     cross_sections.clear();
