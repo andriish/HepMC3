@@ -69,11 +69,11 @@ public:
 
     /** @brief Get the cross-sections
      */
-    std::vector<double>& xsecs() const { return cross_sections; }
+    const std::vector<double>& xsecs() const { return cross_sections; }
 
     /** @brief Get the cross-section errors
      */
-    std::vector<double>& xsec_errs() const { return cross_section_errors; }
+    const std::vector<double>& xsec_errs() const { return cross_section_errors; }
 
 
     /** @brief Set the number of accepted events
@@ -110,8 +110,9 @@ public:
     /** @brief Set the cross section corresponding to the weight with
         index \a indx.
      */
-    void set_xsec(const int& indx, const double& xs) {
-        cross_sections[indx] = xs;
+    void set_xsec(const int& index, const double& xs) {
+        if ( index >= cross_sections.size() ) {throw std::runtime_error("GenCrossSection::set_xsec(const int&): index outside of range");}
+        cross_sections[index] = xs;
     }
 
     /** @brief Set the cross section error corresponding to the weight
@@ -124,8 +125,9 @@ public:
     /** @brief Set the cross section error corresponding to the weight
         with index \a indx.
      */
-    void set_xsec_err(const int& indx, const double& xs_err) {
-        cross_section_errors[indx] = xs_err;
+    void set_xsec_err(const int& index, const double& xs_err) {
+        if ( index >= cross_section_errors.size() ) {throw std::runtime_error("GenCrossSection::set_xsec_err(const int&): index outside of range");}
+        cross_section_errors[index] = xs_err;
     }
 
     /** @brief Get the cross section corresponding to the weight named
@@ -139,7 +141,9 @@ public:
         \a indx.
      */
     double xsec(const int& index = 0) const {
-        if ( index < cross_sections().size() ) return cross_sections.at(index); else  throw std::runtime_error("GenCrossSection::xsec(const int&): index outside of range"); return 0.0; }
+        if ( index < cross_sections.size() ) { return cross_sections.at(index); }
+        else  { throw std::runtime_error("GenCrossSection::xsec(const int&): index outside of range");}
+        return 0.0;
     }
 
     /** @brief Get the cross section error corresponding to the weight
@@ -152,8 +156,10 @@ public:
     /** @brief Get the cross section error corresponding to the weight
         with index \a indx.
      */
-    double xsec_err(const int& indx = 0) const {
-        if ( index < cross_section_errors().size() ) return cross_section_errors.at(index); else  throw std::runtime_error("GenCrossSection::xsec_err(const int&): index outside of range"); return 0.0; }
+    double xsec_err(const int& index = 0) const {
+        if ( index < cross_section_errors.size() ) {return cross_section_errors.at(index);}
+        else  { throw std::runtime_error("GenCrossSection::xsec_err(const int&): index outside of range");}
+        return 0.0;
     }
 
     bool operator==( const GenCrossSection& ) const; ///< Operator ==
