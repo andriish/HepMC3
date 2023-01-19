@@ -29,7 +29,7 @@ void GenCrossSection::set_cross_section(const double& xs, const double& xs_err, 
     double cross_section_error = xs_err;
     accepted_events     = n_acc;
     attempted_events    = n_att;
-    size_t N = std::max( event() ? event()->weights().size() : 0 , 1);
+    size_t N = std::max( event() ? event()->weights().size() : 0 , size_t{1});
     cross_sections = std::vector<double>(N, cross_section);
     cross_section_errors = std::vector<double>(N, cross_section_error);
 }
