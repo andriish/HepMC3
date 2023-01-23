@@ -17,6 +17,7 @@
 -class std::locale
 -class std::streambuf
 -class std::_Ios_Seekdir
+-class std::_Ios_Iostate
 
 
 -function HepMC3::WriterAsciiHepMC2::WriterAsciiHepMC2(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
@@ -33,9 +34,9 @@
 -function LHEF::Writer::initComments()
 -function LHEF::Writer::eventComments()
 
--function void HepMC3::GenCrossSection::set_cross_section(const std::vector<double>&, const std::vector<double>&,const long&, const long&)
--function HepMC3::GenCrossSection::xsecs
--function HepMC3::GenCrossSection::xsec_errs
+#function void HepMC3::GenCrossSection::set_cross_section(const std::vector<double>&, const std::vector<double>&,const long&, const long&)
+#function HepMC3::GenCrossSection::xsecs
+#function HepMC3::GenCrossSection::xsec_errs
 
 
 -function std::vector<std::shared_ptr<HepMC3::GenVertex>, std::allocator<std::shared_ptr<HepMC3::GenVertex> > >::data()
