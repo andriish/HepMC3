@@ -431,9 +431,12 @@ endif()
 # Aliases for packages that include this as a sub-project but 
 # want to use the namespaced target names
 add_library(HepMC3::All ALIAS HepMC3All)
-add_library(HepMC3::All_static ALIAS HepMC3All_static)
-
-install(TARGETS HepMC3All HepMC3All_static EXPORT HepMC3Targets)
+if(HEPMC3_BUILD_STATIC_LIBS)
+  add_library(HepMC3::All_static ALIAS HepMC3All_static)
+  install(TARGETS HepMC3All HepMC3All_static EXPORT HepMC3Targets)
+else()
+  install(TARGETS HepMC3All EXPORT HepMC3Targets)
+endif()
 
 install(EXPORT HepMC3Targets DESTINATION ${CONFIG_INSTALL_DIR})
 

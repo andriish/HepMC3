@@ -17,8 +17,6 @@
 -class std::locale
 -class std::streambuf
 -class std::_Ios_Seekdir
--class std::_Ios_Iostate
-
 
 -function HepMC3::WriterAsciiHepMC2::WriterAsciiHepMC2(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
 -function HepMC3::WriterAscii::WriterAscii(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
