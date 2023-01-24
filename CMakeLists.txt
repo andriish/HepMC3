@@ -17,7 +17,6 @@ else(CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
   message(STATUS "HepMC3 Build type not specified, use: ${CMAKE_BUILD_TYPE}")
 endif(CMAKE_BUILD_TYPE)
-
 if (${CMAKE_VERSION} GREATER "3.8")
 cmake_policy(SET CMP0069 NEW)
 endif()
