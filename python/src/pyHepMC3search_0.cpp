@@ -3,13 +3,15 @@
 #include <HepMC3/Selector.h>
 #include <functional>
 #include <iterator>
+#include <map>
 #include <memory>
 #include <sstream> // __str__
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <functional>
 #include <pybind11/pybind11.h>
+#include <functional>
 #include <string>
 #include <HepMC3/Version.h>
 #include <HepMC3/Relatives.h>
