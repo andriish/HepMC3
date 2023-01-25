@@ -45,7 +45,7 @@ void bind_pyHepMC3_16(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("dirpath", &LHEF::Reader::dirpath);
 		cl.def("readEvent", (bool (LHEF::Reader::*)()) &LHEF::Reader::readEvent, "Read an event from the file and store it in the hepeup\n object. Optional comment lines are stored i the eventComments\n member variable.\n \n\n true if the read sas successful.\n\nC++: LHEF::Reader::readEvent() --> bool");
 		cl.def("openeventfile", (void (LHEF::Reader::*)(int)) &LHEF::Reader::openeventfile, "Open the efentfile with index ifile. If another eventfile is\n being read, its remaining contents is discarded. This is a noop\n if current read session is not a multi-file run.\n\nC++: LHEF::Reader::openeventfile(int) --> void", pybind11::arg("ifile"));
-/*Because of an issue in binder one should comment those lines manually*/
+/*Because of an issue in binder one should comment those lines manually.*/
 /*
 		cl.def("initfile_rdstate", (enum std::_Ios_Iostate (LHEF::Reader::*)() const) &LHEF::Reader::initfile_rdstate, "initfile rdstate \n\nC++: LHEF::Reader::initfile_rdstate() const --> enum std::_Ios_Iostate");
 		cl.def("file_rdstate", (enum std::_Ios_Iostate (LHEF::Reader::*)() const) &LHEF::Reader::file_rdstate, "file rdstate \n\nC++: LHEF::Reader::file_rdstate() const --> enum std::_Ios_Iostate");
