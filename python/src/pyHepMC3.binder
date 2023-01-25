@@ -33,8 +33,7 @@
 -function LHEF::Writer::initComments()
 -function LHEF::Writer::eventComments()
 
--function LHEF::Reader::file_rdstate()
--function LHEF::Reader::initfile_rdstate()
+
 
 -function std::vector<std::shared_ptr<HepMC3::GenVertex>, std::allocator<std::shared_ptr<HepMC3::GenVertex> > >::data()
 -function std::vector<std::shared_ptr<HepMC3::GenParticle>, std::allocator<std::shared_ptr<HepMC3::GenParticle> > >::data()
