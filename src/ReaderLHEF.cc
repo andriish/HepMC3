@@ -74,8 +74,9 @@ void ReaderLHEF::init()
 
     // This is just a test to make sure we can add other attributes as
     // well.
-    run_info()->add_attribute("NPRUP",
-                              std::make_shared<FloatAttribute>(m_hepr->heprup.NPRUP));
+    run_info()->add_attribute("NPRUP",std::make_shared<IntAttribute>(m_hepr->heprup.NPRUP));
+    run_info()->add_attribute("XSECUP",std::make_shared<VectorDoubleAttribute>(m_hepr->heprup.XSECUP));
+    run_info()->add_attribute("LPRUP",std::make_shared<VectorIntAttribute>(m_hepr->heprup.LPRUP));
 
     // We want to be able to convey the different event weights to
     // HepMC. In particular we need to add the names of the weights to
