@@ -208,6 +208,14 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         evt.add_attribute("GenCrossSection", xs);
         /// PDF info
         std::shared_ptr<GenPdfInfo> pi  = std::make_shared<GenPdfInfo>();
+        pi->parton_id[0] = particles[0]->pdg_id();
+        pi->parton_id[1] = particles[1]->pdg_id();
+        pi->x[0] = std::abs(particles[0]->momentum().pz()/m_hepr->heprup.EBMUP.first);
+        pi->x[1] = std::abs(particles[1]->momentum().pz()/m_hepr->heprup.EBMUP.second);
+        pi->scale = ahepeup->pdfinfo.scale;
+        pi->xf[0] = 1;
+        pi->xf[1] = 1;
+        /*
         pi->parton_id[0] = ahepeup->pdfinfo.p1;
         pi->parton_id[1] = ahepeup->pdfinfo.p2;
         pi->x[0] = ahepeup->pdfinfo.x1;
@@ -215,6 +223,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         pi->scale = ahepeup->pdfinfo.scale;
         pi->xf[0] = ahepeup->pdfinfo.xf1;
         pi->xf[1] = ahepeup->pdfinfo.xf2;
+        */
         pi->pdf_id[0] = m_hepr->heprup.PDFSUP.first;
         pi->pdf_id[1] = m_hepr->heprup.PDFSUP.second;
         evt.add_attribute("GenPdfInfo", pi);
