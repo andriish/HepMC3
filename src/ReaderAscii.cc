@@ -7,6 +7,7 @@
 /// @file ReaderAscii.cc
 /// @brief Implementation of \b class ReaderAscii
 ///
+#include <array>
 #include <cstring>
 #include <sstream>
 
