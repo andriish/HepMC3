@@ -60,7 +60,7 @@ void ReaderLHEF::init()
             for (auto* t3: t2->tags) {
                 if (t3->name != "weightgroup") continue;
                 for (auto* t4: t3->tags) if (t4->name == "weight") nweights++;
-                break;
+                //We can have multiple weight groups
             }
             break;
         }
@@ -76,6 +76,7 @@ void ReaderLHEF::init()
     // well.
     run_info()->add_attribute("NPRUP",std::make_shared<IntAttribute>(m_hepr->heprup.NPRUP));
     run_info()->add_attribute("XSECUP",std::make_shared<VectorDoubleAttribute>(m_hepr->heprup.XSECUP));
+    run_info()->add_attribute("XERRUP",std::make_shared<VectorDoubleAttribute>(m_hepr->heprup.XERRUP));
     run_info()->add_attribute("LPRUP",std::make_shared<VectorIntAttribute>(m_hepr->heprup.LPRUP));
 
     // We want to be able to convey the different event weights to
@@ -84,8 +85,14 @@ void ReaderLHEF::init()
 
     std::vector<std::string> weightnames;
     for ( int i = 0, N = m_hepr->heprup.weightinfo.size(); i < N; ++i ) weightnames.push_back(m_hepr->heprup.weightNameHepMC(i));
-    if (nweights == 0) nweights=1;
-    for ( size_t i = weightnames.size(); i < nweights; ++i ) weightnames.push_back(std::to_string(i));
+    if (nweights == 0) {
+     HEPMC3_WARNING("ReaderLHEF::init: no weight in the LHEF file")
+     nweights=1;
+    }
+    if (weightnames.empty()) {
+      HEPMC3_WARNING("ReaderLHEF::init: no weight names in the LHEF file: "<< m_hepr->heprup.weightinfo.size())
+      for ( size_t i = weightnames.size(); i < nweights; ++i ) weightnames.push_back(std::to_string(i));
+    }
     run_info()->set_weight_names(weightnames);
 
     // We also want to convey the information about which generators was
