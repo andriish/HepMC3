@@ -8,6 +8,7 @@
  *  @brief Implementation of helper functions used to manipulate with HEPEVT block
  */
 #include <algorithm>
+#include <array>
 #include <set>
 #include <vector>
 
