@@ -8,6 +8,7 @@
  *  @brief Implementation of \b class ReaderAsciiHepMC2
  *
  */
+#include <array>
 #include <cstdlib>
 #include <cstring>
 
