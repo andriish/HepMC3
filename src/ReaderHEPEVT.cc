@@ -8,6 +8,7 @@
  *  @brief Implementation of \b class ReaderHEPEVT
  *
  */
+#include <array>
 #include <sstream>
 #include "HepMC3/ReaderHEPEVT.h"
 
