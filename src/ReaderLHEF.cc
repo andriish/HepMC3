@@ -79,6 +79,8 @@ void ReaderLHEF::init()
     run_info()->add_attribute("XERRUP",std::make_shared<VectorDoubleAttribute>(m_hepr->heprup.XERRUP));
     run_info()->add_attribute("LPRUP",std::make_shared<VectorIntAttribute>(m_hepr->heprup.LPRUP));
 
+
+
     // We want to be able to convey the different event weights to
     // HepMC. In particular we need to add the names of the weights to
     // the GenRunInfo object.
@@ -190,6 +192,9 @@ bool ReaderLHEF::read_event(GenEvent& ev)
             wts.push_back(ahepeup->weights[i].first);
         }
         evt.weights() = wts;
+        std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
+        xs->set_cross_section(m_hepr->heprup.XSECUP, m_hepr->heprup.XERRUP);
+        evt.add_attribute("GenCrossSection", xs);
         m_storage.push_back(evt);
     }
     ev = m_storage.front();
