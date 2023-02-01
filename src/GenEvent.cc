@@ -8,13 +8,14 @@
  *  @brief Implementation of \b class GenEvent
  *
  */
-#include <deque>
 #include <algorithm> // sort
+#include <deque>
 
+#include "HepMC3/Data/GenEventData.h"
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
-#include "HepMC3/Data/GenEventData.h"
+
 
 namespace HepMC3 {
 
@@ -140,9 +141,10 @@ void GenEvent::remove_particle(GenParticlePtr p) {
 
     // Remove attributes of this particle
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    std::vector<std::string> atts = p->attribute_names();
-    for (const std::string &s: atts) {
-        p->remove_attribute(s);
+    for (att_key_t& vt1: m_attributes) {
+        std::map<int, std::shared_ptr<Attribute> >::iterator vt2 = vt1.second.find(idx);
+        if (vt2 == vt1.second.end()) continue;
+        vt1.second.erase(vt2);
     }
 
     //
@@ -213,9 +215,10 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     std::vector<GenVertexPtr>::iterator it = m_vertices.erase(m_vertices.begin() + idx-1);
     // Remove attributes of this vertex
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    std::vector<std::string> atts = v->attribute_names();
-    for (std::string s: atts) {
-        v->remove_attribute(s);
+    for (att_key_t& vt1: m_attributes) {
+        std::map<int, std::shared_ptr<Attribute> >::iterator vt2 = vt1.second.find(-idx);
+        if (vt2 == vt1.second.end()) continue;
+        vt1.second.erase(vt2);
     }
 
     //
@@ -420,6 +423,10 @@ std::vector<ConstGenParticlePtr> GenEvent::beams(const int status) const {
     std::vector<ConstGenParticlePtr> ret;
     for (auto p: m_rootvertex->particles_out()) if (p->status() == status) ret.push_back(p);
     return ret;
+}
+
+std::vector<ConstGenParticlePtr> GenEvent::beams() const {
+    return std::const_pointer_cast<const GenVertex>(m_rootvertex)->particles_out();
 }
 
 
