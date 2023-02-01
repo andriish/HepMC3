@@ -597,7 +597,7 @@ bool ReaderAsciiHepMC2::parse_xs_info(GenEvent &evt, const char *buf) {
     if (m_options.count("keep_single_crosssection") != 0) {
         xs->set_cross_section(xs_val, xs_err);
     } else {
-        const size_t all = run_info()?run_info()->weight_names().size():1;
+        const size_t all = evt.weights().size();
         if (m_options.count("fill_crosssections_with_zeros") != 0) {
             xs->set_cross_section(std::vector<double>(all,0.0), std::vector<double>(all,0.0));
             xs->set_xsec(0,xs_val);
