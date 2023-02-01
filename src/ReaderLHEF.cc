@@ -187,9 +187,9 @@ bool ReaderLHEF::read_event(GenEvent& ev)
             }
         }
         for ( auto v: vertices ) {
-          if (!v.second->particles_out().empty() && !v.second->particles_in().empty()) {
-            evt.add_vertex(v.second);
-          }  
+            if (!v.second->particles_out().empty() && !v.second->particles_in().empty()) {
+                evt.add_vertex(v.second);
+            }
         }
         if (particles.size() > 1)
         {
@@ -208,8 +208,9 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         evt.weights() = wts;
         /// Cross-section
         std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
-        xs->set_cross_section(m_hepr->heprup.XSECUP, m_hepr->heprup.XERRUP);
         evt.add_attribute("GenCrossSection", xs);
+        /// In this order the number of cross-sections will match the number of weights
+        xs->set_cross_section(m_hepr->heprup.XSECUP, m_hepr->heprup.XERRUP);
         /// PDF info
         std::shared_ptr<GenPdfInfo> pi  = std::make_shared<GenPdfInfo>();
         pi->parton_id[0] = particles[0]->pdg_id();
