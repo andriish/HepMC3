@@ -216,7 +216,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
         return false;
     }
      if (run_info() && run_info()->weight_names().empty() ) {
-       run_info()->set_weight_names(std::vector<std::string>("Default"));
+       run_info()->set_weight_names(std::vector<std::string>{"Default"});
      }
      if (evt.weights().empty()) {
        evt.weights().push_back(1.0);
@@ -603,7 +603,7 @@ bool ReaderAsciiHepMC2::parse_xs_info(GenEvent &evt, const char *buf) {
     if (m_options.count("keep_single_crosssection") != 0) {
         xs->set_cross_section(xs_val, xs_err);
     } else {
-        const size_t all = std::max(evt.weights().size(),1);
+        const size_t all = std::max(evt.weights().size(),size_t{1});
         if (m_options.count("fill_crosssections_with_zeros") != 0) {
             xs->set_cross_section(std::vector<double>(all,0.0), std::vector<double>(all,0.0));
             xs->set_xsec(0,xs_val);
