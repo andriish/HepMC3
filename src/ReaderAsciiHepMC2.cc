@@ -219,6 +219,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
        run_info()->set_weight_names(std::vector<std::string>{"Default"});
      }
      if (evt.weights().empty()) {
+       HEPMC3_WARNING("ReaderAsciiHepMC2: weights are empty, an event weight 1.0 will be added.")
        evt.weights().push_back(1.0);
      }
      
