@@ -31,7 +31,7 @@ std::vector<HepMC3::ConstGenVertexPtr>   children_vertices(const HepMC3::ConstGe
 std::vector<HepMC3::GenParticlePtr>      grandchildren_particles(const HepMC3::GenParticlePtr& O);  ///< Return grandchildren particles
 std::vector<HepMC3::ConstGenParticlePtr> grandchildren_particles(const HepMC3::ConstGenParticlePtr& O);  ///< Return grandchildren particles
 std::vector<HepMC3::GenVertexPtr>        grandchildren_vertices(const HepMC3::GenVertexPtr& O);   ///< Return grandchildren vertices
-std::vector<HepMC3::ConstGenVertexPtr>   grandchildren_vertices(HepMC3::ConstGenVertexPtr& O); ///< Return grandchildren vertices
+std::vector<HepMC3::ConstGenVertexPtr>   grandchildren_vertices(const HepMC3::ConstGenVertexPtr& O); ///< Return grandchildren vertices
 std::vector<HepMC3::GenParticlePtr>      parent_particles(const HepMC3::GenVertexPtr& O);  ///< Return parent particles
 std::vector<HepMC3::ConstGenParticlePtr> parent_particles(const HepMC3::ConstGenVertexPtr& O);   ///< Return parent particles
 std::vector<HepMC3::GenVertexPtr>        parent_vertices(const HepMC3::GenParticlePtr& O);   ///< Return parent vertices
