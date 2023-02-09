@@ -832,7 +832,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
     ip = std::unique(unames.begin(), unames.end());
     unames.resize(std::distance(unames.begin(), ip));
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    for (auto name: unames) {
+    for (const auto& name: unames) {
         if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
     }
     const int particles_size = int(m_particles.size());
