@@ -21,9 +21,9 @@ void Print::content(std::ostream& os, const GenEvent &event) {
     os << std::endl;
 
     os << "Weights (" << event.weights().size() << "): " << std::endl;
-    for (const auto& w: event.weights())
+    for (const auto& w: event.weights()) {
         os << " " << w;
-
+    }
 
     os << "Attributes:" << std::endl;
 
@@ -203,14 +203,21 @@ void Print::listing(std::ostream& os, ConstGenParticlePtr p) {
 }
 void Print::line(std::ostream& os, const GenEvent &event, bool attributes) {
     os << "GenEvent: #" << event.event_number();
-    if (attributes) for (const std::string& s: event.attribute_names())
+    if (attributes) {
+        for (const std::string& s: event.attribute_names()) {
             os << " " << s << "=" <<event.attribute_as_string(s);
+        }
+    }
 }
 
 void Print::line(std::ostream& os, const GenRunInfo &RunInfo, bool attributes) {
     os <<"GenRunInfo: Number of tools:" << RunInfo.tools().size();
-    if (attributes) for (const std::string& s: RunInfo.attribute_names())
+
+    if (attributes) {
+        for (const std::string& s: RunInfo.attribute_names()) {
             os << " " << s << "=" << RunInfo.attribute_as_string(s);
+        }
+    }
 }
 
 void Print::line(std::ostream& os, const GenRunInfo::ToolInfo& t) {
@@ -228,8 +235,8 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
 
     const FourVector &pos = v->position();
     os << " has_set_position: ";
-    if ( v->has_set_position() ) os << "true";
-    else                        os << "false";
+    if ( v->has_set_position() ) { os << "true"; }
+    else  { os << "false"; }
 
     os << " (X,cT): " << pos.x() << ", " <<pos.y() << ", " << pos.z() << ", " << pos.t();
     if (attributes)
@@ -237,6 +244,7 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
         std::vector<std::string> names     = v->attribute_names();
         for (const auto& ss: names)
             os << " " << ss << "=" << (*v).attribute_as_string(ss);
+        }
     }
 }
 
@@ -303,6 +311,7 @@ void Print::line(std::ostream& os, ConstGenParticlePtr p, bool attributes) {
         std::vector<std::string> names     = p->attribute_names();
         for (const auto& ss: names)
             os << " " << ss << "=" << (*p).attribute_as_string(ss);
+        }
     }
 }
 

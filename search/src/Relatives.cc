@@ -19,95 +19,95 @@ const Descendants Relatives::DESCENDANTS;
 thread_local const Ancestors   Relatives::ANCESTORS;
 thread_local const Descendants Relatives::DESCENDANTS;
 #endif
-}
+} // namespace HepMC3
 
 namespace HepMC3 {
 /// @brief Returns children of vertex, i.e. outgoing particles.
 std::vector<HepMC3::GenParticlePtr>      children(const HepMC3::GenVertexPtr& O) {
     if (O) return O->particles_out();
-    return  std::vector<HepMC3::GenParticlePtr>();
+    return  {};
 }
 /// @brief Returns children of const vertex, i.e. outgoing particles.
 std::vector<HepMC3::ConstGenParticlePtr> children(const HepMC3::ConstGenVertexPtr& O) {
     if (O) return O->particles_out();
-    return  std::vector<HepMC3::ConstGenParticlePtr>();
+    return  {};
 }
 /// @brief Returns children of particle, i.e. the end vertex.
 std::vector<HepMC3::GenVertexPtr>        children(const HepMC3::GenParticlePtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O->end_vertex()) result.push_back(O->end_vertex());
+    if (O->end_vertex()) result.emplace_back(O->end_vertex());
     return result;
 }
 /// @brief Returns children of const particle, i.e. the end vertex.
 std::vector<HepMC3::ConstGenVertexPtr>   children(const HepMC3::ConstGenParticlePtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O->end_vertex()) result.push_back(O->end_vertex());
+    if (O->end_vertex()) result.emplace_back(O->end_vertex());
     return result;
 }
 /// @brief Returns grandchildren of particle, i.e. the outgoing particles of the end vertex.
 std::vector<HepMC3::GenParticlePtr>      grandchildren(const HepMC3::GenParticlePtr& O) {
     if (O) if (O->end_vertex()) return O->end_vertex()->particles_out();
-    return std::vector<HepMC3::GenParticlePtr> ();
+    return {};
 }
 /// @brief Returns grandchildren of const particle, i.e. the outgoing particles of the end vertex.
 std::vector<HepMC3::ConstGenParticlePtr> grandchildren(const HepMC3::ConstGenParticlePtr& O) {
     if (O) if (O->end_vertex()) return O->end_vertex()->particles_out();
-    return std::vector<HepMC3::ConstGenParticlePtr> ();
+    return {};
 }
 /// @brief Returns grandchildren of vertex, i.e. the end vertices of the outgoing particles.
 std::vector<HepMC3::GenVertexPtr>        grandchildren(const HepMC3::GenVertexPtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O) for (const auto& o: O->particles_out()) if (o->end_vertex()) result.push_back(o->end_vertex());
+    if (O) for (auto o: O->particles_out()) if (o->end_vertex()) result.emplace_back(o->end_vertex());
     return result;
 }
 /// @brief Returns grandchildren of const vertex, i.e. the end vertices of the outgoing particles.
 std::vector<HepMC3::ConstGenVertexPtr>   grandchildren(const HepMC3::ConstGenVertexPtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O)  for (const auto& o:O->particles_out()) if (o->end_vertex()) result.push_back(o->end_vertex());
+    if (O)  for (auto o:O->particles_out()) if (o->end_vertex()) result.emplace_back(o->end_vertex());
     return result;
 }
 /// @brief Returns parents of vertex, i.e. incoming particles.
 std::vector<HepMC3::GenParticlePtr>      parents(const HepMC3::GenVertexPtr& O) {
     if (O) return O->particles_in();
-    return  std::vector<GenParticlePtr>();
+    return  {};
 }
 /// @brief Returns parents of const vertex, i.e. incoming particles.
 std::vector<HepMC3::ConstGenParticlePtr> parents(const HepMC3::ConstGenVertexPtr& O) {
     if (O) return O->particles_in();
-    return  std::vector<HepMC3::ConstGenParticlePtr>();
+    return  {};
 }
 /// @brief Returns parents of particle, i.e. production vertex.
 std::vector<HepMC3::GenVertexPtr>        parents(const HepMC3::GenParticlePtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O->production_vertex()) result.push_back(O->production_vertex());
+    if (O->production_vertex()) result.emplace_back(O->production_vertex());
     return result;
 }
 /// @brief Returns parents of const particle, i.e. production vertex.
 std::vector<HepMC3::ConstGenVertexPtr>   parents(const HepMC3::ConstGenParticlePtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O->production_vertex()) result.push_back(O->production_vertex());
+    if (O->production_vertex()) result.emplace_back(O->production_vertex());
     return result;
 }
 /// @brief Returns grandparents of particle, i.e. incoming particles of production vertex.
 std::vector<HepMC3::GenParticlePtr>      grandparents(const HepMC3::GenParticlePtr& O) {
     if (O) if (O->production_vertex()) return O->production_vertex()->particles_in();
-    return std::vector<HepMC3::GenParticlePtr> ();
+    return {};
 }
 /// @brief Returns grandparents of const particle, i.e. incoming particles of production vertex.
 std::vector<HepMC3::ConstGenParticlePtr> grandparents(const HepMC3::ConstGenParticlePtr& O) {
     if (O) if (O->production_vertex()) return O->production_vertex()->particles_in();
-    return std::vector<HepMC3::ConstGenParticlePtr> ();
+    return {};
 }
 /// @brief Returns grandparents of vertex, i.e. production vertices of incoming particles.
 std::vector<HepMC3::GenVertexPtr>        grandparents(const HepMC3::GenVertexPtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O) for (const auto& o: O->particles_in()) if (o->production_vertex()) result.push_back(o->production_vertex());
+    if (O) for (auto o: O->particles_in()) if (o->production_vertex()) result.emplace_back(o->production_vertex());
     return result;
 }
 /// @brief Returns grandparents of const vertex, i.e. production vertices of incoming particles.
 std::vector<HepMC3::ConstGenVertexPtr>   grandparents(const HepMC3::ConstGenVertexPtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O)  for (const auto& o :O->particles_in()) if (o->end_vertex()) result.push_back(o->production_vertex());
+    if (O)  for (auto o:O->particles_in()) if (o->end_vertex()) result.emplace_back(o->production_vertex());
     return result;
 }
 /// @brief Returns descendands of the same type, i.e. vertices for vertex and particles for particle

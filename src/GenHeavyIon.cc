@@ -8,9 +8,9 @@
  *  @brief Implementation of \b class GenHeavyIon
  *
  */
-#include <cstring> // memcmp
-#include <cstdlib> // atoi
 #include <cstdio> // sprintf
+#include <cstdlib> // atoi
+#include <cstring> // memcmp
 #include <sstream> // sprintf
 
 #include "HepMC3/GenHeavyIon.h"
@@ -34,7 +34,7 @@ bool GenHeavyIon::from_string(const std::string &att) {
            >> centrality;
         return !is.fail();
     } else
-        is >> version;
+    { is >> version;}
 
 
 
@@ -48,7 +48,8 @@ bool GenHeavyIon::from_string(const std::string &att) {
     if ( version != "v0" ) is >> user_cent_estimate;
     is >> Nspec_proj_n >> Nspec_targ_n >> Nspec_proj_p >> Nspec_targ_p;
 
-    int N, ord;
+    int N=0;
+    int ord=0;
     is >> N;
     for ( int i = 0; i < N; ++i ) {
         is >> ord;
@@ -89,13 +90,13 @@ bool GenHeavyIon::to_string(std::string &att) const {
        << Nspec_proj_p << " " << Nspec_targ_p << " ";
 
     os << participant_plane_angles.size();
-    for ( const auto& it: participant_plane_angles)
+    for (const auto& it: participant_plane_angles) {
         os << " " << it.first << " " << it.second;
-
+    }
     os << " " << eccentricities.size();
-    for ( const auto&  it: eccentricities)
+    for (const auto& it: eccentricities) {
         os << " " << it.first << " " << it.second;
-
+    }
     att = os.str();
 
     return true;

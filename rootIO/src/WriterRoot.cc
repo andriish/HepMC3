@@ -8,6 +8,7 @@
  *  @brief Implementation of \b class WriterRoot
  *
  */
+#include <array>
 #include <cstdio>  // sprintf
 #include "HepMC3/WriterRoot.h"
 #include "HepMC3/Version.h"
@@ -38,19 +39,20 @@ void WriterRoot::write_event(const GenEvent &evt) {
         set_run_info(evt.run_info());
         write_run_info();
     } else {
-        if ( evt.run_info() && run_info() != evt.run_info() )
+        if ( evt.run_info() && run_info() != evt.run_info() ) {
             HEPMC3_WARNING("WriterRoot::write_event: GenEvents contain "
                            "different GenRunInfo objects from - only the "
                            "first such object will be serialized.")
         }
+    }
 
     GenEventData data;
     evt.write_data(data);
 
-    char buf[16] = "";
-    sprintf(buf, "%15i", ++m_events_count);
+    std::array<char,16> buf;
+    snprintf(buf.data(), buf.size(), "%15i", ++m_events_count);
 
-    int nbytes = m_file->WriteObject(&data, buf);
+    int nbytes = m_file->WriteObject(&data, buf.data());
 
     if ( nbytes == 0 ) {
         HEPMC3_ERROR("WriterRoot: error writing event")
@@ -77,9 +79,7 @@ void WriterRoot::close() {
 }
 
 bool WriterRoot::failed() {
-    if ( !m_file->IsOpen() ) return true;
-
-    return false;
+    return !m_file->IsOpen();
 }
 
 } // namespace HepMC3

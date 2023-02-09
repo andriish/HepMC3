@@ -10,11 +10,11 @@
  */
 #include <algorithm> // std::remove
 
-#include "HepMC3/GenVertex.h"
-#include "HepMC3/GenParticle.h"
-#include "HepMC3/GenEvent.h"
-#include "HepMC3/Setup.h"
 #include "HepMC3/Attribute.h"
+#include "HepMC3/GenEvent.h"
+#include "HepMC3/GenParticle.h"
+#include "HepMC3/GenVertex.h"
+#include "HepMC3/Setup.h"
 
 namespace HepMC3 {
 
@@ -81,7 +81,6 @@ void GenVertex::remove_particle_out(GenParticlePtr p) {
 
 void GenVertex::set_id(int id) {
     m_id = id;
-    return;
 }
 
 
@@ -134,7 +133,7 @@ std::string GenVertex::attribute_as_string(const std::string& name) const {
 std::vector<std::string> GenVertex::attribute_names() const {
     if ( parent_event() ) return parent_event()->attribute_names(id());
 
-    return std::vector<std::string>();
+    return {};
 }
 
 } // namespace HepMC3

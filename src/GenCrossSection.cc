@@ -8,10 +8,11 @@
  *  @brief Implementation of \b class GenCrossSection
  *
  */
-#include <cstring> // memcmp
 #include <cstdlib> // atoi
-#include <sstream>
+#include <cstring> // memcmp
 #include <iomanip>
+#include <sstream>
+
 #include "HepMC3/GenCrossSection.h"
 #include "HepMC3/GenEvent.h"
 
@@ -20,7 +21,7 @@ namespace HepMC3 {
 
 
 int GenCrossSection::windx(const std::string& wName) const {
-    if ( !event() || !event()->run_info() ) return 0;
+    if ( !event() || !event()->run_info() ) {return 0;}
     return event()->run_info()->weight_index(wName);
 }
 
@@ -29,10 +30,17 @@ void GenCrossSection::set_cross_section(const double& xs, const double& xs_err, 
     double cross_section_error = xs_err;
     accepted_events     = n_acc;
     attempted_events    = n_att;
-    size_t N = 1;
-    if ( event() ) N = std::max(event()->weights().size(), N);
+    size_t N = std::max( event() ? event()->weights().size() : 0, size_t{1});
     cross_sections = std::vector<double>(N, cross_section);
     cross_section_errors = std::vector<double>(N, cross_section_error);
+}
+
+
+void GenCrossSection::set_cross_section(const std::vector<double>& xs, const std::vector<double>& xs_err, const long& n_acc, const long& n_att) {
+    cross_sections       = xs;
+    cross_section_errors = xs_err;
+    accepted_events     = n_acc;
+    attempted_events    = n_att;
 }
 
 
@@ -45,7 +53,7 @@ bool GenCrossSection::from_string(const std::string &att) {
     double cross_section = atof(cursor);
     cross_sections.push_back(cross_section);
 
-    if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
+    if ( !(cursor = strchr(cursor+1, ' ')) ) {return false;}
     double cross_section_error = atof(cursor);
     cross_section_errors.push_back(cross_section_error);
 
@@ -53,8 +61,8 @@ bool GenCrossSection::from_string(const std::string &att) {
     else
     {
         accepted_events = atoi(cursor);
-        if ( !(cursor = strchr(cursor+1, ' ')) ) attempted_events = -1;
-        else attempted_events = atoi(cursor);
+        if ( !(cursor = strchr(cursor+1, ' ')) ) { attempted_events = -1; }
+        else { attempted_events = atoi(cursor); }
     }
     size_t N = 1;
     if ( event() ) N = std::max(event()->weights().size(), N);
@@ -84,10 +92,10 @@ bool GenCrossSection::to_string(std::string &att) const {
        << accepted_events << " "
        << attempted_events;
 
-    for (size_t i = 1; i < cross_sections.size(); ++i )
+    for (size_t i = 1; i < cross_sections.size(); ++i ) {
         os << " " << cross_sections.at(i)
            << " " << (cross_section_errors.size()>i?cross_section_errors.at(i):0.0);
-
+    }
     att = os.str();
 
     return true;

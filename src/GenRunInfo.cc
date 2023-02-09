@@ -10,8 +10,9 @@
  */
 #include <sstream>
 
-#include "HepMC3/GenRunInfo.h"
 #include "HepMC3/Data/GenRunInfoData.h"
+#include "HepMC3/GenRunInfo.h"
+
 
 namespace HepMC3 {
 
@@ -27,20 +28,21 @@ void GenRunInfo::set_weight_names(const std::vector<std::string> & names) {
             name = oss.str();
             m_weight_names[i] = name;
         }
-        if ( has_weight(name) )
+        if ( has_weight(name) ) {
             throw std::logic_error("GenRunInfo::set_weight_names: "
                                    "Duplicate weight name '" + name +
                                    "' found.");
+        }
         m_weight_indices[name] = i;
     }
 }
 
 std::string GenRunInfo::attribute_as_string(const std::string &name) const {
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
-    std::map< std::string, std::shared_ptr<Attribute> >::iterator i = m_attributes.find(name);
-    if ( i == m_attributes.end() ) return std::string();
+    auto i = m_attributes.find(name);
+    if ( i == m_attributes.end() ) return {};
 
-    if ( !i->second ) return std::string();
+    if ( !i->second ) return {};
 
     std::string ret;
     i->second->to_string(ret);
@@ -53,7 +55,7 @@ void GenRunInfo::write_data(GenRunInfoData& data) const {
     data.weight_names = this->weight_names();
 
     // Attributes
-    typedef std::map<std::string, std::shared_ptr<Attribute> >::value_type att_val_t;
+    using att_val_t = std::map<std::string, std::shared_ptr<Attribute>>::value_type;
 
     for (const att_val_t& vt: m_attributes) {
         std::string att;
