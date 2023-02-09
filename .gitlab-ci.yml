@@ -576,6 +576,7 @@ CentOS9s-gcc:
     - dnf config-manager --set-enabled crb  
     - dnf config-manager --set-enabled epel-testing    
     - yum -y install json-devel
+    - yum -y install zlib zlib-devel --nobest --allowerasing
     - *commoninstall
     - *clanginstall
     - *python3install 
@@ -596,6 +597,7 @@ CentOS9s-clang:
     - dnf config-manager --set-enabled crb  
     - dnf config-manager --set-enabled epel-testing
     - yum -y install json-devel 
+    - yum -y install zlib zlib-devel --nobest --allowerasing
     - *commoninstall
     - *clanginstall
     - *python3install 
