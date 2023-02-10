@@ -125,7 +125,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         {
             std::shared_ptr<LongAttribute> rs = evt.attribute<LongAttribute>("random_states"+std::to_string((long long unsigned int)i));
             if (!rs) break;
-            m_random_states.push_back(rs->value());
+            m_random_states.emplace_back(rs->value());
         }
     }
     // Write event info
@@ -137,8 +137,8 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     {
         for (const ConstGenParticlePtr& p: v->particles_in())
         {
-            if (!p->production_vertex())                { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
-            else {if (p->production_vertex()->id() == 0) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }}
+            if (!p->production_vertex())                { if (p->status() == 4) beams.emplace_back(idbeam); idbeam++; }
+            else {if (p->production_vertex()->id() == 0) { if (p->status() == 4) beams.emplace_back(idbeam); idbeam++; }}
         }
         for (const ConstGenParticlePtr& p: v->particles_out()) { if (p->status() == 4) beams.push_back(idbeam); idbeam++; }
     }
@@ -316,7 +316,7 @@ void WriterAsciiHepMC2::write_vertex(ConstGenVertexPtr v)
         {
             std::shared_ptr<DoubleAttribute> rs = v->attribute<DoubleAttribute>("weight"+std::to_string((long long unsigned int)i));
             if (!rs) break;
-            weights.push_back(rs->value());
+            weights.emplace_back(rs->value());
         }
     }
     flush();

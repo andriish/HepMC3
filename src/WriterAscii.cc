@@ -260,7 +260,7 @@ void WriterAscii::write_vertex(ConstGenVertexPtr v) {
     std::string vlist;
     std::vector<int> pids;
     pids.reserve(v->particles_in().size());
-    for (const ConstGenParticlePtr& p: v->particles_in()) pids.push_back(p->id());
+    for (const ConstGenParticlePtr& p: v->particles_in()) pids.emplace_back(p->id());
     //We order pids to be able to compare ascii files
     std::sort(pids.begin(), pids.end());
     for (const auto& p: pids) vlist.append( std::to_string(p).append(",") );
