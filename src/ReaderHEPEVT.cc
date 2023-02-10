@@ -161,7 +161,7 @@ bool ReaderHEPEVT::read_event(GenEvent& evt)
         std::vector<std::string> weightnames;
         weightnames.emplace_back("0");
         std::vector<double> wts;
-        wts.push_back(1.0);
+        wts.emplace_back(1.0);
         g->set_weight_names(weightnames);
         evt.set_run_info(g);
         evt.weights() = wts;
