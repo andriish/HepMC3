@@ -814,7 +814,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -864,7 +863,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -912,7 +910,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -960,7 +957,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -1009,7 +1005,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -1057,7 +1052,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -1106,7 +1100,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
@@ -1154,7 +1147,6 @@ public:
         std::stringstream datastream(att);
         while (datastream >> datafoo) m_val.emplace_back(datafoo);
         set_is_parsed(true);
-
         return true;
     }
 
