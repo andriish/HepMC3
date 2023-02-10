@@ -694,7 +694,7 @@ public:
         char  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -739,7 +739,7 @@ public:
         float  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -785,7 +785,7 @@ public:
         long double  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -832,7 +832,7 @@ public:
         long long  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -877,7 +877,7 @@ public:
         unsigned int  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -922,7 +922,7 @@ public:
         unsigned long  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -968,7 +968,7 @@ public:
         unsigned long long  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -1013,7 +1013,7 @@ public:
         int  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -1058,7 +1058,7 @@ public:
         long int  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -1103,7 +1103,7 @@ public:
         double  datafoo;
         m_val.clear();
         std::stringstream datastream(att);
-        while (datastream >> datafoo) m_val.push_back(datafoo);
+        while (datastream >> datafoo) m_val.emplace_back(datafoo);
         return true;
     }
 
@@ -1149,7 +1149,7 @@ public:
         size_t posb = att.find_first_not_of(' ');
         do {
            size_t pose = att.find_first_of(' ', posb);
-           m_val.push_back(att.substr(posb, pose - posb));
+           m_val.emplace_back(att.substr(posb, pose - posb));
            posb = att.find_first_not_of(' ', pose);
         } while (posb != std::string::npos);
         return true;
