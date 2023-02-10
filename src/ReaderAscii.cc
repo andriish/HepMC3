@@ -257,8 +257,11 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
     /* restore ids of vertices using a bank of available ids*/
     std::vector<int> all_ids;
+    all_ids.reserve(evt.vertices().size());
     std::vector<int> filled_ids;
+    filled_ids.reserve(evt.vertices().size());
     std::vector<int> diff;
+    diff.reserve(evt.vertices().size());
     for (const auto& v: evt.vertices()) if (v->id() != 0) filled_ids.emplace_back(v->id());
     for (int i = -((long)evt.vertices().size()); i < 0; i++) all_ids.emplace_back(i);
     std::sort(all_ids.begin(), all_ids.end());

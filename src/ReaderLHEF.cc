@@ -96,7 +96,9 @@ void ReaderLHEF::init()
     // the GenRunInfo object.
 
     std::vector<std::string> weightnames;
-    for ( int i = 0, N = m_hepr->heprup.weightinfo.size(); i < N; ++i ) weightnames.emplace_back(m_hepr->heprup.weightNameHepMC(i));
+    size_t N = m_hepr->heprup.weightinfo.size();
+    weightnames.reserve(N);
+    for ( size_t i = 0; i < N; ++i ) weightnames.emplace_back(m_hepr->heprup.weightNameHepMC(i));
     if (nweights == 0) {
         HEPMC3_WARNING("ReaderLHEF::init: no weights in the LHEF file.")
         nweights=1;
@@ -157,6 +159,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         evt.add_attribute("IDPRUP", std::make_shared<LongAttribute>(ahepeup->IDPRUP));
         // Now add the Particles from the LHE event to HepMC
         std::vector<GenParticlePtr> particles;
+        particles.reserve(ahepeup->NUP);
         std::map< std::pair<int, int>, GenVertexPtr> vertices;
         for ( int i = 0; i < ahepeup->NUP; ++i )
         {
@@ -201,7 +204,9 @@ bool ReaderLHEF::read_event(GenEvent& ev)
 
 
         std::vector<double> wts;
-        for ( int i = 0, N = ahepeup->weights.size(); i < N; ++i )
+        size_t N = ahepeup->weights.size();
+        wts.reserve(N);
+        for ( size_t i = 0; i < N; ++i )
         {
             wts.emplace_back(ahepeup->weights[i].first);
         }

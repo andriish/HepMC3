@@ -440,9 +440,9 @@ void GenEvent::shift_position_by(const FourVector & delta) {
 
 bool GenEvent::rotate(const FourVector&  delta)
 {
-    for ( auto p: m_particles)
+    for ( auto& p: m_particles)
     {
-        FourVector mom = p->momentum();
+        const FourVector& mom = p->momentum();
         long double tempX = mom.x();
         long double tempY = mom.y();
         long double tempZ = mom.z();
@@ -475,9 +475,9 @@ bool GenEvent::rotate(const FourVector&  delta)
         FourVector temp(tempX, tempY, tempZ, mom.e());
         p->set_momentum(temp);
     }
-    for (auto v: m_vertices)
+    for (auto& v: m_vertices)
     {
-        FourVector pos = v->position();
+        const FourVector& pos = v->position();
         long double tempX = pos.x();
         long double tempY = pos.y();
         long double tempZ = pos.z();
@@ -525,20 +525,20 @@ bool GenEvent::reflect(const int axis)
     switch (axis)
     {
     case 0:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setX(-p->momentum().x()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setX(-v->position().x()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setX(-p->momentum().x()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setX(-v->position().x()); v->set_position(temp);}
         break;
     case 1:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setY(-p->momentum().y()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setY(-v->position().y()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setY(-p->momentum().y()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setY(-v->position().y()); v->set_position(temp);}
         break;
     case 2:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setZ(-p->momentum().z()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setZ(-v->position().z()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setZ(-p->momentum().z()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setZ(-v->position().z()); v->set_position(temp);}
         break;
     case 3:
-        for ( auto p: m_particles) { FourVector temp = p->momentum(); temp.setT(-p->momentum().e()); p->set_momentum(temp);}
-        for ( auto v: m_vertices)  { FourVector temp = v->position(); temp.setT(-v->position().t()); v->set_position(temp);}
+        for ( auto& p: m_particles) { FourVector temp = p->momentum(); temp.setT(-p->momentum().e()); p->set_momentum(temp);}
+        for ( auto& v: m_vertices)  { FourVector temp = v->position(); temp.setT(-v->position().t()); v->set_position(temp);}
         break;
     default:
         return false;
@@ -572,9 +572,9 @@ bool GenEvent::boost(const FourVector&  delta)
     long double deltalength = std::sqrt(deltalength2);
     long double gamma = 1.0/std::sqrt(1.0-deltalength2);
 
-    for ( auto p: m_particles)
+    for ( auto& p: m_particles)
     {
-        FourVector mom = p->momentum();
+        const FourVector& mom = p->momentum();
 
         long double tempX = mom.x();
         long double tempY = mom.y();
@@ -645,20 +645,20 @@ void GenEvent::write_data(GenEventData& data) const {
     // Fill containers
     data.weights = this->weights();
 
-    for (ConstGenParticlePtr p: this->particles()) {
+    for (const ConstGenParticlePtr& p: this->particles()) {
         data.particles.emplace_back(p->data());
     }
 
-    for (ConstGenVertexPtr v: this->vertices()) {
+    for (const ConstGenVertexPtr& v: this->vertices()) {
         data.vertices.emplace_back(v->data());
         int v_id = v->id();
 
-        for (ConstGenParticlePtr p: v->particles_in()) {
+        for (const ConstGenParticlePtr& p: v->particles_in()) {
             data.links1.emplace_back(p->id());
             data.links2.emplace_back(v_id);
         }
 
-        for (ConstGenParticlePtr p: v->particles_out()) {
+        for (const ConstGenParticlePtr& p: v->particles_out()) {
             data.links1.emplace_back(v_id);
             data.links2.emplace_back(p->id());
         }

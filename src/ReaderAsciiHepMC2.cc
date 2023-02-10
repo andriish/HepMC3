@@ -234,6 +234,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
             HEPMC3_DEBUG(30, "ReaderAsciiHepMC2::read_event - found a vertex without incoming particles: " << m_vertex_cache[i]->id() );
             //Sometimes the root vertex has no incoming particles.  Here we try to save the event.
             std::vector<GenParticlePtr> beams;
+            beams.reserve(2);
             for (auto p: m_vertex_cache[i]->particles_out()) if (p->status() == 4 && !(p->end_vertex())) beams.emplace_back(p);
             for (auto p: beams)
             {
@@ -273,7 +274,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
 
     std::map< std::string, std::map<int, std::shared_ptr<Attribute> > > cached_attributes = m_event_ghost->attributes();
     if (cached_attributes.count("flows") != 0) {
-        std::map<int, std::shared_ptr<Attribute> > flows = cached_attributes.at("flows");
+        const std::map<int, std::shared_ptr<Attribute> >& flows = cached_attributes.at("flows");
         if (m_options.count("particle_flows_are_separated") == 0) {
             for (const auto& f: flows) if (f.first > 0 && f.first <= (int)m_particle_cache.size()) {  m_particle_cache[f.first-1]->add_attribute("flows", f.second);}
         } else  {
@@ -289,17 +290,17 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
     }
 
     if (cached_attributes.count("phi") != 0) {
-        std::map<int, std::shared_ptr<Attribute> > phi = cached_attributes.at("phi");
+        const std::map<int, std::shared_ptr<Attribute> >& phi = cached_attributes.at("phi");
         for (const auto& f: phi) if (f.first > 0 &&f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("phi", f.second);
     }
 
     if (cached_attributes.count("theta") != 0) {
-        std::map<int, std::shared_ptr<Attribute> > theta = cached_attributes.at("theta");
+        const std::map<int, std::shared_ptr<Attribute> >& theta = cached_attributes.at("theta");
         for (const auto& f: theta) if (f.first > 0 && f.first <= (int)m_particle_cache.size())  m_particle_cache[f.first-1]->add_attribute("theta", f.second);
     }
 
     if (cached_attributes.count("weights") != 0) {
-        std::map<int, std::shared_ptr<Attribute> > weights = cached_attributes.at("weights");
+        const std::map<int, std::shared_ptr<Attribute> >& weights = cached_attributes.at("weights");
         if (m_options.count("vertex_weights_are_separated") == 0) {
             for (const auto& f: weights) { if (f.first < 0 && f.first >= -(int)m_vertex_cache.size())  m_vertex_cache[-f.first-1]->add_attribute("weights", f.second);}
         } else {

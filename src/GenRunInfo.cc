@@ -76,7 +76,7 @@ void GenRunInfo::write_data(GenRunInfoData& data) const {
 
 std::vector<std::string> GenRunInfo::attribute_names() const {
     std::vector<std::string> results;
-    for (auto vt1: m_attributes) {
+    for (const auto& vt1: m_attributes) {
         results.emplace_back(vt1.first);
     }
     return results;
