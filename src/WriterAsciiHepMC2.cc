@@ -304,7 +304,7 @@ std::string WriterAsciiHepMC2::escape(const std::string& s) const
     return ret;
 }
 
-void WriterAsciiHepMC2::write_vertex(ConstGenVertexPtr v)
+void WriterAsciiHepMC2::write_vertex(const ConstGenVertexPtr& v)
 {
     std::vector<double> weights;
     std::shared_ptr<VectorDoubleAttribute> weights_a = v->attribute<VectorDoubleAttribute>("weights");
@@ -373,7 +373,7 @@ inline void WriterAsciiHepMC2::forced_flush()
 
 void WriterAsciiHepMC2::write_run_info() {}
 
-void WriterAsciiHepMC2::write_particle(ConstGenParticlePtr p, int /*second_field*/)
+void WriterAsciiHepMC2::write_particle(const ConstGenParticlePtr& p, int /*second_field*/)
 {
     flush();
     m_cursor += sprintf(m_cursor, "P %i", int(10001+m_particle_counter));

@@ -102,12 +102,12 @@ void GenEvent::add_vertex(GenVertexPtr v) {
     v->m_id = -(int)vertices().size();
 
     // Add all incoming and outgoing particles and restore their production/end vertices
-    for (auto& p: v->particles_in()) {
+    for (const auto& p: v->particles_in()) {
         if (!p->in_event()) add_particle(p);
         p->m_end_vertex = v->shared_from_this();
     }
 
-    for (auto& p: v->particles_out()) {
+    for (const auto& p: v->particles_out()) {
         if (!p->in_event()) add_particle(p);
         p->m_production_vertex = v;
     }
@@ -190,11 +190,11 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     HEPMC3_DEBUG(30, "GenEvent::remove_vertex   - called with vertex:  " << v->id());
     std::shared_ptr<GenVertex> null_vtx;
 
-    for (auto& p: v->particles_in()) {
+    for (const auto& p: v->particles_in()) {
         p->m_end_vertex = std::weak_ptr<GenVertex>();
     }
 
-    for (auto& p: v->particles_out()) {
+    for (const auto& p: v->particles_out()) {
         p->m_production_vertex = std::weak_ptr<GenVertex>();
 
         // recursive delete rest of the tree
@@ -291,7 +291,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
     std::deque<GenVertexPtr> sorting;
 
     // Find all starting vertices (end vertex of particles that have no production vertex)
-    for (auto& p: parts) {
+    for (const auto& p: parts) {
         const GenVertexPtr &v = p->production_vertex();
         if ( !v || v->particles_in().empty() ) {
             const GenVertexPtr &v2 = p->end_vertex();
@@ -316,7 +316,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
         bool added = false;
 
         // Add all mothers to the front of the list
-        for ( auto& p: v->particles_in() ) {
+        for (const auto& p: v->particles_in() ) {
             GenVertexPtr v2 = p->production_vertex();
             if ( v2 && !v2->in_event() && find(sorting.begin(), sorting.end(), v2) == sorting.end() ) {
                 sorting.push_front(v2);
@@ -333,7 +333,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
             add_vertex(v);
 
             // Add all end vertices to the end of the list
-            for (auto& p: v->particles_out()) {
+            for (const auto& p: v->particles_out()) {
                 GenVertexPtr v2 = p->end_vertex();
                 if ( v2 && !v2->in_event()&& find(sorting.begin(), sorting.end(), v2) == sorting.end() ) {
                     sorting.emplace_back(v2);
@@ -355,7 +355,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
                 std::vector< std::pair< int, std::shared_ptr<Attribute> > > changed_attributes;
                 for ( const auto& vt2 : vt1.second ) {
                     if ( vt2.first <= rootid ) {
-                        changed_attributes.push_back(vt2);
+                        changed_attributes.emplace_back(vt2);
                     }
                 }
                 for ( const auto& val : changed_attributes ) {
