@@ -215,14 +215,14 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
         m_isstream ? m_stream->clear(std::ios::badbit) : m_file.clear(std::ios::badbit);
         return false;
     }
-     if (run_info() && run_info()->weight_names().empty() ) {
-       run_info()->set_weight_names(std::vector<std::string>{"Default"});
-     }
-     if (evt.weights().empty()) {
-       HEPMC3_WARNING("ReaderAsciiHepMC2: weights are empty, an event weight 1.0 will be added.")
-       evt.weights().push_back(1.0);
-     }
-     
+    if (run_info() && run_info()->weight_names().empty() ) {
+        run_info()->set_weight_names(std::vector<std::string> {"Default"});
+    }
+    if (evt.weights().empty()) {
+        HEPMC3_WARNING("ReaderAsciiHepMC2: weights are empty, an event weight 1.0 will be added.")
+        evt.weights().push_back(1.0);
+    }
+
     // Restore production vertex pointers
     for (unsigned int i = 0; i < m_particle_cache.size(); ++i) {
         if ( !m_end_vertex_barcodes[i] ) continue;
@@ -602,14 +602,15 @@ bool ReaderAsciiHepMC2::parse_xs_info(GenEvent &evt, const char *buf) {
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     double xs_err = atof(cursor);
-    const size_t all = m_options.count("keep_single_crosssection") ? size_t{1} : std::max(evt.weights().size(),size_t{1});
+    const size_t all = m_options.count("keep_single_crosssection") ? size_t{1} :
+                       std::max(evt.weights().size(),size_t{1});
     if (all > 1 && m_options.count("fill_crosssections_with_zeros") != 0) {
-      xs->set_cross_section(std::vector<double>(all,0.0), std::vector<double>(all,0.0));
-      xs->set_xsec(0,xs_val);
-      xs->set_xsec_err(0,xs_err);
-     } else {
-      xs->set_cross_section(std::vector<double>(all,xs_val), std::vector<double>(all,xs_err));
-     }
+        xs->set_cross_section(std::vector<double>(all,0.0), std::vector<double>(all,0.0));
+        xs->set_xsec(0,xs_val);
+        xs->set_xsec_err(0,xs_err);
+    } else {
+        xs->set_cross_section(std::vector<double>(all,xs_val), std::vector<double>(all,xs_err));
+    }
     evt.add_attribute("GenCrossSection", xs);
 
     return true;
