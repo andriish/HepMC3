@@ -248,7 +248,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
 ///       Core library due to wories about generator dependence
 static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, const ConstGenVertexPtr& v)
 {
-    for (const ConstGenParticlePtr& p: v->particles_out())
+    for (const ConstGenParticlePtr& p: v->particles_out()) {
         if (p->end_vertex())
         {
             if (a[p->end_vertex()] != 0) { return true; }
@@ -353,9 +353,11 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
             std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
             for (auto & vt1: m_attributes) {
                 std::vector< std::pair< int, std::shared_ptr<Attribute> > > changed_attributes;
-                for ( const auto& vt2 : vt1.second )
-                    if ( vt2.first <= rootid )
+                for ( const auto& vt2 : vt1.second ) {
+                    if ( vt2.first <= rootid ) {
                         changed_attributes.push_back(vt2);
+                    }
+                }
                 for ( const auto& val : changed_attributes ) {
                     vt1.second.erase(val.first);
                     vt1.second[val.first == rootid? 0: val.first + 1] = val.second;
@@ -430,7 +432,7 @@ void GenEvent::shift_position_by(const FourVector & delta) {
 
     // Offset all vertices
     for ( GenVertexPtr& v: m_vertices ) {
-        if ( v->has_set_position() )
+        if ( v->has_set_position() ) {
             v->set_position(v->position() + delta);
         }
     }

@@ -250,7 +250,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
                 if (p->production_vertex()->id() == 0) write_particle( p, production_vertex );
             }
         }
-        for (const ConstGenParticlePtr& p: v->particles_out())
+        for (const ConstGenParticlePtr& p: v->particles_out()) {
             write_particle(p, production_vertex);
         }
     }
