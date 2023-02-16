@@ -48,14 +48,14 @@ const std::vector<ConstGenVertexPtr>& GenEvent::vertices() const {
 void GenEvent::add_particle(GenParticlePtr p) {
     if ( !p || p->in_event() ) return;
 
-    m_particles.emplace_back(p);
+    m_particles.emplace_back(std::move(p));
 
-    p->m_event = this;
-    p->m_id = particles().size();
+    m_particles.back()->m_event = this;
+    m_particles.back()->m_id = m_particles.size();
 
     // Particles without production vertex are added to the root vertex
-    if ( !p->production_vertex() ) {
-        m_rootvertex->add_particle_out(p);
+    if ( !m_particles.back()->production_vertex() ) {
+        m_rootvertex->add_particle_out(m_particles.back());
     }
 }
 
@@ -96,20 +96,20 @@ GenEvent& GenEvent::operator=(const GenEvent& e) {
 
 void GenEvent::add_vertex(GenVertexPtr v) {
     if ( !v|| v->in_event() ) return;
-    m_vertices.emplace_back(v);
+    m_vertices.emplace_back(std::move(v));
 
-    v->m_event = this;
-    v->m_id = -(int)vertices().size();
+    m_vertices.back()->m_event = this;
+    m_vertices.back()->m_id = -(int)vertices().size();
 
     // Add all incoming and outgoing particles and restore their production/end vertices
-    for (const auto& p: v->particles_in()) {
+    for (const auto& p: m_vertices.back()->particles_in()) {
         if (!p->in_event()) add_particle(p);
-        p->m_end_vertex = v->shared_from_this();
+        p->m_end_vertex = m_vertices.back()->shared_from_this();
     }
 
-    for (const auto& p: v->particles_out()) {
+    for (const auto& p: m_vertices.back()->particles_out()) {
         if (!p->in_event()) add_particle(p);
-        p->m_production_vertex = v;
+        p->m_production_vertex = m_vertices.back();
     }
 }
 
