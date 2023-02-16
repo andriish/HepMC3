@@ -260,8 +260,8 @@ static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, const ConstGenV
 }
 
 void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
-    m_particles.reserve(m_particles.size()+parts.size());
-    m_vertices.reserve(m_vertices.size()+parts.size());
+    m_particles.reserve(m_particles.size() + parts.size());
+    m_vertices.reserve(m_vertices.size() + parts.size());
     std::shared_ptr<IntAttribute> existing_hc = attribute<IntAttribute>("cycles");
     bool has_cycles = false;
     std::map<GenVertexPtr, int>  sortingv;
