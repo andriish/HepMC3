@@ -37,39 +37,35 @@ void GenVertex::add_particle_in(GenParticlePtr p) {
     if (!p) return;
 
     // Avoid duplicates
-    if (m_event == p->parent_event())
     if (std::find(particles_in().begin(), particles_in().end(), p) != particles_in().end()) return;
 
-    m_particles_in.emplace_back(p);
+    m_particles_in.emplace_back(std::move(p));
 
-    if ( p->end_vertex() ) p->end_vertex()->remove_particle_in(p);
+    if (  m_particles_in.back()->end_vertex() ) m_particles_in.back()->end_vertex()->remove_particle_in(m_particles_in.back());
 
-    p->m_end_vertex = shared_from_this();
+    m_particles_in.back()->m_end_vertex = shared_from_this();
 
-    if (m_event) m_event->add_particle(p);
+    if (m_event) m_event->add_particle(m_particles_in.back());
 }
 
 
 void GenVertex::add_particle_out(GenParticlePtr p) {
     if (!p) return;
 
-    
     // Avoid duplicates
-    if (m_event == p->parent_event())
     if (std::find(particles_out().begin(), particles_out().end(), p) != particles_out().end()) return;
 
-    m_particles_out.emplace_back(p);
+    m_particles_out.emplace_back(std::move(p));
 
-    if ( p->production_vertex() ) p->production_vertex()->remove_particle_out(p);
+    if ( m_particles_out.back()->production_vertex() ) m_particles_out.back()->production_vertex()->remove_particle_out(m_particles_out.back());
 
-    p->m_production_vertex = shared_from_this();
+    m_particles_out.back()->m_production_vertex = shared_from_this();
 
-    if (m_event) m_event->add_particle(p);
+    if (m_event) m_event->add_particle(m_particles_out.back());
 }
 
 void GenVertex::remove_particle_in(GenParticlePtr p) {
     if (!p) return;
-    if (m_event && m_event != p->parent_event()) return;
     if (std::find(m_particles_in.begin(), m_particles_in.end(), p) == m_particles_in.end()) return;
     p->m_end_vertex.reset();
     m_particles_in.erase(std::remove(m_particles_in.begin(), m_particles_in.end(), p), m_particles_in.end());
@@ -78,7 +74,6 @@ void GenVertex::remove_particle_in(GenParticlePtr p) {
 
 void GenVertex::remove_particle_out(GenParticlePtr p) {
     if (!p) return;
-    if (m_event && m_event != p->parent_event()) return;
     if (std::find(m_particles_out.begin(), m_particles_out.end(), p) == m_particles_out.end()) return;
     p->m_production_vertex.reset();
     m_particles_out.erase(std::remove(m_particles_out.begin(), m_particles_out.end(), p), m_particles_out.end());
@@ -107,7 +102,7 @@ const FourVector& GenVertex::position() const {
         //This could be a recussive call.  Try to prevent it.
         if (!cycles || cycles->value() == 0)
         {
-            for (const ConstGenParticlePtr& p: m_particles_in) {
+            for (const GenParticlePtr& p: m_particles_in) {
                 ConstGenVertexPtr v = p->production_vertex();
                 if (v) return v->position();
             }
