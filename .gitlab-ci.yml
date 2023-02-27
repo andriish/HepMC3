@@ -169,7 +169,7 @@ debian-salsa:
     -  yum -y install  python3 python3-devel python2 python2-devel 
 ########################################################################
 .rpminstall: &rpminstall
-    -  yum -y install  rpmbuild
+    -  yum -y install  rpm-build
 ########################################################################
 .python3install: &python3install
     - yum -y install  python3 python3-devel
