@@ -317,7 +317,7 @@ Adjustment of LD_LIBRARY_PATH might be needed.
 To include an existing build of HepMC3 in your project, you can use find_package as below:
 
 ```
-find_package(HepMC3 3.3.0 REQUIRED)
+find_package(HepMC3 3.2.0 REQUIRED)
 ```
 
 This will set up a number of CMake variables targets depending on the features that were built with the found version of HepMC3. Some useful CMake variables that will be set are included below:
@@ -369,9 +369,9 @@ The way that the dependency on ROOT is currently included, means that paths to t
 ```
 CPMAddPackage(
     NAME HepMC3
-    VERSION 3.2.5
+    VERSION 3.2.6
     GIT_REPOSITORY "https://gitlab.cern.ch/hepmc/HepMC3.git"
-    GIT_TAG 3.2.5
+    GIT_TAG 3.2.6
     OPTIONS
       "HEPMC3_CXX_STANDARD ${CMAKE_CXX_STANDARD}"
       "HEPMC3_ENABLE_SEARCH OFF"
@@ -551,6 +551,7 @@ and those that are involved in testing of HepMC3 with Monte Carlo generators/too
 ./test/testPythia2.cc
 ./test/testPythia1.cc
 ./test/testTauola1.cc
+...
 ```
 
 
