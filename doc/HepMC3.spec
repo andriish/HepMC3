@@ -377,12 +377,12 @@ rm %{buildroot}%{_includedir}/%{name}/bxzstr/LICENSE
 %{_includedir}/%{name}/WriterRootTree.h
 
 
-%files protobuf
-%{_libdir}/root/libHepMC3protobuf.so.1
+%files protobufIO
+%{_libdir}/libHepMC3protobufIO.so.1
 # unversioned symlink is used at runtime when library is used as a  plugin
-%{_libdir}/root/libHepMC3protobuf.so
+%{_libdir}/libHepMC3protobufIO.so
 
-%files protobuf-devel
+%files protobufIO-devel
 %{_includedir}/%{name}/Readerprotobuf.h
 %{_includedir}/%{name}/Writerprotobuf.h
 
