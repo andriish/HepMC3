@@ -179,6 +179,16 @@ Requires:	python%{python3_other_pkgversion}-%{name}%{?_isa} = %{version}-%{relea
 
 %description -n python%{python3_other_pkgversion}-%{name}-rootIO
 This package provides the Python 3 bindings for HepMC3 ROOT I/O module.
+
+%package -n python%{python3_other_pkgversion}-%{name}-protobufIO
+Summary:	HepMC3 ProtoBuf I/O module Python 3 bindings
+%{?python_provide:%python_provide python%{?python3_other_pkgversion}-%{name}-protobufIO}
+Requires:	%{name}-protobufIO%{?_isa} = %{version}-%{release}
+Requires:	python%{python3_other_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
+
+%description -n python%{python3_other_pkgversion}-%{name}-protobufIO
+This package provides the Python 3 bindings for HepMC3 ProtoBuf I/O module.
+
 %endif
 
 %package -n python%{python3_pkgversion}-%{name}
@@ -206,6 +216,16 @@ Requires:	python%{python3_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
 
 %description -n python%{python3_pkgversion}-%{name}-rootIO
 This package provides the Python 3 bindings for HepMC3 ROOT I/O module.
+
+%package -n python%{python3_other_pkgversion}-%{name}-protobufIO
+Summary:	HepMC3 ProtoBuf I/O module Python 3 bindings
+%{?python_provide:%python_provide python%{?python3_other_pkgversion}-%{name}-protobufIO}
+Requires:	%{name}-protobufIO%{?_isa} = %{version}-%{release}
+Requires:	python%{python3_other_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
+
+%description -n python%{python3_other_pkgversion}-%{name}-protobufIO
+This package provides the Python 3 bindings for HepMC3 ProtoBuf I/O module.
+
 
 %package doc
 Summary:	C++ Event Record for Monte Carlo Generators - documentation
@@ -400,12 +420,12 @@ rm %{buildroot}%{_includedir}/%{name}/bxzstr/LICENSE
 %{python3_other_sitearch}/pyHepMC3/rootIO/pyHepMC3rootIO.so
 %{python3_other_sitearch}/pyHepMC3.rootIO-*.egg-info
 
-%files -n python%{python3_other_pkgversion}-%{name}-protobuf
-%dir %{python3_other_sitearch}/pyHepMC3/protobuf
-%{python3_other_sitearch}/pyHepMC3/protobuf/__init__.py
-%{python3_other_sitearch}/pyHepMC3/protobuf/__pycache__
-%{python3_other_sitearch}/pyHepMC3/protobuf/pyHepMC3protobuf.so
-%{python3_other_sitearch}/pyHepMC3.protobuf-*.egg-info
+%files -n python%{python3_other_pkgversion}-%{name}-protobufIO
+%dir %{python3_other_sitearch}/pyHepMC3/protobufIO
+%{python3_other_sitearch}/pyHepMC3/protobufIO/__init__.py
+%{python3_other_sitearch}/pyHepMC3/protobufIO/__pycache__
+%{python3_other_sitearch}/pyHepMC3/protobufIO/pyHepMC3protobufIO.so
+%{python3_other_sitearch}/pyHepMC3.protobufIO-*.egg-info
 
 %endif
 
@@ -431,12 +451,12 @@ rm %{buildroot}%{_includedir}/%{name}/bxzstr/LICENSE
 %{python3_sitearch}/pyHepMC3.rootIO-*.egg-info
 
 
-%files -n python%{python3_pkgversion}-%{name}-protobuf
-%dir %{python3_sitearch}/pyHepMC3/protobuf
-%{python3_sitearch}/pyHepMC3/protobuf/__init__.py
-%{python3_sitearch}/pyHepMC3/protobuf/__pycache__
-%{python3_sitearch}/pyHepMC3/protobuf/pyHepMC3protobuf.so
-%{python3_sitearch}/pyHepMC3.protobuf-*.egg-info
+%files -n python%{python3_pkgversion}-%{name}-protobufIO
+%dir %{python3_sitearch}/pyHepMC3/protobufIO
+%{python3_sitearch}/pyHepMC3/protobufIO/__init__.py
+%{python3_sitearch}/pyHepMC3/protobufIO/__pycache__
+%{python3_sitearch}/pyHepMC3/protobufIO/pyHepMC3protobufIO.so
+%{python3_sitearch}/pyHepMC3.protobufIO-*.egg-info
 
 %files doc
 %dir %{_pkgdocdir}
