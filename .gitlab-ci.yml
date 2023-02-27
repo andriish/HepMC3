@@ -155,7 +155,7 @@ debian-salsa:
     - tar cfz HepMC3-3.2.6.tar.gz HepMC3-3.2.6
     - mkdir -p ~/rpmbuild/SOURCES/
     - cp HepMC3-3.2.6.tar.gz ~/rpmbuild/SOURCES/
-    - rpmbuild -ba HepMC3/doc/HepMC3.spec
+    - rpmbuild -ba HepMC3-3.2.6/doc/HepMC3.spec
 ########################################################################
 .commoninstall: &commoninstall
     - set -x
