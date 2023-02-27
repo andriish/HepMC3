@@ -226,13 +226,13 @@ Requires:	python%{python3_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
 %description -n python%{python3_pkgversion}-%{name}-rootIO
 This package provides the Python 3 bindings for HepMC3 ROOT I/O module.
 
-%package -n python%{python3_other_pkgversion}-%{name}-protobufIO
+%package -n python%{python3_pkgversion}-%{name}-protobufIO
 Summary:	HepMC3 ProtoBuf I/O module Python 3 bindings
-%{?python_provide:%python_provide python%{?python3_other_pkgversion}-%{name}-protobufIO}
+%{?python_provide:%python_provide python%{?python3_pkgversion}-%{name}-protobufIO}
 Requires:	%{name}-protobufIO%{?_isa} = %{version}-%{release}
-Requires:	python%{python3_other_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
+Requires:	python%{python3_pkgversion}-%{name}%{?_isa} = %{version}-%{release}
 
-%description -n python%{python3_other_pkgversion}-%{name}-protobufIO
+%description -n python%{python3_pkgversion}-%{name}-protobufIO
 This package provides the Python 3 bindings for HepMC3 ProtoBuf I/O module.
 
 
