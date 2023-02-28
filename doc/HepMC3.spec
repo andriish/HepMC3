@@ -11,18 +11,7 @@ Summary:	C++ Event Record for Monte Carlo Generators
 License:	GPLv3+ and MPLv2.0
 URL:		https://hepmc.web.cern.ch/hepmc/
 Source0:	https://hepmc.web.cern.ch/hepmc/releases/%{name}-%{version}.tar.gz
-#		Use the correct CMake variable name for PYTHIA8_VERSION
-#		https://gitlab.cern.ch/hepmc/HepMC3/-/merge_requests/166
-Patch0:		%{name}-pythia8-version.patch
-#		Fix test failures on big endian architectures (s390x)
-#		https://gitlab.cern.ch/hepmc/HepMC3/-/merge_requests/167
-Patch1:		%{name}-endian.patch
-#		Fix doxygen markup
-#		https://gitlab.cern.ch/hepmc/HepMC3/-/merge_requests/168
-Patch2:		%{name}-dox.patch
-#		Updates for Python 3.11
-#		Backported from upstream
-Patch3:		%{name}-python-3.11.patch
+
 
 #		The ROOT cmake file used by this project requires cmake 3.9
 %if %{?rhel}%{!?rhel:0} == 7
