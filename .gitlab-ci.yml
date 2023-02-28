@@ -149,13 +149,14 @@ debian-salsa:
 ########################################################################
 .rpmbuild:  &rpmbuild
     - export
+    - export VERSION=3.2.6
     - cd ../
     - pwd
-    - mv HepMC3 HepMC3-3.2.6
-    - tar cfz HepMC3-3.2.6.tar.gz HepMC3-3.2.6
+    - mv HepMC3 HepMC3-$VERSION
+    - tar cfz HepMC3-$VERSION.tar.gz HepMC3-$VERSION
     - mkdir -p ~/rpmbuild/SOURCES/
-    - cp HepMC3-3.2.6.tar.gz ~/rpmbuild/SOURCES/
-    - rpmbuild -ba HepMC3-3.2.6/doc/HepMC3.spec
+    - cp HepMC3-$VERSION.tar.gz ~/rpmbuild/SOURCES/
+    - rpmbuild -ba HepMC3-$VERSION/doc/HepMC3.spec
 ########################################################################
 .commoninstall: &commoninstall
     - set -x
@@ -226,17 +227,6 @@ debian-salsa:
   script:
     - *clangexport
     - *fullbuild
-########################################################################
-Fedora-38-rpm:
-  image: fedora:38
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *protobufinstall
-    - *rpminstall
-  script:
-    - *rpmbuild
 ############################The Pipelines###############################
 ########################################################################
 Fedora33-gcc-pypy:
