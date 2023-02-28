@@ -286,6 +286,7 @@ rm %{buildroot}%{_includedir}/%{name}/bxzstr/LICENSE
 %{_includedir}/%{name}/bxzstr/stream_wrapper.hpp
 %{_includedir}/%{name}/bxzstr/strict_fstream.hpp
 %{_includedir}/%{name}/bxzstr/z_stream_wrapper.hpp
+%{_includedir}/%{name}/bxzstr/zstd_stream_wrapper.hpp
 %{_includedir}/%{name}/AssociatedParticle.h
 %{_includedir}/%{name}/Attribute.h
 %{_includedir}/%{name}/CompressedIO.h
@@ -339,6 +340,8 @@ rm %{buildroot}%{_includedir}/%{name}/bxzstr/LICENSE
 %dir %{_datadir}/%{name}/cmake
 %{_datadir}/%{name}/cmake/HepMC3Config.cmake
 %{_datadir}/%{name}/cmake/HepMC3Config-version.cmake
+%{_datadir}/%{name}/cmake/HepMC3Targets.cmake
+%{_datadir}/%{name}/cmake/HepMC3Targets-release.cmake
 
 %files search
 %{_libdir}/libHepMC3search.so.5
