@@ -1,4 +1,6 @@
-  --------------------------  HepMC3.2.6-pre ----------------------
+  --------------------------  HepMC3.2.6 ----------------------
+2023-03-01 Andrii Verbytskyi for HepMC
+         * Preparation to the rease 3.2.6.
 2023-02-14 Andrii Verbytskyi for HepMC
          * Multiple optimizations inspired by clang-tidy
 2023-02-10 Andrii Verbytskyi for HepMC

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of HepMC
-// Copyright (C) 2014-2022 The HepMC collaboration (see AUTHORS for details)
+// Copyright (C) 2014-2023 The HepMC collaboration (see AUTHORS for details)
 //
 /**
  *  @file GenHeavyIon.cc
@@ -18,6 +18,7 @@
 namespace HepMC3 {
 
 bool GenHeavyIon::from_string(const std::string &att) {
+/// If HEPMC3_NO_DEPRECATED is not defined, those are member variables.
 #ifdef HEPMC3_NO_DEPRECATED
     double spectator_neutrons, spectator_protons, eccentricity;
 #endif
