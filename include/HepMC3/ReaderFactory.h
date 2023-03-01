@@ -93,7 +93,7 @@ std::shared_ptr<Reader> deduce_reader(const std::string &filename)
 
         std::string line;
         size_t nonempty = 0;
-        while (std::getline(*(file.get()), line) && nonempty < 3) {
+        while (std::getline( *(file.get()) , line) && nonempty < 3) {
             if (line.empty()) continue;
             nonempty++;
             head.push_back(line);
