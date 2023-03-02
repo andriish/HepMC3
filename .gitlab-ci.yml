@@ -186,7 +186,7 @@ debian-salsa:
         - git log -1 | grep $OS'Dockerfile'$FREL | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
         - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
         - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile | sed 's/'$OS':35/'$OS':'$FREL'/g' > todo-$OS_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile | sed 's/$OS:35/$OS:$FREL/g' > todo-$OS_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile | sed 's/'$OS':35/'$OS':'$FREL'/g' > todo-$OS_$FREL.txt; fi
         - cat todo-$OS_$FREL.txt
         - exit 0
   variables:
@@ -217,41 +217,6 @@ debian-salsa:
     paths:
       - todo-Fedora_$FREL.txt
     expire_in: 1 day
-
-.build_image_Archlinux: &build_image_Archlinux
-  stage: build_docker_image
-  image: 
-        name: gcr.io/kaniko-project/executor:debug
-        entrypoint: [""]
-  script:
-        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-        - if [ -s todo-Archlinux_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-Archlinux_$FREL.txt --destination $CI_REGISTRY_IMAGE:Archlinux_$FREL ; fi
-  variables:
-    GIT_DEPTH: "1"
-
-.build_image_Fedora: &build_image_Fedora
-  stage: build_docker_image
-  image: 
-        name: gcr.io/kaniko-project/executor:debug
-        entrypoint: [""]
-  script:
-        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-        - if [ -s todo-Fedora_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-Fedora_$FREL.txt --destination $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
-  variables:
-    GIT_DEPTH: "2"
-
-
-.build_image_CentOS: &build_image_CentOS
-  stage: build_docker_image
-  image: 
-        name: gcr.io/kaniko-project/executor:debug
-        entrypoint: [""]
-  script:
-        - echo $CI_REGISTRY_IMAGE:CentOS_$FREL CI_PROJECT_DIR
-        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-        - if [ -s todo-CentOS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-CentOS_$FREL.txt --destination $CI_REGISTRY_IMAGE:CentOS_$FREL ; fi
-  variables:
-    GIT_DEPTH: "2"
 
 
 .build_image: &build_image
