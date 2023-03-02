@@ -296,10 +296,32 @@ check_commit_Fedora34:
     FREL: 34
   extends: .check_commit_Fedora
 
-check_commit_CentOS7:
+
+check_commit_Fedora24:
+  variables:
+    OS: Fedora
+    FREL: 24
+  extends: .check_commit_Fedora
+
+
+check_commit_Fedora23:
+  variables:
+    OS: Fedora
+    FREL: 23
+  extends: .check_commit_Fedora
+
+
+check_commit_Fedora22:
+  variables:
+    OS: Fedora
+    FREL: 22
+  extends: .check_commit_Fedora
+
+
+check_commit_CentOS9:
   variables:
     OS: centOS
-    FREL: 7
+    FREL: 9
   extends: .check_commit_CentOS
 
 check_commit_CentOS8:
@@ -308,11 +330,13 @@ check_commit_CentOS8:
     FREL: 8
   extends: .check_commit_CentOS
 
-check_commit_CentOS9:
+
+check_commit_CentOS7:
   variables:
     OS: centOS
-    FREL: 9
+    FREL: 7
   extends: .check_commit_CentOS
+
 
 check_commit_Archlinux0:
   variables:
@@ -325,13 +349,6 @@ check_commit_Archlinux0:
 
 ###########################################################################
 #Build images
-build_image_Fedora34:
-  variables:
-    OS: Fedora
-    FREL: 34
-  extends: .build_image_Fedora
-  needs:
-    - job: check_commit_Fedora34
 
 build_image_Fedora35:
   variables:
@@ -341,13 +358,51 @@ build_image_Fedora35:
   needs:
     - job: check_commit_Fedora35
 
-build_image_CentOS7:
+build_image_Fedora34:
+  variables:
+    OS: Fedora
+    FREL: 34
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora34
+
+build_image_Fedora24:
+  variables:
+    OS: Fedora
+    FREL: 24
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora24
+
+
+build_image_Fedora23:
+  variables:
+    OS: Fedora
+    FREL: 23
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora23
+
+
+build_image_Fedora22:
+  variables:
+    OS: Fedora
+    FREL: 22
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora22
+
+
+
+
+build_image_CentOS9:
   variables:
     OS: CentOS
-    FREL: 7
+    FREL: 9
   extends: .build_image_CentOS
   needs:
-    - job: check_commit_CentOS7
+    - job: check_commit_CentOS9
+
 
 build_image_CentOS8:
   variables:
@@ -357,13 +412,15 @@ build_image_CentOS8:
   needs:
     - job: check_commit_CentOS8
 
-build_image_CentOS9:
+
+build_image_CentOS7:
   variables:
     OS: CentOS
-    FREL: 9
+    FREL: 7
   extends: .build_image_CentOS
   needs:
-    - job: check_commit_CentOS9
+    - job: check_commit_CentOS7
+
 
 build_image_Archlinux0:
   variables:
@@ -397,6 +454,43 @@ Fedora34-GNU:
   needs:
     - job: build_image_Fedora34
 
+Fedora24-GNU:
+  variables:
+    OS: Fedora
+    FREL: 24
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora24
+
+
+
+
+Fedora23-GNU:
+  variables:
+    OS: Fedora
+    FREL: 23
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora23
+
+
+Fedora22-GNU:
+  variables:
+    OS: Fedora
+    FREL: 22
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora22
+
+
+
+
 Fedora34-LLVM:
   variables:
     OS: Fedora
@@ -407,16 +501,16 @@ Fedora34-LLVM:
   needs:
     - job: build_image_Fedora34
 
-CentOS7-GNU:
+
+CentOS9-GNU:
   variables:
     OS: CentOS
-    FREL: 7
+    FREL: 9
     TOOLSET: GNU    
     EXTRACMAKEFLAGS:
   extends: .any-cmake
   needs:
-    - job: build_image_CentOS7
-
+    - job: build_image_CentOS9
 
 
 CentOS8-GNU:
@@ -430,15 +524,18 @@ CentOS8-GNU:
     - job: build_image_CentOS8
 
 
-CentOS9-GNU:
+
+CentOS7-GNU:
   variables:
     OS: CentOS
-    FREL: 9
+    FREL: 7
     TOOLSET: GNU    
     EXTRACMAKEFLAGS:
   extends: .any-cmake
   needs:
-    - job: build_image_CentOS9
+    - job: build_image_CentOS7
+
+
 
 Archlinux0-GNU:
   variables:

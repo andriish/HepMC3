@@ -7,3 +7,4 @@ RUN  yum -y  install  dnf-plugins-core --exclude=*uploa* --exclude=*product* --e
                       protobuf protobuf-devel \
                       python3 python3-devel   \                      
                       libzip-devel  zlib zlib-devel pythia8-devel pythia8 python3-lhapdf  &&  yum -y  clean all  
+
