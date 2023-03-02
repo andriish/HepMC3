@@ -284,6 +284,12 @@ check_commit_Fedora34:
     FREL: 34
   extends: .check_commit_Fedora
 
+check_commit_Fedora33:
+  variables:
+    OS: Fedora
+    FREL: 33
+  extends: .check_commit_Fedora
+
 
 check_commit_Fedora24:
   variables:
@@ -353,6 +359,14 @@ build_image_Fedora34:
   extends: .build_image_Fedora
   needs:
     - job: check_commit_Fedora34
+
+build_image_Fedora33:
+  variables:
+    OS: Fedora
+    FREL: 33
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora33
 
 build_image_Fedora24:
   variables:
