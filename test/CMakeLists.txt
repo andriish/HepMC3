@@ -182,6 +182,7 @@ if("Threads" IN_LIST HEPMC3_TEST_PACKAGES_LIST AND Threads_FOUND AND NOT (${CMAK
   message(STATUS "HepMC3 test: Threads library found.  Thread safety tests enabled")
   list( APPEND HepMC_tests "testThreads1" )
   list( APPEND HepMC_tests "testIO10" )
+  list( APPEND HepMC_tests "testReaderFactory3" )
   if (HEPMC3_ENABLE_SEARCH)
     list( APPEND HepMC_search_tests "testThreadssearch" )
   endif()
