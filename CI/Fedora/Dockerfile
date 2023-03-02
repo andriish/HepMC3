@@ -11,6 +11,7 @@ RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  24 ]; then sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake ; fi 
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  33 ]; then yum -y  install pypy pypy-devel; fi && yum -y clean all
 
+
 #   cat /etc/fedora-release | grep -Eo '[0-9]+'
 # 24 + -- sed is needed.  
 #22,23 -- no protobuf no root and no python                      
