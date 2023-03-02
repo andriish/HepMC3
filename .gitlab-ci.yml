@@ -1,12 +1,14 @@
 stages:
-  - test
+  - check_if_dockerfile_updated
+  - build_docker_image
+  - build
 ########################################################################
 LCG_99_x86_64-centos7-gcc8-opt:
   only:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-cc7
-  stage: test
+  stage: build
   before_script:
     - export LCGPLATFORM=x86_64-centos7-gcc8-opt
     - export LCG_LOCATION=/cvmfs/sft.cern.ch/lcg/releases/LCG_99
@@ -38,7 +40,7 @@ LCG_95_x86_64-centos7-gcc8-opt:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-cc7
-  stage: test
+  stage: build
   before_script:
     - export LCGPLATFORM=x86_64-centos7-gcc8-opt
     - source /cvmfs/sft.cern.ch/lcg/contrib/gcc/8.2.0/${LCGPLATFORM}/setup.sh
@@ -68,7 +70,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-ubuntu18
-  stage: test
+  stage: build
   before_script:
     - export LCGPLATFORM=x86_64-ubuntu1804-gcc8-opt
     - source /cvmfs/sft.cern.ch/lcg/releases/LCG_95/ROOT/6.16.00/${LCGPLATFORM}/ROOT-env.sh
@@ -105,7 +107,7 @@ debian-salsa:
     variables:
      - $CI_SERVER_HOST=="salsa.debian.org"
   image: debian:unstable
-  stage: test
+  stage: build
   before_script:
     - apt-get update 
     - apt-get install -y -qq cmake g++   apt-utils
@@ -123,170 +125,504 @@ debian-salsa:
 #    - mv HepMC3-3.2.0.tar.gz  ../hepmc3_3.2.0.orig.tar.gz
     - debuild -us -uc
 
-##########################Templates#####################################
-########################################################################
-.Fedora: &Fedora
-  only:
-    variables:
-     - $CI_SERVER_HOST=="gitlab.cern.ch" && $CI_COMMIT_MESSAGE =~ /FedoraCI/ 
-  stage: test
-########################################################################
-.CentOS: &CentOS
-  only:
-    variables:
-     - $CI_SERVER_HOST=="gitlab.cern.ch" && $CI_COMMIT_MESSAGE =~ /CentOSCI/ 
-  stage: test
 
-########################################################################
-.fullbuild:  &fullbuild
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-.commoninstall: &commoninstall
+
+
+
+
+
+
+
+.check_commit_CentOS: &check_commit_CentOS
+  stage: check_if_dockerfile_updated
+  image: 
+        name: alpine/git
+        entrypoint: [""]
+  script:
+        - rm -rf todo-CentOS_$FREL.txt
+        - git log -1 | grep CentOSDockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
+        - git diff --name-only HEAD HEAD~1 | grep CI/CentOS/Dockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
+        - if [ -s todo-CentOS_$FREL.txt ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
+        - cat todo-CentOS_$FREL.txt
+        - exit 0
+  variables:
+    GIT_DEPTH: "3"
+  artifacts:
+    paths:
+      - todo-CentOS_$FREL.txt
+    expire_in: 1 day
+
+.check_commit_Archlinux: &check_commit_Archlinux
+  stage: check_if_dockerfile_updated
+  image: 
+        name: alpine/git
+        entrypoint: [""]
+  script:
+        - rm -rf todo-Archlinux_$FREL.txt
+        - git log -1 | grep ArchlinuxDockerfile$FREL | head -n 1 >> todo-Archlinux_$FREL.txt || touch todo-Archlinux_$FREL.txt
+        - git diff --name-only HEAD HEAD~1 | grep CI/Archlinux/Dockerfile | head -n 1 >> todo-Archlinux_$FREL.txt || touch todo-Archlinux_$FREL.txt
+        - if [ -s todo-Archlinux_$FREL.txt ]; then cat CI/Archlinux/Dockerfile | sed 's/Archlinux:35/Archlinux:$FREL/g' > todo-Archlinux_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/Archlinux/Dockerfile | sed 's/Archlinux:35/Archlinux:$FREL/g' > todo-Archlinux_$FREL.txt; fi
+        - cat todo-Archlinux_$FREL.txt
+        - exit 0
+  variables:
+    GIT_DEPTH: "3"
+  artifacts:
+    paths:
+      - todo-Archlinux_$FREL.txt
+    expire_in: 1 day
+
+
+.check_commit_Fedora: &check_commit_Fedora
+  stage: check_if_dockerfile_updated
+  image: 
+        name: alpine/git
+        entrypoint: [""]
+  script:
+        - rm -rf todo-Fedora_$FREL.txt
+        - git log -1 | grep FedoraDockerfile$FREL | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
+        - git diff --name-only HEAD HEAD~1 | grep CI/Fedora/Dockerfile | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
+        - if [ -s todo-Fedora_$FREL.txt ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:$FREL/g' > todo-Fedora_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:$FREL/g' > todo-Fedora_$FREL.txt; fi
+        - cat todo-Fedora_$FREL.txt
+        - exit 0
+  variables:
+    GIT_DEPTH: "3"
+  artifacts:
+    paths:
+      - todo-Fedora_$FREL.txt
+    expire_in: 1 day
+
+.build_image_Archlinux: &build_image_Archlinux
+  stage: build_docker_image
+  image: 
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+  script:
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        - if [ -s todo-Archlinux_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-Archlinux_$FREL.txt --destination $CI_REGISTRY_IMAGE:Archlinux_$FREL ; fi
+  variables:
+    GIT_DEPTH: "1"
+
+.build_image_Fedora: &build_image_Fedora
+  stage: build_docker_image
+  image: 
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+  script:
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        - if [ -s todo-Fedora_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-Fedora_$FREL.txt --destination $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
+  variables:
+    GIT_DEPTH: "1"
+
+.build_image_Fedora_alt: &build_image_Fedora_alt
+  stage: build_docker_image
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - echo $CI_REGISTRY_IMAGE  $CI_REGISTRY
+    - if [ -s todo-Fedora_$FREL.txt ]; then docker build --file todo-Fedora_$FREL.txt -t $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
+    - if [ -s todo-Fedora_$FREL.txt ]; then docker push $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
+  variables:
+    GIT_DEPTH: "1"
+
+.build_image_CentOS: &build_image_CentOS
+  stage: build_docker_image
+  image: 
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+  script:
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        - if [ -s todo-CentOS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-CentOS_$FREL.txt --destination $CI_REGISTRY_IMAGE:CentOS_$FREL ; fi
+  variables:
+    GIT_DEPTH: "1"
+
+
+.any: &any
+  image: $CI_REGISTRY_IMAGE:${OS}_${FREL}
+  stage: build
+  only:
+    variables:
+     - $CI_SERVER_HOST=="gitlab.cern.ch"
+  stage: build
+  before_script:
     - set -x
     - uname -a 
     - cat /etc/issue
-    - yum -y install  cmake make binutils sed gawk grep
-    - yum -y install  doxygen
-    - yum -y update --exclude=kern*
-    - yum -y install  valgrind HepMC HepMC-devel xz xz-devel bzip2 bzip2-devel zlib zlib-devel zlib-static libzstd-devel libzstd graphviz graphviz-devel pythia8 pythia8-devel  root
-#    - yum -y install  glibc-debuginfo --enablerepo=*debug*
-########################################################################
-.pythoninstall: &pythoninstall
-    -  yum -y install  python3 python3-devel python2 python2-devel 
-########################################################################
-.python3install: &python3install
-    - yum -y install  python3 python3-devel
-########################################################################
-.pythonupdate: &pythonupdate
-    - dnf -y install python3-dnf-plugin* --allowerasing --skip-broken
-    - dnf -y copr enable @python/python3.11 
-    - yum -y update  python3 python3-devel python2 python2-devel --enablerepo=*update* --allowerasing --skip-broken
-########################################################################
-.protobufinstall: &protobufinstall
-    -  yum -y install protobuf protobuf-devel
-########################################################################
-.pypyinstall: &pypyinstall
-    -  yum -y install   pypy pypy-devel 
-########################################################################
-.fixrootcmake: &fixrootcmake
-    - sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake
-########################################################################
-.clanginstall: &clanginstall
-    - yum -y install  clang
-########################################################################
-.clangexport:  &clangexport
-    - export CXX=clang++
-    - export CC=clang
-########################################################################
-.gccinstall: &gccinstall
-    - yum -y install  gcc gcc-c++ gcc-gfortran
-########################################################################
-.gccexport:  &gccexport
-    - export CXX=g++
-    - export CC=gcc
-    - export FC=gfortran
-########################################################################
-.Fedora-gcc:
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *protobufinstall
-  script:
-    - *gccexport
-    - *fullbuild
-########################################################################
-.Fedora-clang:
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall
-    - *protobufinstall
-  script:
-    - *clangexport
-    - *fullbuild
+    - export GIT_DEPTH=1
 
-############################The Pipelines###############################
-########################################################################
-Fedora33-gcc-pypy:
-  image: fedora:33
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *pypyinstall
-    - *protobufinstall
+
+.cmake: &cmake
+    - export CMAKE=cmake3
+    - export CTEST=ctest3
+    - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
+    - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
+    - export COMPILATIONSTART=$(date +%s)
+    - $CMAKE -S . -B BUILD -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    - $CMAKE --build BUILD -j 10
+    - export COMPILATIONEND=$(date +%s)
+    - $CMAKE --install BUILD
+    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
+    - $CTEST --test-dir BUILD --output-on-failure 
+
+
+
+.ex:  &ex
+    - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
+    - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
+
+.any-cmake: &any-cmake
+  extends: .any
   script:
-    - *gccexport
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=2,3,pypy2 -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
-    - make -j $(nproc)
-    - ctest --output-on-failure
-    - make -j $(nproc) install
+      - *ex
+      - *cmake
+
+###########################################################################
+#Check commit messages
+
+check_commit_Fedora35:
+  variables:
+    OS: Fedora
+    FREL: 35
+  extends: .check_commit_Fedora
+    
+check_commit_Fedora34:
+  variables:
+    OS: Fedora
+    FREL: 34
+  extends: .check_commit_Fedora
+
+check_commit_CentOS7:
+  variables:
+    OS: centOS
+    FREL: 7
+  extends: .check_commit_CentOS
+
+check_commit_CentOS8:
+  variables:
+    OS: centOS
+    FREL: 8
+  extends: .check_commit_CentOS
+
+check_commit_CentOS9:
+  variables:
+    OS: centOS
+    FREL: 9
+  extends: .check_commit_CentOS
+
+check_commit_Archlinux0:
+  variables:
+    OS: Archlinux
+    FREL: 0
+  extends: .check_commit_Archlinux
+
+###########################################################################
+
+###########################################################################
+#Build images
+build_image_Fedora34:
+  variables:
+    OS: Fedora
+    FREL: 34
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora34
+
+build_image_Fedora35:
+  variables:
+    OS: Fedora
+    FREL: 35
+  extends: .build_image_Fedora
+  needs:
+    - job: check_commit_Fedora35
+
+build_image_CentOS7:
+  variables:
+    OS: CentOS
+    FREL: 7
+  extends: .build_image_CentOS
+  needs:
+    - job: check_commit_CentOS7
+
+build_image_CentOS8:
+  variables:
+    OS: CentOS
+    FREL: 8
+  extends: .build_image_CentOS
+  needs:
+    - job: check_commit_CentOS8
+
+build_image_CentOS9:
+  variables:
+    OS: CentOS
+    FREL: 9
+  extends: .build_image_CentOS
+  needs:
+    - job: check_commit_CentOS9
+
+build_image_Archlinux0:
+  variables:
+    OS: Archlinux
+    FREL: 0
+  extends: .build_image_Archlinux
+  needs:
+    - job: check_commit_Archlinux0
+
+
+###########################################################################
+
+Fedora35-GNU:
+  variables:
+    OS: Fedora
+    FREL: 35
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_Fedora35
+
+  
+Fedora34-GNU:
+  variables:
+    OS: Fedora
+    FREL: 34
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_Fedora34
+
+Fedora34-LLVM:
+  variables:
+    OS: Fedora
+    FREL: 34
+    TOOLSET: LLVM
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_Fedora34
+
+CentOS7-GNU:
+  variables:
+    OS: CentOS
+    FREL: 7
+    TOOLSET: GNU    
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_CentOS7
+
+
+
+CentOS8-GNU:
+  variables:
+    OS: CentOS
+    FREL: 8
+    TOOLSET: GNU    
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_CentOS8
+
+
+CentOS9-GNU:
+  variables:
+    OS: CentOS
+    FREL: 9
+    TOOLSET: GNU    
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_CentOS9
+
+Archlinux0-GNU:
+  variables:
+    OS: Archlinux
+    FREL: 0
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake-ccache
+  needs:
+    - job: build_image_Archlinux0
+
+
+
+
+
+
+
+
+
+
+
+
+##########################Templates#####################################
 ########################################################################
-Fedora37-gcc-python311:
-  image: fedora:37
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *pythonupdate
-    - *protobufinstall
-  script:
-    - *gccexport
-    - *fullbuild
-########################################################################
-Fedora37-gcc:
-  image: fedora:37
-  extends: .Fedora-gcc
-########################################################################
-Fedora37-clang:
-  image: fedora:37
-  extends: .Fedora-clang
-########################################################################
-Fedora35-gcc:
-  image: fedora:35
-  extends: .Fedora-gcc
-########################################################################
-Fedora35-clang:
-  image: fedora:35
-  extends: .Fedora-clang
-########################################################################
-Fedora34-gcc:
-  image: fedora:34
-  extends: .Fedora-gcc
-########################################################################
-Fedora34-clang:
-  image: fedora:34
-  extends: .Fedora-clang
-########################################################################
-Fedora33-gcc:
-  image: fedora:33
-  extends: .Fedora-gcc
-########################################################################
-Fedora33-clang:
-  image: fedora:33
-  extends: .Fedora-clang
-########################################################################
-Fedora32-gcc:
-  image: fedora:32
-  extends: .Fedora-gcc
-########################################################################
-Fedora32-clang:
-  image: fedora:32
-  extends: .Fedora-clang
+#.Fedora: &Fedora
+  #only:
+    #variables:
+     #- $CI_SERVER_HOST=="gitlab.cern.ch" && $CI_COMMIT_MESSAGE =~ /FedoraCI/ 
+  #stage: build
+#########################################################################
+#.CentOS: &CentOS
+  #only:
+    #variables:
+     #- $CI_SERVER_HOST=="gitlab.cern.ch" && $CI_COMMIT_MESSAGE =~ /CentOSCI/ 
+  #stage: build
+
+#########################################################################
+#.fullbuild:  &fullbuild
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#.commoninstall: &commoninstall
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install  cmake make binutils sed gawk grep
+    #- yum -y install  doxygen
+    #- yum -y update --exclude=kern*
+    #- yum -y install  valgrind HepMC HepMC-devel xz xz-devel bzip2 bzip2-devel zlib zlib-devel zlib-static libzstd-devel libzstd graphviz graphviz-devel pythia8 pythia8-devel  root
+##    - yum -y install  glibc-debuginfo --enablerepo=*debug*
+#########################################################################
+#.pythoninstall: &pythoninstall
+    #-  yum -y install  python3 python3-devel python2 python2-devel 
+#########################################################################
+#.python3install: &python3install
+    #- yum -y install  python3 python3-devel
+#########################################################################
+#.pythonupdate: &pythonupdate
+    #- dnf -y install python3-dnf-plugin* --allowerasing --skip-broken
+    #- dnf -y copr enable @python/python3.11 
+    #- yum -y update  python3 python3-devel python2 python2-devel --enablerepo=*update* --allowerasing --skip-broken
+#########################################################################
+#.protobufinstall: &protobufinstall
+    #-  yum -y install protobuf protobuf-devel
+#########################################################################
+#.pypyinstall: &pypyinstall
+    #-  yum -y install   pypy pypy-devel 
+#########################################################################
+#.fixrootcmake: &fixrootcmake
+    #- sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake
+#########################################################################
+#.clanginstall: &clanginstall
+    #- yum -y install  clang
+#########################################################################
+#.clangexport:  &clangexport
+    #- export CXX=clang++
+    #- export CC=clang
+#########################################################################
+#.gccinstall: &gccinstall
+    #- yum -y install  gcc gcc-c++ gcc-gfortran
+#########################################################################
+#.gccexport:  &gccexport
+    #- export CXX=g++
+    #- export CC=gcc
+    #- export FC=gfortran
+#########################################################################
+#.Fedora-gcc:
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- *fullbuild
+#########################################################################
+#.Fedora-clang:
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+    #- *fullbuild
+
+#############################The Pipelines###############################
+#########################################################################
+#Fedora33-gcc-pypy:
+  #image: fedora:33
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *pypyinstall
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=2,3,pypy2 -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
+    #- make -j $(nproc)
+    #- ctest --output-on-failure
+    #- make -j $(nproc) install
+#########################################################################
+#Fedora37-gcc-python311:
+  #image: fedora:37
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *pythonupdate
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- *fullbuild
+#########################################################################
+#Fedora37-gcc:
+  #image: fedora:37
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora37-clang:
+  #image: fedora:37
+  #extends: .Fedora-clang
+#########################################################################
+#Fedora35-gcc:
+  #image: fedora:35
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora35-clang:
+  #image: fedora:35
+  #extends: .Fedora-clang
+#########################################################################
+#Fedora34-gcc:
+  #image: fedora:34
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora34-clang:
+  #image: fedora:34
+  #extends: .Fedora-clang
+#########################################################################
+#Fedora33-gcc:
+  #image: fedora:33
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora33-clang:
+  #image: fedora:33
+  #extends: .Fedora-clang
+#########################################################################
+#Fedora32-gcc:
+  #image: fedora:32
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora32-clang:
+  #image: fedora:32
+  #extends: .Fedora-clang
 #########################################################################
 #Fedora31-gcc:
   #image: fedora:31
@@ -320,289 +656,289 @@ Fedora32-clang:
   #image: fedora:28
   #extends: .Fedora-clang
 ########################################################################
-Fedora27-gcc:
-  image: fedora:27
-  extends: .Fedora-gcc
-########################################################################
-Fedora27-clang:
-  image: fedora:27
-  extends: .Fedora-clang
-########################################################################
-Fedora26-clang:
-  image: fedora:26
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *clangexport
-    - *fullbuild
-########################################################################
-Fedora26-gcc:
-  image: fedora:26
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *gccexport
-    - *fullbuild
-########################################################################
-Fedora25-clang:
-  image: fedora:25
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *clangexport
-#Bad lzma
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-Fedora25-gcc:
-  image: fedora:25
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *gccexport
-#Bad lzma
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-Fedora24-clang:
-  image: fedora:24
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *clangexport
-#Bad lzma
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-Fedora24-gcc:
-  image: fedora:24
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-    - *fixrootcmake
-    - *protobufinstall
-  script:
-    - *gccexport
-#Bad lzma
-    - export
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-Fedora23-clang-noroot-nopython-noprotobuf:
-  image: fedora:23
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall
-#We have ROOT5 here
-  script:
-    - export
-#Bad lzma
-    - mkdir build
-    - cd build
-    - *clangexport
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
-    - make -j $(nproc)
-    - ctest --output-on-failure
-    - make -j $(nproc) install 
-########################################################################
-Fedora23-gcc-noroot-nopython-noprotobuf:
-  image: fedora:23
-  extends: .Fedora
-  before_script:
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall
-#We have ROOT5 here
-  script:
-    - export
-#Bad lzma
-    - mkdir build
-    - cd build
-    - *gccexport
-    - cmake ..  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-CentOS7-gcc:
-  extends: .CentOS
-  image: centos:7
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release
-    - yum -y install  cmake3    
-    - *commoninstall
-    - *gccinstall
-    - *pythoninstall 
-    - *protobufinstall
-    - yum -y install  python34 python34-devel
-  script:
-    - export
-    - mkdir build
-    - cd build
-    - *gccexport
-    - cmake3 .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6  -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure
-    - make -j $(nproc) install
-########################################################################
-CentOS7-clang:
-  extends: .CentOS
-  image: centos:7
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release
-    - yum -y install  cmake3    
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall 
-    - *protobufinstall
-    - yum -y install  python34 python34-devel
-  script:
-    - *clangexport
-    - export
-    - mkdir build
-    - cd build
-    - cmake3 .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6  -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
-    - make -j $(nproc)
-    - ctest --output-on-failure 
-    - make -j $(nproc) install
-########################################################################
-CentOS8s-gcc:
-  extends: .CentOS
-  image: quay.io/centos/centos:stream8
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release epel-next-release libarchive
-    - dnf -y install 'dnf-command(config-manager)'
-    - dnf config-manager --set-enabled powertools  
-    - dnf config-manager --set-enabled appstream  
-    - dnf config-manager --set-enabled epel-testing    
-    - yum -y install json-devel
-    - rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-21.el8.x86_64.rpm --nodeps
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall 
-    - *protobufinstall
-  script:
-    - *gccexport
-    - *fullbuild
-########################################################################
-CentOS8s-clang:
-  extends: .CentOS
-  image: quay.io/centos/centos:stream8
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release epel-next-release libarchive
-    - dnf -y install 'dnf-command(config-manager)'
-    - dnf config-manager --set-enabled powertools  
-    - dnf config-manager --set-enabled appstream  
-    - dnf config-manager --set-enabled epel-testing
-    - yum -y install json-devel 
-    - rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-21.el8.x86_64.rpm --nodeps
-    - *commoninstall
-    - *clanginstall
-    - *pythoninstall 
-    - *protobufinstall
-  script:
-    - *clangexport
-    - *fullbuild
-########################################################################
-CentOS9s-gcc:
-  extends: .CentOS
-  image: quay.io/centos/centos:stream9
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release libarchive
-    - dnf -y install 'dnf-command(config-manager)'
-    - dnf config-manager --set-enabled crb  
-    - dnf config-manager --set-enabled epel-testing    
-    - yum -y install json-devel
-    - yum -y install zlib zlib-devel --nobest --allowerasing
-    - *commoninstall
-    - *clanginstall
-    - *python3install 
-    - *protobufinstall
-  script:
-    - *gccexport
-    - *fullbuild
-########################################################################
-CentOS9s-clang:
-  extends: .CentOS
-  image: quay.io/centos/centos:stream9
-  before_script:
-    - set -x
-    - uname -a 
-    - cat /etc/issue
-    - yum -y install epel-release libarchive
-    - dnf -y install 'dnf-command(config-manager)'
-    - dnf config-manager --set-enabled crb  
-    - dnf config-manager --set-enabled epel-testing
-    - yum -y install json-devel 
-    - yum -y install zlib zlib-devel --nobest --allowerasing
-    - *commoninstall
-    - *clanginstall
-    - *python3install 
-    - *protobufinstall
-  script:
-    - *clangexport
-    - *fullbuild
+#Fedora27-gcc:
+  #image: fedora:27
+  #extends: .Fedora-gcc
+#########################################################################
+#Fedora27-clang:
+  #image: fedora:27
+  #extends: .Fedora-clang
+#########################################################################
+#Fedora26-clang:
+  #image: fedora:26
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+    #- *fullbuild
+#########################################################################
+#Fedora26-gcc:
+  #image: fedora:26
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- *fullbuild
+#########################################################################
+#Fedora25-clang:
+  #image: fedora:25
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+##Bad lzma
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#Fedora25-gcc:
+  #image: fedora:25
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+##Bad lzma
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#Fedora24-clang:
+  #image: fedora:24
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+##Bad lzma
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#Fedora24-gcc:
+  #image: fedora:24
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+    #- *fixrootcmake
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+##Bad lzma
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#Fedora23-clang-noroot-nopython-noprotobuf:
+  #image: fedora:23
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall
+##We have ROOT5 here
+  #script:
+    #- export
+##Bad lzma
+    #- mkdir build
+    #- cd build
+    #- *clangexport
+    #- cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
+    #- make -j $(nproc)
+    #- ctest --output-on-failure
+    #- make -j $(nproc) install 
+#########################################################################
+#Fedora23-gcc-noroot-nopython-noprotobuf:
+  #image: fedora:23
+  #extends: .Fedora
+  #before_script:
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall
+##We have ROOT5 here
+  #script:
+    #- export
+##Bad lzma
+    #- mkdir build
+    #- cd build
+    #- *gccexport
+    #- cmake ..  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON 
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#CentOS7-gcc:
+  #extends: .CentOS
+  #image: centos:7
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release
+    #- yum -y install  cmake3    
+    #- *commoninstall
+    #- *gccinstall
+    #- *pythoninstall 
+    #- *protobufinstall
+    #- yum -y install  python34 python34-devel
+  #script:
+    #- export
+    #- mkdir build
+    #- cd build
+    #- *gccexport
+    #- cmake3 .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6  -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure
+    #- make -j $(nproc) install
+#########################################################################
+#CentOS7-clang:
+  #extends: .CentOS
+  #image: centos:7
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release
+    #- yum -y install  cmake3    
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall 
+    #- *protobufinstall
+    #- yum -y install  python34 python34-devel
+  #script:
+    #- *clangexport
+    #- export
+    #- mkdir build
+    #- cd build
+    #- cmake3 .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6  -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    #- make -j $(nproc)
+    #- ctest --output-on-failure 
+    #- make -j $(nproc) install
+#########################################################################
+#CentOS8s-gcc:
+  #extends: .CentOS
+  #image: quay.io/centos/centos:stream8
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release epel-next-release libarchive
+    #- dnf -y install 'dnf-command(config-manager)'
+    #- dnf config-manager --set-enabled powertools  
+    #- dnf config-manager --set-enabled appstream  
+    #- dnf config-manager --set-enabled epel-testing    
+    #- yum -y install json-devel
+    #- rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-21.el8.x86_64.rpm --nodeps
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall 
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- *fullbuild
+#########################################################################
+#CentOS8s-clang:
+  #extends: .CentOS
+  #image: quay.io/centos/centos:stream8
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release epel-next-release libarchive
+    #- dnf -y install 'dnf-command(config-manager)'
+    #- dnf config-manager --set-enabled powertools  
+    #- dnf config-manager --set-enabled appstream  
+    #- dnf config-manager --set-enabled epel-testing
+    #- yum -y install json-devel 
+    #- rpm -i http://ftp.tu-chemnitz.de/pub/linux/centos/8-stream/BaseOS/x86_64/os/Packages/zlib-devel-1.2.11-21.el8.x86_64.rpm --nodeps
+    #- *commoninstall
+    #- *clanginstall
+    #- *pythoninstall 
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+    #- *fullbuild
+#########################################################################
+#CentOS9s-gcc:
+  #extends: .CentOS
+  #image: quay.io/centos/centos:stream9
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release libarchive
+    #- dnf -y install 'dnf-command(config-manager)'
+    #- dnf config-manager --set-enabled crb  
+    #- dnf config-manager --set-enabled epel-testing    
+    #- yum -y install json-devel
+    #- yum -y install zlib zlib-devel --nobest --allowerasing
+    #- *commoninstall
+    #- *clanginstall
+    #- *python3install 
+    #- *protobufinstall
+  #script:
+    #- *gccexport
+    #- *fullbuild
+#########################################################################
+#CentOS9s-clang:
+  #extends: .CentOS
+  #image: quay.io/centos/centos:stream9
+  #before_script:
+    #- set -x
+    #- uname -a 
+    #- cat /etc/issue
+    #- yum -y install epel-release libarchive
+    #- dnf -y install 'dnf-command(config-manager)'
+    #- dnf config-manager --set-enabled crb  
+    #- dnf config-manager --set-enabled epel-testing
+    #- yum -y install json-devel 
+    #- yum -y install zlib zlib-devel --nobest --allowerasing
+    #- *commoninstall
+    #- *clanginstall
+    #- *python3install 
+    #- *protobufinstall
+  #script:
+    #- *clangexport
+    #- *fullbuild
 ########################################################################
