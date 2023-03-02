@@ -35,19 +35,14 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream);
 std::shared_ptr<Reader> deduce_reader(const std::string &filename)
 {
     std::string libHepMC3rootIO = "libHepMC3rootIO.so.3";
-#if defined(__darwin__) || defined(__APPLE__)
-    libHepMC3rootIO = "libHepMC3rootIO.dylib";
-#endif
-#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
-    libHepMC3rootIO = "HepMC3rootIO.dll";
-#endif
-
     std::string libHepMC3protobufIO = "libHepMC3protobufIO.so.3";
 #if defined(__darwin__) || defined(__APPLE__)
+    libHepMC3rootIO = "libHepMC3rootIO.dylib";
     libHepMC3protobufIO = "libHepMC3protobufIO.dylib";
 #endif
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
     libHepMC3protobufIO = "HepMC3protobufIO.dll";
+    libHepMC3rootIO = "HepMC3rootIO.dll";
 #endif
 
     bool remote = false;
@@ -183,10 +178,10 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
     head.push_back("");
     if (fstream)  {
         for (size_t i = 0; i < raw_header_size; ++i)  { static_cast<std::filebuf*>(fstream->rdbuf())->sungetc(); }
-        HEPMC3_DEBUG(0, "After sungetc() fstream->good()="+std::to_string(fstream->good()));
+        HEPMC3_DEBUG(0, "After sungetc() fstream->good()=" + std::to_string(fstream->good()));
     } else {
         for (size_t i = 0; i < raw_header_size; ++i)  { stream.rdbuf()->sungetc(); }
-        HEPMC3_DEBUG(0, "After sungetc() stream.good()="+std::to_string(stream.good()));
+        HEPMC3_DEBUG(0, "After sungetc() stream.good()=" + std::to_string(stream.good()));
     }
     if (!stream)
     {
