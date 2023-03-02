@@ -254,6 +254,19 @@ debian-salsa:
     GIT_DEPTH: "2"
 
 
+.build_image: &build_image
+  stage: build_docker_image
+  image: 
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+  script:
+        - echo $CI_REGISTRY_IMAGE:$OS_$FREL $CI_PROJECT_DIR
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        - if [ -s todo-$OS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-$OS_$FREL.txt --destination $CI_REGISTRY_IMAGE:$OS_$FREL ; fi
+  variables:
+    GIT_DEPTH: "2"
+
+
 .any: &any
   image: $CI_REGISTRY_IMAGE:${OS}_${FREL}
   stage: build
@@ -364,55 +377,55 @@ check_commit_Archlinux0:
 
 build_image_Fedora35:
   variables: { OS: Fedora, FREL: 35}
-  extends: .build_image_Fedora
+  extends: .build_image
   needs:
     - job: check_commit_Fedora35
 
 build_image_Fedora34:
   variables: { OS: Fedora, FREL: 34}
-  extends: .build_image_Fedora
+  extends: .build_image
   needs:
     - job: check_commit_Fedora34
 
 build_image_Fedora33:
   variables: { OS: Fedora, FREL: 33}
-  extends: .build_image_Fedora
+  extends: .build_image
   needs:
     - job: check_commit_Fedora33
 
 build_image_Fedora24:
   variables: { OS: Fedora, FREL: 24}
-  extends: .build_image_Fedora
+  extends: .build_image
   needs:
     - job: check_commit_Fedora24
 
 build_image_Fedora23:
   variables: { OS: Fedora, FREL: 23}
-  extends: .build_image_Fedora
+  extends: .build_image
   needs:
     - job: check_commit_Fedora23
 
 build_image_CentOS9:
   variables: { OS: CentOS, FREL: 9}
-  extends: .build_image_CentOS
+  extends: .build_image
   needs:
     - job: check_commit_CentOS9
 
 build_image_CentOS8:
   variables: { OS: CentOS, FREL: 8}
-  extends: .build_image_CentOS
+  extends: .build_image
   needs:
     - job: check_commit_CentOS8
 
 build_image_CentOS7:
   variables: { OS: CentOS, FREL: 7}
-  extends: .build_image_CentOS
+  extends: .build_image
   needs:
     - job: check_commit_CentOS7
 
 build_image_Archlinux0:
   variables: { OS: Archlinux, FREL: 0}
-  extends: .build_image_Archlinux
+  extends: .build_image
   needs:
     - job: check_commit_Archlinux0
 
