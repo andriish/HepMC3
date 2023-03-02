@@ -132,7 +132,7 @@ debian-salsa:
 
 
 
-
+########################################################################
 
 .check_commit_CentOS: &check_commit_CentOS
   stage: check_if_dockerfile_updated
@@ -174,6 +174,28 @@ debian-salsa:
     paths:
       - todo-Archlinux_$FREL.txt
     expire_in: 1 day
+
+
+.check_commit: &check_commit
+  stage: check_if_dockerfile_updated
+  image: 
+        name: alpine/git
+        entrypoint: [""]
+  script:
+        - rm -rf todo-$OS_$FREL.txt
+        - git log -1 | grep $OSDockerfile$FREL | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
+        - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
+        - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile | sed 's/$OS:35/$OS:$FREL/g' > todo-$OS_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile | sed 's/$OS:35/$OS:$FREL/g' > todo-$OS_$FREL.txt; fi
+        - cat todo-$OS_$FREL.txt
+        - exit 0
+  variables:
+    GIT_DEPTH: "3"
+  artifacts:
+    paths:
+      - todo-$OS_$FREL.txt
+    expire_in: 1 day
+
 
 
 .check_commit_Fedora: &check_commit_Fedora
@@ -354,10 +376,8 @@ check_commit_CentOS7:
   extends: .check_commit_CentOS
 
 check_commit_Archlinux0:
-  variables:
-    OS: Archlinux
-    FREL: 0
-  extends: .check_commit_Archlinux
+  variables: {OS: Archlinux, FREL: 0}
+  extends: .check_commit
 
 ###########################################################################
 #Build images
