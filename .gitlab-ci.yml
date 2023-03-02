@@ -217,18 +217,6 @@ debian-salsa:
   variables:
     GIT_DEPTH: "2"
 
-.build_image_Fedora_alt: &build_image_Fedora_alt
-  stage: build_docker_image
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo $CI_REGISTRY_IMAGE  $CI_REGISTRY
-    - if [ -s todo-Fedora_$FREL.txt ]; then docker build --file todo-Fedora_$FREL.txt -t $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
-    - if [ -s todo-Fedora_$FREL.txt ]; then docker push $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
-  variables:
-    GIT_DEPTH: "2"
 
 .build_image_CentOS: &build_image_CentOS
   stage: build_docker_image
@@ -262,7 +250,7 @@ debian-salsa:
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - export COMPILATIONSTART=$(date +%s)
-    - $CMAKE -S . -B BUILD -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    - $CMAKE -S . -B BUILD ${EXTRACMAKEFLAGS}  -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
     - $CMAKE --build BUILD -j 10
     - export COMPILATIONEND=$(date +%s)
     - $CMAKE --install BUILD
@@ -454,6 +442,29 @@ Fedora34-GNU:
   needs:
     - job: build_image_Fedora34
 
+
+Fedora34-LLVM:
+  variables:
+    OS: Fedora
+    FREL: 34
+    TOOLSET: LLVM
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora34
+
+
+Fedora33-GNU-pypy:
+  variables:
+    OS: Fedora
+    FREL: 33
+    TOOLSET: GNU
+    EXTRACMAKEFLAGS: -DHEPMC3_PYTHON_VERSIONS=2,3,pypy2 
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora33
+
+
 Fedora24-GNU:
   variables:
     OS: Fedora
@@ -472,7 +483,7 @@ Fedora23-GNU:
     OS: Fedora
     FREL: 23
     TOOLSET: GNU
-    EXTRACMAKEFLAGS:
+    EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
   extends: .any-cmake
   needs:
     - job: build_image_Fedora23
@@ -483,7 +494,7 @@ Fedora22-GNU:
     OS: Fedora
     FREL: 22
     TOOLSET: GNU
-    EXTRACMAKEFLAGS:
+    EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
   extends: .any-cmake
   needs:
     - job: build_image_Fedora22
@@ -491,15 +502,7 @@ Fedora22-GNU:
 
 
 
-Fedora34-LLVM:
-  variables:
-    OS: Fedora
-    FREL: 34
-    TOOLSET: LLVM
-    EXTRACMAKEFLAGS:
-  extends: .any-cmake
-  needs:
-    - job: build_image_Fedora34
+
 
 
 CentOS9-GNU:
