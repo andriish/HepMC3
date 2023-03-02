@@ -250,7 +250,7 @@ debian-salsa:
 .cmake: &cmake
     - export COMPILATIONSTART=$(date +%s)
     - $CMAKE --version
-    - $CMAKE -S . -B BUILD  $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS}
+    - $CMAKE -S . -B BUILD    ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - export COMPILATIONEND=$(date +%s)
     - $CMAKE --install BUILD
@@ -263,7 +263,7 @@ debian-salsa:
     - $CMAKE --version
     - mkdir -p BUILD
     - cd  BUILD
-    - $CMAKE ..  $CACHINGFLAGS $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS}
+    - $CMAKE ..   $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - export COMPILATIONEND=$(date +%s)
     - make install
@@ -287,7 +287,17 @@ debian-salsa:
     - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
     
+.any-cmake: &any-cmake
+  extends: .any
+  script:
+      - *ex
+      - *cmake
 
+.any-oldcmake: &any-oldcmake
+  extends: .any
+  script:
+      - *ex
+      - *oldcmake
 
 ###########################################################################
 #Check commit messages
@@ -423,22 +433,6 @@ build_image_Archlinux0:
   needs:
     - job: check_commit_Archlinux0
 
-
-
-.any-cmake: &any-cmake
-  extends: .any
-  script:
-      - *ex
-      - *cmake
-  needs:
-    - job: build_image_${OS}${FREL}
-
-.any-oldcmake: &any-oldcmake
-  extends: .any
-  script:
-      - *ex
-      - *oldcmake
-
 ###########################################################################
 Fedora35-GNU:
   variables:
@@ -558,4 +552,5 @@ Archlinux0-GNU:
     TOOLSET: GNU
     EXTRACMAKEFLAGS:
   extends: .any-cmake
-
+  needs:
+    - job: build_image_Archlinux0
