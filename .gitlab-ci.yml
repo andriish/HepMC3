@@ -283,6 +283,7 @@ debian-salsa:
 .ex:  &ex
     - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
     - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
+    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=gfortran; fi   
 
 .any-cmake: &any-cmake
   extends: .any
@@ -521,7 +522,15 @@ Fedora23-GNU-noroot-nopython-noprotobuf:
     - job: build_image_Fedora23
 
 
-
+CentOS9-INTEL:
+  variables:
+    OS: CentOS
+    FREL: 9
+    TOOLSET: INTEL
+    EXTRACMAKEFLAGS:
+  extends: .any-cmake
+  needs:
+    - job: build_image_CentOS9
 
 
 CentOS9-GNU:
