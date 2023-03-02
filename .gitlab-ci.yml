@@ -131,8 +131,6 @@ debian-salsa:
 
 
 
-
-
 .check_commit_CentOS: &check_commit_CentOS
   stage: check_if_dockerfile_updated
   image: 
