@@ -292,6 +292,8 @@ debian-salsa:
   script:
       - *ex
       - *cmake
+  needs:
+    - job: build_image_${OS}${FREL}
 
 .any-oldcmake: &any-oldcmake
   extends: .any
@@ -552,5 +554,4 @@ Archlinux0-GNU:
     TOOLSET: GNU
     EXTRACMAKEFLAGS:
   extends: .any-cmake
-  needs:
-    - job: build_image_Archlinux0
+
