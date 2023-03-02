@@ -138,6 +138,7 @@ debian-salsa:
   script:
         - rm -rf todo-CentOS_$FREL.txt
         - git log -1 | grep CentOSDockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
+        - cat todo-CentOS_$FREL.txt
         - git diff --name-only HEAD HEAD~1 | grep CI/CentOS/Dockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
         - if [ -s todo-CentOS_$FREL.txt ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
         - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
@@ -211,7 +212,7 @@ debian-salsa:
         - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
         - if [ -s todo-Fedora_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-Fedora_$FREL.txt --destination $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
   variables:
-    GIT_DEPTH: "1"
+    GIT_DEPTH: "2"
 
 .build_image_Fedora_alt: &build_image_Fedora_alt
   stage: build_docker_image
@@ -224,7 +225,7 @@ debian-salsa:
     - if [ -s todo-Fedora_$FREL.txt ]; then docker build --file todo-Fedora_$FREL.txt -t $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
     - if [ -s todo-Fedora_$FREL.txt ]; then docker push $CI_REGISTRY_IMAGE:Fedora_$FREL ; fi
   variables:
-    GIT_DEPTH: "1"
+    GIT_DEPTH: "2"
 
 .build_image_CentOS: &build_image_CentOS
   stage: build_docker_image
@@ -235,7 +236,7 @@ debian-salsa:
         - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
         - if [ -s todo-CentOS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-CentOS_$FREL.txt --destination $CI_REGISTRY_IMAGE:CentOS_$FREL ; fi
   variables:
-    GIT_DEPTH: "1"
+    GIT_DEPTH: "2"
 
 
 .any: &any
