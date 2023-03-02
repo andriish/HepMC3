@@ -490,9 +490,18 @@ Fedora24-GNU:
     - job: build_image_Fedora24
 
 
+Fedora23-LLVM-noroot-nopython-noprotobuf:
+  variables:
+    OS: Fedora
+    FREL: 23
+    TOOLSET: LLVM
+    EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora23
 
 
-Fedora23-GNU:
+Fedora23-GNU-noroot-nopython-noprotobuf:
   variables:
     OS: Fedora
     FREL: 23
