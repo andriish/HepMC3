@@ -380,7 +380,7 @@ Fedora35-GNU:
     FREL: 35
     TOOLSET: GNU
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_Fedora35
 
@@ -391,7 +391,7 @@ Fedora34-GNU:
     FREL: 34
     TOOLSET: GNU
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_Fedora34
 
@@ -401,7 +401,7 @@ Fedora34-LLVM:
     FREL: 34
     TOOLSET: LLVM
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_Fedora34
 
@@ -411,7 +411,7 @@ CentOS7-GNU:
     FREL: 7
     TOOLSET: GNU    
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_CentOS7
 
@@ -423,7 +423,7 @@ CentOS8-GNU:
     FREL: 8
     TOOLSET: GNU    
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_CentOS8
 
@@ -434,7 +434,7 @@ CentOS9-GNU:
     FREL: 9
     TOOLSET: GNU    
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_CentOS9
 
@@ -444,7 +444,7 @@ Archlinux0-GNU:
     FREL: 0
     TOOLSET: GNU
     EXTRACMAKEFLAGS:
-  extends: .any-cmake-ccache
+  extends: .any-cmake
   needs:
     - job: build_image_Archlinux0
 
