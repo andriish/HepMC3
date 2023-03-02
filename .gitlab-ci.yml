@@ -243,7 +243,10 @@ debian-salsa:
     - uname -a 
     - cat /etc/issue
     - export GIT_DEPTH=1
-
+  cache:
+   - key: $TOOLSET-cache-$FREL
+     paths:
+       - $TOOLSET-cache-$FREL/
 
 .cmake: &cmake
     - export CCACHE_BASEDIR=`pwd`/$TOOLSET-cache-$FREL    
@@ -265,10 +268,7 @@ debian-salsa:
     - $CMAKE --install BUILD
     - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
     - $CTEST --test-dir BUILD --output-on-failure 
-  cache:
-   - key: $TOOLSET-cache-$FREL
-     paths:
-       - $TOOLSET-cache-$FREL/
+
        
 .oldcmake: &oldcmake
     - export CCACHE_BASEDIR=`pwd`/$TOOLSET-cache-$FREL    
@@ -294,10 +294,6 @@ debian-salsa:
     - make install
     - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
     - $CTEST  --output-on-failure 
-  cache:
-   - key: $TOOLSET-cache-$FREL
-     paths:
-       - $TOOLSET-cache-$FREL/
 
 .ex:  &ex
     - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
