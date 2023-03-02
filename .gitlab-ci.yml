@@ -1,3 +1,6 @@
+variables:
+  DOCKER_DRIVER: overlay2
+
 stages:
   - check_if_dockerfile_updated
   - build_docker_image
@@ -246,7 +249,6 @@ debian-salsa:
   only:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
-  stage: build
   before_script:
     - set -x
     - uname -a 
