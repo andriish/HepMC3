@@ -233,6 +233,7 @@ debian-salsa:
         name: gcr.io/kaniko-project/executor:debug
         entrypoint: [""]
   script:
+        - echo $CI_REGISTRY_IMAGE:CentOS_$FREL CI_PROJECT_DIR
         - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
         - if [ -s todo-CentOS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-CentOS_$FREL.txt --destination $CI_REGISTRY_IMAGE:CentOS_$FREL ; fi
   variables:
