@@ -247,19 +247,35 @@ debian-salsa:
 .cmake: &cmake
     - export CMAKE=cmake3
     - export CTEST=ctest3
-    - export LETTER=S
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - if [ "${FREL}" == "23" ]; then export LETTER=H; CMAKE=cmake; fi
-    - if [ "${FREL}" == "24" ]; then export LETTER=H;  fi
+    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; fi
     - export COMPILATIONSTART=$(date +%s)
     - $CMAKE --version
-    - $CMAKE -${LETTER} . -B BUILD ${EXTRACMAKEFLAGS}  -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    - $CMAKE -S . -B BUILD ${EXTRACMAKEFLAGS}  -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
     - $CMAKE --build BUILD -j 10
     - export COMPILATIONEND=$(date +%s)
     - $CMAKE --install BUILD
     - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
     - $CTEST --test-dir BUILD --output-on-failure 
+
+.oldcmake: &oldcmake
+    - export CMAKE=cmake3
+    - export CTEST=ctest3
+    - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
+    - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
+    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; fi
+    - export COMPILATIONSTART=$(date +%s)
+    - $CMAKE --version
+    - mkdir -p BUILD
+    - cd  BUILD
+    - $CMAKE ..  ${EXTRACMAKEFLAGS}  -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+    - make -j 10
+    - export COMPILATIONEND=$(date +%s)
+    - make install
+    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
+    - $CTEST  --output-on-failure 
+
 
 
 
@@ -272,6 +288,12 @@ debian-salsa:
   script:
       - *ex
       - *cmake
+
+.any-oldcmake: &any-oldcmake
+  extends: .any
+  script:
+      - *ex
+      - *oldcmake
 
 ###########################################################################
 #Check commit messages
@@ -470,7 +492,7 @@ Fedora24-GNU:
     FREL: 24
     TOOLSET: GNU
     EXTRACMAKEFLAGS: -DHEPMC3_TEST_LZMA:BOOL=OFF
-  extends: .any-cmake
+  extends: .any-oldcmake
   needs:
     - job: build_image_Fedora24
 
@@ -481,7 +503,7 @@ Fedora23-LLVM-noroot-nopython-noprotobuf:
     FREL: 23
     TOOLSET: LLVM
     EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
-  extends: .any-cmake
+  extends: .any-oldcmake
   needs:
     - job: build_image_Fedora23
 
@@ -492,7 +514,7 @@ Fedora23-GNU-noroot-nopython-noprotobuf:
     FREL: 23
     TOOLSET: GNU
     EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
-  extends: .any-cmake
+  extends: .any-oldcmake
   needs:
     - job: build_image_Fedora23
 
