@@ -5,13 +5,14 @@ stages:
   - check_if_dockerfile_updated
   - build_docker_image
   - build
+  - LCG
 ########################################################################
 LCG_99_x86_64-centos7-gcc8-opt:
   only:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-cc7
-  stage: build
+  stage: LCG
   before_script:
     - export LCGPLATFORM=x86_64-centos7-gcc8-opt
     - export LCG_LOCATION=/cvmfs/sft.cern.ch/lcg/releases/LCG_99
@@ -43,7 +44,7 @@ LCG_95_x86_64-centos7-gcc8-opt:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-cc7
-  stage: build
+  stage: LCG
   before_script:
     - export LCGPLATFORM=x86_64-centos7-gcc8-opt
     - source /cvmfs/sft.cern.ch/lcg/contrib/gcc/8.2.0/${LCGPLATFORM}/setup.sh
@@ -73,7 +74,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker:lcg-ubuntu18
-  stage: build
+  stage: LCG
   before_script:
     - export LCGPLATFORM=x86_64-ubuntu1804-gcc8-opt
     - source /cvmfs/sft.cern.ch/lcg/releases/LCG_95/ROOT/6.16.00/${LCGPLATFORM}/ROOT-env.sh
@@ -264,7 +265,7 @@ debian-salsa:
     - export CTEST=ctest3
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; fi
+    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - export COMPILATIONSTART=$(date +%s)
     - $CMAKE --version
     - mkdir -p BUILD
