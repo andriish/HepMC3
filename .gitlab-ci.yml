@@ -509,6 +509,7 @@ Fedora23-LLVM-noroot-nopython-noprotobuf:
     - job: build_image_Fedora23
 
 
+
 Fedora23-GNU-noroot-nopython-noprotobuf:
   variables:
     OS: Fedora
