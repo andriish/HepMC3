@@ -184,7 +184,7 @@ debian-salsa:
         - rm -rf todo-Fedora_$FREL.txt
         - git log -1 | grep FedoraDockerfile$FREL | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
         - git diff --name-only HEAD HEAD~1 | grep CI/Fedora/Dockerfile | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
-        - if [ -s todo-Fedora_$FREL.txt ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:$FREL/g' > todo-Fedora_$FREL.txt; fi
+        - if [ -s todo-Fedora_$FREL.txt ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:'$FREL'/g' > todo-Fedora_$FREL.txt; fi
         - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:$FREL/g' > todo-Fedora_$FREL.txt; fi
         - cat todo-Fedora_$FREL.txt
         - exit 0
