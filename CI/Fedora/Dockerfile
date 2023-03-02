@@ -11,6 +11,6 @@ RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  33 ]; then yum -y  install pypy pypy-devel; fi && yum -y clean all
 
 #   cat /etc/fedora-release | grep -Eo '[0-9]+'
-# 24 + -- sed is needed. 
+# 24 + -- sed is needed.  
 #22,23 -- no protobuf no root and no python                      
 # pypy -- 33   pypy pypy-devel 
