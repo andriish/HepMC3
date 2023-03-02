@@ -158,9 +158,9 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
     std::string raw_header(raw_header_size + 1,'\0');
     auto fstream = dynamic_cast<std::ifstream*>(&stream);
     if (fstream) {
-        fstream->read(raw_header.data(), raw_header_size);
+        fstream->read(&(raw_header[0]), raw_header_size);
     } else {
-        stream.read(raw_header.data(), raw_header_size);
+        stream.read(&(raw_header[0]), raw_header_size);
     }
     std::vector<std::string> head;
     head.push_back("");
@@ -254,9 +254,9 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream)
     std::string raw_header(raw_header_size + 1,'\0');
     auto fstream = std::dynamic_pointer_cast<std::ifstream>(stream);
     if (fstream) {
-        fstream->read(raw_header.data(), raw_header_size);
+        fstream->read(&(raw_header[0]), raw_header_size);
     } else {
-        stream->read(raw_header.data(), raw_header_size);
+        stream->read(&(raw_header[0]), raw_header_size);
     }
     std::vector<std::string> head;
     head.push_back("");
