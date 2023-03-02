@@ -304,14 +304,6 @@ check_commit_Fedora23:
     FREL: 23
   extends: .check_commit_Fedora
 
-
-check_commit_Fedora22:
-  variables:
-    OS: Fedora
-    FREL: 22
-  extends: .check_commit_Fedora
-
-
 check_commit_CentOS9:
   variables:
     OS: centOS
@@ -384,17 +376,6 @@ build_image_Fedora23:
   extends: .build_image_Fedora
   needs:
     - job: check_commit_Fedora23
-
-
-build_image_Fedora22:
-  variables:
-    OS: Fedora
-    FREL: 22
-  extends: .build_image_Fedora
-  needs:
-    - job: check_commit_Fedora22
-
-
 
 
 build_image_CentOS9:
@@ -510,19 +491,6 @@ Fedora23-GNU-noroot-nopython-noprotobuf:
   extends: .any-cmake
   needs:
     - job: build_image_Fedora23
-
-
-Fedora22-GNU:
-  variables:
-    OS: Fedora
-    FREL: 22
-    TOOLSET: GNU
-    EXTRACMAKEFLAGS: -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF
-  extends: .any-cmake
-  needs:
-    - job: build_image_Fedora22
-
-
 
 
 
