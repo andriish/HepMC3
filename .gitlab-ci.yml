@@ -1,6 +1,6 @@
 variables:
   DOCKER_DRIVER: overlay2
-  
+  STANDARDFLAGS: -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
 stages:
   - check_if_dockerfile_updated
   - build_docker_image
@@ -32,8 +32,7 @@ LCG_99_x86_64-centos7-gcc8-opt:
     - export
     - mkdir build
     - cd build
-    - cmake ..  -DHEPMC3_TEST_VALGRIND=ON -DHEPMC3_USE_INTERFACE_FROM_PYTHIA8:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3 -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DHEPMC3_Python_SITEARCH38=$(pwd)/install/lib/python3.8/site-packages -DHEPMC3_BUILD_EXAMPLES=ON -DHEPMC3_ENABLE_TEST=ON -DHEPMC3_INSTALL_INTERFACES=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPYTHIA8_ROOT_DIR=${LCG_LOCATION}/MCGenerators/pythia8/244/${LCGPLATFORM} -DPHOTOSPP_ROOT_DIR=${LCG_LOCATION}/MCGenerators/photos++/3.64/${LCGPLATFORM}/ -DTAUOLAPP_ROOT_DIR=${LCG_LOCATION}/MCGenerators/tauola++/1.1.8/${LCGPLATFORM}/ -DMCTESTER_ROOT_DIR=${LCG_LOCATION}/MCGenerators/mctester/1.25.0/${LCGPLATFORM}/ -DHEPMC2_ROOT_DIR=${LCG_LOCATION}/HepMC/2.06.11/${LCGPLATFORM}/ -DGRAPHVIZ_ROOT=${LCG_LOCATION}/graphviz/2.40.1/${LCGPLATFORM}/ 
-      -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include -DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so
+    - cmake ..  -DHEPMC3_TEST_VALGRIND=ON -DHEPMC3_USE_INTERFACE_FROM_PYTHIA8:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3 -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DHEPMC3_Python_SITEARCH38=$(pwd)/install/lib/python3.8/site-packages -DHEPMC3_BUILD_EXAMPLES=ON -DHEPMC3_ENABLE_TEST=ON -DHEPMC3_INSTALL_INTERFACES=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DPYTHIA8_ROOT_DIR=${LCG_LOCATION}/MCGenerators/pythia8/244/${LCGPLATFORM} -DPHOTOSPP_ROOT_DIR=${LCG_LOCATION}/MCGenerators/photos++/3.64/${LCGPLATFORM}/ -DTAUOLAPP_ROOT_DIR=${LCG_LOCATION}/MCGenerators/tauola++/1.1.8/${LCGPLATFORM}/ -DMCTESTER_ROOT_DIR=${LCG_LOCATION}/MCGenerators/mctester/1.25.0/${LCGPLATFORM}/ -DHEPMC2_ROOT_DIR=${LCG_LOCATION}/HepMC/2.06.11/${LCGPLATFORM}/ -DGRAPHVIZ_ROOT=${LCG_LOCATION}/graphviz/2.40.1/${LCGPLATFORM}/   -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include -DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so
     - make -j $(nproc)
     - ctest --output-on-failure
     - make -j $(nproc) install
@@ -249,20 +248,9 @@ debian-salsa:
        - $TOOLSET-cache-$FREL/
 
 .cmake: &cmake
-    - export CCACHE_BASEDIR=`pwd`/$TOOLSET-cache-$FREL    
-    - export CCACHE_BASEDIR=${PWD}
-    - export CCACHE_DIR=`pwd`/$TOOLSET-cache-$FREL/ccache
-    - export CCACHE_COMPILERCHECK=content
-    - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
-    - export CACHINGFLAGS=
-    - export CMAKE=cmake3
-    - export CTEST=ctest3
-    - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
-    - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; fi
     - export COMPILATIONSTART=$(date +%s)
     - $CMAKE --version
-    - $CMAKE -S . -B BUILD  $CACHINGFLAGS  -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON ${EXTRACMAKEFLAGS}
+    - $CMAKE -S . -B BUILD  $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS}
     - $CMAKE --build BUILD -j 10
     - export COMPILATIONEND=$(date +%s)
     - $CMAKE --install BUILD
@@ -271,6 +259,21 @@ debian-salsa:
 
        
 .oldcmake: &oldcmake
+    - export COMPILATIONSTART=$(date +%s)
+    - $CMAKE --version
+    - mkdir -p BUILD
+    - cd  BUILD
+    - $CMAKE ..  $CACHINGFLAGS $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS}
+    - make -j 10
+    - export COMPILATIONEND=$(date +%s)
+    - make install
+    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
+    - $CTEST  --output-on-failure 
+
+.ex:  &ex
+    - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
+    - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
+    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi   
     - export CCACHE_BASEDIR=`pwd`/$TOOLSET-cache-$FREL    
     - export CCACHE_BASEDIR=${PWD}
     - export CCACHE_DIR=`pwd`/$TOOLSET-cache-$FREL/ccache
@@ -283,23 +286,7 @@ debian-salsa:
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
-    - export CACHINGFLAGS=
-    - export COMPILATIONSTART=$(date +%s)
-    - $CMAKE --version
-    - mkdir -p BUILD
-    - cd  BUILD
-    - $CMAKE ..  $CACHINGFLAGS -DHEPMC3_TEST_VALGRIND=ON -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON ${EXTRACMAKEFLAGS}
-    - make -j 10
-    - export COMPILATIONEND=$(date +%s)
-    - make install
-    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
-    - $CTEST  --output-on-failure 
-
-.ex:  &ex
-    - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
-    - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
-    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi   
-
+    
 .any-cmake: &any-cmake
   extends: .any
   script:
@@ -359,22 +346,17 @@ check_commit_CentOS8:
     FREL: 8
   extends: .check_commit_CentOS
 
-
 check_commit_CentOS7:
   variables:
     OS: centOS
     FREL: 7
   extends: .check_commit_CentOS
 
-
 check_commit_Archlinux0:
   variables:
     OS: Archlinux
     FREL: 0
   extends: .check_commit_Archlinux
-
-###########################################################################
-
 
 ###########################################################################
 #Build images
@@ -411,7 +393,6 @@ build_image_Fedora24:
   needs:
     - job: check_commit_Fedora24
 
-
 build_image_Fedora23:
   variables:
     OS: Fedora
@@ -419,7 +400,6 @@ build_image_Fedora23:
   extends: .build_image_Fedora
   needs:
     - job: check_commit_Fedora23
-
 
 build_image_CentOS9:
   variables:
@@ -429,7 +409,6 @@ build_image_CentOS9:
   needs:
     - job: check_commit_CentOS9
 
-
 build_image_CentOS8:
   variables:
     OS: CentOS
@@ -437,7 +416,6 @@ build_image_CentOS8:
   extends: .build_image_CentOS
   needs:
     - job: check_commit_CentOS8
-
 
 build_image_CentOS7:
   variables:
@@ -447,7 +425,6 @@ build_image_CentOS7:
   needs:
     - job: check_commit_CentOS7
 
-
 build_image_Archlinux0:
   variables:
     OS: Archlinux
@@ -456,9 +433,7 @@ build_image_Archlinux0:
   needs:
     - job: check_commit_Archlinux0
 
-
 ###########################################################################
-
 Fedora35-GNU:
   variables:
     OS: Fedora
@@ -469,7 +444,6 @@ Fedora35-GNU:
   needs:
     - job: build_image_Fedora35
 
-  
 Fedora34-GNU:
   variables:
     OS: Fedora
@@ -479,7 +453,6 @@ Fedora34-GNU:
   extends: .any-cmake
   needs:
     - job: build_image_Fedora34
-
 
 Fedora34-LLVM:
   variables:
@@ -491,7 +464,6 @@ Fedora34-LLVM:
   needs:
     - job: build_image_Fedora34
 
-
 Fedora33-GNU-pypy:
   variables:
     OS: Fedora
@@ -501,7 +473,6 @@ Fedora33-GNU-pypy:
   extends: .any-cmake
   needs:
     - job: build_image_Fedora33
-
 
 Fedora24-GNU:
   variables:
@@ -513,7 +484,6 @@ Fedora24-GNU:
   needs:
     - job: build_image_Fedora24
 
-
 Fedora23-LLVM-noroot-nopython-noprotobuf:
   variables:
     OS: Fedora
@@ -523,8 +493,6 @@ Fedora23-LLVM-noroot-nopython-noprotobuf:
   extends: .any-oldcmake
   needs:
     - job: build_image_Fedora23
-
-
 
 Fedora23-GNU-noroot-nopython-noprotobuf:
   variables:
@@ -546,7 +514,6 @@ Fedora23-GNU-noroot-nopython-noprotobuf:
 #  extends: .any-cmake
 #  needs:
 #    - job: build_image_CentOS9
-
 
 CentOS9-GNU:
   variables:
