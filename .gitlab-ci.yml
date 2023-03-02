@@ -283,7 +283,7 @@ debian-salsa:
 .ex:  &ex
     - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
     - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
-    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=gfortran; fi   
+    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi   
 
 .any-cmake: &any-cmake
   extends: .any
@@ -527,7 +527,7 @@ CentOS9-INTEL:
     OS: CentOS
     FREL: 9
     TOOLSET: INTEL
-    EXTRACMAKEFLAGS:
+    EXTRACMAKEFLAGS: -DCMAKE_EXE_LINKER_FLAGS=-lstdc++
   extends: .any-cmake
   needs:
     - job: build_image_CentOS9
