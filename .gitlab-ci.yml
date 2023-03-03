@@ -188,26 +188,17 @@ debian-salsa:
        - $TOOLSET-cache-$FREL/
 
 .cmake: &cmake
-    - export COMPILATIONSTART=$(date +%s)
-    - $CMAKE --version
     - $CMAKE -S . -B BUILD    ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
-    - export COMPILATIONEND=$(date +%s)
     - $CMAKE --install BUILD
-    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
     - $CTEST --test-dir BUILD --output-on-failure 
 
-       
 .oldcmake: &oldcmake
-    - export COMPILATIONSTART=$(date +%s)
-    - $CMAKE --version
     - mkdir -p BUILD
     - cd  BUILD
     - $CMAKE ..   $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
-    - export COMPILATIONEND=$(date +%s)
     - make install
-    - echo $COMPILATIONSTART $COMPILATIONEND $(echo $COMPILATIONEND-$COMPILATIONSTART | bc -l)
     - $CTEST  --output-on-failure 
 
 .ex:  &ex
@@ -218,13 +209,15 @@ debian-salsa:
     - export CCACHE_BASEDIR=${PWD}
     - export CCACHE_DIR=`pwd`/$TOOLSET-cache-$FREL/ccache
     - export CCACHE_COMPILERCHECK=content
-    - export CMAKE=cmake3
-    - export CTEST=ctest3
+    - export CMAKE=cmake
+    - export CTEST=ctest
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
-    
+    - $CMAKE --version
+    - $TEST --version
+
 .any-cmake: &any-cmake
   extends: .any
   script:
@@ -396,7 +389,7 @@ CentOS8-GNU:
 
 CentOS7-GNU:
   variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
-  extends: .any-oldcmake
+  extends: .any-cmake
   needs:
     - job: build_image_CentOS7
     
