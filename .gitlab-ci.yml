@@ -246,7 +246,7 @@ check_commit_Fedora35:
     
 check_commit_Fedora34:
   variables: { OS: Fedora, FREL: 34}
-  extends: .check_commit_Fedora
+  extends: .check_commit
 
 check_commit_Fedora33:
   variables: { OS: Fedora, FREL: 33}
