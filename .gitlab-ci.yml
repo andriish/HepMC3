@@ -134,48 +134,6 @@ debian-salsa:
 
 ########################################################################
 
-.check_commit_CentOS: &check_commit_CentOS
-  stage: check_if_dockerfile_updated
-  image: 
-        name: alpine/git
-        entrypoint: [""]
-  script:
-        - rm -rf todo-CentOS_$FREL.txt
-        - git log -1 | grep CentOSDockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
-        - cat todo-CentOS_$FREL.txt
-        - git diff --name-only HEAD HEAD~1 | grep CI/CentOS/Dockerfile$FREL | head -n 1 >> todo-CentOS_$FREL.txt || touch todo-CentOS_$FREL.txt
-        - if [ -s todo-CentOS_$FREL.txt ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/CentOS/Dockerfile$FREL  > todo-CentOS_$FREL.txt; fi
-        - cat todo-CentOS_$FREL.txt
-        - exit 0
-  variables:
-    GIT_DEPTH: "3"
-  artifacts:
-    paths:
-      - todo-CentOS_$FREL.txt
-    expire_in: 1 day
-
-.check_commit_Archlinux: &check_commit_Archlinux
-  stage: check_if_dockerfile_updated
-  image: 
-        name: alpine/git
-        entrypoint: [""]
-  script:
-        - rm -rf todo-Archlinux_$FREL.txt
-        - git log -1 | grep ArchlinuxDockerfile$FREL | head -n 1 >> todo-Archlinux_$FREL.txt || touch todo-Archlinux_$FREL.txt
-        - git diff --name-only HEAD HEAD~1 | grep CI/Archlinux/Dockerfile | head -n 1 >> todo-Archlinux_$FREL.txt || touch todo-Archlinux_$FREL.txt
-        - if [ -s todo-Archlinux_$FREL.txt ]; then cat CI/Archlinux/Dockerfile | sed 's/Archlinux:35/Archlinux:$FREL/g' > todo-Archlinux_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/Archlinux/Dockerfile | sed 's/Archlinux:35/Archlinux:$FREL/g' > todo-Archlinux_$FREL.txt; fi
-        - cat todo-Archlinux_$FREL.txt
-        - exit 0
-  variables:
-    GIT_DEPTH: "3"
-  artifacts:
-    paths:
-      - todo-Archlinux_$FREL.txt
-    expire_in: 1 day
-
-
 .check_commit: &check_commit
   stage: check_if_dockerfile_updated
   image: 
@@ -183,10 +141,12 @@ debian-salsa:
         entrypoint: [""]
   script:
         - rm -rf todo-$OS_$FREL.txt
+        - export SUFFIX=
+        - if [ $OS == "CentOS" ]; then export SUFFIX=$FREL; fi
         - git log -1 | grep $OS'Dockerfile'$FREL | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
-        - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
-        - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile | sed 's/'$OS':35/'$OS':'$FREL'/g' > todo-$OS_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile | sed 's/'$OS':35/'$OS':'$FREL'/g' > todo-$OS_$FREL.txt; fi
+        - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile$SUFFIX | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
+        - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS_$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS_$FREL.txt; fi
         - cat todo-$OS_$FREL.txt
         - exit 0
   variables:
@@ -196,28 +156,7 @@ debian-salsa:
       - todo-$OS_$FREL.txt
     expire_in: 1 day
 
-
-
-.check_commit_Fedora: &check_commit_Fedora
-  stage: check_if_dockerfile_updated
-  image: 
-        name: alpine/git
-        entrypoint: [""]
-  script:
-        - rm -rf todo-Fedora_$FREL.txt
-        - git log -1 | grep FedoraDockerfile$FREL | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
-        - git diff --name-only HEAD HEAD~1 | grep CI/Fedora/Dockerfile | head -n 1 >> todo-Fedora_$FREL.txt || touch todo-Fedora_$FREL.txt
-        - if [ -s todo-Fedora_$FREL.txt ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:'$FREL'/g' > todo-Fedora_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/Fedora/Dockerfile | sed 's/fedora:35/fedora:$FREL/g' > todo-Fedora_$FREL.txt; fi
-        - cat todo-Fedora_$FREL.txt
-        - exit 0
-  variables:
-    GIT_DEPTH: "3"
-  artifacts:
-    paths:
-      - todo-Fedora_$FREL.txt
-    expire_in: 1 day
-
+########################################################################
 
 .build_image: &build_image
   stage: build_docker_image
@@ -230,7 +169,7 @@ debian-salsa:
         - if [ -s todo-$OS_$FREL.txt ]; then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile todo-$OS_$FREL.txt --destination $CI_REGISTRY_IMAGE:$OS_$FREL ; fi
   variables:
     GIT_DEPTH: "2"
-
+########################################################################
 
 .any: &any
   image: $CI_REGISTRY_IMAGE:${OS}_${FREL}
@@ -303,7 +242,7 @@ debian-salsa:
 
 check_commit_Fedora35:
   variables: { OS: Fedora, FREL: 35}
-  extends: .check_commit_Fedora
+  extends: .check_commit
     
 check_commit_Fedora34:
   variables: { OS: Fedora, FREL: 34}
@@ -311,27 +250,27 @@ check_commit_Fedora34:
 
 check_commit_Fedora33:
   variables: { OS: Fedora, FREL: 33}
-  extends: .check_commit_Fedora
+  extends: .check_commit
 
 check_commit_Fedora24:
   variables: { OS: Fedora, FREL: 24}
-  extends: .check_commit_Fedora
+  extends: .check_commit
 
 check_commit_Fedora23:
   variables: { OS: Fedora, FREL: 23}
-  extends: .check_commit_Fedora
+  extends: .check_commit
 
 check_commit_CentOS9:
   variables: { OS: CentOS, FREL: 9}
-  extends: .check_commit_CentOS
+  extends: .check_commit
 
 check_commit_CentOS8:
   variables: { OS: CentOS, FREL: 8}
-  extends: .check_commit_CentOS
+  extends: .check_commit
 
 check_commit_CentOS7:
   variables: { OS: CentOS, FREL: 7}
-  extends: .check_commit_CentOS
+  extends: .check_commit
 
 check_commit_Archlinux0:
   variables: {OS: Archlinux, FREL: 0}
