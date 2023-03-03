@@ -28,6 +28,7 @@ size_t const ProtobufMagicHeaderBytes = 4;
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf)
 HEPMC3_DECLARE_READER_STREAM(Readerprotobuf)
 
+/// @brief Constant
 static size_t const MDBytesLength = 10;
 
 Readerprotobuf::Readerprotobuf(const std::string &filename)

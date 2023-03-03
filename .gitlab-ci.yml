@@ -202,7 +202,7 @@ debian-salsa:
        -  CACHES/cache-${OS}-${FREL}-${TOOLSET}/
 
 .cmake: &cmake
-    - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Wno-unused-command-line-argument -Wno-gnu-zero-variadic-macro-arguments"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
     - cd BUILD
@@ -211,7 +211,7 @@ debian-salsa:
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
-    - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra  -Wno-unused-command-line-argument -Wno-gnu-zero-variadic-macro-arguments"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - make install
     - $CTEST  --output-on-failure 
