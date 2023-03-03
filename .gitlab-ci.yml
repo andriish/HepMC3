@@ -152,20 +152,21 @@ debian-salsa:
         name: alpine/git
         entrypoint: [""]
   script:
-        - rm -rf todo-$OS_$FREL.txt
+        - rm -rf todo-$OS'_'$FREL.txt
         - export SUFFIX=
+        - set -x
         - if [ $OS == "CentOS" ]; then export SUFFIX=$FREL; fi
-        - git log -1 | grep $OS'Dockerfile'$FREL | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
-        - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile$SUFFIX | head -n 1 >> todo-$OS_$FREL.txt || touch todo-$OS_$FREL.txt
-        - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS_$FREL.txt; fi
-        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS_$FREL.txt; fi
-        - cat todo-$OS_$FREL.txt
+        - git log -1 | grep $OS'Dockerfile'$FREL | head -n 1 >> todo-$OS'_'$FREL.txt || touch todo-$OS'_'$FREL.txt
+        - git diff --name-only HEAD HEAD~1 | grep CI/$OS/Dockerfile$SUFFIX | head -n 1 >> todo-$OS'_'$FREL.txt || touch todo-$OS'_'$FREL.txt
+        - if [ -s todo-$OS_$FREL.txt ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS'_'$FREL.txt; fi
+        - if [ $CI_PIPELINE_SOURCE == "schedule" ]; then cat CI/$OS/Dockerfile$SUFFIX | sed 's/fedora:35/fedora:'$FREL'/g' > todo-$OS'_'$FREL.txt; fi
+        - cat todo-$OS'_'$FREL.txt
         - exit 0
   variables:
     GIT_DEPTH: "3"
   artifacts:
     paths:
-      - todo-$OS_$FREL.txt
+      - todo-$OS'_'$FREL.txt
     expire_in: 1 day
 
 ########################################################################
