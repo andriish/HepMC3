@@ -16,7 +16,7 @@ stages:
     - set +x
     - make -j $(nproc)
     - make -j $(nproc) install
-    - ctest --output-on-failure
+    - ctest -j 5 --output-on-failure
 
 LCG_99_x86_64-centos7-gcc8-opt:
   only:
@@ -89,7 +89,6 @@ LCG_95_x86_64-centos7-gcc8-opt:
     - LARG="$LARG "-DGRAPHVIZ_ROOT=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/graphviz/2.28.0/${LCGPLATFORM}/ 
     - LARG="$LARG "-DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include 
     - LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so    
-    - LARG="$LARG "-DHEPMC3_TEST_LZMA:BOOL=OFF
     - *LCGcmake
     
 ########################################################################
@@ -133,6 +132,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - LARG="$LARG "-DGRAPHVIZ_ROOT=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/graphviz/2.28.0/${LCGPLATFORM}/ 
     - LARG="$LARG "-DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include 
     - LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so    
+    - LARG="$LARG "-DHEPMC3_TEST_LZMA:BOOL=OFF
     - *LCGcmake
 ########################################################################
 
@@ -196,7 +196,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
     - cd BUILD
-    - $CTEST  --output-on-failure 
+    - $CTEST -j 5 --output-on-failure 
 
 .oldcmake: &oldcmake
     - mkdir -p BUILD
@@ -204,7 +204,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - make install
-    - $CTEST  --output-on-failure 
+    - $CTEST -j 5 --output-on-failure 
 
 .ex:  &ex
     - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
