@@ -197,9 +197,9 @@ debian-salsa:
     - cat /etc/issue
     - export GIT_DEPTH=1
   cache:
-   - key: $TOOLSET-cache-$FREL
+   - key: cache-${OS}-${FREL}-${TOOLSET}
      paths:
-       - $TOOLSET-cache-$FREL/
+       -  ../cache-${OS}-${FREL}-${TOOLSET}/
 
 .cmake: &cmake
     - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Wno-unused-command-line-argument -Wno-gnu-zero-variadic-macro-arguments"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
@@ -220,9 +220,8 @@ debian-salsa:
     - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi  
     - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi   
     - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi   
-    - export CCACHE_BASEDIR=`pwd`/$TOOLSET-cache-$FREL    
-    - export CCACHE_BASEDIR=${PWD}
-    - export CCACHE_DIR=`pwd`/$TOOLSET-cache-$FREL/ccache
+    - export CCACHE_BASEDIR=`pwd`/../cache-${OS}-${FREL}-${TOOLSET}
+    - export CCACHE_DIR=`pwd`/../cache-${OS}-${FREL}-${TOOLSET}/ccache
     - export CCACHE_COMPILERCHECK=content
     - export CMAKE=cmake
     - export CTEST=ctest
