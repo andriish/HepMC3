@@ -22,9 +22,10 @@ namespace HepMC3 {
 
 std::string const ProtobufMagicHeader = "hmpb";
 
-HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf);
-HEPMC3_DECLARE_WRITER_STREAM(Writerprotobuf);
+HEPMC3_DECLARE_WRITER_FILE(Writerprotobuf)
+HEPMC3_DECLARE_WRITER_STREAM(Writerprotobuf)
 
+/// @brief Constant
 static size_t const MDBytesLength = 10;
 
 template <typename T>

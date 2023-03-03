@@ -20,7 +20,9 @@
 
 namespace HepMC3 {
 
+/// @brief Header of the protobuf file
 std::string const ProtobufMagicHeader = "hmpb";
+/// @brief Size of the protobuf file header
 size_t const ProtobufMagicHeaderBytes = 4;
 
 HEPMC3_DECLARE_READER_FILE(Readerprotobuf)
