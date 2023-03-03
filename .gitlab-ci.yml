@@ -188,7 +188,7 @@ debian-salsa:
        - $TOOLSET-cache-$FREL/
 
 .cmake: &cmake
-    - $CMAKE -S . -B BUILD    ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
     - $CTEST --test-dir BUILD --output-on-failure 
@@ -196,7 +196,7 @@ debian-salsa:
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
-    - $CMAKE ..   $CACHINGFLAGS  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - make install
     - $CTEST  --output-on-failure 
