@@ -147,17 +147,6 @@ debian-salsa:
     - ctest --output-on-failure 
     - make -j $(nproc) install
 ########################################################################
-.rpmbuild:  &rpmbuild
-    - export
-    - export VERSION=3.2.6
-    - cd ../
-    - pwd
-    - mv HepMC3 HepMC3-$VERSION
-    - tar cfz HepMC3-$VERSION.tar.gz HepMC3-$VERSION
-    - mkdir -p ~/rpmbuild/SOURCES/
-    - cp HepMC3-$VERSION.tar.gz ~/rpmbuild/SOURCES/
-    - rpmbuild -ba HepMC3-$VERSION/doc/HepMC3.spec
-########################################################################
 .commoninstall: &commoninstall
     - set -x
     - uname -a 
@@ -170,9 +159,6 @@ debian-salsa:
 ########################################################################
 .pythoninstall: &pythoninstall
     -  yum -y install  python3 python3-devel python2 python2-devel 
-########################################################################
-.rpminstall: &rpminstall
-    -  yum -y install  rpm-build
 ########################################################################
 .python3install: &python3install
     - yum -y install  python3 python3-devel
@@ -227,6 +213,7 @@ debian-salsa:
   script:
     - *clangexport
     - *fullbuild
+
 ############################The Pipelines###############################
 ########################################################################
 Fedora33-gcc-pypy:
@@ -247,11 +234,6 @@ Fedora33-gcc-pypy:
     - make -j $(nproc)
     - ctest --output-on-failure
     - make -j $(nproc) install
-########################################################################
-########################################################################
-Fedora38-gcc:
-  image: fedora:38
-  extends: .Fedora-gcc
 ########################################################################
 Fedora37-gcc-python311:
   image: fedora:37
@@ -298,13 +280,13 @@ Fedora33-clang:
   image: fedora:33
   extends: .Fedora-clang
 ########################################################################
-#Fedora32-gcc:
-#  image: fedora:32
-#  extends: .Fedora-gcc
+Fedora32-gcc:
+  image: fedora:32
+  extends: .Fedora-gcc
 ########################################################################
-#Fedora32-clang:
-#  image: fedora:32
-#  extends: .Fedora-clang
+Fedora32-clang:
+  image: fedora:32
+  extends: .Fedora-clang
 #########################################################################
 #Fedora31-gcc:
   #image: fedora:31
