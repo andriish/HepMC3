@@ -141,7 +141,7 @@ private:
 
   /** @brief The total number of event bytes read, including message frames
    */
-  size_t m_bytes_read;
+  size_t m_bytes_read = 0;
 
   /** @brief The file stream of the file being read
    * 
@@ -154,7 +154,7 @@ private:
    * @detail If constructed with the string constructor, this just points to 
    * m_in_file.get())
    */
-  std::istream *m_in_stream;
+  std::istream *m_in_stream = nullptr;
 
   /** @brief The buffer used to hold the current message binary 
    * (header/genruninfo/genevent/footer)

@@ -23,14 +23,13 @@ namespace HepMC3 {
 std::string const ProtobufMagicHeader = "hmpb";
 size_t const ProtobufMagicHeaderBytes = 4;
 
-HEPMC3_DECLARE_READER_FILE(Readerprotobuf);
-HEPMC3_DECLARE_READER_STREAM(Readerprotobuf);
+HEPMC3_DECLARE_READER_FILE(Readerprotobuf)
+HEPMC3_DECLARE_READER_STREAM(Readerprotobuf)
 
 static size_t const MDBytesLength = 10;
 
 Readerprotobuf::Readerprotobuf(const std::string &filename)
-    : m_in_file(nullptr), m_bytes_read(0),
-      m_msg_type(HepMC3_pb::MessageDigest::unknown) {
+    : m_msg_type(HepMC3_pb::MessageDigest::unknown) {
 
     m_md_buffer.resize(MDBytesLength);
 
@@ -48,8 +47,7 @@ Readerprotobuf::Readerprotobuf(const std::string &filename)
 }
 
 Readerprotobuf::Readerprotobuf(std::istream &stream)
-    : m_in_file(nullptr), m_bytes_read(0),
-      m_msg_type(HepMC3_pb::MessageDigest::unknown) {
+    : m_msg_type(HepMC3_pb::MessageDigest::unknown) {
 
     if (!stream.good()) {
         HEPMC3_ERROR(

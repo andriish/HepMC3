@@ -48,9 +48,8 @@ LCG_99_x86_64-centos7-gcc8-opt:
     - cd BUILD
     - cmake ..  ${STANDARDFLAGS} ${LARG}
     - make -j $(nproc)
-    - ctest --output-on-failure
     - make -j $(nproc) install
-
+    - ctest --output-on-failure
 
 LCG_95_x86_64-centos7-gcc8-opt:
   only:
@@ -112,7 +111,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - export
     - mkdir build
     - cd build
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=2 -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DHEPMC3_Python_SITEARCH27=$(pwd)/install/lib/python2.7/site-packages -DHEPMC3_BUILD_EXAMPLES=ON -DHEPMC3_ENABLE_TEST=ON -DHEPMC3_INSTALL_INTERFACES=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DPYTHIA8_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/pythia8/240/${LCGPLATFORM} -DPHOTOSPP_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/photos++/3.61/${LCGPLATFORM}/ -DTAUOLAPP_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/tauola++/1.1.6/${LCGPLATFORM}/ -DMCTESTER_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/mctester/1.25.0/${LCGPLATFORM}/ -DHEPMC2_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/HepMC/2.06.09/${LCGPLATFORM}/ -DGRAPHVIZ_ROOT=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/graphviz/2.28.0/${LCGPLATFORM}/   
+    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Wno-unused-command-line-argument" -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=2 -DCMAKE_INSTALL_PREFIX=$(pwd)/install -DHEPMC3_Python_SITEARCH27=$(pwd)/install/lib/python2.7/site-packages -DHEPMC3_BUILD_EXAMPLES=ON -DHEPMC3_ENABLE_TEST=ON -DHEPMC3_INSTALL_INTERFACES=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DPYTHIA8_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/pythia8/240/${LCGPLATFORM} -DPHOTOSPP_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/photos++/3.61/${LCGPLATFORM}/ -DTAUOLAPP_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/tauola++/1.1.6/${LCGPLATFORM}/ -DMCTESTER_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/MCGenerators/mctester/1.25.0/${LCGPLATFORM}/ -DHEPMC2_ROOT_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/HepMC/2.06.09/${LCGPLATFORM}/ -DGRAPHVIZ_ROOT=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/graphviz/2.28.0/${LCGPLATFORM}/   
       -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include -DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so
 #sourcing python is enough -DPython_DIR=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/Python/2.7.15/${LCGPLATFORM}/
     - make -j $(nproc)
@@ -201,7 +200,7 @@ debian-salsa:
        - $TOOLSET-cache-$FREL/
 
 .cmake: &cmake
-    - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Wno-unused-command-line-argument -Wno-gnu-zero-variadic-macro-arguments"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
     - cd BUILD
@@ -210,7 +209,7 @@ debian-salsa:
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
-    - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE ..   -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra  -Wno-unused-command-line-argument -Wno-gnu-zero-variadic-macro-arguments"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - make install
     - $CTEST  --output-on-failure 
