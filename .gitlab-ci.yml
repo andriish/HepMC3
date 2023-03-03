@@ -11,7 +11,9 @@ stages:
 .LCGcmake: &LCGcmake
     - mkdir BUILD
     - cd BUILD
+    - set -x
     - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" ${STANDARDFLAGS} ${LARG}  ${EXTRACMAKEFLAGS}
+    - set +x
     - make -j $(nproc)
     - make -j $(nproc) install
     - ctest --output-on-failure
