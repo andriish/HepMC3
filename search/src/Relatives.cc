@@ -121,6 +121,7 @@ template <class O>  std::vector<O> descendants_of_same_type(const O& obj)
         for (; gc < result.size(); gc++)
         {
             auto  temp0 = grandchildren(result[gc]);
+            /// std::move(temp0.begin(), temp0.end(), std::back_inserter(temp));?
             temp.insert(temp.end(), temp0.begin(), temp0.end());
         }
         for (const auto& p2: temp) if (std::find(result.begin(), result.end(), p2) == result.end()) result.push_back(p2);
@@ -151,6 +152,7 @@ template <class O>  std::vector<O> ancestors_of_same_type(const O& obj)
         for (; gc < result.size(); gc++)
         {
             auto  temp0 = grandparents(result[gc]);
+            /// std::move(temp0.begin(), temp0.end(), std::back_inserter(temp));?
             temp.insert(temp.end(), temp0.begin(), temp0.end());
         }
         for (const auto& p2: temp) if (std::find(result.begin(), result.end(), p2) == result.end()) result.push_back(p2);
