@@ -411,3 +411,4 @@ Archlinux0-GNU:
   extends: .any-cmake
   needs:
     - job: build_image_Archlinux0
+
