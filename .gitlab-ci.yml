@@ -191,7 +191,8 @@ debian-salsa:
     - $CMAKE -S . -B BUILD  -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
-    - $CTEST --test-dir BUILD --output-on-failure 
+    - cd BUILD
+    - $CTEST  --output-on-failure 
 
 .oldcmake: &oldcmake
     - mkdir -p BUILD
