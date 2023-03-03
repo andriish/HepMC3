@@ -396,7 +396,7 @@ CentOS8-GNU:
 
 CentOS7-GNU:
   variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
-  extends: .any-cmake
+  extends: .any-oldcmake
   needs:
     - job: build_image_CentOS7
     
