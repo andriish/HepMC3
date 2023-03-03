@@ -11,7 +11,7 @@ stages:
 .LCGcmake: &LCGcmake
     - mkdir BUILD
     - cd BUILD
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" ${STANDARDFLAGS} ${LARG}
+    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" ${STANDARDFLAGS} ${LARG}  ${EXTRACMAKEFLAGS}
     - make -j $(nproc)
     - make -j $(nproc) install
     - ctest --output-on-failure
@@ -87,6 +87,7 @@ LCG_95_x86_64-centos7-gcc8-opt:
     - LARG="$LARG "-DGRAPHVIZ_ROOT=/cvmfs/sft.cern.ch/lcg/releases/LCG_95/graphviz/2.28.0/${LCGPLATFORM}/ 
     - LARG="$LARG "-DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include 
     - LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so    
+    - export EXTRACMAKEFLAGS="-DHEPMC3_TEST_LZMA:BOOL=OFF"
     - *LCGcmake
 ########################################################################
 LCG_95_x86_64-ubuntu1804-gcc8-opt:
