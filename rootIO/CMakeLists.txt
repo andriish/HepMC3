@@ -13,11 +13,7 @@ else()
 endif()
 ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
 
-add_library(HepMC3rootIO SHARED ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRoot.cc 
-                                ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRoot.cc 
-                                ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRootTree.cc 
-                                ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRootTree.cc 
-                                ${PROJECT_SOURCE_DIR}/rootIO/src/Streamers.cc G__HepMC3rootIO.cxx)
+add_library(HepMC3rootIO SHARED ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/Streamers.cc G__HepMC3rootIO.cxx)
 set_property(TARGET HepMC3rootIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 target_link_libraries(HepMC3rootIO ${ROOT_Tree_LIBRARY} ${ROOT_RIO_LIBRARY} ${ROOT_Core_LIBRARY} HepMC3)
