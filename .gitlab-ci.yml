@@ -246,6 +246,10 @@ debian-salsa:
 ###########################################################################
 #Check commit messages
 
+check_commit_Fedora37:
+  variables: { OS: Fedora, FREL: 37}
+  extends: .check_commit
+
 check_commit_Fedora35:
   variables: { OS: Fedora, FREL: 35}
   extends: .check_commit
@@ -284,6 +288,11 @@ check_commit_Archlinux0:
 
 ###########################################################################
 #Build images
+build_image_Fedora37:
+  variables: { OS: Fedora, FREL: 37}
+  extends: .build_image
+  needs:
+    - job: check_commit_Fedora37
 
 build_image_Fedora35:
   variables: { OS: Fedora, FREL: 35}
@@ -340,6 +349,12 @@ build_image_Archlinux0:
     - job: check_commit_Archlinux0
 
 ###########################################################################
+Fedora37-LLVM:
+  variables: { OS: Fedora, FREL: 37, TOOLSET: LLVM,  EXTRACMAKEFLAGS: }
+  extends: .any-cmake
+  needs:
+    - job: build_image_Fedora37
+
 Fedora35-GNU:
   variables: { OS: Fedora, FREL: 35, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
   extends: .any-cmake
