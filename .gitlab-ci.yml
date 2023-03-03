@@ -91,6 +91,7 @@ LCG_95_x86_64-centos7-gcc8-opt:
     - LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so    
     - LARG="$LARG "-DHEPMC3_TEST_LZMA:BOOL=OFF
     - *LCGcmake
+    
 ########################################################################
 LCG_95_x86_64-ubuntu1804-gcc8-opt:
   only:
