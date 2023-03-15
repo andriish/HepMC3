@@ -37,7 +37,7 @@
       "keep_single_crosssection"
       "fill_crosssections_with_zeros"
      Regulate if the reader will keep a single cross-section per event, just
-     in the HepMC2 style (pre-3.2.6 default behaviour) or will expand the vector of cross-sections to match
+     in the HepMC2 style (pre-3.2.6 default behaviour) or will expand the vector of cross-sections using the nominal cross-section values to match
      the number of event weights. (3.2.6+ default behaviour).
      If "fill_crosssections_with_zeros" option is present, the vector will be expanded with zeros.
 
