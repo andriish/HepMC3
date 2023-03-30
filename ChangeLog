@@ -1,6 +1,6 @@
   --------------------------  HepMC3.2.6 ----------------------
 2023-03-30 Andrii Verbytskyi for HepMC
-         * Deprecated the cross-section functions with double.
+         * Deprecated the cross-section function with double in favour of those with vector of doubles.
 2023-03-03 Andrii Verbytskyi for HepMC
          * Preparation to the release 3.2.6.
 2023-03-03 Andrii Verbytskyi for HepMC
