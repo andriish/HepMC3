@@ -102,7 +102,7 @@ set_target_properties(Analysis PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BIN
 
 configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/convert_example_env.sh.in
-	    ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR}/convert_example_env.sh @ONLY)
+        ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR}/convert_example_env.sh @ONLY)
 
 # installs
 if (USE_INSTALLED_HEPMC3)
