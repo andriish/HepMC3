@@ -354,7 +354,6 @@ foreach ( test ${convert_tests} )
   hepmc_convert_test( ${test} )
 endforeach ( test ${convert_tests} )
 
-endif()
 
 #One should use something else for Windows/BSD/MAC
 
