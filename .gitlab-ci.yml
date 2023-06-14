@@ -238,6 +238,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 
 ###########################################################################
 #Check commit messages
+
 check_commit_Fedora38:
   variables: { OS: Fedora, FREL: 38}
   extends: .check_commit
