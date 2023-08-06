@@ -41,7 +41,7 @@ check_cxx_source_compiles("#define _PACKAGE_ast 1\n${TEST_SOURCE}" TEST_SOURCE_A
 if (TEST_SOURCE_AST_COMPILES AND (NOT TEST_SOURCE_NOAST_COMPILES))
   set(Graphviz_DEFINES "-D_PACKAGE_ast=1")
 else()
-  set(Graphviz_DEFINES "")  
+  set(Graphviz_DEFINES " ")  
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)
