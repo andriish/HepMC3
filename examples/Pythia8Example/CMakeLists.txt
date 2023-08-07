@@ -8,7 +8,7 @@ if (USE_INSTALLED_HEPMC3)
     target_include_directories(pythia8_example.exe PRIVATE ${PYTHIA8_INCLUDE_DIR})
   endif()
 else()
-#This version is for compilation during installation. Should be consistent with Pythia used in tests
+#This version is for compilation during installation. Should be consistent with Pythia used in tests.
   set(PYTHIA8_ROOT_DIR "" CACHE PATH "Location of Pythia8 installation.")
   find_package(Pythia8 8.300)
   if(Pythia8_FOUND)
