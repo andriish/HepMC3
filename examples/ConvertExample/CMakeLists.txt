@@ -1,11 +1,10 @@
-
 set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/convert_example.cc
                     ${CMAKE_CURRENT_SOURCE_DIR}/cmdline.c
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterDOT.cc
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterHEPEVTZEUS.cc )
 set(basic_includes ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} )
 set(basic_libraries ${HEPMC3_LIB})
-set(basic_defines   HEPMCCONVERT_EXTENSION_HEPEVTZEUS=1   HEPMCCONVERT_EXTENSION_DOT=1)
+set(basic_defines HEPMCCONVERT_EXTENSION_HEPEVTZEUS=1 HEPMCCONVERT_EXTENSION_DOT=1)
 set(basic_dependencies )
 set(basic_libdir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" )
 find_package(ZLIB)
