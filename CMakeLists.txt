@@ -88,7 +88,7 @@ endif()
 # - Prepend our own CMake Modules to the search path
 # This allows us to customize, add, and factor out functionality
 # NB: if our custom modules include others that we don't supply, those in the
-# base path will be used, so watch for incompatibilities!!
+# base path will be used, so watch for incompatibilities!
 #
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
 
