@@ -5,7 +5,7 @@ RUN  yum -y  install  dnf-plugins-core \
                       libzip-devel  zlib zlib-devel pythia8-devel pythia8 \
                       valgrind HepMC HepMC-devel xz xz-devel bzip2 bzip2-devel zlib zlib-devel zlib-static libzstd \
                       libzstd-devel graphviz graphviz-devel pythia8 pythia8-devel \
-                      ccache  \
+                      ccache  liburing \
                       protobuf protobuf-devel  \
                       python3 python3-devel  python3-numpy   \
                       && yum -y clean all
