@@ -1,6 +1,8 @@
 #include "binders.h"
 #include <HepMC3/Print.h>
 
+#include <HepMC3/ReaderFactory.h>
+
 namespace binder {
 
 void custom_HEPEVT_Wrapper_Runtime_binder(pybind11::class_<HepMC3::HEPEVT_Wrapper_Runtime, std::shared_ptr<HepMC3::HEPEVT_Wrapper_Runtime>> cl)
@@ -72,6 +74,10 @@ void	print_binder(pybind11::module &M)
         pybind11::handle cl_type = cl;
 
 		cl.def( pybind11::init( [](){ return new HepMC3::Print(); } ) );
+
+
+   //     cl.def_static("deduce_reader", [](pybind11::object  & a0, const class HepMC3::GenEvent & a1) -> void {  std::stringstream b; HepMC3::Print::content(b,a1);   a0.attr("write")(pybind11::str(b.str().c_str()));  }, "Print content of all GenEvent containers\n\nC++: HepMC3::Print::content(std::ostream &, const class HepMC3::GenEvent &) --> void", pybind11::arg("os"), pybind11::arg("event"));
+
 
 		//cl.def_static("content", (void (*)(std::ostream &, const class HepMC3::GenEvent &)) &HepMC3::Print::content, "Print content of all GenEvent containers\n\nC++: HepMC3::Print::content(std::ostream &, const class HepMC3::GenEvent &) --> void", pybind11::arg("os"), pybind11::arg("event"));
 		cl.def_static("content", [](pybind11::object  & a0, const class HepMC3::GenEvent & a1) -> void {  std::stringstream b; HepMC3::Print::content(b,a1);   a0.attr("write")(pybind11::str(b.str().c_str()));  }, "Print content of all GenEvent containers\n\nC++: HepMC3::Print::content(std::ostream &, const class HepMC3::GenEvent &) --> void", pybind11::arg("os"), pybind11::arg("event"));

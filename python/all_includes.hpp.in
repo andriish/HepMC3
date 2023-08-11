@@ -21,6 +21,7 @@
 
 #include <@HEPMC3_INCLUDE_DIR@HepMC3/Writer.h>
 #include <@HEPMC3_INCLUDE_DIR@HepMC3/Reader.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/ReaderFactory_fwd.h>
 
 
 #include <@HEPMC3_INCLUDE_DIR@HepMC3/WriterAscii.h>
