@@ -311,11 +311,6 @@ endif()
 set( convert_tests )
 
 
-
-
-
-
-
 if ("HepMC2" IN_LIST HEPMC3_TEST_PACKAGES_LIST)
   find_package(HepMC2 QUIET)
 endif()
