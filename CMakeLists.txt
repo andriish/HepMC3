@@ -5,7 +5,7 @@ set(PROJECT_VERSION 3.02.06)
 SET(HEPMC3_VERSION 3.02.06)
 SET(HEPMC3_VERSION_MAJOR  3)
 SET(HEPMC3_VERSION_MINOR  2)
-SET(HEPMC3_VERSION_PATCH  6)
+SET(HEPMC3_VERSION_PATCH  7)
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 #This module respects HFS, e.g. defines lib or lib64 when it is needed.
@@ -255,6 +255,7 @@ set( hepmc3core_sources
   ${PROJECT_SOURCE_DIR}/src/WriterAsciiHepMC2.cc
   ${PROJECT_SOURCE_DIR}/src/ReaderPlugin.cc
   ${PROJECT_SOURCE_DIR}/src/WriterPlugin.cc
+  ${PROJECT_SOURCE_DIR}/src/ReaderFactory.cc
 )
 
 #We need to export all symbols on Win to build .lib files
@@ -324,7 +325,6 @@ if (HEPMC3_INSTALL_INTERFACES)
   list(APPEND HEPMC3_FEATURES "interfaces")
   list(APPEND HEPMC3_FEATURES "interfaceshepmc2")
   list(APPEND HEPMC3_FEATURES "interfacespythia6")
-  list(APPEND HEPMC3_FEATURES "interfacespythia8")
 endif()
 
 # ROOT support
@@ -510,7 +510,7 @@ set(CPACK_PACKAGE_VENDOR "HepMC3 Developers")
 set(CPACK_PACKAGE_VERSION 3)
 set(CPACK_PACKAGE_VERSION_MAJOR 3)
 set(CPACK_PACKAGE_VERSION_MINOR 2)
-set(CPACK_PACKAGE_VERSION_PATCH 6)
+set(CPACK_PACKAGE_VERSION_PATCH 7)
 set(CPACK_PACKAGE_RELEASE 0)
 set(CPACK_PACKAGE_FILE_NAME "HepMC3")
 set(CPACK_PACKAGE_DESCRIPTION "Event record library for high energy physics Monte Carlo")
