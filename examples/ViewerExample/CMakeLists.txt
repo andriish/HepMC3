@@ -2,7 +2,7 @@ set(CMAKE_MODULE_PATH    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules    ${CMAKE_MO
 find_package(Graphviz)
 find_package(ROOT REQUIRED COMPONENTS Core RIO Tree Gui Graf Hist Gpad )
 if(Graphviz_FOUND AND ROOT_FOUND)
-  message(STATUS "HepMC3 ViewerExample: GrpahViz and ROOT found. GUI Browser example enabled. ${ROOT_LIBRARIES}  ${Graphviz_GRAPH_LIBRARY}  ${Graphviz_CGRAPH_LIBRARY} ${Graphviz_GVC_LIBRARY}")
+  message(STATUS "HepMC3 ViewerExample: GrpahViz and ROOT found. GUI Browser example enabled. ${ROOT_LIBRARIES}  ${Graphviz_GRAPH_LIBRARY}  ${Graphviz_CGRAPH_LIBRARY} ${Graphviz_GVC_LIBRARY} ${Graphviz_INCLUDE_DIRS}")
   include_directories(${PROJECT_SOURCE_DIR}/rootIO/include ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}  ${ROOT_INCLUDE_DIRS} ${Graphviz_INCLUDE_DIRS} ./)
   ROOT_GENERATE_DICTIONARY(HepMC3ViewerFrameDict include/HepMC3ViewerFrame.h LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader)
   ADD_EXECUTABLE(HepMC3Viewer.exe  src/main.cc  src/HepMC3ViewerFrame.cc HepMC3ViewerFrameDict.cxx  )
