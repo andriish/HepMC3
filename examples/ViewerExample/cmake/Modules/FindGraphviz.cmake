@@ -33,7 +33,7 @@ else()
   find_library(Graphviz_GVC_LIBRARY NAMES gvc PATHS_SUFFIXES lib lib64)
 endif()
 
-set(Graphviz_INCLUDE_DIRS ${Graphviz_INCLUDE_DIR})
+set(Graphviz_INCLUDE_DIRS ${Graphviz_INCLUDE_DIR} ${Graphviz_INCLUDE_DIR}/graphviz)
 get_filename_component(Graphviz_LIBRARY_DIR ${Graphviz_GVC_LIBRARY} PATH)
 set ( TEST_SOURCE "#include <graphviz/gvc.h>\n#include <string>\n int main(){\nreturn strcmp(\"XX\",\"XXY\");\n}\n")
 check_cxx_source_compiles("${TEST_SOURCE}" TEST_SOURCE_NOAST_COMPILES )
