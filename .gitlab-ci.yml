@@ -214,8 +214,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - export CACHINGFLAGS=
-    #"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
+    - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
     - $CMAKE --version
     - $CTEST --version
 
@@ -421,7 +420,7 @@ CentOS8-GNU:
     - job: build_image_CentOS8
 
 CentOS7-GNU:
-  variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6"}
+  variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6 -DHEPMC3_BUILD_EXAMPLES:BOOL=OFF"}
   extends: .any-cmake
   needs:
     - job: build_image_CentOS7
