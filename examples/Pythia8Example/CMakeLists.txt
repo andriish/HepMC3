@@ -1,6 +1,6 @@
-if (USE_INSTALLED_HEPMC3)
 #This version is for standalone compilation of examples.
-  set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
+if (USE_INSTALLED_HEPMC3)
   find_package(Pythia8 8.300)
   if(Pythia8_FOUND)
     message(STATUS "HepMC3 Pythia8Example: Pythia8 package found. pythia8_example enabled")
