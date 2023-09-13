@@ -177,17 +177,23 @@ set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp)
 set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
 set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
-foreach(_comp ";${HEPMC3_COMPONENTS}")
-  if (${_comp})
-    set(_comp ".${_comp}") 
+foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
+  if (${_comp} STREQUAL " ")
+    set(_dotcomp "") 
+  else()
+    set(_dotcomp ".${_comp}")   
   endif()
-  configure_file("pyHepMC3${_comp}.egg-info.in" "pyHepMC3.${_comp}.egg-info" IMMEDIATE @ONLY)
+  configure_file("pyHepMC3${_dotcomp}.egg-info.in" "pyHepMC3${_dotcomp}.egg-info" IMMEDIATE @ONLY)
 endforeach()
 if (RERUN_BINDER)
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
   if(BINDER)
     message(STATUS "HepMC3 python: binder found in ${BINDER}. Automatic generatin of code for python bindings is possible.")
-    foreach(_comp ";${HEPMC3_COMPONENTS}")
+    foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
+       if (${_comp} STREQUAL " ")
+         set(_comp "") 
+       endif()
+       message(STATUS "HepMC3 python:->${_comp}<-")
       configure_file("${_comp}includes.hpp.in" "${_comp}includes.hpp" IMMEDIATE @ONLY)
       add_custom_command(
         OUTPUT  ${autoBN${_comp}}
@@ -305,7 +311,13 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
   message(STATUS "HepMC3 python: Python verson ${ver}.${verminor} found in ${Python_EXECUTABLE}. Python bindings generation is possible.")
 
 #Compilation with CPython3
-    foreach(_comp ";${HEPMC3_COMPONENTS}")
+    foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
+       if (${_comp} STREQUAL " ")
+         set(_comp "") 
+             set(__comp "") 
+         else()
+             set(__comp "_${_comp}")   
+       endif()
       if (${ver} STREQUAL 2)
         Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
       endif()
@@ -325,8 +337,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>)
       target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
-        PUBLIC  ${HEPMC3_LIB} ${HEPMC3_${_comp}_LIBRARY} )
-        #FIXME
+        PUBLIC  ${HEPMC3_LIB} ${HEPMC3_${__comp}_LIBRARY} )
       target_include_directories(pyHepMC3${_comp}${Python_VERSION}
         PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} )
       add_custom_target(
@@ -342,7 +353,10 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
   if (WIN32)
 #Python is insane
     if(HEPMC3_ENABLE_TEST)
-      foreach(_comp ";${HEPMC3_COMPONENTS}")
+    foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
+       if (${_comp} STREQUAL " ")
+         set(_comp "") 
+       endif()
         message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX}")
         message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX}")
         message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_IMPORT_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/${CMAKE_IMPORT_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
@@ -366,7 +380,6 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set (HEPMC3_Python_SITEARCH ${HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR}})
       message(STATUS "HepMC3 python: HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} is set to to ${HEPMC3_Python_SITEARCH}")
     endif()
-
   else()
     if (NOT HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
       set (HEPMC3_Python_SITEARCH ${Python_SITEARCH})
@@ -382,17 +395,22 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     message(STATUS "HepMC3 python: WARNING: You can use the HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} variable to set the desired installation path for the Python${Python_VERSION_MAJOR}${Python_VERSION_MINOR} modules.")
   endif()
 
-  foreach(_comp ";${HEPMC3_COMPONENTS}")
+    foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
+       if (${_comp} STREQUAL " ")
+         set(_comp "") 
+         set(_dotcomp "") 
+       else()
+         set(_dotcomp ".${_comp}")   
+       endif()
     install(TARGETS pyHepMC3${_comp}${Python_VERSION}
       DESTINATION ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
     install(FILES src/${_comp}/__init__.py
       DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
-      #FIXME
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3.${_comp}.egg-info
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.egg-info
       DESTINATION  ${HEPMC3_Python_SITEARCH}
-      RENAME pyHepMC3.${_comp}-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
+      RENAME pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
       COMPONENT python${_comp})
   endforeach()
   set( HepMC_python_tests
