@@ -206,6 +206,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi
     - export CCACHE_BASEDIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}
     - export CCACHE_DIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}/ccache
+    - rm -rf $CCACHE_DIR
     - mkdir -p CCACHE_DIR
     - export CCACHE_COMPILERCHECK=content
     - export CMAKE=cmake
