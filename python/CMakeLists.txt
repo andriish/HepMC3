@@ -297,17 +297,18 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
        endif()
       if (${ver} STREQUAL 2)
         Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+        set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
       endif()
       if (${ver} STREQUAL 3)
         Python3_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+        set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
       endif()
       if (${ver} MATCHES pypy* )
         add_library(pyHepMC3${_comp}${Python_VERSION} MODULE  ${BN${_comp}} )
         set_target_properties(pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
       endif()
-      set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
-
+      
       set_target_properties(pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
