@@ -1,4 +1,8 @@
 set(CMAKE_MODULE_PATH    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules    ${CMAKE_MODULE_PATH})
+foreach( fl  IN ITEMS "-pedantic" "-Wpedantic" )
+  string(REPLACE "${fl}" ""  CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(REPLACE "${fl}" ""  CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+endforeach()
 find_package(Graphviz)
 find_package(ROOT REQUIRED COMPONENTS Core RIO Tree Gui Graf Hist Gpad )
 if(Graphviz_FOUND AND ROOT_FOUND)
