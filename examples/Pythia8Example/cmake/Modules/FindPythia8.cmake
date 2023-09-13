@@ -45,7 +45,7 @@ if(PYTHIA8_INCLUDE_DIR AND PYTHIA8_XMLDOC_DIR)
   endif()
   find_file(resHEPMC3 HepMC3.h PATHS  ${PYTHIA8_INCLUDE_DIRS} NO_DEFAULT_PATH)
   if (resHEPMC3)
-    set(Pythia8_HEPMC3_FOUND TRUE)
+    set(Pythia8_HepMC3_FOUND TRUE)
   endif()
   
 endif()
