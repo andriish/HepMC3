@@ -214,7 +214,8 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
     - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
     - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
+    - export CACHINGFLAGS=
+    #"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
     - $CMAKE --version
     - $CTEST --version
 
