@@ -20,7 +20,7 @@ endif()
 
 
 if(Pythia8_FOUND)
-  target_link_libraries(pythia8_example.exe ${PYTHIA8_LIBRARIES} ${HEPMC3_LIB})
+  target_link_libraries(pythia8_example.exe ${PYTHIA8_LIBRARIES} HepMC3::HepMC3)
   set_target_properties(pythia8_example.exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
 
 # create environment scripts
