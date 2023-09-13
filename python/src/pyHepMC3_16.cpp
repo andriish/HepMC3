@@ -1,16 +1,12 @@
-#include <HepMC3/Attribute.h>
-#include <HepMC3/Data/GenRunInfoData.h>
-#include <HepMC3/GenCrossSection.h>
-#include <HepMC3/GenHeavyIon.h>
-#include <HepMC3/GenRunInfo.h>
-#include <functional>
+#include <HepMC3/LHEF.h>
+#include <ios>
+#include <istream>
 #include <iterator>
-#include <map>
 #include <memory>
+#include <ostream>
 #include <sstream> // __str__
+#include <streambuf>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include <functional>
 #include <pybind11/pybind11.h>
@@ -32,39 +28,38 @@
 
 void bind_pyHepMC3_16(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // HepMC3::GenRunInfo file:HepMC3/GenRunInfo.h line:33
-		pybind11::class_<HepMC3::GenRunInfo, std::shared_ptr<HepMC3::GenRunInfo>> cl(M("HepMC3"), "GenRunInfo", "Stores run-related information\n\n Manages run-related information.\n Contains run-wide attributes");
-		cl.def( pybind11::init( [](){ return new HepMC3::GenRunInfo(); } ) );
-		cl.def( pybind11::init( [](HepMC3::GenRunInfo const &o){ return new HepMC3::GenRunInfo(o); } ) );
-		cl.def("attribute", (class std::shared_ptr<class HepMC3::GenHeavyIon> (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::attribute<HepMC3::GenHeavyIon>, "C++: HepMC3::GenRunInfo::attribute(const std::string &) const --> class std::shared_ptr<class HepMC3::GenHeavyIon>", pybind11::arg("name"));
-		cl.def("attribute", (class std::shared_ptr<class HepMC3::GenPdfInfo> (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::attribute<HepMC3::GenPdfInfo>, "C++: HepMC3::GenRunInfo::attribute(const std::string &) const --> class std::shared_ptr<class HepMC3::GenPdfInfo>", pybind11::arg("name"));
-		cl.def("attribute", (class std::shared_ptr<class HepMC3::GenCrossSection> (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::attribute<HepMC3::GenCrossSection>, "C++: HepMC3::GenRunInfo::attribute(const std::string &) const --> class std::shared_ptr<class HepMC3::GenCrossSection>", pybind11::arg("name"));
-		cl.def("assign", (class HepMC3::GenRunInfo & (HepMC3::GenRunInfo::*)(const class HepMC3::GenRunInfo &)) &HepMC3::GenRunInfo::operator=, "Assignmet\n\nC++: HepMC3::GenRunInfo::operator=(const class HepMC3::GenRunInfo &) --> class HepMC3::GenRunInfo &", pybind11::return_value_policy::automatic, pybind11::arg("r"));
-		cl.def("has_weight", (bool (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::has_weight, "Check if a weight name is present.\n\nC++: HepMC3::GenRunInfo::has_weight(const std::string &) const --> bool", pybind11::arg("name"));
-		cl.def("weight_indices", (class std::map<std::string, int> (HepMC3::GenRunInfo::*)() const) &HepMC3::GenRunInfo::weight_indices, "Returns a copy of indices map.\n\nC++: HepMC3::GenRunInfo::weight_indices() const --> class std::map<std::string, int>");
-		cl.def("weight_index", (int (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::weight_index, "Return the index corresponding to a weight name.\n \n\n -1 if name was not found\n\nC++: HepMC3::GenRunInfo::weight_index(const std::string &) const --> int", pybind11::arg("name"));
-		cl.def("weight_names", (const class std::vector<std::string > & (HepMC3::GenRunInfo::*)() const) &HepMC3::GenRunInfo::weight_names, "Get the vector of weight names.\n\nC++: HepMC3::GenRunInfo::weight_names() const --> const class std::vector<std::string > &", pybind11::return_value_policy::automatic);
-		cl.def("set_weight_names", (void (HepMC3::GenRunInfo::*)(const class std::vector<std::string > &)) &HepMC3::GenRunInfo::set_weight_names, "Set the names of the weights in this run.\n\n For consistency, the length of the vector should be the same as\n the number of weights in the events in the run.\n\nC++: HepMC3::GenRunInfo::set_weight_names(const class std::vector<std::string > &) --> void", pybind11::arg("names"));
-		cl.def("add_attribute", (void (HepMC3::GenRunInfo::*)(const std::string &, const class std::shared_ptr<class HepMC3::Attribute> &)) &HepMC3::GenRunInfo::add_attribute, "add an attribute\n This will overwrite existing attribute if an attribute\n with the same name is present\n\nC++: HepMC3::GenRunInfo::add_attribute(const std::string &, const class std::shared_ptr<class HepMC3::Attribute> &) --> void", pybind11::arg("name"), pybind11::arg("att"));
-		cl.def("remove_attribute", (void (HepMC3::GenRunInfo::*)(const std::string &)) &HepMC3::GenRunInfo::remove_attribute, "Remove attribute\n\nC++: HepMC3::GenRunInfo::remove_attribute(const std::string &) --> void", pybind11::arg("name"));
-		cl.def("attribute_as_string", (std::string (HepMC3::GenRunInfo::*)(const std::string &) const) &HepMC3::GenRunInfo::attribute_as_string, "Get attribute of any type as string\n\nC++: HepMC3::GenRunInfo::attribute_as_string(const std::string &) const --> std::string", pybind11::arg("name"));
-		cl.def("attribute_names", (class std::vector<std::string > (HepMC3::GenRunInfo::*)() const) &HepMC3::GenRunInfo::attribute_names, "Get list of attribute names\n\nC++: HepMC3::GenRunInfo::attribute_names() const --> class std::vector<std::string >");
-		cl.def("attributes", (class std::map<std::string, class std::shared_ptr<class HepMC3::Attribute> > (HepMC3::GenRunInfo::*)() const) &HepMC3::GenRunInfo::attributes, "Get a copy of the list of attributes\n \n\n To avoid thread issues, this is returns a copy. Better solution may be needed.\n\nC++: HepMC3::GenRunInfo::attributes() const --> class std::map<std::string, class std::shared_ptr<class HepMC3::Attribute> >");
-		cl.def("write_data", (void (HepMC3::GenRunInfo::*)(struct HepMC3::GenRunInfoData &) const) &HepMC3::GenRunInfo::write_data, "Fill GenRunInfoData object\n\nC++: HepMC3::GenRunInfo::write_data(struct HepMC3::GenRunInfoData &) const --> void", pybind11::arg("data"));
-		cl.def("read_data", (void (HepMC3::GenRunInfo::*)(const struct HepMC3::GenRunInfoData &)) &HepMC3::GenRunInfo::read_data, "Fill GenRunInfo based on GenRunInfoData\n\nC++: HepMC3::GenRunInfo::read_data(const struct HepMC3::GenRunInfoData &) --> void", pybind11::arg("data"));
+	{ // LHEF::Reader file:HepMC3/LHEF.h line:2742
+		pybind11::class_<LHEF::Reader, std::shared_ptr<LHEF::Reader>> cl(M("LHEF"), "Reader", "The Reader class is initialized with a stream from which to read a\n version 1/2 Les Houches Accord event file. In the constructor of\n the Reader object the optional header information is read and then\n the mandatory init is read. After this the whole header block\n including the enclosing lines with tags are available in the public\n headerBlock member variable. Also the information from the init\n block is available in the heprup member variable and any additional\n comment lines are available in initComments. After each successful\n call to the readEvent() function the standard Les Houches Accord\n information about the event is available in the hepeup member\n variable and any additional comments in the eventComments\n variable. A typical reading sequence would look as follows:\n\n ");
+		cl.def( pybind11::init<std::string>(), pybind11::arg("filename") );
 
-		 binder::custom_GenRunInfo_binder(cl);
+		cl.def_readwrite("version", &LHEF::Reader::version);
+		cl.def_readwrite("outsideBlock", &LHEF::Reader::outsideBlock);
+		cl.def_readwrite("headerBlock", &LHEF::Reader::headerBlock);
+		cl.def_readwrite("heprup", &LHEF::Reader::heprup);
+		cl.def_readwrite("initComments", &LHEF::Reader::initComments);
+		cl.def_readwrite("hepeup", &LHEF::Reader::hepeup);
+		cl.def_readwrite("eventComments", &LHEF::Reader::eventComments);
+		cl.def_readwrite("currevent", &LHEF::Reader::currevent);
+		cl.def_readwrite("curreventfile", &LHEF::Reader::curreventfile);
+		cl.def_readwrite("currfileevent", &LHEF::Reader::currfileevent);
+		cl.def_readwrite("dirpath", &LHEF::Reader::dirpath);
+		cl.def("readEvent", (bool (LHEF::Reader::*)()) &LHEF::Reader::readEvent, "Read an event from the file and store it in the hepeup\n object. Optional comment lines are stored i the eventComments\n member variable.\n \n\n true if the read sas successful.\n\nC++: LHEF::Reader::readEvent() --> bool");
+		cl.def("openeventfile", (void (LHEF::Reader::*)(int)) &LHEF::Reader::openeventfile, "Open the efentfile with index ifile. If another eventfile is\n being read, its remaining contents is discarded. This is a noop\n if current read session is not a multi-file run.\n\nC++: LHEF::Reader::openeventfile(int) --> void", pybind11::arg("ifile"));
 
-		{ // HepMC3::GenRunInfo::ToolInfo file:HepMC3/GenRunInfo.h line:38
-			auto & enclosing_class = cl;
-			pybind11::class_<HepMC3::GenRunInfo::ToolInfo, std::shared_ptr<HepMC3::GenRunInfo::ToolInfo>> cl(enclosing_class, "ToolInfo", "Interrnal struct for keeping track of tools.");
-			cl.def( pybind11::init( [](HepMC3::GenRunInfo::ToolInfo const &o){ return new HepMC3::GenRunInfo::ToolInfo(o); } ) );
-			cl.def( pybind11::init( [](){ return new HepMC3::GenRunInfo::ToolInfo(); } ) );
-			cl.def_readwrite("name", &HepMC3::GenRunInfo::ToolInfo::name);
-			cl.def_readwrite("version", &HepMC3::GenRunInfo::ToolInfo::version);
-			cl.def_readwrite("description", &HepMC3::GenRunInfo::ToolInfo::description);
-			cl.def("assign", (struct HepMC3::GenRunInfo::ToolInfo & (HepMC3::GenRunInfo::ToolInfo::*)(const struct HepMC3::GenRunInfo::ToolInfo &)) &HepMC3::GenRunInfo::ToolInfo::operator=, "C++: HepMC3::GenRunInfo::ToolInfo::operator=(const struct HepMC3::GenRunInfo::ToolInfo &) --> struct HepMC3::GenRunInfo::ToolInfo &", pybind11::return_value_policy::automatic, pybind11::arg(""));
-		}
+		 binder::custom_LHEFReader_binder(cl);
+	}
+	{ // LHEF::Writer file:HepMC3/LHEF.h line:3099
+		pybind11::class_<LHEF::Writer, std::shared_ptr<LHEF::Writer>> cl(M("LHEF"), "Writer", "The Writer class is initialized with a stream to which to write a\n version 1.0 Les Houches Accord event file. In the constructor of\n the Writer object the main XML tag is written out, with the\n corresponding end tag is written in the destructor. After a Writer\n object has been created, it is possible to assign standard init\n information in the heprup member variable. In addition any XML\n formatted information can be added to the headerBlock member\n variable (directly or via the addHeader() function). Further\n comment line (beginning with a # character) can be\n added to the initComments variable (directly or with the\n addInitComment() function). After this information is set, it\n should be written out to the file with the init() function.\n\n Before each event is written out with the writeEvent() function,\n the standard event information can then be assigned to the hepeup\n variable and optional comment lines (beginning with a\n # character) may be given to the eventComments\n variable (directly or with the addEventComment() function).\n\n ");
+		cl.def( pybind11::init<std::string>(), pybind11::arg("filename") );
 
+		cl.def_readwrite("heprup", &LHEF::Writer::heprup);
+		cl.def_readwrite("hepeup", &LHEF::Writer::hepeup);
+		cl.def("headerBlock", (void (LHEF::Writer::*)(const std::string &)) &LHEF::Writer::headerBlock, "Add header lines consisting of XML code with this stream.\n\nC++: LHEF::Writer::headerBlock(const std::string &) --> void", pybind11::arg("a"));
+		cl.def("initComments", (void (LHEF::Writer::*)(const std::string &)) &LHEF::Writer::initComments, "Add comment lines to the init block with this stream.\n\nC++: LHEF::Writer::initComments(const std::string &) --> void", pybind11::arg("a"));
+		cl.def("eventComments", (void (LHEF::Writer::*)(const std::string &)) &LHEF::Writer::eventComments, "Add comment lines to the next event to be written out with this stream.\n\nC++: LHEF::Writer::eventComments(const std::string &) --> void", pybind11::arg("a"));
+		cl.def("init", (void (LHEF::Writer::*)()) &LHEF::Writer::init, "Initialize the writer.\n\nC++: LHEF::Writer::init() --> void");
+		cl.def("openeventfile", (bool (LHEF::Writer::*)(int)) &LHEF::Writer::openeventfile, "Open a new event file, possibly closing a previous opened one.\n\nC++: LHEF::Writer::openeventfile(int) --> bool", pybind11::arg("ifile"));
+		cl.def("writeinit", (void (LHEF::Writer::*)()) &LHEF::Writer::writeinit, "Write out an optional header block followed by the standard init\n block information together with any comment lines.\n\nC++: LHEF::Writer::writeinit() --> void");
+		cl.def("writeEvent", (void (LHEF::Writer::*)()) &LHEF::Writer::writeEvent, "Write the current HEPEUP object to the stream;\n\nC++: LHEF::Writer::writeEvent() --> void");
 	}
 }

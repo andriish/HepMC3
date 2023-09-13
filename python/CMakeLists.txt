@@ -198,7 +198,7 @@ if (RERUN_BINDER)
       add_custom_command(
         OUTPUT  ${autoBN${_comp}}
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp src/pyHepMC3${_comp}.binder
-        COMMAND ${BINDER} --flat --max-file-size=5000
+        COMMAND ${BINDER} --flat --max-file-size=20000
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                           --config src/pyHepMC3${_comp}.binder   ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp

@@ -29,6 +29,5 @@
 +class HepMC3::Writerprotobuf
 
 
-
 +binder HepMC3::Writerprotobuf  binder::Writerprotobuf_binder
 +binder HepMC3::Readerprotobuf  binder::Readerprotobuf_binder

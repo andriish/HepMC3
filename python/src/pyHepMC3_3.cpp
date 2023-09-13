@@ -1,15 +1,12 @@
-#include <HepMC3/Attribute.h>
-#include <HepMC3/GenCrossSection.h>
-#include <HepMC3/GenHeavyIon.h>
+#include <HepMC3/GenParticle.h>
 #include <HepMC3/GenVertex.h>
-#include <functional>
+#include <HepMC3/LHEF.h>
 #include <iterator>
-#include <map>
 #include <memory>
-#include <set>
+#include <ostream>
 #include <sstream> // __str__
 #include <string>
-#include <utility>
+#include <vector>
 
 #include <functional>
 #include <pybind11/pybind11.h>
@@ -31,22 +28,58 @@
 
 void bind_pyHepMC3_3(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::string,int,std::less<std::string >,std::allocator<std::pair<const std::string, int> >>(M("std"), "std_string", "int", "std_less_std_string_t", "std_allocator_std_pair_const_std_string_int_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<std::shared_ptr<HepMC3::GenParticle>,std::allocator<std::shared_ptr<HepMC3::GenParticle> >>(M("std"), "std_shared_ptr_HepMC3_GenParticle_t", "std_allocator_std_shared_ptr_HepMC3_GenParticle_t");
 
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::string,std::shared_ptr<HepMC3::Attribute>,std::less<std::string >,std::allocator<std::pair<const std::string, std::shared_ptr<HepMC3::Attribute> > >>(M("std"), "std_string", "std_shared_ptr_HepMC3_Attribute_t", "std_less_std_string_t", "std_allocator_std_pair_const_std_string_std_shared_ptr_HepMC3_Attribute_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<std::shared_ptr<const HepMC3::GenParticle>,std::allocator<std::shared_ptr<const HepMC3::GenParticle> >>(M("std"), "std_shared_ptr_const_HepMC3_GenParticle_t", "std_allocator_std_shared_ptr_const_HepMC3_GenParticle_t");
 
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::string,std::map<int, std::shared_ptr<HepMC3::Attribute> >,std::less<std::string >,std::allocator<std::pair<const std::string, std::map<int, std::shared_ptr<HepMC3::Attribute> > > >>(M("std"), "std_string", "std_map_int_std_shared_ptr_HepMC3_Attribute_t", "std_less_std_string_t", "std_allocator_std_pair_const_std_string_std_map_int_std_shared_ptr_HepMC3_Attribute_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<char,std::allocator<char>>(M("std"), "char", "std_allocator_char_t");
 
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::string,std::string,std::less<std::string >,std::allocator<std::pair<const std::string, std::string > >>(M("std"), "std_string", "std_string", "std_less_std_string_t", "std_allocator_std_pair_const_std_string_std_string_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<float,std::allocator<float>>(M("std"), "float", "std_allocator_float_t");
 
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::shared_ptr<const HepMC3::GenVertex>,int,std::less<std::shared_ptr<const HepMC3::GenVertex> >,std::allocator<std::pair<const std::shared_ptr<const HepMC3::GenVertex>, int> >>(M("std"), "std_shared_ptr_const_HepMC3_GenVertex_t", "int", "std_less_std_shared_ptr_const_HepMC3_GenVertex_t", "std_allocator_std_pair_const_std_shared_ptr_const_HepMC3_GenVertex_int_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<long double,std::allocator<long double>>(M("std"), "long_double", "std_allocator_long_double_t");
 
-	// std::map file:bits/stl_map.h line:100
-	binder::map_binder<std::string,std::set<long>,std::less<std::string >,std::allocator<std::pair<const std::string, std::set<long> > >>(M("std"), "std_string", "std_set_long_t", "std_less_std_string_t", "std_allocator_std_pair_const_std_string_std_set_long_t");
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<long long,std::allocator<long long>>(M("std"), "long_long", "std_allocator_long_long_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<unsigned int,std::allocator<unsigned int>>(M("std"), "unsigned_int", "std_allocator_unsigned_int_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<unsigned long,std::allocator<unsigned long>>(M("std"), "unsigned_long", "std_allocator_unsigned_long_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<unsigned long long,std::allocator<unsigned long long>>(M("std"), "unsigned_long_long", "std_allocator_unsigned_long_long_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<long,std::allocator<long>>(M("std"), "long", "std_allocator_long_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<double,std::allocator<double>>(M("std"), "double", "std_allocator_double_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<std::string,std::allocator<std::string >>(M("std"), "std_string", "std_allocator_std_string_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<std::shared_ptr<HepMC3::GenVertex>,std::allocator<std::shared_ptr<HepMC3::GenVertex> >>(M("std"), "std_shared_ptr_HepMC3_GenVertex_t", "std_allocator_std_shared_ptr_HepMC3_GenVertex_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<LHEF::XMLTag *,std::allocator<LHEF::XMLTag *>>(M("std"), "LHEF_XMLTag_*", "std_allocator_LHEF_XMLTag__star__t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<std::vector<double>,std::allocator<std::vector<double> >>(M("std"), "std_vector_double_t", "std_allocator_std_vector_double_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<LHEF::WeightInfo,std::allocator<LHEF::WeightInfo>>(M("std"), "LHEF_WeightInfo", "std_allocator_LHEF_WeightInfo_t");
+
+	// std::vector file:bits/stl_vector.h line:423
+	binder::vector_binder<LHEF::HEPEUP *,std::allocator<LHEF::HEPEUP *>>(M("std"), "LHEF_HEPEUP_*", "std_allocator_LHEF_HEPEUP__star__t");
 
 }
