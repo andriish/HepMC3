@@ -328,7 +328,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>)
       target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
-        PUBLIC  ${HEPMC3_LIB} ${HEPMC3_${__comp}_LIBRARY} )
+        PUBLIC  ${HEPMC3_LIB} ${HEPMC3${__comp}_LIBRARY} )
       target_include_directories(pyHepMC3${_comp}${Python_VERSION}
         PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} )
       add_custom_target(
