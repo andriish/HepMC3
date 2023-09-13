@@ -140,25 +140,18 @@ if(HEPMC3_ENABLE_SEARCH)
   add_definitions(-DHEPMC3_ENABLE_SEARCH)
 endif()
 
-set(autoBN       pyHepMC3.cpp pyHepMC3_0.cpp pyHepMC3_1.cpp
-                 pyHepMC3_2.cpp pyHepMC3_3.cpp pyHepMC3_4.cpp
-                 pyHepMC3_5.cpp pyHepMC3_6.cpp pyHepMC3_7.cpp
-                 pyHepMC3_8.cpp pyHepMC3_9.cpp pyHepMC3_10.cpp
-                 pyHepMC3_11.cpp pyHepMC3_12.cpp pyHepMC3_13.cpp
-                 pyHepMC3_14.cpp pyHepMC3_15.cpp pyHepMC3_16.cpp
-                 pyHepMC3_17.cpp pyHepMC3_18.cpp
+set(autoBN       ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_1.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_2.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_4.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_5.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_6.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_7.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_8.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_9.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_10.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_11.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_12.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_13.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_14.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_15.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_16.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_17.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3_18.cpp
 )
-set(autoBNrootIO pyHepMC3rootIO.cpp pyHepMC3rootIO_0.cpp pyHepMC3rootIO_1.cpp pyHepMC3rootIO_2.cpp)
-set(autoBNsearch pyHepMC3search.cpp pyHepMC3search_0.cpp pyHepMC3search_1.cpp)
-set(autoBNprotobufIO pyHepMC3protobufIO.cpp pyHepMC3protobufIO_0.cpp )
-list(TRANSFORM autoBN PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-list(TRANSFORM autoBNrootIO PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-list(TRANSFORM autoBNsearch PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-list(TRANSFORM autoBNprotobufIO PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp)
-set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
-set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
-set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
+set(autoBNrootIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_1.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_2.cpp)
+set(autoBNsearch ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_1.cpp)
+set(autoBNprotobufIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO_0.cpp )
+
 foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   if (${_comp} STREQUAL " ")
     set(_dotcomp "") 
