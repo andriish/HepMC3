@@ -3,9 +3,6 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 #
 
-
-include_directories(${PROJECT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/search/include )
-
 #---Add executables------------------------------------------------------------
 add_executable(basic_tree.exe ${CMAKE_CURRENT_SOURCE_DIR}/basic_tree.cc)
 target_link_libraries(basic_tree.exe HepMC3::HepMC3  ROOT::Tree ROOT::RIO ROOT::Core)
