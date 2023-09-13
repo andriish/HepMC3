@@ -33,7 +33,7 @@ else()
   find_library(Graphviz_GVC_LIBRARY NAMES gvc PATHS_SUFFIXES lib lib64)
 endif()
 
-set(Graphviz_INCLUDE_DIRS ${Graphviz_INCLUDE_DIR} ${Graphviz_INCLUDE_DIR}/graphviz)
+set(Graphviz_INCLUDE_DIRS ${Graphviz_INCLUDE_DIR})
 get_filename_component(Graphviz_LIBRARY_DIR ${Graphviz_GVC_LIBRARY} PATH)
 set ( TEST_SOURCE "#include <graphviz/gvc.h>\n#include <string>\n int main(){\nreturn strcmp(\"XX\",\"XXY\");\n}\n")
 check_cxx_source_compiles("${TEST_SOURCE}" TEST_SOURCE_NOAST_COMPILES )
@@ -41,7 +41,7 @@ check_cxx_source_compiles("#define _PACKAGE_ast 1\n${TEST_SOURCE}" TEST_SOURCE_A
 if (TEST_SOURCE_AST_COMPILES AND (NOT TEST_SOURCE_NOAST_COMPILES))
   set(Graphviz_DEFINES "-D_PACKAGE_ast=1")
 else()
-  set(Graphviz_DEFINES "-D_UNUSED_DUMMY_DEFINE")  
+  set(Graphviz_DEFINES "")  
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)
