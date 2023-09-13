@@ -287,43 +287,42 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         OR "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}" STREQUAL "${ver}.${verminor}" ))
   message(STATUS "HepMC3 python: Python verson ${ver}.${verminor} found in ${Python_EXECUTABLE}. Python bindings generation is possible.")
 
-#Compilation with CPython3
-    foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
-       if (${_comp} STREQUAL " ")
-         set(_comp "") 
-             set(__comp "") 
-         else()
-             set(__comp HepMC3::${_comp})   
-       endif()
-      if (${ver} STREQUAL 2)
-        Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
-        set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
-      endif()
-      if (${ver} STREQUAL 3)
-        Python3_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
-        set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
-      endif()
-      if (${ver} MATCHES pypy* )
-        add_library(pyHepMC3${_comp}${Python_VERSION} MODULE  ${BN${_comp}} )
-        set_target_properties(pyHepMC3${_comp}${Python_VERSION}
-        PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
-      endif()
-      
+  foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
+    if (${_comp} STREQUAL " ")
+      set(_comp "") 
+      set(__comp "") 
+    else()
+      set(__comp HepMC3::${_comp})   
+    endif()
+    if (${ver} STREQUAL 2)
+      Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+    endif()
+    if (${ver} STREQUAL 3)
+      Python3_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+    endif()
+    if (${ver} MATCHES pypy* )
+      add_library(pyHepMC3${_comp}${Python_VERSION} MODULE  ${BN${_comp}} )
       set_target_properties(pyHepMC3${_comp}${Python_VERSION}
+      PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
+    endif()
+  
+    set_target_properties(pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>)
-      target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
+    target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
         PUBLIC  HepMC3::HepMC3 ${__comp} )
-      target_include_directories(pyHepMC3${_comp}${Python_VERSION}
+    target_include_directories(pyHepMC3${_comp}${Python_VERSION}
         PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${HEPMC3_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} )
-      add_custom_target(
+    add_custom_target(
         foo${_comp}${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/
         COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/src/${_comp}/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/__init__.py
                 )
-    endforeach()
+  endforeach()
 
   message(STATUS "HepMC3 python: For this platforrm CMAKE_SHARED_LIBRARY_PREFIX=${CMAKE_SHARED_LIBRARY_PREFIX}, CMAKE_SHARED_LIBRARY_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}")
   message(STATUS "HepMC3 python: For this platforrm CMAKE_IMPORT_LIBRARY_PREFIX=${CMAKE_IMPORT_LIBRARY_PREFIX}, CMAKE_IMPORT_LIBRARY_SUFFIX=${CMAKE_IMPORT_LIBRARY_SUFFIX}")
