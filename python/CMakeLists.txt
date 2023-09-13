@@ -193,7 +193,6 @@ if (RERUN_BINDER)
        if (${_comp} STREQUAL " ")
          set(_comp "") 
        endif()
-       message(STATUS "HepMC3 python:->${_comp}<-")
       configure_file("${_comp}includes.hpp.in" "${_comp}includes.hpp" IMMEDIATE @ONLY)
       add_custom_command(
         OUTPUT  ${autoBN${_comp}}
@@ -316,7 +315,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
          set(_comp "") 
              set(__comp "") 
          else()
-             set(__comp "_${_comp}")   
+             string(TOUPPER  "_${_comp}" __comp)   
        endif()
       if (${ver} STREQUAL 2)
         Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
