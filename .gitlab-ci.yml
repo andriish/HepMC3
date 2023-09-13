@@ -206,7 +206,6 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi
     - export CCACHE_BASEDIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}
     - export CCACHE_DIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}/ccache
-    - rm -rf $CCACHE_DIR
     - mkdir -p CCACHE_DIR
     - export CCACHE_COMPILERCHECK=content
     - export CMAKE=cmake
@@ -420,7 +419,7 @@ CentOS8-GNU:
     - job: build_image_CentOS8
 
 CentOS7-GNU:
-  variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6 -DHEPMC3_BUILD_EXAMPLES:BOOL=OFF"}
+  variables: { OS: CentOS, FREL: 7, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=2,3.4,3.6"}
   extends: .any-cmake
   needs:
     - job: build_image_CentOS7
