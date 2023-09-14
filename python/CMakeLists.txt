@@ -13,6 +13,7 @@ if (USE_INSTALLED_HEPMC3)
   set(THIS_PROJECT_NAME ${PROJECT_NAME})
   set(THIS_PROJECT_NAME_VERSION 3.2.7)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
+  set(CMAKE_MODULE_PATH ../cmake/Modules ${CMAKE_MODULE_PATH})
 
   find_package(HepMC3  REQUIRED  )
   include(CheckCXXCompilerFlag)
