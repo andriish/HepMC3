@@ -188,7 +188,8 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - mkdir -p STANDALONE
     - cp -r examples STANDALONE
     - cd STANDALONE/examples
-    - $CMAKE -S . -B BUILD
+    - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON
+    - $CMAKE -S . -B BUILD _
     - $CMAKE --build BUILD -DHepMC3_DIR=../../INSTALL/share/HepMC3/cmake/
 
 .cmake: &cmake
