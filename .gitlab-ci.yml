@@ -192,8 +192,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - $CMAKE --build BUILD 
     - cd $TTOP
-    - cp -r python STANDALONE
-    - cd STANDALONE/python
+    - cd python
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - $CMAKE --build BUILD 
     - cd $TTOP
@@ -208,8 +207,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - make -j 4
     - cd $TTOP
-    - cp -r python STANDALONE
-    - cd STANDALONE/python
+    - cd python
     - mkdir -p BUILD
     - cd BUILD 
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
