@@ -187,7 +187,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 .standalone: &standalone
     - export TTOP=$(pwd)
     - mkdir -p STANDALONE
-    - cp -r INSTALL/examples STANDALONE
+    - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - $CMAKE --build BUILD 
@@ -201,7 +201,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 .oldstandalone: &oldstandalone
     - export TTOP=$(pwd)
     - mkdir -p STANDALONE
-    - cp -r INSTALL/examples STANDALONE
+    - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - mkdir -p BUILD
     - cd BUILD 
