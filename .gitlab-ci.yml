@@ -187,20 +187,21 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 .standalone: &standalone
     - export TTOP=$(pwd)
     - mkdir -p STANDALONE
-    - cp -r examples STANDALONE
+    - cp -r INSTALL/examples STANDALONE
     - cd STANDALONE/examples
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - $CMAKE --build BUILD 
     - cd $TTOP
     - cd python
-    - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
+    - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON
     - $CMAKE --build BUILD 
+    - $CTEST -j 5 --output-on-failure
     - cd $TTOP
 
 .oldstandalone: &oldstandalone
     - export TTOP=$(pwd)
     - mkdir -p STANDALONE
-    - cp -r examples STANDALONE
+    - cp -r INSTALL/examples STANDALONE
     - cd STANDALONE/examples
     - mkdir -p BUILD
     - cd BUILD 
@@ -210,8 +211,9 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - cd python
     - mkdir -p BUILD
     - cd BUILD 
-    - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
+    - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON
     - make -j 4
+    - $CTEST -j 5 --output-on-failure
     - cd $TTOP
 
 .cmake: &cmake
