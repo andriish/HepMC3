@@ -217,7 +217,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - cd $TTOP
 
 .cmake: &cmake
-    - $CMAKE -S . -B BUILD -DCMAKE_INSTALL_DIR=$(pwd)/INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE -S . -B BUILD -DCMAKE_INSTALL_PREFIX=$(pwd)/INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - $CMAKE --build BUILD -j 10
     - $CMAKE --install BUILD
     - cd BUILD
@@ -227,7 +227,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
-    - $CMAKE ..  -DCMAKE_INSTALL_DIR=$(pwd)/../INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
+    - $CMAKE ..  -DCMAKE_INSTALL_PREFIX=$(pwd)/../INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
     - make -j 10
     - make install
     - $CTEST -j 5 --output-on-failure
