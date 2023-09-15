@@ -227,6 +227,8 @@ if (${ver} STREQUAL 2)
   unset(Python2_LIBRARIES CACHE)
   unset(_Python2_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
   unset(_Python2_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
+    unset(_Python2_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
+
   if (${verminor} STREQUAL X)
     find_package (Python2 ${ver} COMPONENTS  Interpreter Development.Module)
   else()
@@ -242,6 +244,8 @@ if (${ver} STREQUAL 2)
     SET( Python_INCLUDE_DIRS  ${Python2_INCLUDE_DIRS})
     unset(_Python2_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
     unset(_Python2_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
+  unset(_Python2_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
+    
   endif()
 endif()
 
@@ -256,6 +260,7 @@ if (${ver} STREQUAL 3)
   unset(Python3_LIBRARIES CACHE)
   unset(_Python3_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
+  unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
   if (${verminor} STREQUAL X)
     find_package (Python3 ${ver} COMPONENTS  Interpreter Development.Module )
   else()
@@ -271,6 +276,8 @@ if (${ver} STREQUAL 3)
     SET( Python_INCLUDE_DIRS  ${Python3_INCLUDE_DIRS})
     unset(_Python3_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
     unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
+  unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
+
   endif()
 endif()
 
@@ -457,5 +464,24 @@ foreach( tempver   IN ZIP_LISTS TEMPVERSIONS NN )
 endforeach()
 
 
-
+#if (${ver} MATCHES pypy* )
+#  unset(Python_FOUND CACHE)
+#  unset(Python_VERSION CACHE)
+#  unset(Python_Interpreter_FOUND CACHE)
+#  unset(Python_EXECUTABLE CACHE)
+#  unset(Python_INCLUDE_DIR CACHE)
+#  unset(Python_INCLUDE_DIRS CACHE)
+#  unset(Python_LIBRARIES CACHE)
+#  unset(_Python_EXECUTABLE CACHE)
+#  string(REPLACE "pypy" "" forpypy "${ver}")
+#  find_package(PyPy  ${forpypy})
+#  set(Python_EXECUTABLE        ${PyPy_EXE})
+#  set(Python_Interpreter       ${PyPy_EXE})
+#  set(Python_VERSION           pypy${PyPy_Python_VERSION})
+#  set(Python_VERSION_MAJOR     pypy${PyPy_Python_VERSION_MAJOR})
+#  set(Python_VERSION_MINOR     ${PyPy_Python_VERSION_MINOR})
+#  set(Python_LIBRARIES         ${PyPy_LIBRARIES})
+#  set(Python_INCLUDE_DIRS      ${PyPy_INCLUDE_DIRS})
+#  set(Python_SITEARCH          ${PyPy_SITEARCH})
+#endif()
 
