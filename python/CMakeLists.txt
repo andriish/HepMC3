@@ -307,7 +307,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     if (${verin} MATCHES pypy* )
 #      add_library(pyHepMC3${_comp}${Python_VERSION} MODULE  ${BN${_comp}} )
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
-      PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
+      PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-73)
     endif()
   
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
@@ -455,6 +455,7 @@ if (NOT HEPMC3_PYTHON_VERSIONS)
   set(HEPMC3_PYTHON_VERSIONS "2,3")
 endif()
 string(REPLACE "," ";" TEMPVERSIONS ${HEPMC3_PYTHON_VERSIONS})
+list(SORT TEMPVERSIONS)
 
 list(LENGTH TEMPVERSIONS LL)
 MATH(EXPR LL "${LL}-1")
