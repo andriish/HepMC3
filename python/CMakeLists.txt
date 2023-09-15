@@ -209,9 +209,11 @@ string(REPLACE "pypy" "" ver "${verin}")
 if (${verin} MATCHES pypy* )
 set(Python2_FIND_IMPLEMENTATIONS PyPy)
 set(Python3_FIND_IMPLEMENTATIONS PyPy)
+set(IMPL PyPy)
 else()
 set(Python2_FIND_IMPLEMENTATIONS CPython)
 set(Python3_FIND_IMPLEMENTATIONS CPython)
+set(IMPL CPython)
 endif()
 
 
@@ -295,30 +297,30 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set(__comp HepMC3::${_comp})   
     endif()
     if (${ver} STREQUAL 2)
-      Python2_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
-      set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+      Python2_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     endif()
     if (${ver} STREQUAL 3)
-      Python3_add_library(pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
-      set_target_properties(pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+      Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     endif()
     if (${verin} MATCHES pypy* )
 #      add_library(pyHepMC3${_comp}${Python_VERSION} MODULE  ${BN${_comp}} )
-      set_target_properties(pyHepMC3${_comp}${Python_VERSION}
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
       PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION_MAJOR}${PyPy_PyPy_VERSION_MINOR})
     endif()
   
-    set_target_properties(pyHepMC3${_comp}${Python_VERSION}
+    set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>)
-    target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
+    target_link_libraries(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PUBLIC  HepMC3::HepMC3 ${__comp} )
-    target_include_directories(pyHepMC3${_comp}${Python_VERSION}
+    target_include_directories(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/../include  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../ )
     add_custom_target(
-        foo${_comp}${Python_VERSION} ALL
+        ${IMPL}foo${_comp}${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/
         COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/__init__.py
                 )
@@ -379,7 +381,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
        else()
          set(_dotcomp ".${_comp}")   
        endif()
-    install(TARGETS pyHepMC3${_comp}${Python_VERSION}
+    install(TARGETS ${IMPL}pyHepMC3${_comp}${Python_VERSION}
       DESTINATION ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py
@@ -427,13 +429,13 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       file(GLOB INPUT${ptest}  "${CMAKE_CURRENT_SOURCE_DIR}/../test/input${testname}*" )
       file(COPY ${INPUT${ptest}} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test")
       configure_file("${CMAKE_CURRENT_SOURCE_DIR}/../test/${ptest}.py" "${CMAKE_CURRENT_BINARY_DIR}/test/${ptest}.py" COPYONLY)
-      add_test(NAME python${Python_VERSION}_${ptest}
+      add_test(NAME ${IMPL}${Python_VERSION}_${ptest}
         COMMAND ${Python_EXECUTABLE} ${ptest}.py
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test"
       )
       if(HEPMC3_ENABLE_PROTOBUFIO AND Protobuf_FOUND AND NOT WIN32)
         get_filename_component(pcdir ${Protobuf_PROTOC_EXECUTABLE} DIRECTORY)
-        SET_TESTS_PROPERTIES(  python${Python_VERSION}_${ptest}
+        SET_TESTS_PROPERTIES(  ${IMPL}${Python_VERSION}_${ptest}
                   PROPERTIES
                   ENVIRONMENT
                   "PATH=${pcdir};${Protobuf_INCLUDE_DIR}/../lib;${Protobuf_INCLUDE_DIR}/../lib64;${Protobuf_INCLUDE_DIR}/../bin;$ENV{PATH}"
