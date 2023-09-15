@@ -324,11 +324,11 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     target_link_libraries(pyHepMC3${_comp}${Python_VERSION}
         PUBLIC  HepMC3::HepMC3 ${__comp} )
     target_include_directories(pyHepMC3${_comp}${Python_VERSION}
-        PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include  ${CMAKE_CURRENT_SOURCE_DIR} )
+        PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/../include  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../ )
     add_custom_target(
         foo${_comp}${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/
-        COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/src/${_comp}/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/__init__.py
+        COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/__init__.py
                 )
   endforeach()
 
@@ -390,7 +390,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     install(TARGETS pyHepMC3${_comp}${Python_VERSION}
       DESTINATION ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
-    install(FILES src/${_comp}/__init__.py
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py
       DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.egg-info
@@ -429,12 +429,12 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     if(USE_INSTALLED_HEPMC3)
       ENABLE_TESTING()
     endif()
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/test/Pythia8ToHepMC3.py" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test/")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/test/pyHepMC3TestUtils.py" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test/")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../test/Pythia8ToHepMC3.py" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test/")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../test/pyHepMC3TestUtils.py" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test/")
     foreach ( ptest ${HepMC_python_tests} )
-      file(GLOB INPUT${ptest}  "${CMAKE_CURRENT_SOURCE_DIR}/test/input${testname}*" )
+      file(GLOB INPUT${ptest}  "${CMAKE_CURRENT_SOURCE_DIR}/../test/input${testname}*" )
       file(COPY ${INPUT${ptest}} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test")
-      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/test/${ptest}.py" "${CMAKE_CURRENT_BINARY_DIR}/test/${ptest}.py" COPYONLY)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/../test/${ptest}.py" "${CMAKE_CURRENT_BINARY_DIR}/test/${ptest}.py" COPYONLY)
       add_test(NAME python${Python_VERSION}_${ptest}
         COMMAND ${Python_EXECUTABLE} ${ptest}.py
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test"
@@ -455,15 +455,22 @@ endif()
 unset(HEPMC3_Python_SITEARCH)
 endmacro(bindings)
 
-if (HEPMC3_PYTHON_VERSIONS)
-  string(REPLACE "," ";" TEMPVERSIONS ${HEPMC3_PYTHON_VERSIONS})
-  foreach( tempver ${TEMPVERSIONS} )
-    string(REPLACE "." ";" MAJMIN "${tempver}.X.Y")
+
+set(NN  "A" "B" "C" "D")
+if (NOT HEPMC3_PYTHON_VERSIONS)
+set(HEPMC3_PYTHON_VERSIONS "2,3")
+endif()
+string(REPLACE "," ";" TEMPVERSIONS ${HEPMC3_PYTHON_VERSIONS})
+foreach( tempver   IN ZIP_LISTS TEMPVERSIONS NN )
+    if (tempver_0)
+    string(REPLACE "." ";" MAJMIN "${tempver_0}.X.Y")
     list(GET MAJMIN 0 MAJ)
     list(GET MAJMIN 1 MIN)
-    bindings(${MAJ} ${MIN})
-  endforeach ()
-else()
-  bindings(2 X)
-  bindings(3 X)
-endif()
+    message(STATUS "${tempver_1}")
+    add_subdirectory(${tempver_1})
+    endif()
+endforeach()
+
+
+
+
