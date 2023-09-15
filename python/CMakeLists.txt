@@ -378,7 +378,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py
       DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.egg-info
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.egg-info
       DESTINATION  ${HEPMC3_Python_SITEARCH}
       RENAME pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
       COMPONENT python${_comp})
