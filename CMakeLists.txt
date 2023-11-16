@@ -149,7 +149,6 @@ if(HEPMC3_ENABLE_ROOTIO)
     add_definitions(-DHEPMC3_ROOTIO)
     string(REPLACE " " ";" ROOT_CXX_FLAGS_LIST ${ROOT_CXX_FLAGS})
     foreach(fl ${ROOT_CXX_FLAGS_LIST})
-      if(COMPILER_SUPPORTS_${fl})
         if ("${fl}" MATCHES   ".*\\+\\+14$" OR "${fl}" MATCHES   ".*\\+\\+1y$" )
           set(HEPMC3_CXX_STANDARD 14)
         endif()
@@ -162,7 +161,6 @@ if(HEPMC3_ENABLE_ROOTIO)
         if ("${fl}" MATCHES   ".*\\+\\+23$" OR "${fl}" MATCHES   ".*\\+\\+2b$" )
           set(HEPMC3_CXX_STANDARD 23)
         endif()
-      endif()
     endforeach(fl ${ROOT_CXX_FLAGS_LIST})
   else()
     message(STATUS "HepMC3 warning: ROOT needed for ROOTIO but not found")
@@ -179,23 +177,21 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
   endif()
   add_definitions(-DHEPMC3_PROTOBUFIO)
 endif()
-
-set(CXX_FLAGS_TO_CHECK 
-  $<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251
-  $<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0
-  $<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0
-  $<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196
-  $<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196
-  $<$<CXX_COMPILER_ID:GNU>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments
-  $<$<CXX_COMPILER_ID:Clang>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments
-)
-list(APPEND CXX_FLAGS_TO_CHECK ${ROOT_CXX_FLAGS})
-foreach(fl ${CXX_FLAGS_TO_CHECK})
-  CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
-    if(COMPILER_SUPPORTS_${fl})
+  set(${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK "")
+  set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251")
+  set(PGIC_CXX_FLAGS_TO_CHECK "-Wc,--pending_instantiations=0")
+  set(NVHPCC_CXX_FLAGS_TO_CHECK "-Wc,--pending_instantiations=0")
+  set(IntelC_CXX_FLAGS_TO_CHECK "-diag-disable=2196")
+  set(IntelLLVMC_CXX_FLAGS_TO_CHECK "-diag-disable=2196")
+  set(GNUC_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments")
+  set(ClangC_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments")
+  list(APPEND ${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK ${ROOT_CXX_FLAGS_LIST})
+foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
+  CHECK_CXX_COMPILER_FLAG(${fl} CXX_COMPILER_SUPPORTS_${fl})
+    if(CXX_COMPILER_SUPPORTS_${fl})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
-endforeach(fl ${CXX_FLAGS_TO_CHECK})
+endforeach()
 
 message(STATUS "HepMC3: HEPMC3_CXX_STANDARD ${HEPMC3_CXX_STANDARD} " )
 message(STATUS "HepMC3: CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID} " )
