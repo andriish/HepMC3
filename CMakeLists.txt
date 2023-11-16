@@ -181,13 +181,13 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
 endif()
 
 set(CXX_FLAGS_TO_CHECK 
-  "$<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251"
-  "$<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0"
-  "$<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0"
-  "$<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196"
-  "$<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196"
-  "$<$<CXX_COMPILER_ID:GNU>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments"
-  "$<$<CXX_COMPILER_ID:Clang>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments"
+  $<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251
+  $<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0
+  $<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0
+  $<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196
+  $<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196
+  $<$<CXX_COMPILER_ID:GNU>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments
 )
 list(APPEND CXX_FLAGS_TO_CHECK ${ROOT_CXX_FLAGS})
 foreach(fl ${CXX_FLAGS_TO_CHECK})
@@ -236,7 +236,7 @@ add_library(HepMC3 SHARED ${hepmc3core_sources})
 target_include_directories(HepMC3 PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(HepMC PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
+target_compile_features(HepMC3 PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
 set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 4
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
@@ -259,7 +259,7 @@ if (HEPMC3_BUILD_STATIC_LIBS)
   target_include_directories(HepMC3_static PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-  target_compile_features(HepMC_static PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
+  target_compile_features(HepMC3_static PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
   target_compile_definitions(HepMC3_static PRIVATE HEPMC3_NO_EXPORTS)
   set_target_properties(HepMC3_static PROPERTIES OUTPUT_NAME HepMC3-static
     ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>

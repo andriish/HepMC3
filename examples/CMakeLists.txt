@@ -1,6 +1,6 @@
 # building examples
 #------------------
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 include_directories(${PROJECT_SOURCE_DIR}/include )
 
 
@@ -55,7 +55,6 @@ if (USE_INSTALLED_HEPMC3)
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
         endif()
       endforeach(fl ${ROOT_CXX_FLAGS_LIST})
-      set(HEPMC3_ROOTIO_LIBRARY "-lHepMC3rootIO" )
     else()
       message(STATUS "HepMC3 warning: ROOT needed for ROOTIO but not found")
       message(STATUS "HepMC3 warning: Skipping HepMC ROOT IO libraries")
@@ -68,24 +67,15 @@ if (USE_INSTALLED_HEPMC3)
   if (NOT HEPMC3_CXX_STANDARD)
     set(HEPMC3_CXX_STANDARD 11)
   endif()
-  set(CMAKE_CXX_STANDARD ${HEPMC3_CXX_STANDARD})
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-  if (MSVC)
-#This is a workaround for VC memory problem and false positive warnings.
-    set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj" "/D _CRT_SECURE_NO_WARNINGS" "/wd4267" "/wd4244" "/wd4477")
-    foreach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-      CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
-      if(COMPILER_SUPPORTS_${fl})
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
-      endif()
-    endforeach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-  endif()
-else()
-  set(HEPMC3_PROTOBUFIO_LIB HepMC3protobufIO)
-  set(HEPMC3_ROOTIO_LIB HepMC3rootIO)
-  set(HEPMC3_SEARCH_LIB HepMC3search)
-  set(HEPMC3_LIB HepMC3)
+  set(CXX_FLAGS_TO_CHECK 
+  $<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477
+  )
+  foreach(fl ${CXX_FLAGS_TO_CHECK})
+    CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
+    if(COMPILER_SUPPORTS_${fl})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
+    endif()
+  endforeach(fl ${CXX_FLAGS_TO_CHECK}) 
 endif()
 #<-This is needed for standalone compilation
 
@@ -101,23 +91,20 @@ if (CMAKE_Fortran_COMPILER)
   enable_language(Fortran)
   get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
   message(STATUS "HepMC3 examples: Fortran compiler found, Pythia6 example enabled. Fortran_COMPILER_NAME=${Fortran_COMPILER_NAME}  CMAKE_Fortran_COMPILER_ID=${CMAKE_Fortran_COMPILER_ID}")
-  if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-    set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -fno-automatic -fno-backslash -ffixed-line-length-132 -std=legacy")
-  elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
-    if (WIN32)
-      set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} /noauto /extend-source:132")
-    else()
-      set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -noauto -extend-source 132")
+  set( Fortran_FLAGS_TO_CHECK  
+         $<$<Fortran_COMPILER_ID:GNU>:-fno-automatic;-fno-backslash;-ffixed-line-length-132;-std=legacy>
+         $<$<Fortran_COMPILER_ID:Intel>:/noauto;/extend-source:132; -noauto;-extend-source 132>
+         $<$<Fortran_COMPILER_ID:IntelLLVM>:/noauto;/extend-source:132; -noauto;-extend-source 132>
+         $<$<Fortran_COMPILER_ID:PGI>:-Mpreprocess;-Mextend;-Mnosave;-Mnofree>
+         $<$<Fortran_COMPILER_ID:NVHPC>:-Mpreprocess;-Mextend;-Mnosave;-Mnofree>
+         $<$<Fortran_COMPILER_ID:XL>:-qfixed=256;-qnosave;-qextname>
+         )
+  foreach(fl ${Fortran_FLAGS_TO_CHECK})
+    Fortran_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
+    if(COMPILER_SUPPORTS_${fl})
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${fl}")
     endif()
-  elseif (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
-    set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -Mpreprocess -Mextend -Mnosave -Mnofree")
-  elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "SunPro")
-    set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS}  ")
-  elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "XL")
-    set( CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -qfixed=256  -qnosave -qextname")
-  elseif()
-    message(STATUS "HepMC3 examples: Don't know how to set Fortran FLAGS for  ${Fortran_COMPILER_NAME} with ID ${Fortran_COMPILER_ID}")
-  endif ()
+  endforeach(fl ${Fortran_FLAGS_TO_CHECK})
   if(CMAKE_SYSTEM_NAME MATCHES Darwin)
     set(CMAKE_SHARED_LIBRARY_CREATE_Fortran_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_Fortran_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
   else()

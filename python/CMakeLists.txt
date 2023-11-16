@@ -1,9 +1,6 @@
 #project(pyHepMC3 CXX)
 #Should be fixed
-cmake_minimum_required(VERSION 3.1.0)
-if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
-SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
-endif()
+cmake_minimum_required(VERSION 3.15.0)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 option(USE_INSTALLED_HEPMC3 "Use HepMC3 bindings as a standalone package" OFF)
@@ -59,13 +56,13 @@ if (USE_INSTALLED_HEPMC3)
   endif()
 #Memory problem and false positive warnings.
 set(CXX_FLAGS_TO_CHECK 
-  "$<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477"
-  "$<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0"
-  "$<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0"
-  "$<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196"
-  "$<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196"
-  "$<$<CXX_COMPILER_ID:GNU>:-Wno-unused-value;-Wno-unused-but-set-variable"
-  "$<$<CXX_COMPILER_ID:Clang>:-fsized-deallocation;-Wno-unused-value;-Wno-unused-but-set-variable")
+  $<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477
+  $<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0
+  $<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0
+  $<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196
+  $<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196
+  $<$<CXX_COMPILER_ID:GNU>:-Wno-unused-value;-Wno-unused-but-set-variable
+  $<$<CXX_COMPILER_ID:Clang>:-fsized-deallocation;-Wno-unused-value;-Wno-unused-but-set-variable)
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${HEPMC3_LIB_DIR})
   message(STATUS "pyHepMC3 v${THIS_PROJECT_NAME_VERSION}")
 else()
