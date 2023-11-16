@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 #----------------------------------------------------------------------------
 project(HepMC3)
 set(PROJECT_VERSION 3.02.08)
@@ -19,9 +19,8 @@ else(CMAKE_BUILD_TYPE)
 endif(CMAKE_BUILD_TYPE)
 
 message(STATUS "HepMC3: CMAKE_VERSION=${CMAKE_VERSION}")
-if (${CMAKE_VERSION} VERSION_GREATER "3.8")
-  cmake_policy(SET CMP0069 NEW)
-endif()
+cmake_policy(SET CMP0069 NEW)
+
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
@@ -147,11 +146,9 @@ if(HEPMC3_ENABLE_ROOTIO)
     message(STATUS "ROOT includes:  ${ROOT_INCLUDE_DIRS}")
     message(STATUS "ROOT libraries: ${ROOT_LIBRARIES}")
     message(STATUS "ROOT definitions: ${ROOT_DEFINITIONS}")
-    include_directories(${ROOT_INCLUDE_DIRS})
     add_definitions(-DHEPMC3_ROOTIO)
     string(REPLACE " " ";" ROOT_CXX_FLAGS_LIST ${ROOT_CXX_FLAGS})
     foreach(fl ${ROOT_CXX_FLAGS_LIST})
-      CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
       if(COMPILER_SUPPORTS_${fl})
         if ("${fl}" MATCHES   ".*\\+\\+14$" OR "${fl}" MATCHES   ".*\\+\\+1y$" )
           set(HEPMC3_CXX_STANDARD 14)
@@ -165,10 +162,8 @@ if(HEPMC3_ENABLE_ROOTIO)
         if ("${fl}" MATCHES   ".*\\+\\+23$" OR "${fl}" MATCHES   ".*\\+\\+2b$" )
           set(HEPMC3_CXX_STANDARD 23)
         endif()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
       endif()
     endforeach(fl ${ROOT_CXX_FLAGS_LIST})
-    set(HEPMC3_ROOTIO_LIBRARY "-lHepMC3rootIO" )
   else()
     message(STATUS "HepMC3 warning: ROOT needed for ROOTIO but not found")
     message(STATUS "HepMC3 warning: Skipping HepMC ROOT IO libraries")
@@ -185,45 +180,22 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
   add_definitions(-DHEPMC3_PROTOBUFIO)
 endif()
 
-
-#Workarounds for gcc/clang
-set(CMAKE_CXX_STANDARD ${HEPMC3_CXX_STANDARD})
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-CHECK_CXX_COMPILER_FLAG("-Wno-strict-aliasing" COMPILER_SUPPORTS_-Wno-strict-aliasing)
-if (COMPILER_SUPPORTS_-Wno-strict-aliasing)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")
-endif()
-
-CHECK_CXX_COMPILER_FLAG("-Wno-unused-command-line-argument" COMPILER_SUPPORTS_-Wno-unused-command-line-argument)
-if (COMPILER_SUPPORTS_-Wno-unused-command-line-argument)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-command-line-argument")
-endif()
-CHECK_CXX_COMPILER_FLAG("-Wno-gnu-zero-variadic-macro-arguments" COMPILER_SUPPORTS_-Wno-gnu-zero-variadic-macro-arguments)
-if (COMPILER_SUPPORTS_-Wno-gnu-zero-variadic-macro-arguments)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-gnu-zero-variadic-macro-arguments")
-endif()
-#Workarounds for Intel
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "Intel")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -diag-disable=2196")
-endif()
-#Workarounds for nvc++
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
-    set(CMAKE_CXX_EXTENSIONS ON)
-    #Workaround for pybind11 templates
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc,--pending_instantiations=0 ")
-endif()
-#Workarounds for VS
-if (MSVC OR ${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC" )
-#Memory problem and false positive warnings.
-  set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj" "/D_CRT_SECURE_NO_WARNINGS" "/wd4267" "/wd4244" "/wd4477" "/wd4251")
-  foreach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-    CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
+set(CXX_FLAGS_TO_CHECK 
+  "$<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251"
+  "$<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0"
+  "$<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0"
+  "$<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196"
+  "$<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196"
+  "$<$<CXX_COMPILER_ID:GNU>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments"
+  "$<$<CXX_COMPILER_ID:Clang>:-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments"
+)
+list(APPEND CXX_FLAGS_TO_CHECK ${ROOT_CXX_FLAGS})
+foreach(fl ${CXX_FLAGS_TO_CHECK})
+  CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
     if(COMPILER_SUPPORTS_${fl})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
-  endforeach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-endif()
+endforeach(fl ${CXX_FLAGS_TO_CHECK})
 
 message(STATUS "HepMC3: HEPMC3_CXX_STANDARD ${HEPMC3_CXX_STANDARD} " )
 message(STATUS "HepMC3: CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID} " )
@@ -264,6 +236,7 @@ add_library(HepMC3 SHARED ${hepmc3core_sources})
 target_include_directories(HepMC3 PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+target_compile_features(HepMC PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
 set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 4
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
@@ -286,6 +259,7 @@ if (HEPMC3_BUILD_STATIC_LIBS)
   target_include_directories(HepMC3_static PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
+  target_compile_features(HepMC_static PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
   target_compile_definitions(HepMC3_static PRIVATE HEPMC3_NO_EXPORTS)
   set_target_properties(HepMC3_static PROPERTIES OUTPUT_NAME HepMC3-static
     ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>

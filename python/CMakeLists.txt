@@ -14,12 +14,8 @@ if (USE_INSTALLED_HEPMC3)
   set(THIS_PROJECT_NAME_VERSION 3.2.8)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
 
-
-  find_package(HepMC3  REQUIRED  )
+  find_package(HepMC3 ${PROJECT_NAME}_VERSION REQUIRED  )
   include(CheckCXXCompilerFlag)
-
-  include_directories(${HEPMC3_INCLUDE_DIR})
-  message(STATUS "HEPMC3_INCLUDE DIR: ${HEPMC3_INCLUDE_DIR}")
   message(STATUS "HEPMC3_LIB: ${HEPMC3_LIB}")
   include(GNUInstallDirs)
   if (HEPMC3_ROOTIO_LIB)
@@ -33,12 +29,9 @@ if (USE_INSTALLED_HEPMC3)
     if(ROOT_FOUND)
       list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
       list(APPEND CMAKE_PREFIX_PATH ${ROOT_DIR})
-      include_directories(${ROOT_INCLUDE_DIRS})
-      link_directories(${ROOT_LIBRARY_DIR})
       add_definitions(${ROOT_DEFINITIONS})
       add_definitions(-DHEPMC3_ROOTIO)
       foreach(fl ${ROOT_CXX_FLAGS})
-        CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
         if(COMPILER_SUPPORTS_${fl})
           if ("${fl}" MATCHES   ".*\\+\\+14$" OR "${fl}" MATCHES   ".*\\+\\+1y$" )
             set(HEPMC3_CXX_STANDARD 14)
@@ -55,7 +48,6 @@ if (USE_INSTALLED_HEPMC3)
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
         endif()
       endforeach(fl ${ROOT_CXX_FLAGS})
-      set(HEPMC3_ROOTIO_LIBRARY ${HEPMC3_ROOTIO_LIB} )
     endif()
   endif()
   if (HEPMC3_PROTOBUFIO_LIB)
@@ -65,69 +57,38 @@ if (USE_INSTALLED_HEPMC3)
   if (NOT HEPMC3_CXX_STANDARD)
     set(HEPMC3_CXX_STANDARD 11)
   endif()
-  set(CMAKE_CXX_STANDARD ${HEPMC3_CXX_STANDARD})
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-#Workarounds for gcc/clang
-  CHECK_CXX_COMPILER_FLAG("-Wno-unused-but-set-variable" COMPILER_SUPPORTS_-Wno-unused-but-set-variable)
-  if (COMPILER_SUPPORTS_-Wno-unused-but-set-variable)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
-  endif()
-  CHECK_CXX_COMPILER_FLAG("-Wno-unused-value" COMPILER_SUPPORTS_-Wno-unused-value)
-  if (COMPILER_SUPPORTS_-Wno-unused-value)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-value")
-  endif()
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    CHECK_CXX_COMPILER_FLAG("-fsized-deallocation" COMPILER_SUPPORTS_-fsized-deallocation)
-    if (COMPILER_SUPPORTS_-fsized-deallocation)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsized-deallocation")
-    endif()
-  endif()
-#Workarounds for nvc++
-  if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
-      set(CMAKE_CXX_EXTENSIONS ON)
-      #Workaround for pybind11 templates
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc,--pending_instantiations=0 ")
-  endif()
-#Workarounds for VS
-  if (MSVC OR ${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC" )
 #Memory problem and false positive warnings.
-    set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj" "/D_CRT_SECURE_NO_WARNINGS" "/wd4267" "/wd4244" "/wd4477")
-    foreach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-      CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
-      if(COMPILER_SUPPORTS_${fl})
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
-      endif()
-    endforeach(fl ${MSVC_CXX_FLAGS_TO_CHECK})
-  endif()
-
-
-  set (HEPMC3_INCLUDE_DIRECTORIES ${HEPMC3_INCLUDE_DIR})
-  set (HEPMC3_INCLUDE_FLAGS -I${HEPMC3_INCLUDE_DIR})
+set(CXX_FLAGS_TO_CHECK 
+  "$<$<CXX_COMPILER_ID:MSVC>:/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477"
+  "$<$<CXX_COMPILER_ID:PGI>:-Wc,--pending_instantiations=0"
+  "$<$<CXX_COMPILER_ID:NVHPC>:-Wc,--pending_instantiations=0"
+  "$<$<CXX_COMPILER_ID:Intel>:-diag-disable=2196"
+  "$<$<CXX_COMPILER_ID:IntelLLVM>:-diag-disable=2196"
+  "$<$<CXX_COMPILER_ID:GNU>:-Wno-unused-value;-Wno-unused-but-set-variable"
+  "$<$<CXX_COMPILER_ID:Clang>:-fsized-deallocation;-Wno-unused-value;-Wno-unused-but-set-variable")
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${HEPMC3_LIB_DIR})
   message(STATUS "pyHepMC3 v${THIS_PROJECT_NAME_VERSION}")
 else()
-  CHECK_CXX_COMPILER_FLAG("-Wno-unused-but-set-variable" COMPILER_SUPPORTS_-Wno-unused-but-set-variable)
-  if (COMPILER_SUPPORTS_-Wno-unused-but-set-variable)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
-  endif()
-  CHECK_CXX_COMPILER_FLAG("-Wno-unused-value" COMPILER_SUPPORTS_-Wno-unused-value)
-  if (COMPILER_SUPPORTS_-Wno-unused-value)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-value")
-  endif()
+  list(APPEND CXX_FLAGS_TO_CHECK "-Wno-unused-but-set-variable")
+  list(APPEND CXX_FLAGS_TO_CHECK "-Wno-unused-value")
   set(THIS_PROJECT_NAME pyHepMC3)
   set(THIS_PROJECT_NAME_VERSION ${HEPMC3_VERSION_MAJOR}.${HEPMC3_VERSION_MINOR}.${HEPMC3_VERSION_PATCH})
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/)
-  set (HEPMC3_INCLUDE_FLAGS -I${PROJECT_SOURCE_DIR}/include   -I${PROJECT_SOURCE_DIR}/rootIO/include  -I${PROJECT_SOURCE_DIR}/search/include -I${PROJECT_SOURCE_DIR}/protobufIO/include)
-  set (HEPMC3_INCLUDE_DIRECTORIES  ${PROJECT_SOURCE_DIR}/include   ${PROJECT_SOURCE_DIR}/rootIO/include  ${PROJECT_SOURCE_DIR}/search/include ${PROJECT_SOURCE_DIR}/protobufIO/include)
-  set ( HEPMC3_LIB HepMC3)
 endif()
+list( APPEND CXX_FLAGS_TO_CHECK ${ROOT_CXX_FLAGS})
+foreach(fl ${CXX_FLAGS_TO_CHECK})
+  CHECK_CXX_COMPILER_FLAG(${fl} COMPILER_SUPPORTS_${fl})
+    if(COMPILER_SUPPORTS_${fl})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
+    endif()
+endforeach()
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Sun*")
     message(STATUS "HepMC3 python: WARNING: you are trying to use Oracle Studio compiller that is not officially supported by pybind11.\
  This compiler does not have the needed functionality to build the HepMC3 python modules using pybind11. Most likely the build fill fail.\
  To disable the build of python bindings use -DHEPMC3_ENABLE_PYTHON=OFF with cmake.")
 endif()
+
 
 #Workaround for nvc++ for this particular code
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
@@ -312,7 +273,9 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
       PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION})
     endif()
-  
+#    if (${_comp} STREQUAL "root")
+#      target_compile_features(${IMPL}pyHepMC3${_comp}${Python_VERSION} PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
+#    endif()
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
