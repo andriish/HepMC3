@@ -11,7 +11,7 @@ if (USE_INSTALLED_HEPMC3)
   set(THIS_PROJECT_NAME_VERSION 3.2.8)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
 
-  find_package(HepMC3 ${PROJECT_NAME}_VERSION REQUIRED  )
+  find_package(HepMC3 ${${PROJECT_NAME}_VERSION} REQUIRED  )
   include(CheckCXXCompilerFlag)
   message(STATUS "HEPMC3_LIB: ${HEPMC3_LIB}")
   include(GNUInstallDirs)
