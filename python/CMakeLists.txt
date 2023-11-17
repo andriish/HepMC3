@@ -1,6 +1,9 @@
 #project(pyHepMC3 CXX)
 #Should be fixed
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.1.0)
+if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
+SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
+endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 option(USE_INSTALLED_HEPMC3 "Use HepMC3 bindings as a standalone package" OFF)
@@ -11,8 +14,10 @@ if (USE_INSTALLED_HEPMC3)
   set(THIS_PROJECT_NAME_VERSION 3.2.8)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
 
+
   find_package(HepMC3 ${${PROJECT_NAME}_VERSION} REQUIRED  )
   include(CheckCXXCompilerFlag)
+
   message(STATUS "HEPMC3_LIB: ${HEPMC3_LIB}")
   include(GNUInstallDirs)
   if (HEPMC3_ROOTIO_LIB)
@@ -84,7 +89,6 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES "Sun*")
  This compiler does not have the needed functionality to build the HepMC3 python modules using pybind11. Most likely the build fill fail.\
  To disable the build of python bindings use -DHEPMC3_ENABLE_PYTHON=OFF with cmake.")
 endif()
-
 
 #Workaround for nvc++ for this particular code
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
@@ -269,9 +273,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
       PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION})
     endif()
-#    if (${_comp} STREQUAL "root")
-#      target_compile_features(${IMPL}pyHepMC3${_comp}${Python_VERSION} PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
-#    endif()
+  
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>

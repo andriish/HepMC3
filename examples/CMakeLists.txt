@@ -1,6 +1,6 @@
 # building examples
 #------------------
-cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 include_directories(${PROJECT_SOURCE_DIR}/include )
 
 
@@ -115,6 +115,10 @@ if (CMAKE_Fortran_COMPILER)
 else()
   message(STATUS "HepMC3 examples: Fortran compiler not found, Pythia6 example disabled")
 endif()
+
+
+
+
 
 add_subdirectory(ConvertExample)
 add_subdirectory(Pythia8Example)
