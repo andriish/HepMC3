@@ -178,6 +178,10 @@ if(HEPMC3_ENABLE_PROTOBUFIO)
   endif()
   add_definitions(-DHEPMC3_PROTOBUFIO)
 endif()
+#Workarounds for gcc/clang
+  set(CMAKE_CXX_STANDARD ${HEPMC3_CXX_STANDARD})
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
   set(${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK "")
   set(MSVC_CXX_FLAGS_TO_CHECK "/bigobj;/D_CRT_SECURE_NO_WARNINGS;/wd4267;/wd4244;/wd4477;/wd4251")
   set(PGIC_CXX_FLAGS_TO_CHECK "-Wc,--pending_instantiations=0")
@@ -233,7 +237,6 @@ add_library(HepMC3 SHARED ${hepmc3core_sources})
 target_include_directories(HepMC3 PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(HepMC3 PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
 set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 4
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
@@ -256,7 +259,6 @@ if (HEPMC3_BUILD_STATIC_LIBS)
   target_include_directories(HepMC3_static PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-  target_compile_features(HepMC3_static PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
   target_compile_definitions(HepMC3_static PRIVATE HEPMC3_NO_EXPORTS)
   set_target_properties(HepMC3_static PROPERTIES OUTPUT_NAME HepMC3-static
     ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
