@@ -363,7 +363,7 @@ bool ReaderAscii::parse_units(GenEvent &evt, const char *buf) {
 
 bool ReaderAscii::parse_vertex_information(GenEvent &evt, const char *buf) {
     GenVertexPtr  data = std::make_shared<GenVertex>();
-    FourVector    position;
+    
     const char   *cursor          = buf;
     const char   *cursor2         = nullptr;
     int           id              = 0;
@@ -375,7 +375,9 @@ bool ReaderAscii::parse_vertex_information(GenEvent &evt, const char *buf) {
 
     // status
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    data->set_status(atoi(cursor));
+    m_data.vertices[-id-1].status = atoi(cursor);
+    
+    FourVector&  position = m_data.vertices[-id+1].position;
 
     // skip to the list of particles
     if ( !(cursor = strchr(cursor+1, '[')) ) return false;
@@ -387,13 +389,8 @@ bool ReaderAscii::parse_vertex_information(GenEvent &evt, const char *buf) {
 
         // add incoming particle to the vertex
         if (particle_in > 0) {
-            //Particles are always ordered, so id==position in event.
-            if (particle_in <= highest_id) {
-                data->add_particle_in(evt.particles()[particle_in-1]);
-            } else {
                 //If the particle has not been red yet, we store its id to add the particle later.
-                m_forward_mothers[data].insert(particle_in);
-            }
+                m_forward_mothers[id].insert(particle_in);
         }
 
         // check for next particle or end of particle list
@@ -420,73 +417,46 @@ bool ReaderAscii::parse_vertex_information(GenEvent &evt, const char *buf) {
         // t
         if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
         position.setT(atof(cursor));
-        data->set_position(position);
+
     }
-
-    HEPMC3_DEBUG(10, "ReaderAscii: V: " << id << " with  "<< data->particles_in().size() << " particles)")
-
-    evt.add_vertex(data);
-    //Restore vertex id, as it is used to build connections inside event.
-    data->set_id(id);
 
     return true;
 }
 
 
 bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
-    GenParticlePtr  data = std::make_shared<GenParticle>();
-    FourVector      momentum;
+
     const char     *cursor  = buf;
     int             mother_id = 0;
-
     // verify id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
 
-    if ( atoi(cursor) != (int)evt.particles().size() + 1 ) {
+    int id = atoi(cursor);
+    if ( id != (int)evt.particles().size() + 1 ) {
         /// @todo Should be an exception
         HEPMC3_ERROR("ReaderAscii: particle ID mismatch")
         return false;
     }
-
+    FourVector&      momentum = m_data.particles[id-1].momentum;
     // mother id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     mother_id = atoi(cursor);
 
     // Parent object is a particle. Particleas are always ordered id==position in event.
-    if ( mother_id > 0 && mother_id <= (int)evt.particles().size() ) {
-        GenParticlePtr mother = evt.particles()[ mother_id-1 ];
-        GenVertexPtr   vertex = mother->end_vertex();
-
-        // create new vertex if needed
-        if ( !vertex ) {
-            vertex = std::make_shared<GenVertex>();
-            vertex->add_particle_in(mother);
-        }
-
-        vertex->add_particle_out(data);
-        evt.add_vertex(vertex);
-        //ID of this vertex is not explicitely set in the input. We set it to zero to prevent overlap with other ids. It will be restored later.
-        vertex->set_id(0);
+    if ( mother_id > 0 && mother_id <= (int)m_data.particles.size() ) {
+        int fm = m_forward_mothers.back()->first+1;
+        m_forward_mothers[fm].insert(mother_id);
     }
     // Parent object is vertex
     else {
         if ( mother_id < 0 )
         {
-            //Vertices are not always ordered, e.g. when one reads HepMC2 event, so we check their ids.
-            bool found = false;
-            for (auto v: evt.vertices()) if (v->id() == mother_id) {v->add_particle_out(data); found = true; break; }
-            if (!found)
-            {
-                //This should happen  in case of unordered event.
-                //      WARNING("ReaderAscii: Unordered event, id of mother vertex  is out of range of known ids:   " <<mother_id<<" evt.vertices().size()="<<evt.vertices().size() )
-                //Save the mother id to reconnect later.
-                m_forward_daughters[data] = mother_id;
-            }
+			m_forward_mothers[mother_id].insert(id);
         }
     }
     // pdg id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    data->set_pid(atoi(cursor));
+    m_data.particles[id-1].pid = atoi(cursor);
 
     // px
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
@@ -503,19 +473,14 @@ bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
     // pe
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     momentum.setE(atof(cursor));
-    data->set_momentum(momentum);
 
     // m
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    data->set_generated_mass(atof(cursor));
+    m_data.particles[id-1].mass= atof(cursor);
 
     // status
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    data->set_status(atoi(cursor));
-
-    evt.add_particle(data);
-
-    HEPMC3_DEBUG(10, "ReaderAscii: P: " << data->id() << " ( mother: " << mother_id << ", pid: " << data->pid() << ")")
+    m_data.particles[id-1].status = atoi(cursor);
 
     return true;
 }
@@ -537,11 +502,9 @@ bool ReaderAscii::parse_attribute(GenEvent &evt, const char *buf) {
     snprintf(name.data(), name.size(), "%.*s", (int)(cursor2-cursor), cursor);
 
     cursor = cursor2+1;
-
-    std::shared_ptr<Attribute> att =
-        std::make_shared<StringAttribute>(StringAttribute(unescape(cursor)));
-
-    evt.add_attribute(std::string(name.data()), att, id);
+    m_data.attribute_id.push_back(id);
+    m_data.attribute_name.push_back(name);
+    m_data.attribute_as_string.push_back(unescape(cursor));
 
     return true;
 }

@@ -168,7 +168,9 @@ private:
     std::map<GenVertexPtr, std::set<int> >  m_forward_mothers;
     /** @brief Temp storage for  prod vertex ids */
     std::map<GenParticlePtr, int >  m_forward_daughters;
-
+    
+    
+    GenEventData m_data;
 };
 
 
