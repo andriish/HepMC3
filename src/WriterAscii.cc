@@ -136,8 +136,8 @@ void WriterAscii::write_event(const GenEvent &evt) {
     // Write event info
     flush();
     std::string especifier =  "E " + std::to_string(evt.event_number()) + " "
-                              + std::to_string(evt.vertices().size()) + " "
-                              + std::to_string(evt.particles().size());
+                              + std::to_string(evt.vertices_size()) + " "
+                              + std::to_string(evt.particles_size());
     // Write event position if not zero
     const FourVector &pos = evt.event_pos();
     if ( !pos.is_zero() ) {
@@ -196,11 +196,11 @@ void WriterAscii::write_event(const GenEvent &evt) {
         if (v) {
             // Check if we need this vertex at all
             // Yes, use vertex as parent object
-            if ( v->particles_in().size() > 1 || !v->data().is_zero() ) { parent_object = v->id(); }
+            if ( v->particles_in_size() > 1 || !v->data().is_zero() ) { parent_object = v->id(); }
             // No, use particle as parent object
             // Add check for attributes of this vertex
             else {
-                if ( v->particles_in().size() == 1 )                  { parent_object = v->particles_in().front()->id();}
+                if ( v->particles_in_size() == 1 )                  { parent_object = v->particles_in().front()->id();}
                 else {if ( v->particles_in().empty() ) {HEPMC3_DEBUG(30, "WriterAscii::write_event - found a vertex without incoming particles: " << v->id());}}
             }
             // Usage of map instead of simple counter helps to deal with events with random ids of vertices.
@@ -259,7 +259,7 @@ void WriterAscii::write_vertex(const ConstGenVertexPtr& v) {
     flush();
     std::string vlist;
     std::vector<int> pids;
-    pids.reserve(v->particles_in().size());
+    pids.reserve(v->particles_in_size());
     for (const ConstGenParticlePtr& p: v->particles_in()) pids.emplace_back(p->id());
     //We order pids to be able to compare ascii files
     std::sort(pids.begin(), pids.end());

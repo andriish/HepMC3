@@ -33,14 +33,14 @@ void Print::content(std::ostream& os, const GenEvent &event) {
         }
     }
 
-    os << "GenParticlePtr (" << event.particles().size() << ")" << std::endl;
+    os << "GenParticlePtr (" << event.particles_size() << ")" << std::endl;
 
     for (const ConstGenParticlePtr& p: event.particles()) {
         Print::line(os, p, true);
         os << std::endl;
     }
 
-    os << "GenVertexPtr (" << event.vertices().size() << ")" << std::endl;
+    os << "GenVertexPtr (" << event.vertices_size() << ")" << std::endl;
     for ( const ConstGenVertexPtr& v: event.vertices() ) {
         Print::line(os, v, true);
         os << std::endl;
@@ -61,8 +61,8 @@ void Print::listing(std::ostream& os, const GenEvent &event, unsigned short prec
     os << "GenEvent: #" << event.event_number() << std::endl;
     os << " Momentum units: " << Units::name(event.momentum_unit())
        << " Position units: " << Units::name(event.length_unit()) << std::endl;
-    os << " Entries in this event: " << event.vertices().size() << " vertices, "
-       << event.particles().size() << " particles, "
+    os << " Entries in this event: " << event.vertices_size() << " vertices, "
+       << event.particles_size() << " particles, "
        << event.weights().size()   << " weights." << std::endl;
 
     const FourVector &pos = event.event_pos();
@@ -229,9 +229,9 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
     os << "GenVertex:  " << v->id() << " stat: ";
     os.width(3);
     os << v->status();
-    os << " in: "  << v->particles_in().size();
+    os << " in: "  << v->particles_in_size();
     os.width(3);
-    os << " out: " << v->particles_out().size();
+    os << " out: " << v->particles_out_size();
 
     const FourVector &pos = v->position();
     os << " has_set_position: ";
@@ -241,7 +241,7 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
     os << " (X,cT): " << pos.x() << ", " <<pos.y() << ", " << pos.z() << ", " << pos.t();
     if (attributes)
     {
-        std::vector<std::string> names     = v->attribute_names();
+        auto names     = v->attribute_names();
         for (const auto& ss: names) {
             os << " " << ss << "=" << (*v).attribute_as_string(ss);
         }
@@ -300,15 +300,15 @@ void Print::line(std::ostream& os, ConstGenParticlePtr p, bool attributes) {
     const ConstGenVertexPtr end  = p->end_vertex();
     int prod_vtx_id   = (prod) ? prod->id() : 0;
     int end_vtx_id    = (end)  ? end->id()  : 0;
+    auto names        = p->attribute_names();
 
     os << " Stat: " << p->status()
        << " PV: " << prod_vtx_id
        << " EV: " << end_vtx_id
-       << " Attr: " << (*p).attribute_names().size();
+       << " Attr: " << names.size();
 
     if (attributes)
     {
-        std::vector<std::string> names     = p->attribute_names();
         for (const auto& ss: names) {
             os << " " << ss << "=" << (*p).attribute_as_string(ss);
         }

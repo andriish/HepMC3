@@ -367,7 +367,7 @@ bool ReaderAscii::parse_vertex_information(GenEvent &evt, const char *buf) {
     const char   *cursor          = buf;
     const char   *cursor2         = nullptr;
     int           id              = 0;
-    int           highest_id      = evt.particles().size();
+    int           highest_id      = evt.particles_size();
 
     // id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
@@ -442,7 +442,7 @@ bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
     // verify id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
 
-    if ( atoi(cursor) != (int)evt.particles().size() + 1 ) {
+    if ( atoi(cursor) != (int)evt.particles_size() + 1 ) {
         /// @todo Should be an exception
         HEPMC3_ERROR("ReaderAscii: particle ID mismatch")
         return false;
@@ -453,7 +453,7 @@ bool ReaderAscii::parse_particle_information(GenEvent &evt, const char *buf) {
     mother_id = atoi(cursor);
 
     // Parent object is a particle. Particleas are always ordered id==position in event.
-    if ( mother_id > 0 && mother_id <= (int)evt.particles().size() ) {
+    if ( mother_id > 0 && mother_id <= (int)evt.particles_size() ) {
         GenParticlePtr mother = evt.particles()[ mother_id-1 ];
         GenVertexPtr   vertex = mother->end_vertex();
 
