@@ -7,7 +7,6 @@
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
-#include "HepMC3/Relatives.h"
 #include "HepMC3/WriterAscii.h"
 #include "HepMC3/ReaderAscii.h"
 #include "HepMC3TestUtils.h"

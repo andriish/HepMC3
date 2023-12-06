@@ -404,7 +404,6 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
     const char   *cursor          = buf;
     const char   *cursor2         = nullptr;
     int           id              = 0;
-    int           highest_id      = m_data.particles.size();
 
     // id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
