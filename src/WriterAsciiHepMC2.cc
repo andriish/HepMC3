@@ -155,7 +155,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
                         alphaQED,
                         signal_process_id,
                         signal_process_vertex,
-                        evt.vertices_size(),
+                        evt.vertices().size(),
                         idbeam1, idbeam2);
 
     // This should be the largest single add to the buffer. Its size 11+4*11+3*22+2*11+10=153
@@ -342,7 +342,7 @@ void WriterAsciiHepMC2::write_vertex(const ConstGenVertexPtr& v)
         m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), pos.z());
         m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), pos.t());
     }
-    m_cursor += sprintf(m_cursor, " %i %zu %zu", orph, v->particles_out_size(), weights.size());
+    m_cursor += sprintf(m_cursor, " %i %zu %zu", orph, v->particles_out().size(), weights.size());
     flush();
     for (size_t i = 0; i < weights.size(); i++) { m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), weights[i]); flush(); }
     m_cursor += sprintf(m_cursor, "\n");

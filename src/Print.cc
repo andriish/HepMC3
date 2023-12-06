@@ -33,14 +33,14 @@ void Print::content(std::ostream& os, const GenEvent &event) {
         }
     }
 
-    os << "GenParticlePtr (" << event.particles_size() << ")" << std::endl;
+    os << "GenParticlePtr (" << event.particles().size() << ")" << std::endl;
 
     for (const ConstGenParticlePtr& p: event.particles()) {
         Print::line(os, p, true);
         os << std::endl;
     }
 
-    os << "GenVertexPtr (" << event.vertices_size() << ")" << std::endl;
+    os << "GenVertexPtr (" << event.vertices().size() << ")" << std::endl;
     for ( const ConstGenVertexPtr& v: event.vertices() ) {
         Print::line(os, v, true);
         os << std::endl;
@@ -61,8 +61,8 @@ void Print::listing(std::ostream& os, const GenEvent &event, unsigned short prec
     os << "GenEvent: #" << event.event_number() << std::endl;
     os << " Momentum units: " << Units::name(event.momentum_unit())
        << " Position units: " << Units::name(event.length_unit()) << std::endl;
-    os << " Entries in this event: " << event.vertices_size() << " vertices, "
-       << event.particles_size() << " particles, "
+    os << " Entries in this event: " << event.vertices().size() << " vertices, "
+       << event.particles().size() << " particles, "
        << event.weights().size()   << " weights." << std::endl;
 
     const FourVector &pos = event.event_pos();
@@ -229,9 +229,9 @@ void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) {
     os << "GenVertex:  " << v->id() << " stat: ";
     os.width(3);
     os << v->status();
-    os << " in: "  << v->particles_in_size();
+    os << " in: "  << v->particles_in().size();
     os.width(3);
-    os << " out: " << v->particles_out_size();
+    os << " out: " << v->particles_out().size();
 
     const FourVector &pos = v->position();
     os << " has_set_position: ";
