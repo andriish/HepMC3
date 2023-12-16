@@ -218,7 +218,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
     }
     std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles_minus;
-    int currid = -(int)m_data.vertices.size();
+    long currid = -(long)m_data.vertices.size();
     auto fir = m_io_particles_plus.begin();
     for (const auto& io: m_io_particles) {
         for (;currid<io.first;++currid) {
