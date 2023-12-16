@@ -218,27 +218,31 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
     }
 
-    std::vector<int> all;
-    std::vector<int> negative;
-    std::vector<int> positive;
+    std::vector<int> all_vertex_ids;
+    std::vector<int> negative_vertex_ids;
+    std::vector<int> positive_vertex_ids;
+    std::vector<int> unfilled_vertex_ids;
+    all_vertex_ids.reserve(m_data.vertices.size());
+    negative_vertex_ids.reserve(m_data.vertices.size());
+    positive_vertex_ids.reserve(m_data.vertices.size());
+    unfilled_vertex_ids.reserve(m_data.vertices.size());
     int x = -1;
     for (const auto& io: m_io_particles) {
-      if (io.first != 0) {all.push_back(x); x--;}
-      if (io.first < 0) negative.push_back(io.first);
-      if (io.first > 0) positive.push_back(io.first);
+      if (io.first != 0) { all_vertex_ids.push_back(x); x--; }
+      if (io.first < 0) negative_vertex_ids.push_back(io.first);
+      if (io.first > 0) positive_vertex_ids.push_back(io.first);
     }
-    std::sort(all.begin(), all.end());
-    std::sort(negative.begin(), negative.end());
-    std::reverse(positive.begin(), positive.end());
-    std::vector<int> unfilled;
-    std::set_symmetric_difference(all.begin(),all.end(), negative.begin(), negative.end(), std::back_inserter(unfilled));
-    for (size_t i = 0; i < unfilled.size(); ++i){
-      m_io_particles[unfilled[i]]=m_io_particles[positive[i]];
-      m_io_particles.erase(positive[i]);
+    std::sort(all_vertex_ids.begin(), all_vertex_ids.end());
+    std::sort(negative_vertex_ids.begin(), negative_vertex_ids.end());
+    std::reverse(positive_vertex_ids.begin(), positive_vertex_ids.end());
+    std::set_symmetric_difference(all_vertex_ids.begin(),all_vertex_ids.end(), negative_vertex_ids.begin(), negative_vertex_ids.end(), std::back_inserter(unfilled_vertex_ids));
+    for (size_t i = 0; i < unfilled_vertex_ids.size(); ++i){
+      m_io_particles[unfilled_vertex_ids[i]] = m_io_particles[positive_vertex_ids[i]];
+      m_io_particles.erase(positive_vertex_ids[i]);
     }
     for (const auto& io: m_io_particles) {
-      for (const auto& i: io.second.first) {m_data.links1.push_back(i); m_data.links2.push_back(io.first);}
-      for (const auto& o: io.second.second) {m_data.links1.push_back(io.first); m_data.links2.push_back(o);}
+      for (const auto& i: io.second.first) { m_data.links1.push_back(i); m_data.links2.push_back(io.first); }
+      for (const auto& o: io.second.second) { m_data.links1.push_back(io.first); m_data.links2.push_back(o); }
     }    
     evt.read_data(m_data);
 
@@ -424,35 +428,31 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
 bool ReaderAscii::parse_particle_information(const char *buf) {
     const char     *cursor  = buf;
     int             mother_id = 0;
+
     // verify id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
 
     int id = atoi(cursor);
-/*
-    if ( id != (int)m_data.particles.size() + 1 ) {
-        /// @todo Should be an exception
-        HEPMC3_ERROR("ReaderAscii: particle ID mismatch")
+    if ( id < 1 || id > m_data.particles.size() ) {
+        HEPMC3_ERROR("ReaderAscii: particle ID is out of expected range.")
         return false;
     }
-*/
+
     FourVector&      momentum = m_data.particles[id-1].momentum;
     // mother id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     mother_id = atoi(cursor);
+    if ( mother_id < -(int)m_data.vertices.size() || mother_id > (int)m_data.particles.size() ) {
+        HEPMC3_ERROR("ReaderAscii: ID of particle mother is out of expected range.")
+        return false;
+    }
 
-    // Parent object is a particle. Particleas are always ordered id==position in event.
-    if ( mother_id > 0 && mother_id <= (int)m_data.particles.size() ) {
+    if ( mother_id > 0) {
+        /// Parent object is a particle, i.e. a vertex was gobbled.
         /// We will save the gobbled vertices in the same map, but with a positive id.
         m_io_particles[mother_id].first.insert(mother_id);
-        m_io_particles[mother_id].second.insert(id);
     }
-    // Parent object is vertex
-    else {
-        if ( mother_id <= 0 )
-        {
-          m_io_particles[mother_id].second.insert(id);
-        }
-    }
+    m_io_particles[mother_id].second.insert(id);
     // pdg id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     m_data.particles[id-1].pid = atoi(cursor);
