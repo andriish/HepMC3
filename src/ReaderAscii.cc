@@ -102,7 +102,6 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     evt.clear();
     evt.set_run_info(run_info());
     m_io_particles.clear();
-    
     m_data.particles.clear();
     m_data.vertices.clear();
     m_data.links1.clear();
@@ -110,8 +109,6 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     m_data.attribute_id.clear();
     m_data.attribute_name.clear();
     m_data.attribute_string.clear();
-    
-    
     //
     // Parse event, vertex and particle information
     //
@@ -220,61 +217,29 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
 
     }
-    
-    /*
-    for (const auto& io: m_io_particles) {
-		printf("V %i:\n",io.first);
-      for (const auto& i: io.second.first) {printf(" %i ",i);}printf("<-\n");
-      for (const auto& o: io.second.second) {printf(" %i ",o);}printf("->\n");
-    }*/
-    
-    
+
     std::vector<int> all;
     std::vector<int> negative;
     std::vector<int> positive;
-    int x=-1;
+    int x = -1;
     for (const auto& io: m_io_particles) {
-      if (io.first!=0) {all.push_back(x);x--;}
-      if (io.first<0) negative.push_back(io.first);
-      if (io.first>0) positive.push_back(io.first);
+      if (io.first != 0) {all.push_back(x); x--;}
+      if (io.first < 0) negative.push_back(io.first);
+      if (io.first > 0) positive.push_back(io.first);
     }
     std::sort(all.begin(), all.end());
     std::sort(negative.begin(), negative.end());
     std::reverse(positive.begin(), positive.end());
     std::vector<int> unfilled;
     std::set_symmetric_difference(all.begin(),all.end(), negative.begin(), negative.end(), std::back_inserter(unfilled));
-   // printf("%i %i %i %i\n",all.size(),positive.size(),negative.size(),unfilled.size());
-   // for (size_t i = 0; i < unfilled.size(); ++i) printf("%i\n",unfilled[i]);
-   // for (size_t i = 0; i < positive.size(); ++i) printf("%i\n",positive[i]);
     for (size_t i = 0; i < unfilled.size(); ++i){
-     // if (unfilled[i]==0) continue;
-  ///    printf("%i->%i\n",positive[i],unfilled[i]);
       m_io_particles[unfilled[i]]=m_io_particles[positive[i]];
       m_io_particles.erase(positive[i]);
-//       printf(" ok\n");
     }
-    /*
-     *      *  In case links1[i] is particle, links2[i] is end vertex.
-     *  In case links2[i] is vertex, links2[i] is outgoing particle.
-    */
-        /* @note:
-        The  meaningfull combinations for (id1,id2) are:
-        (+-)  --  particle has end vertex
-        (-+)  --  particle  has production vertex
-        */    
-    /*
-    for (const auto& io: m_io_particles) {
-		printf("V %i:\n",io.first);
-      for (const auto& i: io.second.first) {printf(" %i ",i);}printf("<-\n");
-      for (const auto& o: io.second.second) {printf(" %i ",o);}printf("->\n");
-    }
-    */
-//    printf("%i %i\n",m_io_particles.size(),negative.size());
     for (const auto& io: m_io_particles) {
       for (const auto& i: io.second.first) {m_data.links1.push_back(i); m_data.links2.push_back(io.first);}
       for (const auto& o: io.second.second) {m_data.links1.push_back(io.first); m_data.links2.push_back(o);}
-    }
-    
+    }    
     evt.read_data(m_data);
 
     // Check if all particles and vertices were parsed
@@ -333,7 +298,6 @@ std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
     // num_particles
     if ( !(cursor = strchr(cursor+1, ' ')) ) return err;
     ret.second = atoi(cursor);
-    
     m_data.vertices = std::vector<GenVertexData>(ret.first);
     m_data.particles = std::vector<GenParticleData>(ret.second);
 
@@ -400,7 +364,6 @@ bool ReaderAscii::parse_units(const char *buf) {
 
 bool ReaderAscii::parse_vertex_information(const char *buf) {
     GenVertexPtr  data = std::make_shared<GenVertex>();
-    
     const char   *cursor          = buf;
     const char   *cursor2         = nullptr;
     int           id              = 0;
@@ -412,7 +375,6 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
     // status
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     m_data.vertices[-id-1].status = atoi(cursor);
-    
     FourVector&  position = m_data.vertices[-id-1].position;
 
     // skip to the list of particles
@@ -453,7 +415,6 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
         // t
         if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
         position.setT(atof(cursor));
-
     }
 
     return true;
@@ -461,7 +422,6 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
 
 
 bool ReaderAscii::parse_particle_information(const char *buf) {
-
     const char     *cursor  = buf;
     int             mother_id = 0;
     // verify id
@@ -515,7 +475,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
 
     // m
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    m_data.particles[id-1].mass= atof(cursor);
+    m_data.particles[id-1].mass = atof(cursor);
 
     // status
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
@@ -541,6 +501,7 @@ bool ReaderAscii::parse_attribute(const char *buf) {
     snprintf(name.data(), name.size(), "%.*s", (int)(cursor2-cursor), cursor);
 
     cursor = cursor2+1;
+
     m_data.attribute_id.push_back(id);
     m_data.attribute_name.push_back(name.data());
     m_data.attribute_string.push_back(unescape(cursor));
