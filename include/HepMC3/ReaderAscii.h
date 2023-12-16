@@ -19,6 +19,7 @@
 #include <fstream>
 #include <istream>
 #include <iterator>
+#include <unordered_map>
 #include "HepMC3/Reader.h"
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/Data/GenEventData.h"
@@ -155,6 +156,7 @@ private:
 
     /** @brief Temp storage for  outgoing particle ids */
     std::map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles;
+    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles_plus;
 
     GenEventData m_data;
 };

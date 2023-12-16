@@ -102,6 +102,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     evt.clear();
     evt.set_run_info(run_info());
     m_io_particles.clear();
+    m_io_particles_plus.clear();
     m_data.particles.clear();
     m_data.vertices.clear();
     m_data.links1.clear();
@@ -215,35 +216,23 @@ bool ReaderAscii::read_event(GenEvent &evt) {
         //End of event. The next entry is run info which starts from tool.
         if ( event_context &&  peek == 'T' ) break;
 
-
     }
-
-    std::vector<int> all_vertex_ids;
-    std::vector<int> negative_vertex_ids;
-    std::vector<int> positive_vertex_ids;
-    std::vector<int> unfilled_vertex_ids;
-    all_vertex_ids.reserve(m_data.vertices.size());
-    negative_vertex_ids.reserve(m_data.vertices.size());
-    positive_vertex_ids.reserve(m_data.vertices.size());
-    unfilled_vertex_ids.reserve(m_data.vertices.size());
-    int x = -1;
+    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles_minus;
+    int currid = -(int)m_data.vertices.size();
+    auto fir = m_io_particles_plus.begin();
     for (const auto& io: m_io_particles) {
-      if (io.first != 0) { all_vertex_ids.push_back(x); x--; }
-      if (io.first < 0) negative_vertex_ids.push_back(io.first);
-      if (io.first > 0) positive_vertex_ids.push_back(io.first);
+        for (;currid<io.first;++currid) {
+            m_io_particles_minus[currid] = fir->second;
+            ++fir;
+        }
+        ++currid;
     }
-    std::sort(all_vertex_ids.begin(), all_vertex_ids.end());
-    std::sort(negative_vertex_ids.begin(), negative_vertex_ids.end());
-    std::reverse(positive_vertex_ids.begin(), positive_vertex_ids.end());
-    std::set_symmetric_difference(all_vertex_ids.begin(),all_vertex_ids.end(), negative_vertex_ids.begin(), negative_vertex_ids.end(), std::back_inserter(unfilled_vertex_ids));
-    for (size_t i = 0; i < unfilled_vertex_ids.size(); ++i){
-      m_io_particles[unfilled_vertex_ids[i]] = m_io_particles[positive_vertex_ids[i]];
-      m_io_particles.erase(positive_vertex_ids[i]);
-    }
+    m_io_particles.insert(m_io_particles_minus.begin(),m_io_particles_minus.end());
+
     for (const auto& io: m_io_particles) {
       for (const auto& i: io.second.first) { m_data.links1.push_back(i); m_data.links2.push_back(io.first); }
       for (const auto& o: io.second.second) { m_data.links1.push_back(io.first); m_data.links2.push_back(o); }
-    }    
+    }
     evt.read_data(m_data);
 
     // Check if all particles and vertices were parsed
@@ -450,9 +439,11 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     if ( mother_id > 0) {
         /// Parent object is a particle, i.e. a vertex was gobbled.
         /// We will save the gobbled vertices in the same map, but with a positive id.
-        m_io_particles[mother_id].first.insert(mother_id);
+        m_io_particles_plus[mother_id].first.insert(mother_id);
+         m_io_particles_plus[mother_id].second.insert(id);
+    } else {
+      m_io_particles[mother_id].second.insert(id);
     }
-    m_io_particles[mother_id].second.insert(id);
     // pdg id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     m_data.particles[id-1].pid = atoi(cursor);
