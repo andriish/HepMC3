@@ -476,6 +476,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     // m
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     m_data.particles[id-1].mass = atof(cursor);
+    m_data.particles[id-1].is_mass_set = true;
 
     // status
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
