@@ -75,5 +75,6 @@ int main()
     }
     for (size_t i=0; i<outputv.size(); i++) {outputv.at(i)->close();}
 
-    return COMPARE_ASCII_FILES("AA.hepmc2","BB.hepmc2")+COMPARE_ASCII_FILES("BB.hepmc2","DD.hepmc2");
+    if (0 != COMPARE_ASCII_FILES("AA.hepmc2","BB.hepmc2")) { printf("AA vs BB difference\n"); return 1;}
+    if (0 != COMPARE_ASCII_FILES("BB.hepmc2","DD.hepmc2")) { printf("BB vs DD difference\n"); return 2;}
 }
