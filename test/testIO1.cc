@@ -9,6 +9,7 @@
 #include "HepMC3/ReaderAsciiHepMC2.h"
 #include "HepMC3/WriterAsciiHepMC2.h"
 #include "HepMC3TestUtils.h"
+#include "HepMC3/Print.h"
 using namespace HepMC3;
 int main()
 {
@@ -43,6 +44,7 @@ int main()
             printf("End of file reached. Exit.\n");
             break;
         }
+        Print::content(evt);
         outputB.write_event(evt);
         evt.clear();
     }

@@ -101,8 +101,9 @@ bool ReaderAscii::read_event(GenEvent &evt) {
 
     evt.clear();
     evt.set_run_info(run_info());
-    m_io_particles.clear();
-    m_io_particles_plus.clear();
+    m_io_explicit.clear();
+    m_io_implicit.clear();
+    m_io_implicit_order.clear();
     m_data.particles.clear();
     m_data.vertices.clear();
     m_data.links1.clear();
@@ -217,20 +218,26 @@ bool ReaderAscii::read_event(GenEvent &evt) {
         if ( event_context &&  peek == 'T' ) break;
 
     }
-    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles_minus;
+    /// Use the map id->first appearence to create a map first appearence->id
+    std::map<int, int> order;
+    for (const auto& x: m_io_implicit_order) order[-x.second] = x.first;
+    /// Storage for the implicit vertices with proper ids.
+    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > > io_gaps;
+    /// Insert the implicit vertices in the gaps of explicit vertices:
+    /// Find the gaps looping over the explicit vertices
     int currid = -static_cast<int>(m_data.vertices.size());
-    auto fir = m_io_particles_plus.begin();
-    for (const auto& io: m_io_particles) {
-        for (;currid<io.first;++currid) {
-            if (fir == m_io_particles_plus.end()) HEPMC3_ERROR("ReaderAscii: not enough vertices")
-            m_io_particles_minus[currid] = fir->second;
-            ++fir;
+    auto fir = order.begin();
+    for (const auto& io: m_io_explicit) {
+        for (;currid < io.first; ++currid, ++fir) {
+            if (fir == order.end()) HEPMC3_ERROR("ReaderAscii: not enough implicit vertices")
+            /// Found a gap in ids, insert an implicit vertex into a list of gaps.
+            io_gaps[currid] = m_io_implicit.at(fir->second);
         }
         ++currid;
     }
-    m_io_particles.insert(m_io_particles_minus.begin(),m_io_particles_minus.end());
+    m_io_explicit.insert(io_gaps.begin(),io_gaps.end());
 
-    for (const auto& io: m_io_particles) {
+    for (const auto& io: m_io_explicit) {
       for (const auto& i: io.second.first) { m_data.links1.push_back(i); m_data.links2.push_back(io.first); }
       for (const auto& o: io.second.second) { m_data.links1.push_back(io.first); m_data.links2.push_back(o); }
     }
@@ -382,7 +389,7 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
         // add incoming particle to the vertex
         if (particle_in > 0) {
                 //If the particle has not been red yet, we store its id to add the particle later.
-                m_io_particles[id].first.insert(particle_in);
+                m_io_explicit[id].first.insert(particle_in);
         }
 
         // check for next particle or end of particle list
@@ -438,12 +445,12 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     }
 
     if ( mother_id > 0) {
-        /// Parent object is a particle, i.e. a vertex was gobbled.
-        /// We will save the gobbled vertices in the same map, but with a positive id.
-        m_io_particles_plus[mother_id].first.insert(mother_id);
-         m_io_particles_plus[mother_id].second.insert(id);
+        /// Parent object is a particle, i.e. the vertex is implicit.
+        m_io_implicit[mother_id].first.insert(mother_id);
+        m_io_implicit[mother_id].second.insert(id);
+        if (m_io_implicit_order.count(mother_id) == 0) m_io_implicit_order[mother_id] = m_io_implicit_order.size();
     } else {
-      m_io_particles[mother_id].second.insert(id);
+      m_io_explicit[mother_id].second.insert(id);
     }
     // pdg id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;

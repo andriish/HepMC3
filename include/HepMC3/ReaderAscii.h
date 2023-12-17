@@ -154,10 +154,13 @@ private:
     std::istream* m_stream; ///< For ctor when reading from stream
     bool m_isstream; ///< toggles usage of m_file or m_stream
 
-    /** @brief Temp storage for  outgoing particle ids */
-    std::map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles;
-    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_particles_plus;
-
+    /** @brief Temp storage for sets of incoming/outgoing ids for explicit vertices.*/
+    std::map<int, std::pair< std::set<int>, std::set<int> > >  m_io_explicit;
+    /** @brief Temp storage for sets of incoming/outgoing ids for implicit vertices.*/
+    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_implicit;
+    /** @brief Temp storage to keep the order of implicit vertices.*/
+    std::unordered_map<int, int> m_io_implicit_order;
+    
     GenEventData m_data;
 };
 
