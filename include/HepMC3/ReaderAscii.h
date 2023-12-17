@@ -159,7 +159,9 @@ private:
     /** @brief Temp storage for sets of incoming/outgoing ids for implicit vertices.*/
     std::unordered_map<int, std::pair< std::set<int>, std::set<int> > >  m_io_implicit;
     /** @brief Temp storage to keep the order of implicit vertices.*/
-    std::unordered_map<int, int> m_io_implicit_order;
+    std::vector<int> m_io_implicit_ids;
+    /** @brief Temp storage to keep the order of explicit vertices.*/
+    std::set<int> m_io_explicit_ids;
     
     GenEventData m_data;
 };

@@ -103,7 +103,8 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     evt.set_run_info(run_info());
     m_io_explicit.clear();
     m_io_implicit.clear();
-    m_io_implicit_order.clear();
+    m_io_implicit_ids.clear();
+    m_io_explicit_ids.clear();
     m_data.particles.clear();
     m_data.vertices.clear();
     m_data.links1.clear();
@@ -145,6 +146,8 @@ bool ReaderAscii::read_event(GenEvent &evt) {
                 parsed_weights = false;
                 parsed_particles_or_vertices = false;
             }
+            
+            
             run_info_context   = false;
             break;
         case 'V':
@@ -218,24 +221,19 @@ bool ReaderAscii::read_event(GenEvent &evt) {
         if ( event_context &&  peek == 'T' ) break;
 
     }
-    /// Use the map id->first appearence to create a map first appearence->id
-    std::map<int, int> order;
-    for (const auto& x: m_io_implicit_order) order[-x.second] = x.first;
-    /// Storage for the implicit vertices with proper ids.
-    std::unordered_map<int, std::pair< std::set<int>, std::set<int> > > io_gaps;
+    
     /// Insert the implicit vertices in the gaps of explicit vertices:
     /// Find the gaps looping over the explicit vertices
     int currid = -static_cast<int>(m_data.vertices.size());
-    auto fir = order.begin();
-    for (const auto& io: m_io_explicit) {
-        for (;currid < io.first; ++currid, ++fir) {
-            if (fir == order.end()) HEPMC3_ERROR("ReaderAscii: not enough implicit vertices")
+    auto fir = m_io_implicit_ids.rbegin();
+    for (const auto& iofirst: m_io_explicit_ids) {
+        for (;currid < iofirst; ++currid, ++fir) {
+            if (fir == m_io_implicit_ids.rend()) HEPMC3_ERROR("ReaderAscii: not enough implicit vertices")
             /// Found a gap in ids, insert an implicit vertex into a list of gaps.
-            io_gaps[currid] = m_io_implicit.at(fir->second);
+            m_io_explicit[currid] = std::move(m_io_implicit[*fir]);
         }
         ++currid;
     }
-    m_io_explicit.insert(io_gaps.begin(),io_gaps.end());
 
     for (const auto& io: m_io_explicit) {
       for (const auto& i: io.second.first) { m_data.links1.push_back(i); m_data.links2.push_back(io.first); }
@@ -302,6 +300,12 @@ std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
     m_data.vertices = std::vector<GenVertexData>(ret.first);
     m_data.particles = std::vector<GenParticleData>(ret.second);
 
+    m_data.links1.reserve(ret.second*2);
+    m_data.links2.reserve(ret.second*2);
+    m_data.attribute_id.reserve(ret.second + ret.first);
+    m_data.attribute_name.reserve(ret.second + ret.first);
+    m_data.attribute_string.reserve(ret.second + ret.first);
+    m_io_implicit_ids.reserve(ret.second);
     // check if there is position information
     if ( (cursor = strchr(cursor+1, '@')) ) {
         // x
@@ -446,11 +450,13 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
 
     if ( mother_id > 0) {
         /// Parent object is a particle, i.e. the vertex is implicit.
+        /// If the vertex is not known -- mark its first appearence.
+        if (m_io_implicit.count(mother_id) == 0) m_io_implicit_ids.push_back(mother_id);
         m_io_implicit[mother_id].first.insert(mother_id);
         m_io_implicit[mother_id].second.insert(id);
-        if (m_io_implicit_order.count(mother_id) == 0) m_io_implicit_order[mother_id] = m_io_implicit_order.size();
     } else {
       m_io_explicit[mother_id].second.insert(id);
+      m_io_explicit_ids.insert(mother_id);
     }
     // pdg id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
