@@ -222,6 +222,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
     auto fir = m_io_particles_plus.begin();
     for (const auto& io: m_io_particles) {
         for (;currid<io.first;++currid) {
+            if (fir == m_io_particles_plus.end()) HEPMC3_ERROR("ReaderAscii: not enough vertices")
             m_io_particles_minus[currid] = fir->second;
             ++fir;
         }
@@ -422,7 +423,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
 
     int id = atoi(cursor);
-    if ( id < 1 || id > m_data.particles.size() ) {
+    if ( id < 1 || id > static_cast<int>(m_data.particles.size()) ) {
         HEPMC3_ERROR("ReaderAscii: particle ID is out of expected range.")
         return false;
     }
@@ -431,7 +432,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     // mother id
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     mother_id = atoi(cursor);
-    if ( mother_id < -(int)m_data.vertices.size() || mother_id > (int)m_data.particles.size() ) {
+    if ( mother_id < -static_cast<int>(m_data.vertices.size()) || mother_id > static_cast<int>(m_data.particles.size()) ) {
         HEPMC3_ERROR("ReaderAscii: ID of particle mother is out of expected range.")
         return false;
     }
