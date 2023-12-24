@@ -44,7 +44,7 @@
 	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>)
 #endif
 
-// HepMC3::ReaderAscii file:HepMC3/ReaderAscii.h line:29
+// HepMC3::ReaderAscii file:HepMC3/ReaderAscii.h line:31
 struct PyCallBack_HepMC3_ReaderAscii : public HepMC3::ReaderAscii {
 	using HepMC3::ReaderAscii::ReaderAscii;
 
@@ -366,7 +366,7 @@ struct PyCallBack_HepMC3_ReaderAsciiHepMC2 : public HepMC3::ReaderAsciiHepMC2 {
 
 void bind_pyHepMC3_12(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // HepMC3::ReaderAscii file:HepMC3/ReaderAscii.h line:29
+	{ // HepMC3::ReaderAscii file:HepMC3/ReaderAscii.h line:31
 		pybind11::class_<HepMC3::ReaderAscii, std::shared_ptr<HepMC3::ReaderAscii>, PyCallBack_HepMC3_ReaderAscii, HepMC3::Reader> cl(M("HepMC3"), "ReaderAscii", "");
 		cl.def( pybind11::init<const std::string &>(), pybind11::arg("filename") );
 

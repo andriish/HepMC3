@@ -42,7 +42,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("val", &LHEF::OAttr<std::string>::val);
 		cl.def("assign", (struct LHEF::OAttr<std::string > & (LHEF::OAttr<std::string>::*)(const struct LHEF::OAttr<std::string > &)) &LHEF::OAttr<std::string>::operator=, "C++: LHEF::OAttr<std::string>::operator=(const struct LHEF::OAttr<std::string > &) --> struct LHEF::OAttr<std::string > &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		cl.def("__str__", [](LHEF::OAttr<std::string> const &o) -> std::string { std::ostringstream s; LHEF::operator<<(s, o); return s.str(); } );
+		cl.def("__str__", [](LHEF::OAttr<std::string> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
 	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
 		pybind11::class_<LHEF::OAttr<long>, std::shared_ptr<LHEF::OAttr<long>>> cl(M("LHEF"), "OAttr_long_t", "");
@@ -53,7 +53,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("val", &LHEF::OAttr<long>::val);
 		cl.def("assign", (struct LHEF::OAttr<long> & (LHEF::OAttr<long>::*)(const struct LHEF::OAttr<long> &)) &LHEF::OAttr<long>::operator=, "C++: LHEF::OAttr<long>::operator=(const struct LHEF::OAttr<long> &) --> struct LHEF::OAttr<long> &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		cl.def("__str__", [](LHEF::OAttr<long> const &o) -> std::string { std::ostringstream s; LHEF::operator<<(s, o); return s.str(); } );
+		cl.def("__str__", [](LHEF::OAttr<long> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
 	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
 		pybind11::class_<LHEF::OAttr<double>, std::shared_ptr<LHEF::OAttr<double>>> cl(M("LHEF"), "OAttr_double_t", "");
@@ -64,7 +64,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("val", &LHEF::OAttr<double>::val);
 		cl.def("assign", (struct LHEF::OAttr<double> & (LHEF::OAttr<double>::*)(const struct LHEF::OAttr<double> &)) &LHEF::OAttr<double>::operator=, "C++: LHEF::OAttr<double>::operator=(const struct LHEF::OAttr<double> &) --> struct LHEF::OAttr<double> &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		cl.def("__str__", [](LHEF::OAttr<double> const &o) -> std::string { std::ostringstream s; LHEF::operator<<(s, o); return s.str(); } );
+		cl.def("__str__", [](LHEF::OAttr<double> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
 	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
 		pybind11::class_<LHEF::OAttr<int>, std::shared_ptr<LHEF::OAttr<int>>> cl(M("LHEF"), "OAttr_int_t", "");
@@ -75,7 +75,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("val", &LHEF::OAttr<int>::val);
 		cl.def("assign", (struct LHEF::OAttr<int> & (LHEF::OAttr<int>::*)(const struct LHEF::OAttr<int> &)) &LHEF::OAttr<int>::operator=, "C++: LHEF::OAttr<int>::operator=(const struct LHEF::OAttr<int> &) --> struct LHEF::OAttr<int> &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		cl.def("__str__", [](LHEF::OAttr<int> const &o) -> std::string { std::ostringstream s; LHEF::operator<<(s, o); return s.str(); } );
+		cl.def("__str__", [](LHEF::OAttr<int> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
 	// LHEF::oattr(std::string, const std::string &) file:HepMC3/LHEF.h line:68
 	M("LHEF").def("oattr", (struct LHEF::OAttr<std::string > (*)(std::string, const std::string &)) &LHEF::oattr<std::string>, "C++: LHEF::oattr(std::string, const std::string &) --> struct LHEF::OAttr<std::string >", pybind11::arg("name"), pybind11::arg("value"));
@@ -107,7 +107,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_static("deleteAll", (void (*)(class std::vector<struct LHEF::XMLTag *> &)) &LHEF::XMLTag::deleteAll, "Delete all tags in a vector.\n\nC++: LHEF::XMLTag::deleteAll(class std::vector<struct LHEF::XMLTag *> &) --> void", pybind11::arg("tags"));
 		cl.def("assign", (struct LHEF::XMLTag & (LHEF::XMLTag::*)(const struct LHEF::XMLTag &)) &LHEF::XMLTag::operator=, "C++: LHEF::XMLTag::operator=(const struct LHEF::XMLTag &) --> struct LHEF::XMLTag &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_T_binder<LHEF::XMLTag>(cl);
+		binder::custom_T_binder<LHEF::XMLTag>(cl);
 	}
 	// LHEF::hashline(std::string) file:HepMC3/LHEF.h line:328
 	M("LHEF").def("hashline", (std::string (*)(std::string)) &LHEF::hashline, "Helper function to make sure that each line in the string  starts with a\n #-character and that the string ends with a new-line.\n\nC++: LHEF::hashline(std::string) --> std::string", pybind11::arg("s"));
@@ -134,7 +134,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_static("yes", (std::string (*)()) &LHEF::TagBase::yes, "Static string token for truth values.\n\nC++: LHEF::TagBase::yes() --> std::string");
 		cl.def("assign", (struct LHEF::TagBase & (LHEF::TagBase::*)(const struct LHEF::TagBase &)) &LHEF::TagBase::operator=, "C++: LHEF::TagBase::operator=(const struct LHEF::TagBase &) --> struct LHEF::TagBase &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_LHEFTagBase_binder(cl);
+		binder::custom_LHEFTagBase_binder(cl);
 	}
 	{ // LHEF::Generator file:HepMC3/LHEF.h line:474
 		pybind11::class_<LHEF::Generator, std::shared_ptr<LHEF::Generator>, LHEF::TagBase> cl(M("LHEF"), "Generator", "The Generator class contains information about a generator used in a run.");
@@ -145,7 +145,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("version", &LHEF::Generator::version);
 		cl.def("assign", (struct LHEF::Generator & (LHEF::Generator::*)(const struct LHEF::Generator &)) &LHEF::Generator::operator=, "C++: LHEF::Generator::operator=(const struct LHEF::Generator &) --> struct LHEF::Generator &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		  binder::custom_T_binder<LHEF::Generator>(cl);
+		binder::custom_T_binder<LHEF::Generator>(cl);
 	}
 	{ // LHEF::XSecInfo file:HepMC3/LHEF.h line:511
 		pybind11::class_<LHEF::XSecInfo, std::shared_ptr<LHEF::XSecInfo>, LHEF::TagBase> cl(M("LHEF"), "XSecInfo", "The XSecInfo class contains information given in the xsecinfo tag.");
@@ -164,7 +164,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("weightname", &LHEF::XSecInfo::weightname);
 		cl.def("assign", (struct LHEF::XSecInfo & (LHEF::XSecInfo::*)(const struct LHEF::XSecInfo &)) &LHEF::XSecInfo::operator=, "C++: LHEF::XSecInfo::operator=(const struct LHEF::XSecInfo &) --> struct LHEF::XSecInfo &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_T_binder<LHEF::XSecInfo>(cl);
+		binder::custom_T_binder<LHEF::XSecInfo>(cl);
 	}
 	{ // LHEF::EventFile file:HepMC3/LHEF.h line:617
 		pybind11::class_<LHEF::EventFile, std::shared_ptr<LHEF::EventFile>, LHEF::TagBase> cl(M("LHEF"), "EventFile", "Simple struct to store information about separate eventfiles to be\n loaded.");
@@ -177,7 +177,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("ntries", &LHEF::EventFile::ntries);
 		cl.def("assign", (struct LHEF::EventFile & (LHEF::EventFile::*)(const struct LHEF::EventFile &)) &LHEF::EventFile::operator=, "C++: LHEF::EventFile::operator=(const struct LHEF::EventFile &) --> struct LHEF::EventFile &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_T_binder<LHEF::EventFile>(cl);
+		binder::custom_T_binder<LHEF::EventFile>(cl);
 	}
 	{ // LHEF::Cut file:HepMC3/LHEF.h line:669
 		pybind11::class_<LHEF::Cut, std::shared_ptr<LHEF::Cut>, LHEF::TagBase> cl(M("LHEF"), "Cut", "The Cut class represents a cut used by the Matrix Element generator.");
@@ -201,7 +201,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def("outside", (bool (LHEF::Cut::*)(double) const) &LHEF::Cut::outside, "Return true if the given  is outside limits.\n\nC++: LHEF::Cut::outside(double) const --> bool", pybind11::arg("value"));
 		cl.def("assign", (struct LHEF::Cut & (LHEF::Cut::*)(const struct LHEF::Cut &)) &LHEF::Cut::operator=, "C++: LHEF::Cut::operator=(const struct LHEF::Cut &) --> struct LHEF::Cut &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_T_binder<LHEF::Cut>(cl);
+		binder::custom_T_binder<LHEF::Cut>(cl);
 	}
 	{ // LHEF::ProcInfo file:HepMC3/LHEF.h line:915
 		pybind11::class_<LHEF::ProcInfo, std::shared_ptr<LHEF::ProcInfo>, LHEF::TagBase> cl(M("LHEF"), "ProcInfo", "The ProcInfo class represents the information in a procinfo tag.");
@@ -218,6 +218,6 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("scheme", &LHEF::ProcInfo::scheme);
 		cl.def("assign", (struct LHEF::ProcInfo & (LHEF::ProcInfo::*)(const struct LHEF::ProcInfo &)) &LHEF::ProcInfo::operator=, "C++: LHEF::ProcInfo::operator=(const struct LHEF::ProcInfo &) --> struct LHEF::ProcInfo &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_T_binder<LHEF::ProcInfo>(cl);
+		binder::custom_T_binder<LHEF::ProcInfo>(cl);
 	}
 }

@@ -117,7 +117,7 @@ void bind_pyHepMC3_8(std::function< pybind11::module &(std::string const &namesp
 		cl.def("write_data", (void (HepMC3::GenRunInfo::*)(struct HepMC3::GenRunInfoData &) const) &HepMC3::GenRunInfo::write_data, "Fill GenRunInfoData object\n\nC++: HepMC3::GenRunInfo::write_data(struct HepMC3::GenRunInfoData &) const --> void", pybind11::arg("data"));
 		cl.def("read_data", (void (HepMC3::GenRunInfo::*)(const struct HepMC3::GenRunInfoData &)) &HepMC3::GenRunInfo::read_data, "Fill GenRunInfo based on GenRunInfoData\n\nC++: HepMC3::GenRunInfo::read_data(const struct HepMC3::GenRunInfoData &) --> void", pybind11::arg("data"));
 
-		 binder::custom_GenRunInfo_binder(cl);
+		binder::custom_GenRunInfo_binder(cl);
 
 		{ // HepMC3::GenRunInfo::ToolInfo file:HepMC3/GenRunInfo.h line:38
 			auto & enclosing_class = cl;
@@ -172,7 +172,7 @@ void bind_pyHepMC3_8(std::function< pybind11::module &(std::string const &namesp
 		cl.def("assign", (class HepMC3::GenEvent & (HepMC3::GenEvent::*)(const class HepMC3::GenEvent &)) &HepMC3::GenEvent::operator=, "Assignment operator\n\nC++: HepMC3::GenEvent::operator=(const class HepMC3::GenEvent &) --> class HepMC3::GenEvent &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 		cl.def("particles", (const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > & (HepMC3::GenEvent::*)()) &HepMC3::GenEvent::particles, "Get/set list of particles (non-const)\n\nC++: HepMC3::GenEvent::particles() --> const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > &", pybind11::return_value_policy::automatic);
 		cl.def("vertices", (const class std::vector<class std::shared_ptr<class HepMC3::GenVertex> > & (HepMC3::GenEvent::*)()) &HepMC3::GenEvent::vertices, "Get/set list of vertices (non-const)\n\nC++: HepMC3::GenEvent::vertices() --> const class std::vector<class std::shared_ptr<class HepMC3::GenVertex> > &", pybind11::return_value_policy::automatic);
-		cl.def("particles_size", (int (HepMC3::GenEvent::*)() const) &HepMC3::GenEvent::particles_size, "@{\n Particles size, HepMC2 compatibility\n\nC++: HepMC3::GenEvent::particles_size() const --> int");
+		cl.def("particles_size", (int (HepMC3::GenEvent::*)() const) &HepMC3::GenEvent::particles_size, "Particles size, HepMC2 compatibility\n\nC++: HepMC3::GenEvent::particles_size() const --> int");
 		cl.def("particles_empty", (bool (HepMC3::GenEvent::*)() const) &HepMC3::GenEvent::particles_empty, "Particles empty, HepMC2 compatibility\n\nC++: HepMC3::GenEvent::particles_empty() const --> bool");
 		cl.def("vertices_size", (int (HepMC3::GenEvent::*)() const) &HepMC3::GenEvent::vertices_size, "Vertices size, HepMC2 compatibility\n\nC++: HepMC3::GenEvent::vertices_size() const --> int");
 		cl.def("vertices_empty", (bool (HepMC3::GenEvent::*)() const) &HepMC3::GenEvent::vertices_empty, "Vertices empty, HepMC2 compatibility\n\nC++: HepMC3::GenEvent::vertices_empty() const --> bool");
@@ -225,6 +225,6 @@ void bind_pyHepMC3_8(std::function< pybind11::module &(std::string const &namesp
 		cl.def("write_data", (void (HepMC3::GenEvent::*)(struct HepMC3::GenEventData &) const) &HepMC3::GenEvent::write_data, "Fill GenEventData object\n\nC++: HepMC3::GenEvent::write_data(struct HepMC3::GenEventData &) const --> void", pybind11::arg("data"));
 		cl.def("read_data", (void (HepMC3::GenEvent::*)(const struct HepMC3::GenEventData &)) &HepMC3::GenEvent::read_data, "Fill GenEvent based on GenEventData\n\nC++: HepMC3::GenEvent::read_data(const struct HepMC3::GenEventData &) --> void", pybind11::arg("data"));
 
-		 binder::custom_GenEvent_binder(cl);
+		binder::custom_GenEvent_binder(cl);
 	}
 }

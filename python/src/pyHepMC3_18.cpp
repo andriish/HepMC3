@@ -445,6 +445,6 @@ void bind_pyHepMC3_18(std::function< pybind11::module &(std::string const &names
 		cl.def("set_position", (void (HepMC3::HEPEVT_Wrapper_Runtime::*)(const int, const double, const double, const double, const double)) &HepMC3::HEPEVT_Wrapper_Runtime::set_position, "C++: HepMC3::HEPEVT_Wrapper_Runtime::set_position(const int, const double, const double, const double, const double) --> void", pybind11::arg("index"), pybind11::arg("x"), pybind11::arg("y"), pybind11::arg("z"), pybind11::arg("t"));
 		cl.def("assign", (class HepMC3::HEPEVT_Wrapper_Runtime & (HepMC3::HEPEVT_Wrapper_Runtime::*)(const class HepMC3::HEPEVT_Wrapper_Runtime &)) &HepMC3::HEPEVT_Wrapper_Runtime::operator=, "C++: HepMC3::HEPEVT_Wrapper_Runtime::operator=(const class HepMC3::HEPEVT_Wrapper_Runtime &) --> class HepMC3::HEPEVT_Wrapper_Runtime &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
-		 binder::custom_HEPEVT_Wrapper_Runtime_binder(cl);
+		binder::custom_HEPEVT_Wrapper_Runtime_binder(cl);
 	}
 }

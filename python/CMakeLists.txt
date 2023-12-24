@@ -149,14 +149,14 @@ if (RERUN_BINDER)
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                           --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder   ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp
-                          --  -std=c++${HEPMC3_CXX_STANDARD}
-                          -I${CMAKE_CURRENT_SOURCE_DIR}
-                          -I${CMAKE_CURRENT_SOURCE_DIR}/include
-                           ${HEPMC3_INCLUDE_FLAGS}
-                          -I${ROOT_INCLUDE_DIRS}
-                          -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
-                          -I/usr/lib/gcc/x86_64-redhat-linux/12/include/
-                          -I/usr/lib/gcc/x86_64-redhat-linux/13/include/
+                          --extra-arg=-std=c++${HEPMC3_CXX_STANDARD}
+                          --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}
+                          --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}/include
+                           --extra-arg=${HEPMC3_INCLUDE_FLAGS}
+                          --extra-arg=-I${ROOT_INCLUDE_DIRS}
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/8/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/12/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/13/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM
         COMMENT "Generating ${autoBN${_comp}}"
