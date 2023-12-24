@@ -1,6 +1,6 @@
 #project(pyHepMC3 CXX)
 #Should be fixed
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.5.0)
 if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
 SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
 endif()
@@ -153,6 +153,7 @@ if (RERUN_BINDER)
                           -I${ROOT_INCLUDE_DIRS}
                           -I/usr/lib/gcc/x86_64-redhat-linux/8/include/
                           -I/usr/lib/gcc/x86_64-redhat-linux/12/include/
+                          -I/usr/lib/gcc/x86_64-redhat-linux/13/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM
       )
