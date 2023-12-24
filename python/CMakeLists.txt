@@ -5,9 +5,13 @@ if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
 SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
 endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(USE_INSTALLED_HEPMC3 "Use HepMC3 bindings as a standalone package" OFF)
 option(RERUN_BINDER "Rerun binder" OFF)
+if (RERUN_BINDER)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
 if (USE_INSTALLED_HEPMC3)
   set(${PROJECT_NAME}_VERSION 3.2.8)
   set(THIS_PROJECT_NAME ${PROJECT_NAME})
@@ -144,9 +148,8 @@ if (RERUN_BINDER)
         COMMAND ${BINDER} --flat --max-file-size=20000
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-                          --config src/pyHepMC3${_comp}.binder   ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp
+                          --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder   ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp
                           --  -std=c++${HEPMC3_CXX_STANDARD}
-                          -I.
                           -I${CMAKE_CURRENT_SOURCE_DIR}
                           -I${CMAKE_CURRENT_SOURCE_DIR}/include
                            ${HEPMC3_INCLUDE_FLAGS}
