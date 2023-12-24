@@ -144,7 +144,7 @@ if (RERUN_BINDER)
       configure_file("${_comp}includes.hpp.in" "${_comp}includes.hpp" IMMEDIATE @ONLY)
       add_custom_command(
         OUTPUT  ${autoBN${_comp}}
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp src/pyHepMC3${_comp}.binder
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder
         COMMAND ${BINDER} --flat --max-file-size=20000
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
@@ -159,7 +159,9 @@ if (RERUN_BINDER)
                           -I/usr/lib/gcc/x86_64-redhat-linux/13/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM
+        COMMENT "Generating ${autoBN${_comp}}"
       )
+      add_custom_target(generate_${_comp} DEPENDS ${autoBN${_comp}})
     endforeach()
   else()
     message(FATAL_ERROR "HepMC3  python: binder not found!  Automatic generatin of code for python bindings is not possible.")
@@ -255,7 +257,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     AND ((${Python_VERSION_MAJOR} STREQUAL ${ver} AND ${verminor} STREQUAL "X")
         OR "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}" STREQUAL "${ver}.${verminor}" ))
   message(STATUS "HepMC3 python: Python verson ${ver}.${verminor} found in ${Python_EXECUTABLE}. Python bindings generation is possible.")
-
+	
   foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
     if (${_comp} STREQUAL " ")
       set(_comp "") 
@@ -277,7 +279,9 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
       PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION})
     endif()
-  
+    if (RERUN_BINDER)
+      add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
+    endif()  
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>

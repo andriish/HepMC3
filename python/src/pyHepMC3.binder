@@ -93,7 +93,6 @@
 -function LHEF::HEPEUP::print
 
 
-
 +add_on_binder LHEF::TagBase  binder::custom_LHEFTagBase_binder
 -function LHEF::TagBase::printattrs
 -function LHEF::TagBase::closetag
