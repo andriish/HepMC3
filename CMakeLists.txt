@@ -324,7 +324,7 @@ if (HEPMC3_INSTALL_EXAMPLES)
           PATTERN "*CMakeFiles*" EXCLUDE
           PATTERN "*pcm" EXCLUDE
           PATTERN "*rootmap" EXCLUDE
-          PATTERN "*Dict.cxx" EXCLUDE          
+          PATTERN "*Dict.cxx" EXCLUDE
           PATTERN "Makefile" EXCLUDE
           PATTERN "*cmake_install.cmake*" EXCLUDE
           PATTERN "*libAnalysis*" EXCLUDE )
