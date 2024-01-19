@@ -160,6 +160,9 @@ if (RERUN_BINDER)
                            --extra-arg=${HEPMC3_INCLUDE_FLAGS}
                           --extra-arg=-I${ROOT_INCLUDE_DIRS}
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/8/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/9/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/10/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/11/include/
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/12/include/
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/13/include/
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
