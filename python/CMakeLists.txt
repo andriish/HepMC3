@@ -137,8 +137,19 @@ foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   endif()
   configure_file("pyHepMC3${_dotcomp}.egg-info.in" "pyHepMC3${_dotcomp}.egg-info" IMMEDIATE @ONLY)
 endforeach()
-if (RERUN_BINDER)
+if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
+  set(INCARG "")
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -v /dev/null -S ERROR_VARIABLE GCCSPEC OUTPUT_QUIET)
+  STRING(REGEX REPLACE "\r?\n" ";" GCCSPECV2 "${GCCSPEC}")
+  FOREACH(line ${GCCSPECV2})
+    string(REGEX MATCH "^LIBRARY_PATH.*"  GCCSPECV3 "${line}")
+    string(REPLACE "LIBRARY_PATH=/"  "/" GCCSPECV4 "${GCCSPECV3}")
+    if (GCCSPECV4)
+      STRING(REPLACE ":" ";--extra-arg=-I" INCARG "--extra-arg=-I${GCCSPECV4}")
+      message(STATUS "HepMC3 python: INCARG=${INCARG}")
+    endif()
+  endforeach()
   if(BINDER)
     message(STATUS "HepMC3 python: binder found in ${BINDER}. Automatic generatin of code for python bindings is possible.")
     foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
@@ -162,15 +173,8 @@ if (RERUN_BINDER)
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}/include
                           --extra-arg=-I${ROOT_INCLUDE_DIRS}
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/15/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/14/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/13/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/12/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/11/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/10/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/9/include/
-                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/8/include/
-                          "${EARG}"
+                           ${INCARG}
+                           ${EARG}
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM
         COMMENT "Generating ${autoBN${_comp}}"
@@ -178,7 +182,7 @@ if (RERUN_BINDER)
       add_custom_target(generate_${_comp} DEPENDS ${autoBN${_comp}})
     endforeach()
   else()
-    message(FATAL_ERROR "HepMC3  python: binder not found!  Automatic generatin of code for python bindings is not possible.")
+    message(FATAL_ERROR "HepMC3  python: binder not found and/or the C++ is not GNU!  Automatic generatin of code for python bindings is not possible.")
   endif()
 endif()
 
