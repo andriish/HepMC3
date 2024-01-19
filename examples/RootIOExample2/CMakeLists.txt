@@ -1,29 +1,20 @@
-#----------------------------------------------------------------------------
-# Generate dictionaries
-#
-
-ROOT_GENERATE_DICTIONARY(myclass_Classes include/myclass_Classes.h LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO)
-
-add_custom_target (dictionary DEPENDS myclass_Classes.cxx)
-
-
 add_executable(class_example_read.exe
         ${CMAKE_CURRENT_SOURCE_DIR}/class_example_read.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MyRunClass.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc myclass_Classes.cxx)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc)
 target_link_libraries(class_example_read.exe ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3 HepMC3::rootIO)
-target_include_directories(class_example_read.exe  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(class_example_read.exe  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+ROOT_GENERATE_DICTIONARY(myclass_ClassesRead include/myclass_Classes.h LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO MODULE class_example_read.exe)
 set_target_properties(class_example_read.exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
-add_dependencies( class_example_read.exe dictionary )
 
 add_executable(class_example_write.exe
         ${CMAKE_CURRENT_SOURCE_DIR}/class_example_write.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MyRunClass.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc myclass_Classes.cxx)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc)
 target_link_libraries(class_example_write.exe ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3 HepMC3::rootIO)
-target_include_directories(class_example_write.exe  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(class_example_write.exe  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+ROOT_GENERATE_DICTIONARY(myclass_ClassesWrite include/myclass_Classes.h LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO MODULE class_example_write.exe)
 set_target_properties(class_example_write.exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
-add_dependencies( class_example_write.exe dictionary )
 
 # create environment scripts
 

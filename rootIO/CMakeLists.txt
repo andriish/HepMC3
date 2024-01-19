@@ -6,9 +6,8 @@ if (MSVC)
 else()
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR})
 endif()
-ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
 
-add_library(HepMC3rootIO SHARED ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/Streamers.cc G__HepMC3rootIO.cxx)
+add_library(HepMC3rootIO SHARED ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/Streamers.cc)
 set_property(TARGET HepMC3rootIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 
 target_link_libraries(HepMC3rootIO ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3)
@@ -18,9 +17,10 @@ target_include_directories(HepMC3rootIO PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${ROOT_INCLUDE_DIRS})
-
 set_target_properties(HepMC3rootIO PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   EXPORT_NAME HepMC3::rootIO)
+ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader MODULE HepMC3rootIO)
+
 if (MSVC)
   set_target_properties(HepMC3rootIO PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>)
 endif()
