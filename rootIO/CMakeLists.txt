@@ -19,7 +19,7 @@ target_include_directories(HepMC3rootIO PUBLIC
   ${ROOT_INCLUDE_DIRS})
 set_target_properties(HepMC3rootIO PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   EXPORT_NAME HepMC3::rootIO)
-ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader MODULE HepMC3rootIO)
+ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh  MODULE HepMC3rootIO LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
 
 if (MSVC)
   set_target_properties(HepMC3rootIO PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>)

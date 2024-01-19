@@ -1,4 +1,3 @@
-#Beacaus of LZMA targets
 set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/convert_example.cc
                     ${CMAKE_CURRENT_SOURCE_DIR}/cmdline.c
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterDOT.cc
