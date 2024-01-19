@@ -1,20 +1,25 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+
+ROOT_GENERATE_DICTIONARY(myclass_Classes include/myclass_Classes.h LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO)
+
+add_custom_target (dictionary DEPENDS myclass_Classes.cxx)
+
+
 add_executable(class_example_read.exe
         ${CMAKE_CURRENT_SOURCE_DIR}/class_example_read.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MyRunClass.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc myclass_Classes.cxx)
 target_link_libraries(class_example_read.exe ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3 HepMC3::rootIO)
-target_include_directories(class_example_read.exe  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
-ROOT_GENERATE_DICTIONARY(myclass_ClassesRead include/myclass_Classes.h MODULE class_example_read.exe LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO )
 set_target_properties(class_example_read.exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
+add_dependencies( class_example_read.exe dictionary )
 
 add_executable(class_example_write.exe
         ${CMAKE_CURRENT_SOURCE_DIR}/class_example_write.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MyRunClass.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/MyClass.cc myclass_Classes.cxx)
 target_link_libraries(class_example_write.exe ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3 HepMC3::rootIO)
-target_include_directories(class_example_write.exe  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
-ROOT_GENERATE_DICTIONARY(myclass_ClassesWrite include/myclass_Classes.h MODULE class_example_write.exe LINKDEF include/LinkDef.h OPTIONS -inlineInputHeader -DHEPMC3_ROOTIO)
 set_target_properties(class_example_write.exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
+add_dependencies( class_example_write.exe dictionary )
 
 # create environment scripts
 
