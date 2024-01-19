@@ -27,7 +27,7 @@ macro( hepmc_root_test testname )
   target_include_directories(${testname} BEFORE
   PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src )
-  target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 HepMC3::HepMC3rootIO)
+  target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 HepMC3::rootIO)
 
   set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
   set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
