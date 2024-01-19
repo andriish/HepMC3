@@ -1,5 +1,11 @@
-#Beacaus of LZMA targets
-cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
+#Beacause of LZMA targets
+if (HEPMC3_TEST_LZMA)
+  cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
+endif()
+if (HEPMC3_TEST_BZIP2)
+  cmake_minimum_required(VERSION 3.12.0 FATAL_ERROR)
+endif()
+
 
 macro( hepmc_test testname )
   message( STATUS "HepMC3 test: building ${testname} for ${testname}" )
