@@ -51,7 +51,7 @@ macro( hepmc_protobuf_test testname )
   target_include_directories(${testname} BEFORE
   PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src  )
-  target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 HepMC3::HepMC3protobufIO)
+  target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 HepMC3::protobufIO)
 
   set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
   set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
@@ -217,14 +217,14 @@ endforeach ( test ${HepMC_tests} )
 if(HEPMC3_ENABLE_SEARCH )
   foreach ( test ${HepMC_search_tests} )
     hepmc_test( ${test} )
-    target_link_libraries(${test} PRIVATE HepMC3::HepMC3search)
+    target_link_libraries(${test} PRIVATE HepMC3::search)
   endforeach ( test ${HepMC_search_tests} )
 endif()
 
 if(HEPMC3_ENABLE_PROTOBUFIO )
   foreach ( test ${HepMC_protobuf_tests} )
     hepmc_protobuf_test( ${test} )
-  target_link_libraries(${test} PRIVATE HepMC3::HepMC3protobufIO)
+  target_link_libraries(${test} PRIVATE HepMC3::protobufIO)
   endforeach ( test ${HepMC_protobuf_tests} )
 endif()
 
@@ -294,7 +294,7 @@ foreach ( ctest ${compress_tests} )
 endforeach ( ctest ${compress_tests} )
 
 if(HEPMC3_ENABLE_PROTOBUFIO AND "testReaderFactory4" IN_LIST compress_tests)
-    target_link_libraries(testReaderFactory4 PRIVATE HepMC3::HepMC3protobufIO)
+    target_link_libraries(testReaderFactory4 PRIVATE HepMC3::protobufIO)
 endif()
 
 #So far the test with ROOT have issues on WIN32
