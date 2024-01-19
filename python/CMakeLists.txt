@@ -162,6 +162,8 @@ if (RERUN_BINDER)
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}/include
                           --extra-arg=-I${ROOT_INCLUDE_DIRS}
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/15/include/
+                          --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/14/include/
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/13/include/
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/12/include/
                           --extra-arg=-I/usr/lib/gcc/x86_64-redhat-linux/11/include/
