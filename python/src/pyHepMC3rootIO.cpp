@@ -9,9 +9,6 @@
 
 typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
 
-void bind_pyHepMC3rootIO_0(std::function< pybind11::module &(std::string const &namespace_) > &M);
-void bind_pyHepMC3rootIO_1(std::function< pybind11::module &(std::string const &namespace_) > &M);
-void bind_pyHepMC3rootIO_2(std::function< pybind11::module &(std::string const &namespace_) > &M);
 
 
 PYBIND11_MODULE(pyHepMC3rootIO, root_module) {
@@ -36,14 +33,10 @@ PYBIND11_MODULE(pyHepMC3rootIO, root_module) {
 	);
 
 	std::vector< std::pair<std::string, std::string> > sub_modules {
-		{"", "HepMC3"},
 	};
 	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = modules[p.first].def_submodule( mangle_namespace_name(p.second).c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() );
 
 	//pybind11::class_<std::shared_ptr<void>>(M(""), "_encapsulated_data_");
 
-	bind_pyHepMC3rootIO_0(M);
-	bind_pyHepMC3rootIO_1(M);
-	bind_pyHepMC3rootIO_2(M);
 
 }
