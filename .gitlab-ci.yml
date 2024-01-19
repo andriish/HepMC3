@@ -221,7 +221,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
 
 .cmake: &cmake
     - $CMAKE -S . -B BUILD -DCMAKE_INSTALL_PREFIX=$(pwd)/INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
-    - $CMAKE --build BUILD -j 10
+    - $CMAKE --build BUILD -j 10  --verbose
     - $CMAKE --install BUILD
     - cd BUILD
     - $CTEST -j 5 --output-on-failure
@@ -231,7 +231,7 @@ LCG_95_x86_64-ubuntu1804-gcc8-opt:
     - mkdir -p BUILD
     - cd  BUILD
     - $CMAKE ..  -DCMAKE_INSTALL_PREFIX=$(pwd)/../INSTALL -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"  ${STANDARDFLAGS} ${EXTRACMAKEFLAGS} $CACHINGFLAGS
-    - make -j 10
+    - make -j 10  SHELL='sh -x'
     - make install
     - $CTEST -j 5 --output-on-failure
     - cd ..
