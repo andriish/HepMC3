@@ -24,13 +24,13 @@ if (USE_INSTALLED_HEPMC3)
     list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
     list(APPEND CMAKE_PREFIX_PATH ${ROOT_DIR})
     find_package(ROOT REQUIRED COMPONENTS Core RIO Tree)
-    message(STATUS "HepMC3 python: ROOT_FOUND=${ROOT_FOUND}")
-    message(STATUS "HepMC3 python: ROOT_USE_FILE=${ROOT_USE_FILE}")
-    message(STATUS "HepMC3 python: ROOT_INCLUDE_DIRS=${ROOT_INCLUDE_DIRS}")
-    message(STATUS "HepMC3 python: ROOT_LIBRARIES=${ROOT_LIBRARIES}")
-    message(STATUS "HepMC3 python: ROOT_DEFINITIONS=${ROOT_DEFINITIONS}")
-    message(STATUS "HepMC3 python: ROOT_CXX_FLAGS=${ROOT_CXX_FLAGS}")
     if(ROOT_FOUND)  
+      message(STATUS "HepMC3 python: ROOT_FOUND=${ROOT_FOUND}")
+      message(STATUS "HepMC3 python: ROOT_USE_FILE=${ROOT_USE_FILE}")
+      message(STATUS "HepMC3 python: ROOT_INCLUDE_DIRS=${ROOT_INCLUDE_DIRS}")
+      message(STATUS "HepMC3 python: ROOT_LIBRARIES=${ROOT_LIBRARIES}")
+      message(STATUS "HepMC3 python: ROOT_DEFINITIONS=${ROOT_DEFINITIONS}")
+      message(STATUS "HepMC3 python: ROOT_CXX_FLAGS=${ROOT_CXX_FLAGS}")
       add_definitions(-DHEPMC3_ROOTIO)
 # Use ROOT_CXX_STANDARD if defined, otherwise deduce from ROOT_CXX_FLAGS
       if(DEFINED ROOT_CXX_STANDARD)
@@ -86,23 +86,6 @@ foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
 endforeach()
-
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "Sun*")
-    message(STATUS "HepMC3 python: WARNING: you are trying to use Oracle Studio compiller that is not officially supported by pybind11.\
- This compiler does not have the needed functionality to build the HepMC3 python modules using pybind11. Most likely the build fill fail.\
- To disable the build of python bindings use -DHEPMC3_ENABLE_PYTHON=OFF with cmake.")
-endif()
-
-#Workaround for nvc++ for this particular code
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "NVHPC")
-    message(STATUS "HepMC3 python: WARNING: you are using PGI/NVidia compiller that is not officially supported by pybind11.\
- The optimization and debug for the python modules will be disabled.")
-    foreach( fl  IN ITEMS "-g" "-fast" "-O1" "-O2" "-O3" "-O4")
-      string(REPLACE "${fl}" ""  CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-      string(REPLACE "${fl}" ""  CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-    endforeach()
-    set(CMAKE_CXX_FLAGS   "${CMAKE_CXX_FLAGS} -O0")
-endif()
 
 if(HEPMC3_ENABLE_SEARCH)
   add_definitions(-DHEPMC3_ENABLE_SEARCH)
