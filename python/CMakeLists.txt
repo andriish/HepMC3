@@ -124,6 +124,15 @@ foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
 endforeach()
 if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
+
+  execute_process(COMMAND ${BINDER} --version OUTPUT_VARIABLE BINDER_VERSION_STRING OUTPUT_STRIP_TRAILING_WHITESPACE) 
+  string(REGEX REPLACE "[\r\n ]" ";" BINDER_VERSION_LIST "${BINDER_VERSION_STRING} foo 0.0.0")
+  list(GET BINDER_VERSION_LIST 1 BINDER_VERSION)
+  if (BINDER_VERSION VERSION_GREATER 1.4.0)
+    message(STATUS "HepMC3 python: BINDER_VERSION=${BINDER_VERSION} is sufficient for the generation of bindings.")
+  else()
+    message(FATAL_ERROR "HepMC3 python: BINDER_VERSION=${BINDER_VERSION}<=1.4.0 is not sufficient for the generation of bindings.")
+  endif()
   set(INCARG "")
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} -v /dev/null -S ERROR_VARIABLE GCCSPEC OUTPUT_QUIET)
   STRING(REGEX REPLACE "\r?\n" ";" GCCSPECV2 "${GCCSPEC}")
@@ -150,6 +159,7 @@ if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
         OUTPUT  ${autoBN${_comp}}
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder
         COMMAND ${BINDER} --flat --max-file-size=20000
+                          --skip-line-number
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
                           --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder   
