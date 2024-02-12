@@ -28,7 +28,7 @@
 
 void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // LHEF::MergeInfo file:HepMC3/LHEF.h line:992
+	{ // LHEF::MergeInfo file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::MergeInfo, std::shared_ptr<LHEF::MergeInfo>, LHEF::TagBase> cl(M("LHEF"), "MergeInfo", "The MergeInfo class represents the information in a mergeinfo tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::MergeInfo(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -41,7 +41,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::MergeInfo>(cl);
 	}
-	{ // LHEF::WeightInfo file:HepMC3/LHEF.h line:1042
+	{ // LHEF::WeightInfo file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::WeightInfo, std::shared_ptr<LHEF::WeightInfo>, LHEF::TagBase> cl(M("LHEF"), "WeightInfo", "The WeightInfo class encodes the description of a given weight\n present for all events.");
 		cl.def( pybind11::init( [](){ return new LHEF::WeightInfo(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -58,7 +58,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::WeightInfo>(cl);
 	}
-	{ // LHEF::WeightGroup file:HepMC3/LHEF.h line:1128
+	{ // LHEF::WeightGroup file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::WeightGroup, std::shared_ptr<LHEF::WeightGroup>, LHEF::TagBase> cl(M("LHEF"), "WeightGroup", "The WeightGroup assigns a group-name to a set of WeightInfo objects.");
 		cl.def( pybind11::init( [](){ return new LHEF::WeightGroup(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &, int, class std::vector<struct LHEF::WeightInfo> &>(), pybind11::arg("tag"), pybind11::arg("groupIndex"), pybind11::arg("wiv") );
@@ -68,7 +68,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 		cl.def_readwrite("combine", &LHEF::WeightGroup::combine);
 		cl.def("assign", (struct LHEF::WeightGroup & (LHEF::WeightGroup::*)(const struct LHEF::WeightGroup &)) &LHEF::WeightGroup::operator=, "C++: LHEF::WeightGroup::operator=(const struct LHEF::WeightGroup &) --> struct LHEF::WeightGroup &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
-	{ // LHEF::Weight file:HepMC3/LHEF.h line:1169
+	{ // LHEF::Weight file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Weight, std::shared_ptr<LHEF::Weight>, LHEF::TagBase> cl(M("LHEF"), "Weight", "The Weight class represents the information in a weight tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::Weight(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -84,7 +84,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Weight>(cl);
 	}
-	{ // LHEF::Clus file:HepMC3/LHEF.h line:1250
+	{ // LHEF::Clus file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Clus, std::shared_ptr<LHEF::Clus>, LHEF::TagBase> cl(M("LHEF"), "Clus", "The Clus class represents a clustering of two particle entries into\n one as defined in a clustering tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::Clus(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -99,7 +99,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Clus>(cl);
 	}
-	{ // LHEF::Scale file:HepMC3/LHEF.h line:1313
+	{ // LHEF::Scale file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Scale, std::shared_ptr<LHEF::Scale>, LHEF::TagBase> cl(M("LHEF"), "Scale", "Store special scales from within a scales tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::Scale(); } ), "doc" );
 		cl.def( pybind11::init( [](std::string const & a0){ return new LHEF::Scale(a0); } ), "doc" , pybind11::arg("st"));
@@ -118,7 +118,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Scale>(cl);
 	}
-	{ // LHEF::Scales file:HepMC3/LHEF.h line:1416
+	{ // LHEF::Scales file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Scales, std::shared_ptr<LHEF::Scales>, LHEF::TagBase> cl(M("LHEF"), "Scales", "Collect different scales relevant for an event.");
 		cl.def( pybind11::init( [](){ return new LHEF::Scales(); } ), "doc" );
 		cl.def( pybind11::init( [](double const & a0){ return new LHEF::Scales(a0); } ), "doc" , pybind11::arg("defscale"));
@@ -140,7 +140,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Scales>(cl);
 	}
-	{ // LHEF::PDFInfo file:HepMC3/LHEF.h line:1540
+	{ // LHEF::PDFInfo file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::PDFInfo, std::shared_ptr<LHEF::PDFInfo>, LHEF::TagBase> cl(M("LHEF"), "PDFInfo", "The PDFInfo class represents the information in a pdfinto tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::PDFInfo(); } ), "doc" );
 		cl.def( pybind11::init<double>(), pybind11::arg("defscale") );
@@ -161,7 +161,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::PDFInfo>(cl);
 	}
-	{ // LHEF::HEPRUP file:HepMC3/LHEF.h line:1628
+	{ // LHEF::HEPRUP file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::HEPRUP, std::shared_ptr<LHEF::HEPRUP>, LHEF::TagBase> cl(M("LHEF"), "HEPRUP", "The HEPRUP class is a simple container corresponding to the Les Houches\n accord (<A HREF=\"http://arxiv.org/abs/hep-ph/0109068\">hep-ph/0109068</A>)\n common block with the same name. The members are named in the same\n way as in the common block. However, fortran arrays are represented\n by vectors, except for the arrays of length two which are\n represented by pair objects.");
 		cl.def( pybind11::init( [](){ return new LHEF::HEPRUP(); } ) );
 		cl.def( pybind11::init( [](LHEF::HEPRUP const &o){ return new LHEF::HEPRUP(o); } ) );
@@ -202,7 +202,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::HEPRUP>(cl);
 	}
-	{ // LHEF::EventGroup file:HepMC3/LHEF.h line:2070
+	{ // LHEF::EventGroup file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::EventGroup, std::shared_ptr<LHEF::EventGroup>, std::vector<LHEF::HEPEUP *>> cl(M("LHEF"), "EventGroup", "The EventGroup represents a set of events which are to be\n considered together.");
 		cl.def( pybind11::init( [](){ return new LHEF::EventGroup(); } ) );
 		cl.def( pybind11::init( [](LHEF::EventGroup const &o){ return new LHEF::EventGroup(o); } ) );
@@ -211,7 +211,7 @@ void bind_pyHepMC3_15(std::function< pybind11::module &(std::string const &names
 		cl.def("assign", (struct LHEF::EventGroup & (LHEF::EventGroup::*)(const struct LHEF::EventGroup &)) &LHEF::EventGroup::operator=, "The assignment also copies the included HEPEUP object.\n\nC++: LHEF::EventGroup::operator=(const struct LHEF::EventGroup &) --> struct LHEF::EventGroup &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 		cl.def("clear", (void (LHEF::EventGroup::*)()) &LHEF::EventGroup::clear, "Remove all subevents.\n\nC++: LHEF::EventGroup::clear() --> void");
 	}
-	{ // LHEF::HEPEUP file:HepMC3/LHEF.h line:2118
+	{ // LHEF::HEPEUP file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::HEPEUP, std::shared_ptr<LHEF::HEPEUP>, LHEF::TagBase> cl(M("LHEF"), "HEPEUP", "The HEPEUP class is a simple container corresponding to the Les Houches accord\n (<A HREF=\"http://arxiv.org/abs/hep-ph/0109068\">hep-ph/0109068</A>)\n common block with the same name. The members are named in the same\n way as in the common block. However, fortran arrays are represented\n by vectors, except for the arrays of length two which are\n represented by pair objects.");
 		cl.def( pybind11::init( [](){ return new LHEF::HEPEUP(); } ) );
 		cl.def( pybind11::init( [](LHEF::HEPEUP const &o){ return new LHEF::HEPEUP(o); } ) );

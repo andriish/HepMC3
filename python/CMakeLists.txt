@@ -165,6 +165,7 @@ if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
                           --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder   
                             ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp
                           --extra-arg=-std=c++${HEPMC3_CXX_STANDARD}
+                          --extra-arg=-I${PROJECT_SOURCE_DIR}/${_comp}/include
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}
                           --extra-arg=-I${CMAKE_CURRENT_SOURCE_DIR}/include
                           --extra-arg=-I${ROOT_INCLUDE_DIRS}

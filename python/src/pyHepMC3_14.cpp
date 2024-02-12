@@ -33,7 +33,7 @@
 
 void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
+	{ // LHEF::OAttr file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::OAttr<std::string>, std::shared_ptr<LHEF::OAttr<std::string>>> cl(M("LHEF"), "OAttr_std_string_t", "");
 		cl.def( pybind11::init<std::string, const std::string &>(), pybind11::arg("n"), pybind11::arg("v") );
 
@@ -44,7 +44,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		cl.def("__str__", [](LHEF::OAttr<std::string> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
-	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
+	{ // LHEF::OAttr file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::OAttr<long>, std::shared_ptr<LHEF::OAttr<long>>> cl(M("LHEF"), "OAttr_long_t", "");
 		cl.def( pybind11::init<std::string, const long &>(), pybind11::arg("n"), pybind11::arg("v") );
 
@@ -55,7 +55,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		cl.def("__str__", [](LHEF::OAttr<long> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
-	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
+	{ // LHEF::OAttr file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::OAttr<double>, std::shared_ptr<LHEF::OAttr<double>>> cl(M("LHEF"), "OAttr_double_t", "");
 		cl.def( pybind11::init<std::string, const double &>(), pybind11::arg("n"), pybind11::arg("v") );
 
@@ -66,7 +66,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		cl.def("__str__", [](LHEF::OAttr<double> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
-	{ // LHEF::OAttr file:HepMC3/LHEF.h line:45
+	{ // LHEF::OAttr file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::OAttr<int>, std::shared_ptr<LHEF::OAttr<int>>> cl(M("LHEF"), "OAttr_int_t", "");
 		cl.def( pybind11::init<std::string, const int &>(), pybind11::arg("n"), pybind11::arg("v") );
 
@@ -77,19 +77,19 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		cl.def("__str__", [](LHEF::OAttr<int> const &o) -> std::string { std::ostringstream s; using namespace LHEF; s << o; return s.str(); } );
 	}
-	// LHEF::oattr(std::string, const std::string &) file:HepMC3/LHEF.h line:68
+	// LHEF::oattr(std::string, const std::string &) file:HepMC3/LHEF.h line:
 	M("LHEF").def("oattr", (struct LHEF::OAttr<std::string > (*)(std::string, const std::string &)) &LHEF::oattr<std::string>, "C++: LHEF::oattr(std::string, const std::string &) --> struct LHEF::OAttr<std::string >", pybind11::arg("name"), pybind11::arg("value"));
 
-	// LHEF::oattr(std::string, const long &) file:HepMC3/LHEF.h line:68
+	// LHEF::oattr(std::string, const long &) file:HepMC3/LHEF.h line:
 	M("LHEF").def("oattr", (struct LHEF::OAttr<long> (*)(std::string, const long &)) &LHEF::oattr<long>, "C++: LHEF::oattr(std::string, const long &) --> struct LHEF::OAttr<long>", pybind11::arg("name"), pybind11::arg("value"));
 
-	// LHEF::oattr(std::string, const double &) file:HepMC3/LHEF.h line:68
+	// LHEF::oattr(std::string, const double &) file:HepMC3/LHEF.h line:
 	M("LHEF").def("oattr", (struct LHEF::OAttr<double> (*)(std::string, const double &)) &LHEF::oattr<double>, "C++: LHEF::oattr(std::string, const double &) --> struct LHEF::OAttr<double>", pybind11::arg("name"), pybind11::arg("value"));
 
-	// LHEF::oattr(std::string, const int &) file:HepMC3/LHEF.h line:68
+	// LHEF::oattr(std::string, const int &) file:HepMC3/LHEF.h line:
 	M("LHEF").def("oattr", (struct LHEF::OAttr<int> (*)(std::string, const int &)) &LHEF::oattr<int>, "C++: LHEF::oattr(std::string, const int &) --> struct LHEF::OAttr<int>", pybind11::arg("name"), pybind11::arg("value"));
 
-	{ // LHEF::XMLTag file:HepMC3/LHEF.h line:87
+	{ // LHEF::XMLTag file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::XMLTag, std::shared_ptr<LHEF::XMLTag>> cl(M("LHEF"), "XMLTag", "The XMLTag struct is used to represent all information within an\n XML tag. It contains the attributes as a map, any sub-tags as a\n vector of pointers to other XMLTag objects, and any other\n information as a single string.");
 		cl.def( pybind11::init( [](){ return new LHEF::XMLTag(); } ) );
 		cl.def( pybind11::init( [](LHEF::XMLTag const &o){ return new LHEF::XMLTag(o); } ) );
@@ -109,10 +109,10 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::XMLTag>(cl);
 	}
-	// LHEF::hashline(std::string) file:HepMC3/LHEF.h line:328
+	// LHEF::hashline(std::string) file:HepMC3/LHEF.h line:
 	M("LHEF").def("hashline", (std::string (*)(std::string)) &LHEF::hashline, "Helper function to make sure that each line in the string  starts with a\n #-character and that the string ends with a new-line.\n\nC++: LHEF::hashline(std::string) --> std::string", pybind11::arg("s"));
 
-	{ // LHEF::TagBase file:HepMC3/LHEF.h line:345
+	{ // LHEF::TagBase file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::TagBase, std::shared_ptr<LHEF::TagBase>> cl(M("LHEF"), "TagBase", "This is the base class of all classes representing xml tags.");
 		cl.def( pybind11::init( [](){ return new LHEF::TagBase(); } ) );
 		cl.def( pybind11::init( [](const class std::map<std::string, std::string > & a0){ return new LHEF::TagBase(a0); } ), "doc" , pybind11::arg("attr"));
@@ -136,7 +136,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_LHEFTagBase_binder(cl);
 	}
-	{ // LHEF::Generator file:HepMC3/LHEF.h line:474
+	{ // LHEF::Generator file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Generator, std::shared_ptr<LHEF::Generator>, LHEF::TagBase> cl(M("LHEF"), "Generator", "The Generator class contains information about a generator used in a run.");
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
 
@@ -147,7 +147,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Generator>(cl);
 	}
-	{ // LHEF::XSecInfo file:HepMC3/LHEF.h line:511
+	{ // LHEF::XSecInfo file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::XSecInfo, std::shared_ptr<LHEF::XSecInfo>, LHEF::TagBase> cl(M("LHEF"), "XSecInfo", "The XSecInfo class contains information given in the xsecinfo tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::XSecInfo(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -166,7 +166,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::XSecInfo>(cl);
 	}
-	{ // LHEF::EventFile file:HepMC3/LHEF.h line:617
+	{ // LHEF::EventFile file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::EventFile, std::shared_ptr<LHEF::EventFile>, LHEF::TagBase> cl(M("LHEF"), "EventFile", "Simple struct to store information about separate eventfiles to be\n loaded.");
 		cl.def( pybind11::init( [](){ return new LHEF::EventFile(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );
@@ -179,7 +179,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::EventFile>(cl);
 	}
-	{ // LHEF::Cut file:HepMC3/LHEF.h line:669
+	{ // LHEF::Cut file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::Cut, std::shared_ptr<LHEF::Cut>, LHEF::TagBase> cl(M("LHEF"), "Cut", "The Cut class represents a cut used by the Matrix Element generator.");
 		cl.def( pybind11::init( [](){ return new LHEF::Cut(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &, const class std::map<std::string, class std::set<long> > &>(), pybind11::arg("tag"), pybind11::arg("ptypes") );
@@ -203,7 +203,7 @@ void bind_pyHepMC3_14(std::function< pybind11::module &(std::string const &names
 
 		binder::custom_T_binder<LHEF::Cut>(cl);
 	}
-	{ // LHEF::ProcInfo file:HepMC3/LHEF.h line:915
+	{ // LHEF::ProcInfo file:HepMC3/LHEF.h line:
 		pybind11::class_<LHEF::ProcInfo, std::shared_ptr<LHEF::ProcInfo>, LHEF::TagBase> cl(M("LHEF"), "ProcInfo", "The ProcInfo class represents the information in a procinfo tag.");
 		cl.def( pybind11::init( [](){ return new LHEF::ProcInfo(); } ) );
 		cl.def( pybind11::init<const struct LHEF::XMLTag &>(), pybind11::arg("tag") );

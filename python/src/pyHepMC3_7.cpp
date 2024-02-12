@@ -30,7 +30,7 @@
 	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>)
 #endif
 
-// HepMC3::GenCrossSection file:HepMC3/GenCrossSection.h line:42
+// HepMC3::GenCrossSection file:HepMC3/GenCrossSection.h line:
 struct PyCallBack_HepMC3_GenCrossSection : public HepMC3::GenCrossSection {
 	using HepMC3::GenCrossSection::GenCrossSection;
 
@@ -90,7 +90,7 @@ struct PyCallBack_HepMC3_GenCrossSection : public HepMC3::GenCrossSection {
 
 void bind_pyHepMC3_7(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
-	{ // HepMC3::GenCrossSection file:HepMC3/GenCrossSection.h line:42
+	{ // HepMC3::GenCrossSection file:HepMC3/GenCrossSection.h line:
 		pybind11::class_<HepMC3::GenCrossSection, std::shared_ptr<HepMC3::GenCrossSection>, PyCallBack_HepMC3_GenCrossSection, HepMC3::Attribute> cl(M("HepMC3"), "GenCrossSection", "");
 		cl.def( pybind11::init( [](PyCallBack_HepMC3_GenCrossSection const &o){ return new PyCallBack_HepMC3_GenCrossSection(o); } ) );
 		cl.def( pybind11::init( [](HepMC3::GenCrossSection const &o){ return new HepMC3::GenCrossSection(o); } ) );
@@ -124,7 +124,7 @@ void bind_pyHepMC3_7(std::function< pybind11::module &(std::string const &namesp
 		cl.def("is_valid", (bool (HepMC3::GenCrossSection::*)() const) &HepMC3::GenCrossSection::is_valid, "C++: HepMC3::GenCrossSection::is_valid() const --> bool");
 		cl.def("assign", (class HepMC3::GenCrossSection & (HepMC3::GenCrossSection::*)(const class HepMC3::GenCrossSection &)) &HepMC3::GenCrossSection::operator=, "C++: HepMC3::GenCrossSection::operator=(const class HepMC3::GenCrossSection &) --> class HepMC3::GenCrossSection &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
-	{ // HepMC3::Units file: line:26
+	{ // HepMC3::Units file: line:
 		pybind11::class_<HepMC3::Units, std::shared_ptr<HepMC3::Units>> cl(M("HepMC3"), "Units", "");
 		cl.def( pybind11::init( [](){ return new HepMC3::Units(); } ) );
 
