@@ -11,10 +11,17 @@ from pyHepMC3 import HepMC3 as hm
 def test_IO4():
     if sys.version_info[0]<3:
       return 0
+    exts = ["gzip", "bz2", "lzma"]
     import lzma
     import gzip
     import bz2
     import shutil
+    zstdavail = True
+    try:
+      import zstd
+    except ImportError as e:
+      zstdavail = False
+
     with open('inputIO4.hepmc', 'rb') as f_in:
       with gzip.open(python_label() +"inputIO4.hepmc.gzip", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
@@ -26,8 +33,12 @@ def test_IO4():
     with open('inputIO4.hepmc', 'rb') as f_in:
       with lzma.open(python_label() +"inputIO4.hepmc.lzma", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
+    if zstdavail:
+      exts = ["gzip", "bz2", "lzma", "zstd"]
+      with open('inputIO4.hepmc', 'rb') as f_in:
+        with zstd.open(python_label() +"inputIO4.hepmc.zstd", 'wb') as f_out:
+          shutil.copyfileobj(f_in, f_out)
 
-    exts= ["gzip", "bz2", "lzma"]
     for ext in exts:
       inputA = hm.deduce_reader(python_label() +"inputIO4.hepmc."+ext)
       if inputA.failed():

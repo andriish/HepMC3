@@ -20,43 +20,40 @@ void custom_deduce_reader(pybind11::module&  M){
     HepMC3::Compression det  = HepMC3::detect_compression_type(buf, buf + 5);    
     std::string f = filename;
     switch (det) {
-/*
      case HepMC3::Compression::zstd:
-          {
+          try {
           auto mzstd = pybind11::module::import("zstd");
           auto zstdfile = mzstd.attr("open")(f.c_str(),"rb");
           return HepMC3::deduce_reader(std::shared_ptr< std::istream >((std::istream*)(new pystream::streambuf(zstdfile))));
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import zstd module");  return nullptr;}
        }
-*/
-     case HepMC3::Compression::bz2:
-          {
-			  printf("Deduce in python 5a\n");
+     case HepMC3::Compression::bz2: {
+          try {
           auto mbz2 = pybind11::module::import("bz2");
           auto bz2file = mbz2.attr("open")(f.c_str(),"rb");
           return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(bz2file)));
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import bz2 module"); return nullptr;}
        }
 #if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 2
-     case HepMC3::Compression::z:
-          {
-          printf("Deduce in python 5b\n");
+     case HepMC3::Compression::z: {
+          try {
           auto mgzip = pybind11::module::import("gzip");
           auto gzipfile = mgzip.attr("open")(f.c_str(),"rb");
           return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(gzipfile)));
-       }
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import gzip module");  return nullptr;}
+     }
 #endif
 #if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
-     case HepMC3::Compression::lzma:
-          {
-			  printf("Deduce in python 5c\n");
+     case HepMC3::Compression::lzma: {
+          try {
           auto mlzma = pybind11::module::import("lzma");
           auto lzmafile = mlzma.attr("open")(f.c_str(),"rb");
           return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(lzmafile)));
-	  }
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import lzma module");  return nullptr;}
+     }
 #endif
      case HepMC3::Compression::plaintext:
-     printf("Deduce in python 5d\n");
      default: 
-     printf("Deduce in python 5e\n");
      break;
     }
     return input.native_reader(f);
