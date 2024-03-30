@@ -50,7 +50,7 @@ def test_IO4():
           evt = hm.GenEvent()
           inputA.read_event(evt)
           if inputA.failed():
-              print("End of file reached. Exit.\n", flush = True)
+              print("End of file reached. Exit.\n")
               break
           outputA.write_event(evt)
           evt.clear()
