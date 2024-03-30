@@ -21,4 +21,3 @@ RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  
 # 23 -- no protobuf no root and no python
 # 24 -- sed on ROOT is needed.
 # 33 -- added pypy pypy-devel
-
