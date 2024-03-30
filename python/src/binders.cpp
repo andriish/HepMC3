@@ -1,6 +1,8 @@
 #include "binders.h"
 #include <HepMC3/Print.h>
 #include <HepMC3/ReaderFactory_fwd.h>
+#include <pybind11/embed.h>
+#include "pystreambuf.h"
 
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
@@ -13,7 +15,50 @@ void custom_deduce_reader(pybind11::module&  M){
     if (input.m_protobuf) {
         return std::make_shared<HepMC3::ReaderPlugin>(filename, HepMC3::libHepMC3protobufIO, std::string("newReaderprotobuffile"));
     }
+    char buf[6];
+    snprintf(buf, 6, "%s", input.m_head.at(0).c_str());
+    HepMC3::Compression det  = HepMC3::detect_compression_type(buf, buf + 5);    
     std::string f = filename;
+    switch (det) {
+/*
+     case HepMC3::Compression::zstd:
+          {
+          auto mzstd = pybind11::module::import("zstd");
+          auto zstdfile = mzstd.attr("open")(f.c_str(),"rb");
+          return HepMC3::deduce_reader(std::shared_ptr< std::istream >((std::istream*)(new pystream::streambuf(zstdfile))));
+       }
+*/
+     case HepMC3::Compression::bz2:
+          {
+			  printf("Deduce in python 5a\n");
+          auto mbz2 = pybind11::module::import("bz2");
+          auto bz2file = mbz2.attr("open")(f.c_str(),"rb");
+          return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(bz2file)));
+       }
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 2
+     case HepMC3::Compression::z:
+          {
+          printf("Deduce in python 5b\n");
+          auto mgzip = pybind11::module::import("gzip");
+          auto gzipfile = mgzip.attr("open")(f.c_str(),"rb");
+          return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(gzipfile)));
+       }
+#endif
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+     case HepMC3::Compression::lzma:
+          {
+			  printf("Deduce in python 5c\n");
+          auto mlzma = pybind11::module::import("lzma");
+          auto lzmafile = mlzma.attr("open")(f.c_str(),"rb");
+          return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(lzmafile)));
+	  }
+#endif
+     case HepMC3::Compression::plaintext:
+     printf("Deduce in python 5d\n");
+     default: 
+     printf("Deduce in python 5e\n");
+     break;
+    }
     return input.native_reader(f);
 } , "This function deduces the type of input file based on the name/URL\n and its content, and will return an appropriate Reader object.\n\n \n\nC++: HepMC3::deduce_reader(const std::string &) --> class std::shared_ptr<class HepMC3::Reader>", pybind11::arg("filename"));
 }
