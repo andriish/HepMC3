@@ -1,4 +1,6 @@
 /*
+Adopted to HepMC3 from https://github.com/CadQuery/OCP/blob/871ebb68e1ca3afb43c806a70d3b82a67c782da9/pystreambuf.h
+ 
 Based on https://gist.github.com/asford/544323a5da7dddad2c9174490eb5ed06
 
 Original license text
@@ -54,7 +56,8 @@ derivative works thereof, in binary and source code form.
 
 */
 
-#pragma once
+#ifndef HEPMC3_PYSTREAMBUF_H
+#define HEPMC3_PYSTREAMBUF_H
 
 #include <pybind11/pybind11.h>
 
@@ -159,7 +162,7 @@ class streambuf : public std::basic_streambuf<char>
     /** They are respectively used to buffer data read from and data written to
         the Python file object. It can be modified from Python.
     */
-    static inline std::size_t default_buffer_size = 1024*64;
+    static inline std::size_t default_buffer_size = 1024;
 
     /// Construct from a Python file object
     /** if buffer_size is 0 the current default_buffer_size is used.
@@ -584,3 +587,4 @@ namespace pybind11 { namespace detail {
     };
 }} // namespace pybind11::detail
 
+#endif
