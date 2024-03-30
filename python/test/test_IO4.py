@@ -11,6 +11,8 @@ from pyHepMC3 import HepMC3 as hm
 def test_IO4():
     if sys.version_info[0]<3:
       return 0
+    if sys.implementation.name != 'cpython':
+      return 0
     exts = ["gzip", "bz2", "lzma"]
     import lzma
     import gzip
