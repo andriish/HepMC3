@@ -22,10 +22,10 @@ void custom_deduce_reader(pybind11::module&  M){
     switch (det) {
      case HepMC3::Compression::zstd: {
           try {
-          auto mzstd = pybind11::module::import("zstd");
+          auto mzstd = pybind11::module::import("zstandard");
           auto zstdfile = mzstd.attr("open")(f.c_str(),"rb");
           return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(zstdfile)));
-          } catch (pybind11::import_error &e) { pybind11::print("Cannot import zstd module");  return nullptr;}
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import zstandard module");  return nullptr;}
        }
      case HepMC3::Compression::bz2: {
           try {

@@ -18,32 +18,32 @@ def test_IO4():
     import shutil
     zstdavail = True
     try:
-      import zstd
+      import zstandard
     except ImportError as e:
       zstdavail = False
 
     with open('inputIO4.hepmc', 'rb') as f_in:
-      with gzip.open(python_label() +"inputIO4.hepmc.gzip", 'wb') as f_out:
+      with gzip.open("inputIO4.hepmc.gzip", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
 
     with open('inputIO4.hepmc', 'rb') as f_in:
-      with bz2.open(python_label() +"inputIO4.hepmc.bz2", 'wb') as f_out:
+      with bz2.open("inputIO4.hepmc.bz2", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
 
     with open('inputIO4.hepmc', 'rb') as f_in:
-      with lzma.open(python_label() +"inputIO4.hepmc.lzma", 'wb') as f_out:
+      with lzma.open("inputIO4.hepmc.lzma", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
     if zstdavail:
       exts = ["gzip", "bz2", "lzma", "zstd"]
       with open('inputIO4.hepmc', 'rb') as f_in:
-        with zstd.open(python_label() +"inputIO4.hepmc.zstd", 'wb') as f_out:
+        with zstandard.open("inputIO4.hepmc.zstd", 'wb') as f_out:
           shutil.copyfileobj(f_in, f_out)
 
     for ext in exts:
-      inputA = hm.deduce_reader(python_label() +"inputIO4.hepmc."+ext)
+      inputA = hm.deduce_reader("inputIO4.hepmc."+ext)
       if inputA.failed():
           sys.exit(1)
-      outputA = hm.WriterAsciiHepMC2(python_label() + ext +"inputIO4.hepmc")
+      outputA = hm.WriterAsciiHepMC2("inputIO4.hepmcfrom"+ext)
       if outputA.failed():
           sys.exit(2)
       while not inputA.failed():
@@ -56,7 +56,7 @@ def test_IO4():
           evt.clear()
       inputA.close()
       outputA.close()
-      assert 0 == COMPARE_ASCII_FILES(python_label() + ext + "inputIO4.hepmc", "inputIO4.hepmc")
+      assert 0 == COMPARE_ASCII_FILES("inputIO4.hepmcfrom"+ext, "inputIO4.hepmc")
     return 0
 
 
