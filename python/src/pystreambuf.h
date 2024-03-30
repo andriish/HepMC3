@@ -162,7 +162,7 @@ class streambuf : public std::basic_streambuf<char>
     /** They are respectively used to buffer data read from and data written to
         the Python file object. It can be modified from Python.
     */
-    static inline std::size_t default_buffer_size = 1024;
+    static const std::size_t default_buffer_size = 1024;
 
     /// Construct from a Python file object
     /** if buffer_size is 0 the current default_buffer_size is used.
@@ -529,7 +529,7 @@ struct istream : private streambuf_capsule, streambuf::istream
   }
 };
 
-};
+}
 
 namespace pybind11 { namespace detail {
     template <> struct type_caster<std::istream> {
