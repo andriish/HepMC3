@@ -21,6 +21,8 @@ def test_IO4():
     zstdavail = True
     try:
       import zstandard
+      if not hasattr(zstandard,'open'):
+        zstdavail = False  
     except ImportError as e:
       zstdavail = False
 
