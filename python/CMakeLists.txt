@@ -109,7 +109,7 @@ set(autoBN       ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3.cpp ${CMAKE_CURRENT_SO
 set(autoBNrootIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_1.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_2.cpp)
 set(autoBNsearch ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_1.cpp)
 set(autoBNprotobufIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO_0.cpp )
-set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp)
+set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderuprootTree.cc)
 set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
 set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
@@ -211,9 +211,9 @@ if (${ver} STREQUAL 3)
   unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
   if (${verminor} STREQUAL X)
-    find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module )
+    find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module NumPy)
   else()
-    find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module)
+    find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module NumPy)
   endif()
   if (Python3_VERSION AND Python3_INCLUDE_DIRS AND Python3_EXECUTABLE  ) #something is set
     SET( Python_VERSION       ${Python3_VERSION})

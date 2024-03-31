@@ -2,12 +2,17 @@
 #include <HepMC3/Print.h>
 #include <HepMC3/ReaderFactory_fwd.h>
 #ifndef PYPY_VERSION
+#include "ReaderuprootTree.h"
 #include <pybind11/embed.h>
 #include "pystreambuf.h"
 #endif
 
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
+		M.def("uproot_reader", [](const std::string & filename) -> std::shared_ptr<class HepMC3::Reader>{ 
+        return std::make_shared<HepMC3::ReaderuprootTree>(filename);
+        
+        } , "This function deduces ", pybind11::arg("filename"));
 		M.def("deduce_reader", [](const std::string & filename) -> std::shared_ptr<class HepMC3::Reader>{ 
     HepMC3::InputInfo input(filename);
     if (input.m_init && !input.m_error && input.m_reader) return input.m_reader;
