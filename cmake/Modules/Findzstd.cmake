@@ -6,6 +6,7 @@
 # zstd_LIBRARY
 # zstd_STATIC_LIBRARY
 # zstd_FOUND
+# zstd_VERSION
 #
 # Additionally, one of the following import targets will be defined:
 # zstd::libzstd_shared
