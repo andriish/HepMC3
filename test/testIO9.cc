@@ -32,6 +32,10 @@ int main()
             writersGZ.push_back(std::shared_ptr<Writer>(new WriterGZ<WriterAsciiHepMC2,Compression::bz2>("frominputIO9.hepmc."+HepMC3::to_string(w))));
             break;
         }
+        case Compression::zsd: {
+            writersGZ.push_back(std::shared_ptr<Writer>(new WriterGZ<WriterAsciiHepMC2,Compression::zsd>("frominputIO9.hepmc."+HepMC3::to_string(w))));
+            break;
+        }
         default: {
             return 9;
         }
