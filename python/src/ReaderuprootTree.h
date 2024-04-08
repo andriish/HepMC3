@@ -18,8 +18,8 @@
 #define PYBIND11_DETAILED_ERROR_MESSAGES
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include "numpy/arrayobject.h"
+//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+//#include "numpy/arrayobject.h"
 
 namespace HepMC3
 {

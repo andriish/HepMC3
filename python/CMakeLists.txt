@@ -214,9 +214,9 @@ if (${ver} STREQUAL 3)
   unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
   if (${verminor} STREQUAL X)
-    find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module NumPy)
+    find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module)
   else()
-    find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module NumPy)
+    find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module)
   endif()
   if (Python3_VERSION AND Python3_INCLUDE_DIRS AND Python3_EXECUTABLE  ) #something is set
     SET( Python_VERSION       ${Python3_VERSION})
@@ -365,7 +365,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     list(REMOVE_ITEM HepMC_python_tests  test_Print)
   endif()
   if(ROOT_FOUND)
-    list( APPEND HepMC_python_tests test_IO2)
+    list( APPEND HepMC_python_tests test_IO2 test_IO7)
   endif()
   if(HEPMC3_ENABLE_SEARCH)
     list( APPEND HepMC_python_tests test_Pythonization_Search)

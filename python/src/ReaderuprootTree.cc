@@ -47,7 +47,7 @@ bool ReaderuprootTree::init(const std::string &filename)
     m_event_data = new GenEventData();
     m_run_info_data = new GenRunInfoData();
     set_run_info(std::make_shared<GenRunInfo>());
-    import_array();
+    //import_array();
     m_uproot_module = pybind11::module_::import("uproot");
     m_numpy_module = pybind11::module_::import("numpy");
 
