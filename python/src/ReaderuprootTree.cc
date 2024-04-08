@@ -7,8 +7,6 @@
 using namespace pybind11::literals;
 namespace HepMC3
 {
-	
-HEPMC3_DECLARE_READER_FILE(ReaderuprootTree)
 template<class T>
 std::vector<T>  make_vector_from_1d_numpy_array( const pybind11::array_t<T>& py_array ) {
     return std::vector<T>(py_array.data(), py_array.data() + py_array.size());
@@ -39,7 +37,7 @@ ReaderuprootTree::get_vector<std::string>(pybind11::object& tr, const std::strin
 }
 
 ReaderuprootTree::ReaderuprootTree(const std::string &filename,const std::string &treename,const std::string &branchname):
-    m_events_count(0),m_tree_name(treename), m_branch_name(branchname)
+    m_tree_name(treename), m_branch_name(branchname)
 {
     if (!init(filename)) return;
 }

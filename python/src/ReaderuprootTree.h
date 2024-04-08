@@ -50,9 +50,9 @@ private:
     /** @brief init routine */
     bool init(const std::string &filename);
 
-    int   m_events_count; //!< Events count. Needed to read the tree
-    GenEventData* m_event_data; //!< Pointer to structure that holds event data
-    GenRunInfoData* m_run_info_data; //!< Pointer to structure that holds run info data
+    int m_events_count = 0; //!< Events count. Needed to read the tree
+    GenEventData* m_event_data = nullptr; //!< Pointer to structure that holds event data
+    GenRunInfoData* m_run_info_data = nullptr; //!< Pointer to structure that holds run info data
     std::string m_tree_name; //!< Name of TTree
     std::string m_branch_name; //!< Name of TBranch in TTree
     pybind11::object m_file;                       //!< Python file handler
@@ -60,7 +60,7 @@ private:
     pybind11::object m_genruninfo;                 //!< Python runInfo handler.
     pybind11::object m_uproot_module;              //!< Python module
     pybind11::object m_numpy_module;              //!< Python module
-    long int m_tree_getEntries;             //!< number of processed events
+    long int m_tree_getEntries = 0;             //!< number of processed events
     template <class T> std::vector<T> get_vector(pybind11::object& file_name,const std::string& array_name); //!< Get arrays
 };
 
