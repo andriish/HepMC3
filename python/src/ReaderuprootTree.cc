@@ -40,24 +40,24 @@ ReaderuprootTree::ReaderuprootTree(const std::string &filename,const std::string
     m_tree_name(treename), m_branch_name(branchname)
 {
     if (!init(filename)) return;
+    m_event_data = new GenEventData();
+    m_run_info_data = new GenRunInfoData();
 }
 
 bool ReaderuprootTree::init(const std::string &filename)
 {
-    m_event_data = new GenEventData();
-    m_run_info_data = new GenRunInfoData();
     set_run_info(std::make_shared<GenRunInfo>());
-    //import_array();
     m_uproot_module = pybind11::module_::import("uproot");
     m_numpy_module = pybind11::module_::import("numpy");
 
-     bool result =false;
+     bool result = false;
      if (!m_uproot_module || !m_numpy_module ) {
+     pybind11::print( "ReaderuprootTree: cannot initialize python modules uproot and/or numpy. Please check your uproot and/or numpy instalation.");
      HEPMC3_ERROR( "ReaderuprootTree: cannot initialize python modules uproot and/or numpy. Please check your uproot and/or numpy instalation.")
      return result;
      }
 
-    m_file=m_uproot_module.attr("open")(filename);
+    m_file = m_uproot_module.attr("open")(filename);
     if (m_file) {
       m_tree = m_file[(m_tree_name + "/"+ m_branch_name).c_str()];
       m_genruninfo = m_file[(m_tree_name + "/"+ "GenRunInfo").c_str()];
@@ -65,7 +65,7 @@ bool ReaderuprootTree::init(const std::string &filename)
     if (m_tree){
        m_tree_getEntries = m_tree.attr("num_entries").cast<long int>();
     }
-   if (m_tree && m_file && m_genruninfo && m_tree_getEntries) result=true;
+   if (m_tree && m_file && m_genruninfo && m_tree_getEntries) result = true;
     return result;
 }
 
@@ -139,7 +139,7 @@ bool ReaderuprootTree::read_event(GenEvent& evt)
     for (size_t k=0; k < particlesparticlespid.size(); k++)
     {
         HepMC3::GenParticleData p = { particlesparticlespid[k], particlesparticlesstatus[k], particlesis_mass_set[k], particlesmass[k],
-                                     HepMC3::FourVector(particlesmomentumm_v1[k], particlesmomentumm_v1[k], particlesmomentumm_v1[k], particlesmomentumm_v1[k])
+                                     HepMC3::FourVector(particlesmomentumm_v1[k], particlesmomentumm_v2[k], particlesmomentumm_v3[k], particlesmomentumm_v4[k])
                                     };
         m_event_data->particles.push_back(p);
     }
@@ -179,7 +179,7 @@ void ReaderuprootTree::close(){}
 
 bool ReaderuprootTree::failed()
 {
-    if (m_events_count >= m_tree_getEntries) return true;
+    if (m_events_count > m_tree_getEntries) return true;
     return false;
 }
 ReaderuprootTree::~ReaderuprootTree()

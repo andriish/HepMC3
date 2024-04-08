@@ -12,16 +12,22 @@ print(dir(hmrootIO))
 
 
 def test_IO7():
+    try:
+      import uproot
+      import numpy
+    except ImportError as e:
+      print("uproot and/or numpy are not installed. Exit.\n")
+      return 0
     inputA = hmrootIO.ReaderRootTree("inputIO7.root")
     if inputA.failed():
         sys.exit(1)
     inputB = hm.ReaderuprootTree("inputIO7.root")
     if inputB.failed():
         sys.exit(2)
-    outputA = hm.WriterAsciiHepMC2(python_label() + "ReaderRootTreeinputIO7.hepmc")
+    outputA = hm.WriterAscii(python_label() + "ReaderRootTreeinputIO7.hepmc")
     if outputA.failed():
         sys.exit(3)
-    outputB = hm.WriterAsciiHepMC2(python_label() + "ReaderuprootTreeinputIO7.hepmc")
+    outputB = hm.WriterAscii(python_label() + "ReaderuprootTreeinputIO7.hepmc")
     if outputB.failed():
         sys.exit(4)
 
