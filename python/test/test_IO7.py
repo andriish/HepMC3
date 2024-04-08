@@ -16,6 +16,9 @@ def test_IO7():
     try:
       import uproot
       import numpy
+      if (int(uproot.__version__.split('.')[2])+int(uproot.__version__.split('.')[1])*100+int(uproot.__version__.split('.')[0])*10000 < 40000):
+        print("uproot version is too old. Exit.\n")
+        return 0
     except ImportError as e:
       print("uproot and/or numpy are not installed. Exit.\n")
       return 0
