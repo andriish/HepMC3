@@ -109,11 +109,6 @@ bool ReaderuprootTree::read_event(GenEvent& evt)
     auto momentum_unit   = momentum_unit_v.at(0);
     auto length_unit     = length_unit_v.at(0);
 
-    auto links1                   = get_vector<int>(m_tree, "links1");
-    auto links2                   = get_vector<int>(m_tree, "links2");
-    auto attribute_id             = get_vector<int>(m_tree, "attribute_id");
-    auto attribute_name           = get_vector<std::string>(m_tree, "attribute_name");
-    auto attribute_string         = get_vector<std::string>(m_tree, "attribute_string");
     auto particlesmomentumm_v1    = get_vector<double>(m_tree, "particles/particles.momentum.m_v1");
     auto particlesmomentumm_v2    = get_vector<double>(m_tree, "particles/particles.momentum.m_v2");
     auto particlesmomentumm_v3    = get_vector<double>(m_tree, "particles/particles.momentum.m_v3");
@@ -133,26 +128,30 @@ bool ReaderuprootTree::read_event(GenEvent& evt)
     m_event_data->momentum_unit = momentum_unit == 0?HepMC3::Units::MEV:HepMC3::Units::GEV;
     m_event_data->length_unit = length_unit == 0?HepMC3::Units::MM:HepMC3::Units::CM;
     m_event_data->event_pos = HepMC3::FourVector(event_pos_1, event_pos_2, event_pos_3, event_pos_4) ;
-    m_event_data->links1 = links1;
-    m_event_data->links2 = links2;
+    m_event_data->links1 = get_vector<int>(m_tree, "links1");
+    m_event_data->links2 = get_vector<int>(m_tree, "links2");
+    m_event_data->weights = weights;
+    m_event_data->attribute_id = get_vector<int>(m_tree, "attribute_id");
+    m_event_data->attribute_name = get_vector<std::string>(m_tree, "attribute_name");
+    m_event_data->attribute_string = get_vector<std::string>(m_tree, "attribute_string");
 
-    for (size_t k=0; k < particlesparticlespid.size(); k++)
+    m_event_data->particles.reserve(particlesparticlespid.size());
+
+    for (size_t k = 0; k < particlesparticlespid.size(); k++)
     {
         HepMC3::GenParticleData p = { particlesparticlespid[k], particlesparticlesstatus[k], particlesis_mass_set[k], particlesmass[k],
                                      HepMC3::FourVector(particlesmomentumm_v1[k], particlesmomentumm_v2[k], particlesmomentumm_v3[k], particlesmomentumm_v4[k])
                                     };
-        m_event_data->particles.push_back(p);
+        m_event_data->particles.emplace_back(p);
     }
+    m_event_data->particles.reserve(verticesverticesstatus.size());
 
     for (size_t k=0; k < verticesverticesstatus.size(); k++)
     {
         HepMC3::GenVertexData v = { verticesverticesstatus[k], HepMC3::FourVector(verticespositionm_v1[k], verticespositionm_v2[k], verticespositionm_v3[k], verticespositionm_v4[k])};
-        m_event_data->vertices.push_back(v);
+        m_event_data->vertices.emplace_back(v);
     }
-    m_event_data->weights=weights;
-    m_event_data->attribute_id=attribute_id;
-    m_event_data->attribute_name=attribute_name;
-    m_event_data->attribute_string=attribute_string;
+
     evt.read_data(*m_event_data);
 
     m_run_info_data->weight_names.clear();

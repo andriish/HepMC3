@@ -1,5 +1,6 @@
 from pyHepMC3TestUtils import update_path, python_label
 import sys
+import time
 
 sys.path = update_path()
 
@@ -30,7 +31,7 @@ def test_IO7():
     outputB = hm.WriterAscii(python_label() + "ReaderuprootTreeinputIO7.hepmc")
     if outputB.failed():
         sys.exit(4)
-
+    ticA = time.perf_counter()
     while not inputA.failed():
         evt = hm.GenEvent()
         inputA.read_event(evt)
@@ -41,6 +42,8 @@ def test_IO7():
         evt.clear()
     inputA.close()
     outputA.close()
+    tocA = time.perf_counter()    
+    ticB = time.perf_counter()
     while not inputB.failed():
         evt = hm.GenEvent()
         inputB.read_event(evt)
@@ -51,8 +54,9 @@ def test_IO7():
         evt.clear()
     inputB.close()
     outputB.close()
-
+    tocB = time.perf_counter()
     assert 0 == COMPARE_ASCII_FILES(python_label() + "ReaderRootTreeinputIO7.hepmc", python_label() + "ReaderuprootTreeinputIO7.hepmc")
+    print("ReaderRootTree: "+str(1000*(tocA-ticA)), "ReaderuprootTree: "+str(1000*(tocB-ticB)))
     return 0
 
 
