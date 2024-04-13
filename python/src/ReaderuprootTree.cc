@@ -186,4 +186,4 @@ ReaderuprootTree::~ReaderuprootTree()
     if (m_run_info_data) {delete m_run_info_data; m_run_info_data=nullptr;}
 }
 
-}
+} // End namespace HepMC3
