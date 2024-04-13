@@ -178,8 +178,7 @@ void ReaderuprootTree::close(){}
 
 bool ReaderuprootTree::failed()
 {
-    if (m_events_count > m_tree_getEntries) return true;
-    return false;
+    return m_events_count > m_tree_getEntries;
 }
 ReaderuprootTree::~ReaderuprootTree()
 {
