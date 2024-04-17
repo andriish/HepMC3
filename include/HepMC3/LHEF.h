@@ -201,7 +201,8 @@ struct XMLTag {
     pos_t curr = 0;
 
     while ( curr != end ) {
-
+       printf("%i\n",curr);
+       printf("%s\n",str.substr(curr,10).c_str());
       // Find the first tag
       pos_t begin = str.find("<", curr);
 

@@ -50,7 +50,9 @@ void ReaderLHEF::init()
     m_hepr->heprup = m_reader->heprup;
     // There may be some XML tags in the LHE file which are
     // non-standard, but we can save them as well.
+    printf("init 0\n");
     m_hepr->tags = LHEF::XMLTag::findXMLTags(m_reader->headerBlock + m_reader->initComments);
+    printf("init 1\n");
     // This code is ugly and should be replaced.
     size_t nweights = 0;
     for (auto* t1: m_hepr->tags) {
@@ -66,6 +68,7 @@ void ReaderLHEF::init()
         }
         break;
     }
+    printf("init 2\n");
     //
     // Now we want to create a GenRunInfo object for the HepMC file, and
     // we add the LHEF attribute to that.
