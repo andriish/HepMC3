@@ -219,8 +219,7 @@ endif()
 list(REMOVE_DUPLICATES HepMC_tests)
 foreach ( test ${HepMC_tests} )
   hepmc_test( ${test} )
-  #set_tests_properties(${test} PROPERTIES TIMEOUT 2000)  #Relevant for testLoops
-  set_tests_properties(${test} PROPERTIES TIMEOUT 10)  #Relevant for testLoops
+  set_tests_properties(${test} PROPERTIES TIMEOUT 2000)  #Relevant for testLoops
 endforeach ( test ${HepMC_tests} )
 
 if(HEPMC3_ENABLE_SEARCH )

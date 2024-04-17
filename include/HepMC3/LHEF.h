@@ -201,14 +201,28 @@ struct XMLTag {
     pos_t curr = 0;
 
     while ( curr != end ) {
-       printf("%i\n",curr);
-       printf("%s\n",str.substr(curr,10).c_str());
+
       // Find the first tag
       pos_t begin = str.find("<", curr);
 
       // Check for comments
       if ( begin != end && str.find("<!--", curr) == begin ) {
         pos_t endcom = str.find("-->", begin);
+        tags.push_back(new XMLTag());
+        if ( endcom == end ) {
+          tags.back()->contents = str.substr(curr);
+          if ( leftover ) *leftover += str.substr(curr);
+          return tags;
+        }
+        tags.back()->contents = str.substr(curr, endcom - curr);
+        if ( leftover ) *leftover += str.substr(curr, endcom - curr);
+        curr = endcom;
+        continue;
+      }
+
+      // Check for character data
+      if ( begin != end && str.find("<![CDATA[", curr) == begin ) {
+        pos_t endcom = str.find("]]>", begin);
         tags.push_back(new XMLTag());
         if ( endcom == end ) {
           tags.back()->contents = str.substr(curr);
