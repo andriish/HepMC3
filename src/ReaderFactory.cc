@@ -1,3 +1,8 @@
+/**
+ *  @file ReaderFactory.cc
+ *  @brief Implementation of \b deduce_reader and related functions
+ *
+ */
 #include <memory>
 #include <string>
 #include <sys/stat.h>

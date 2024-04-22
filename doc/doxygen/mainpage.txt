@@ -3,11 +3,12 @@
     @mainpage Main page
 
     @section introduction Introduction
-    The HepMC package is an object oriented, C++ event record for High Energy Physics Monte Carlo generators and simulation,
-    described in <a href="https://doi.org/10.1016/j.cpc.2020.107310">A. Buckley et al.,
+    The HepMC package is an object oriented, C++ event record for High Energy Physics Monte Carlo generators and simulation.
+    
+    It is described in <a href="https://doi.org/10.1016/j.cpc.2020.107310">A. Buckley et al.,
     The HepMC3 Event Record Library for Monte Carlo Event Generators (Comput.Phys.Commun. 260 (2021) 107310)</a>.
 
-    The original code was written by <a href="https://doi.org/10.1016/S0010-4655(00)00189-2">M. Dobbs and J.B. Hansen,
+    The predecessor library is described in <a href="https://doi.org/10.1016/S0010-4655(00)00189-2">M. Dobbs and J.B. Hansen,
     The HepMC C++ Monte Carlo event record for High Energy Physics (Comput. Phys. Commun. 134 (2001) 41).</a>
     
     Since the first implementation, the package has undergone several modifications and in particular,
@@ -16,9 +17,15 @@
 
     Further documentation that might be useful for the users of HepMC3 can be found in the following documents:
 
+     -  <a href="https://arxiv.org/abs/2310.13211"> S. Gardiner, J. Isaacson and L. Pickering, NuHepMC: A standardized event record format for neutrino event generators</a>
+
      - <a href="https://doi.org/10.21468/SciPostPhysCore.6.1.007">E. Bothmann et al., A standard convention for particle-level Monte Carlo event-variation weights(SciPost Phys.Core 6 (2023) 007)</a>
 
      - <a href="https://doi.org/10.1016/j.cpc.2006.11.010">J. Alwall et al., A standard format for Les Houches Event Files (Comput.Phys.Commun. 176 (2007) 300-304)</a>
+
+     - <a href="https://inis.iaea.org/collection/NCLCollectionStore/_Public/21/009/21009075.pdf"> T. Sjöstrand et al., A proposed standard event record,
+     in `Z physics at LEP 1', eds. G. Altarelli, R. Kleiss and C. Verzegnassi,
+     Geneva, Switzerland, September 4-5, 1989, CERN 89-08 (Geneva, 1989), Vol. 3, p. 327</a>
 
 
 
@@ -44,18 +51,7 @@
       - <a href="releases/HepMC3-3.1.2.tar.gz">HepMC-3.1.2.tar.gz</a> HepMC3-3.1.2 <b> 23.Aug.2019</b>
 
     @section documentation Documentation
-    - @subpage building
-    - @subpage differences
-    - @subpage attributes
-    - @subpage IO
-    - @subpage LHEF
-    -  Optional omponents of HepMC3: 
-
-        - @subpage python
-        - @subpage search
-
-
-
+    - @subpage full
 
     @section related Related projects
     

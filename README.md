@@ -2,7 +2,7 @@
 
 HepMC3 is a new version of the HepMC event record. It uses shared pointers for in-memory navigation and the POD concept for persistency.
 Visit the home page of the project http://hepmc.web.cern.ch/hepmc/ or the CERN GitLab repository https://gitlab.cern.ch/hepmc/HepMC3 for more information.
-A short information on the compatibility between the HePMC3 versions and deprecation of some functionality see below.
+A short information on the compatibility between the HepMC3 versions and deprecation of some functionality see below.
 You can also send bug reports, feature requests and questions about HepMC3 to hepmc-devATcern.ch.
 
 
