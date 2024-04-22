@@ -29,9 +29,10 @@
 
 
 
-    @section code  Project code and contacts in CERN GitLab
-
-     - <a href="https://gitlab.cern.ch/hepmc/HepMC3">       <b>HepMC3 GitLab repository </b></a>
+    @section code  Project documentation, code and contacts
+    
+     -  [One page documentation](full.md)
+     -  <a href="https://gitlab.cern.ch/hepmc/HepMC3">       <b>HepMC3 CERN GitLab repository </b></a>
      -  <a href="mailto:hepmc-dev@cern.ch"><b>hepmc-dev@NOSPAM.cern.ch mailing list</b></a>
      -  <a href="https://gitlab.cern.ch/hepmc/HepMC3/-/issues"><b>CERN GitLab issues tracker</b></a>
 
@@ -49,10 +50,6 @@
       - <a href="releases/HepMC3-3.2.1.tar.gz">HepMC-3.2.1.tar.gz</a> HepMC3-3.2.1 <b> 17.Mar.2020</b>
       - <a href="releases/HepMC3-3.2.0.tar.gz">HepMC-3.2.0.tar.gz</a> HepMC3-3.2.0 <b> 27.Nov.2019</b>
       - <a href="releases/HepMC3-3.1.2.tar.gz">HepMC-3.1.2.tar.gz</a> HepMC3-3.1.2 <b> 23.Aug.2019</b>
-
-    @section documentation Documentation
-    - @subpage full
-    - See [the other page](full.md) for more info.
 
     @section related Related projects
     
