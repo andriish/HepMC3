@@ -52,6 +52,7 @@
 
     @section documentation Documentation
     - @subpage full
+    - See [the other page](full.md) for more info.
 
     @section related Related projects
     

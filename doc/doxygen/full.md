@@ -1,60 +1,49 @@
-/**
-    @page full One page HepMC3 documentation
-
+# One page HepMC3 documentation
     
-    @section build Build instructions
+## Build instructions
+For the full list of the installation options including the description of the flags to build the
+HepMC3 from the sources see  at [HepMC3 page at CERN GitLab](https://gitlab.cern.ch/hepmc/HepMC3).
 
-    For the full list of the installation options including the description of the flags to build the
-    HepMC3 from the sources see  at <a href="https://gitlab.cern.ch/hepmc/HepMC3">HepMC3 page at CERN GitLab</a>.
+A quick minimalist build that requires only C++11 compiler and a
+recent version of cmake (3.15+) is described below.
 
-    A quick minimalist build that requires only C++11 compiler and a
-    recent version of cmake (3.15+) is described below.
+### Minimalist build with CMake
+To build HepMC3 is  using CMake on the supported platforms, C++11 compiler
+and a recent cmake  is needed (3.15).
+The commands executed in the unpacked source tarball of HepMC3
 
-    ###########################################################################
-    @subsection cmake Minimalist build with CMake
-    ###########################################################################
-
-    To build HepMC3 is  using CMake on the supported platforms, C++11 compiler
-    and a recent cmake  is needed (3.15).
-
-    The commands executed in the unpacked source tarball of HepMC3
-    @code{.cpp}
+```
         cmake -DCMAKE_INSTALL_PREFIX=desired_installation_path -DHEPMC3_ENABLE_ROOTIO=OFF   -DHEPMC3_ENABLE_PYTHON=OFF CMakeLists.txt
         cmake --build .
         cmake --install .
-    @endcode
-    will configure the HepMC3 sources, compile them and install the library into "desired_installation_path".
+```
+will configure the HepMC3 sources, compile them and install the library into "desired_installation_path".
 
 
-    @section differences Differences between HepMC2 and HepMC3
-    
-    The following is a list of main differences that should be taken into
-    account when transitioning from HepMC2 to HepMC3.
+## Differences between HepMC2 and HepMC3
+The following is a list of main differences that should be taken into
+account when transitioning from HepMC2 to HepMC3.
 
-    ###########################################################################
-    @subsection technical Technical changes
-    ###########################################################################
-    ###########################################################################
-    @subsubsection structure Structure change and header file organisation
-    ###########################################################################
+### Structure change and header file organisation
+Following changes in header files have been applied:
 
-    Following changes in header files have been applied:
-    @code{.cpp}
+```
         HepMC/HeavyIons.h    ->  HepMC3/GenHeavyIons.h   (now a POD struct)
         HepMC/PdfInfo.h      ->  HepMC3/GenPdfInfo.h     (now a POD struct)
         HepMC/SimpleVector.h ->  HepMC3/FourVector.h     (ThreeVector class removed)
-    @endcode
-    The structure of GenCrossSection class has been changed to handle multiple
-    values of cross-sections. The cross-section values and errors (uncertainties)
+```
+
+The structure of GenCrossSection class has been changed to handle multiple
+values of cross-sections. The cross-section values and errors (uncertainties)
     can be accessed only by public functions, the corresponding data members are
     private. By default, the number of cross-section values in every event is equal
     to the number of event weights.  Accordingly, each cross-section value can be
     accessed using the corresponding event weight name (std::string) or event
     weight index (int).
 
-    Following header files are no longer available:
+Following header files are no longer available:
 
-    @code{.cpp}
+```
         CompareGenEvent.h
         Flow.h
         GenRanges.h
@@ -80,51 +69,52 @@
         PythiaWrapper.h
         PythiaWrapper6_4.h
         PythiaWrapper6_4_WIN32.h
-    @endcode
+```
 
-    ###########################################################################
-    @subsubsection pythia6 Fortran generators
-    ###########################################################################
-    An example of interface to Pythia6 Fortran blocks  is given in the examples.
-    Please note that the provided interface Pythia6ToHepMC3.cc and Pythia6ToHepMC3.inc
-    is an interface for HepMC3 from Pythia6 and not an interface to Pythia6 from HepMC,
-    as it was in the case of the HepMC2.
+# Fortran generators
+An example of interface to Pythia6 Fortran blocks  is given in the examples.
+Please note that the provided interface Pythia6ToHepMC3.cc and Pythia6ToHepMC3.inc
+is an interface for HepMC3 from Pythia6 and not an interface to Pythia6 from HepMC,
+as it was in the case of the HepMC2.
 
-    ###########################################################################
-    @subsubsection io Changes to the I/O handling
-    ###########################################################################
-    Multiple file formats are supported. The implementation of reading  and writing
-    is separated in HepMC3. All the reading operations are performed in
-    "reader" objects inherited from HepMC::Reader and the writing operations in the "writer"
-    objects inherited from HePMC::Writer. Therefore it is to use the desired headers explicitly, as needed.
+# Changes to the I/O handling
+Multiple file formats are supported. The implementation of reading  and writing
+is separated in HepMC3. All the reading operations are performed in
+"reader" objects inherited from HepMC::Reader and the writing operations in the "writer"
+objects inherited from HePMC::Writer. Therefore it is to use the desired headers explicitly, as needed.
 
-    The IO_GenEvent.h header is not available anymore.
-    to write and/or read HepMC2 files the following includes
-    @code{.cpp}
+The IO_GenEvent.h header is not available anymore.
+to write and/or read HepMC2 files the following includes
+
+```
     WriterAsciiHepMC2.h
     ReaderAsciiHepMC2.h
-    @endcode
-    should be used instead of
-    @code{.cpp}
+```
+
+should be used instead of
+
+```
     IO_GenEvent.h
-    @endcode
-    Please note that HepMC2 format  is outdated and is not able to contain a lot
+```
+Please note that HepMC2 format  is outdated and is not able to contain a lot
     of information stored into event record by the modern Monte Carlo event generators.
     It is recommended to use HepMC3 native event record in plain text or in ROOT TTree format.
     The corresponding readers and writers are
-    @code{.cpp}
+
+```
     WriterAscii.h
     ReaderAscii.h
-    @endcode
-    and
-    @code{.cpp}
+```
+and
+
+```
     WriterRootTree.h
     ReaderRootTree.h
-    @endcode
+```
 
-    Implementation of custom Reader and Writer objects is possible as well.
+Implementation of custom Reader and Writer objects is possible as well.
 
-    Please, note the difference in the behaviour of default Readers with respect to HepMC2.
+Please, note the difference in the behaviour of default Readers with respect to HepMC2.
     when reading files with multiple headers. The ASCII files with multiple headers ( e.g. obtained with
     cat 1.hepmc 2.hepmc > 12.hepmc) will be processed by the readers only till the
     first occurrence of END_EVENT_LISTING.
@@ -133,13 +123,11 @@
     templates readers/writers to handle the zip-,lzma-,bz2-compressed files (ReaderGZ and WriterGZ) and to perform multithread
     reading (ReaderMT).
 
-    ###########################################################################
-    @subsubsection memory Memory managed by shared pointers
-    ###########################################################################
-    Particles and vertices are managed using shared pointers,
-    so they should not be created through the call to 'new'.
+# Memory managed by shared pointers
+Particles and vertices are managed using shared pointers, so they should 
+not be created through the call to 'new'.
 
-    @code{.cpp}
+```
         GenEvent event;
 
         // Create particles
@@ -158,14 +146,12 @@
         v1->add_particle_out(p3);
 
         event.add_vertex(v1);
-    @endcode
+```
 
-    ###########################################################################
-    @subsubsection iterators Iterators
-    ###########################################################################
+### Iterators
+The iterator-bases classes and access functions from HepMC2, e.g.
 
-    The iterator-bases classes and access functions from HepMC2, e.g.
-    @code{.cpp}
+```
     class particle_iterator;
     class vertex_iterator;
     class edge_iterator;
@@ -174,42 +160,41 @@
     inline int GenEvent::vertices_size() const;
     ...
 
-    @endcode
-    were removed.
-    The C++11 iterations should be used instead, e.g. instead of
-    @code{.cpp}
+```
+were removed. The C++11 iterations should be used instead, e.g. instead of
+
+```
     for (GenEvent::particle_const_iterator p = evt->particles_begin(); p != evt->particles_end(); ++p ) {
     ...
     }
-    @endcode
+```
     one should use
-    @code{.cpp}
+```
     for (const auto& p: evt->particles()) {
     ...
     }
-    @endcode
-    or alternatively
-    @code{.cpp}
+```
+or alternatively
+
+```
     for (size_t i=0;i<evt->particles().size();++i) {
     ...
     evt->particles().at(i)
     ...
     }
-    @endcode
+```
 
 
-    ###########################################################################
-    @subsubsection topological_order Topological order
-    ###########################################################################
 
-    Particles and vertices in HepMC3 are stored in topological order. This means
+### Topological order
+Particles and vertices in HepMC3 are stored in topological order. This means
     that when creating vertices, incoming particles must have id lower than
     any of the outgoing particles.
 
-    This forces the tree structure to be constructed top-to-bottom
+This forces the tree structure to be constructed top-to-bottom
     and disallows creating loops.
 
-    @code{.cpp}
+```
         GenParticlePtr p1 = make_shared<GenParticle>();
         GenParticlePtr p2 = make_shared<GenParticle>();
         GenParticlePtr p3 = make_shared<GenParticle>();
@@ -239,26 +224,23 @@
         // can be lower than index of production vertex
         v3->add_particle_in (p1);
         v3->add_particle_out(p2);
-    @endcode
+```
 
-    ###########################################################################
-    @subsection functionality Changes to user interface and to HepMC functionality
-    ###########################################################################
-    ###########################################################################
-    @subsubsection deleting Deleting particles and vertices
-    ###########################################################################
 
-    Deleting a particle using GenEvent::remove_particle() will also remove
+## Changes to user interface and to HepMC functionality
+
+
+### Deleting particles and vertices
+Deleting a particle using GenEvent::remove_particle() will also remove
     its end_vertex if this is the only particle that is on this vertex
     particles_in() list.
 
-    Deleting a vertex will delete all of its outgoing
+Deleting a vertex will delete all of its outgoing
     particles. (and subsequently, all of their decays).
 
-    ###########################################################################
-    @subsubsection barcodes Barcodes can no longer be se (Use constant ID instead)
-    ###########################################################################
-    The "barcode" integer in HepMC2 was an uncomfortable object, simultaneously
+
+### Barcodes can no longer be se (Use constant ID instead)
+The "barcode" integer in HepMC2 was an uncomfortable object, simultaneously
     declared in the code documentation to be a meaningless unique identifier for
     vertex and particle objects, and set to specific ranges by experiments'
     production systems to encode information about a particle's origins. It proved
@@ -266,34 +248,30 @@
     for particle provenance information have exceeded the capacity of an int (or
     even a long int).
 
-    Hence, barcodes are no longer available. Use attributes to provide additional
+Hence, barcodes are no longer available. Use attributes to provide additional
     information that was previously encoded using barcodes
     (see module @ref attributes).
 
-    The unique identifier of particles and vertices is now called id() to
+The unique identifier of particles and vertices is now called id() to
     separate its role from barcodes. Id is set automatically and cannot
     be changed. Id is not permanently attached to particle/vertex. When
     a particle or vertex is removed from the event, id's of other particles
     or vertices may change.
-    ###########################################################################
-    @subsubsection flow  Flow is not a class on its own (it is an attribute).
-    ###########################################################################
 
-    The Flow class has been removed, since it was unused by any widespread event
+### Flow is not a class on its own (it is an attribute).
+The Flow class has been removed, since it was unused by any widespread event
     generator, and to our knowledge the only active use-case is an abuse of it to
     provide more ints in which to encode provenance information. As this is now done
     via attributes, there is no case for Flow's continued existence. No backward
     compatibility Flow class is provided since this usage is extremely localised in
     one piece of user code and migration to the newer scheme should be simple.
 
-    ###########################################################################
-    @subsubsection units Units are no longer defined at compilation time
-    ###########################################################################
 
-    The default units are set to GEV and MM. They can be provided as
+### Units are no longer defined at compilation time
+The default units are set to GEV and MM. They can be provided as
     constructor parameters or changed later using HepMC::GenEvent::set_units
 
-    @code{.cpp}
+```
         GenEvent event(Units::GEV,Units::CM);
 
         GenParticlePtr p = make_shared<GenParticle>();
@@ -306,20 +284,16 @@
         event.set_units(Units::MEV,Units::MM); // will trigger unit conversion for all particles and vertices
 
         event.print(); // event printed in MEV/MM
-    @endcode
+```
 
-    ###########################################################################
-    @subsubsection deprecated_code Deprecated code
-    ###########################################################################
 
-    A lot of HepMC2 functions has been declared obsolete and are marked as
+### Deprecated code
+A lot of HepMC2 functions has been declared obsolete and are marked as
     deprecated. Warnings displayed at compilation time hint to what functions
     or classes should be used instead.
 
 
-    @code{.cpp}
-
-
+```
         // HepMC2 code:
         HepMC::FourVector position(pos[1],pos[2],pos[3],pos[0]);
         vertex = new HepMC::GenVertex(position, id);
@@ -328,9 +302,9 @@
         HepMC3::FourVector position(pos[1],pos[2],pos[3],pos[0]);
         HepMC3::GenVertexPtr vertex = std::make_shared<HepMC3::GenVertex>(position);
         vertex->set_status(1);
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         std::vector<HepMC::GenParticle*> beamparticles
         // ...
@@ -341,9 +315,9 @@
         // ...
         event.add_particle(beamparticles[0]);
         event.add_particle(beamparticles[1]);
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         HepMC::GenVertex * vertex;
         vertex->set_id(1);
@@ -353,9 +327,9 @@
         HepMC3::GenVertexPtr vertex = std::make_shared<HepMC3::GenVertex>();
         vertex->set_status(1);
         vertex->status();
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         HepMC::GenVertex * vertex;
         for (HepMC::GenVertex::particles_out_const_iterator pout
@@ -365,16 +339,16 @@
         // Replace with (similarly for particles_in):
         HepMC3::GenVertexPtr vertex = std::make_shared<HepMC3::GenVertex>();
         for (HepMC3::GenParticlePtr pout : vertex->particles_out() ) { }
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         vertex->weights().push_back(1.);
         // Replace with:
         TODO
-    @endcode
+```
 
-    @code{.cpp}
+```
         GenEvent evt(Units::GEV,Units::MM);
         // HepMC2 code:
         evt.set_alphaQCD(m_alphas);
@@ -396,9 +370,9 @@
                            make_shared<IntAttribute>(m_signal_process_id));
         for ( size_t i=0;i<m_random_states.size();i++)
           evt.add_attribute("random_states"+to_string(i),make_shared<IntAttribute>(m_random_states[i]));
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         HepMC::GenVertex * vertex;
         ...
@@ -406,17 +380,17 @@
         // Replace with:
         vertex->add_attribute("weight1", make_shared<DoubleAttribute>(1.0));
 
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         HepMC::GenVertex * vertex;
         vertex->check_momentum_conservation();
         // Replace with:
         TODO
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         HepMC::GenParticle::set_flow(int code_index, int code = 0)
         HepMC::GenParticle::set_polarization( Polarization(theta,phi))
@@ -424,9 +398,9 @@
         HepMC3::GenParticle::add_attribute("flow"+to_string(code_index),make_shared<IntAttribute>(code));
         HepMC3::GenParticle::add_attribute("theta",make_shared<DoubleAttribute>(theta));
         HepMC3::GenParticle::add_attribute("phi",make_shared<DoubleAttribute>(phi));
-    @endcode
+```
 
-    @code{.cpp}
+```
         // HepMC2 code:
         GenCrossSection* XS;
         double xs, xs_err;
@@ -437,17 +411,15 @@
         std::vector<double> xs, xs_err;
         ....
         XS->set_cross_section(xs,xs_err)
-    @endcode
+```
 
-    ###########################################################################
-    @subsubsection attributes Standard attributes
-    ###########################################################################
 
-    For the user convenience and backward compatibility the following standard attributes are
+### Standard attributes
+For the user convenience and backward compatibility the following standard attributes are
     supported for the
 
     GenEvent
-    @code{.cpp}
+```
         double alphaQCD
         double alphaEM
         double event_scale
@@ -455,32 +427,31 @@
         int signal_process_id
         int signal_vertex_id
         int random_states1... random_statesN
-    @endcode
+```
 
     GenVertex
-    @code{.cpp}
+```
         double weight1... weightN
-    @endcode
+```
 
     GenParticle
-    @code{.cpp}
+```
         int flow
         double theta
         double phi
-    @endcode
+```
 
     The presence of cycles in the event structure is indicated with an attribute
-    @code{.cpp}
+```
         int cycles
-    @endcode
+```
 
      Note that attributes belong to the event, therefore these can be set only for particles and vertices
      that belong to a GenEvent object.
 
-    ###########################################################################
-    @subsection hepevt Interface to HEPEVT block
-    ###########################################################################
-    The most recent versions of HepMC3 has multiple implementations of the interfaces to HEPEVT Fortran common
+
+## Interface to HEPEVT block
+The most recent versions of HepMC3 has multiple implementations of the interfaces to HEPEVT Fortran common
     block. These are
 
     include/HepMC3/HEPEVT_Wrapper.h -- the default implementation. The size of common block is defined in
@@ -500,56 +471,51 @@
     time as a parameter of template. The block can hold float/double precision momenta.
     The block can be held in the object. Multiple instances can exists.
 
-    <hr>
 
-    ###########################################################################
-    @subsection gen_run GenRunInfo class
-    ###########################################################################
-
-    A new class has been provided to store run-level information, such as
+## GenRunInfo class
+A new class has been provided to store run-level information, such as
     weight names, names and description of tools used to generate the event,
     global attributes such as LHE run information or any other run information
     provided by user. See HepMC::GenRunInfo class description for details.
 
 
 
-   @section attributes Attributes
-
-    Attributes can be attached to GenEvent, GenParticle or GenVertex
+## Attributes
+Attributes can be attached to GenEvent, GenParticle or GenVertex
     and they can have any format defined by the user
     (see @ref writing_attributes). An attribute is accessed through
     a shared pointer and identified by its name.
 
     Example of reading an attribute from the event:
 
-    @code{.cpp}
+```
         shared_ptr<GenPdfInfo> pdf_info = event.attribute<GenPdfInfo>("GenPdfInfo");
 
         if( pdf_info ) pdf_info->print();
-    @endcode
+```
 
-    Example of adding an attribute to the event:
+Example of adding an attribute to the event:
 
-    @code{.cpp}
+```
         shared_ptr<GenPdfInfo> pdf_info = make_shared<GenPdfInfo>();
         evt.add_attribute("GenPdfInfo",pdf_info);
 
         // Setting values can be done before or after adding it to the event
         pdf_info->set(1,2,3.4,5.6,7.8,9.0,1.2,3,4);
-    @endcode
+```
 
-    Adding and getting attributes of a vertex or particle uses the same
+Adding and getting attributes of a vertex or particle uses the same
     principles.
 
-    @note An event (or particle or vertex) can have more than one attribute
+Note: An event (or particle or vertex) can have more than one attribute
           of the same type distinguished by different names. This might be
           useful in some applications, however, we strongly encourage
           to use just one instance named by its class name, as in these
           examples.
 
-    @subsection writing_attributes Writing custom attributes
+### Writing custom attributes
 
-    Any class that derives from HepMC::Attribute class can be used as
+Any class that derives from HepMC::Attribute class can be used as
     an attribute that can be attached to the event, vertex or particle.
 
     User has to provide two abstract methods from HepMC::Attribute used
@@ -557,8 +523,8 @@
 
     Example:
 
-    @code{.cpp}
-        #include "HepMC3/Attribute.h"
+```
+    #include "HepMC3/Attribute.h"
 
         struct MyAttribute : public HepMC::Attribute {
 
@@ -585,33 +551,32 @@
                 return true;
             }
         };
-    @endcode
+```
 
     For other examples see attributes provided in the HepMC3 package.
 
 
 
-    @section IO IO-related classes and interfaces
-     
-    The main HepMC3 library contains the classes for the I/O of multiple event formats.
+## IO-related classes and interfaces
+The main HepMC3 library contains the classes for the I/O of multiple event formats.
 
-    Optionally the I/O capabilities can be implemented as plugin Reader/Writer classes compiled
+Optionally the I/O capabilities can be implemented as plugin Reader/Writer classes compiled
     separately into dynamically loadable libraries and used via  RearedPlugin and WriterPlugin classes.
     Please note that all required libraries/dlls should be loadable.
     See examples for details.
 
-    In some cases the fine tuning of the Reader/Writer classes behavior can be done using a
+In some cases the fine tuning of the Reader/Writer classes behavior can be done using a
     map of string "options"
 
-    @code{.cpp}
+```
            void Reader::set_options(const std::map<std::string, std::string>& options)
 
            std::map<std::string, std::string> Reader::get_options() const
-    @endcode
+```
 
-    The options for ReaderAsciiHepMC2
-      "disable_pad_cross_sections"
-      "pad_cross_section_value"/"pad_cross_section_error"
+The options for ReaderAsciiHepMC2
+
+   - "disable_pad_cross_sections", "pad_cross_section_value"/"pad_cross_section_error"
      If "disable_pad_cross_sections" is present the reader will keep a single cross-section per event, just
      in the HepMC2 style. This is pre-3.2.6 default behaviour. 
      Otherwise, the cross-section vector will be expanded to the size  of event weights. This is 3.2.6+ default behaviour.
@@ -619,45 +584,41 @@
      Otherwise, the cross-sections and errors will be filled with zeros.
      
 
-      "particle_flows_are_separated"
-      "event_random_states_are_separated"
-      "vertex_weights_are_separated"
-      "particle_flows_are_separated"
+   - "particle_flows_are_separated" ,"event_random_states_are_separated"
+     "vertex_weights_are_separated"
+     "particle_flows_are_separated"
      Regulate if the corresponding information from IO_GenEvent would be stored into multiple attributes as
      individual numbers, i.e. "separated" or as a single std::vector. The former behavior is used if
      the corresponding option name is present in the list of options, regardless of the option value.
      The later behavior is the default one.
 
-    The option for WriterAscii and WriterAsciiHepMC2
+The option for WriterAscii and WriterAsciiHepMC2
 
-     "float_printf_specifier"
-
+   - "float_printf_specifier"
      specifies the float printf specifier used for the output format of the floats.
      Two first characters from the  option value are used.
      The default behavior is equivalent to setting this option to "e" and results in the output formatted as
      " %.*e". To save the disk space one can use the "g" option, e.g.
-    @code{.cpp}
+```
     WriterAscii       outputA("someoutput.hepmc");
     auto optionsA =  outputA.get_options();
     optionsA["float_printf_specifier"] = "g";
     outputA.set_options(optionsA);
-    @endcode
+```
     This option will be the default on in the future.
 
 
 
-    ###########################################################################
-    @subsubsection links_mem Links
-    ###########################################################################
 
-    The relations between vertices and particles in GenEventData are encoded via
+### Links
+The relations between vertices and particles in GenEventData are encoded via
     members links1 and links2, wich are std::vector<int> containing object ids.
     Direct manipulations with links1 and links2 can be useful. For instance,
     when the events are saved in ROOT format, one can extract the information
     from links1 and links2 without reading whole event.
     In case links1[i] is particle, links2[i] is end vertex. In case links1[i] is
     vertex, links2[i] is outgoing particle. An example of usage is given below.
-    @code{.cpp}
+```
         // Andrii Verbytskyi, 2017, MPI fuer Physik
         // Here is a code to look for a scattered DIS electron  in HepMC3 event record using links.
         // The implementation is extended to provide example of links1, links2 usage.
@@ -701,34 +662,28 @@
         }
         ...
         // Here we have cuts on electron
-    @endcode
+```
 
-    </h4>
-    @section searchx Search-related classes and interfaces
-
-
-    HepMC3 comes with an optional Search library for finding particles
+## Search-related classes and interfaces
+HepMC3 comes with an optional Search library for finding particles
     related to other particles or vertices.
     It provides a set of functions to perform simple search operations e.g.
     
-    @code{.cpp}
+```
     std::vector<HepMC3::GenParticlePtr>      children_particles(const HepMC3::GenVertexPtr& O);   ///< Return children particles
     std::vector<HepMC3::ConstGenVertexPtr>   grandchildren_vertices(const HepMC3::ConstGenVertexPtr& O); ///< Return grandchildren vertices
     std::vector<HepMC3::GenParticlePtr>      parent_particles(const HepMC3::GenVertexPtr& O);  ///< Return parent particles
     std::vector<HepMC3::GenVertexPtr>        ancestor_vertices(const HepMC3::GenVertexPtr& obj);      ///< Return ancestor vertices
     
-    @endcode
-    
-    and interfaces for a more advanced usage. For the latter two main interfaces are defined:
+```
+and interfaces for a more advanced usage. For the latter two main interfaces are defined:
     Relatives, for finding a particular type of relative, and Feature, for
     generating filters based on Features extracted from particles.
     In addition, operator on Filters are also defined.
 
-    ###########################################################################
-    @subsection Relatives Interface
-    ###########################################################################
 
-    The Relatives interface is defined within search/include/HepMC3/Relatives.h.
+## Relatives Interface
+The Relatives interface is defined within search/include/HepMC3/Relatives.h.
     Classes that obey this interface must provide a set of operator functions
     that take either a GenParticlePtr, ConstGenParticlePtr, GenVertexPtr or
     ConstGenVertexPtr and return a vector of either GenParticlePtr or
@@ -738,43 +693,43 @@
     This ensures consistency with the rule that consted objects may only return
     pointers to const objects.
 
-    The Relatives base class is abstract, and has a concrete implementation in
+The Relatives base class is abstract, and has a concrete implementation in
     the templated RelativesInterface class.  The RelativesInterface uses type
     erasure so that any class that obeys the defined Relatives interface
     (i.e that has the necessary four operator functions) can be wrapped in the
     RelativesInterface without needing to inherit from Relatives directly.
 
-    For example, if class foo implements the four necessary functions then the
+For example, if class foo implements the four necessary functions then the
     following will work
 
-    @code{.cpp}
+```
     using FooRelatives = RelativesInterface<Foo>;
     Relatives * relos = new FooRelatives();
     GenParticlePtr someInput;
     vector<GenParticlePtr> foos = (*relos)(someInput);
-    @endcode
+```
 
-    The purpose of Relatives is to be able to wrap any viable class in a common
+The purpose of Relatives is to be able to wrap any viable class in a common
     interface for finding relatives from a particle or vertex.  Examples are
     provided in the form of the _parents and _children classes.  These do not
     inherit from Raltives, but they do implement the necessary functions.
     The _parents and _children class are not intended to be used directly, but
     they are aliased by wrapping in the RelativesInterface:
 
-    @code{.cpp}
+```
     using Parents  = RelativesInterface<_parents>;
     using Children = RelativesInterface<_children>;
-    @endcode
+```
 
     Note as well that the _parents and _children classes use some utility aliases
     to help declare the appropriately consted return type.  For example
 
-    @code{.cpp}
+```
     template<typename GenObject_type>
     GenParticles_type<GenObject_type> operator()(GenObject_type);
-    @endcode
+```
 
-    has a return type GenParticles_type that is a vector of GenParticlePtr that
+has a return type GenParticles_type that is a vector of GenParticlePtr that
     is consted if GenObject_type is const, but is not consted if GenObject_type
     is not consted.  Note as well the use of enable_if so that a single
     implementation can be used for both the const and non-const version of the
@@ -782,11 +737,9 @@
     have been implemented directly without such templating, but for more
     complicated relatives it avoids duplicated code.
 
-    ###########################################################################
-    @subsection Recursive Relatives
-    ###########################################################################
 
-    In addition to the RelativesInterface wrapper, Relatives.h also contains a
+## Recursive Relatives
+In addition to the RelativesInterface wrapper, Relatives.h also contains a
     Recursive class that can wrap the underlying relation in recursion.  For
     example, recursion applied to the parents relationship provides all of the
     ancestors, i.e. parents repeatedly applied to the output of parents.  The
@@ -795,19 +748,17 @@
     the appropriate vertex to follow from a given GenParticle.  As long as a
     class has such a method, it is possible to make a recursive version of it
 
-    @code{.cpp}
+```
     using Ancestors = RelativesInterface<Recursive<_parents> >;
-    @endcode
+```
 
-    ###########################################################################
-    @subsection Existing Relatives
-    ###########################################################################
 
-    The Relatives class contains static implementations of the Parents,
+## Existing Relatives
+The Relatives class contains static implementations of the Parents,
     Children, Ancestors and Descendants relatives, which can be accessed and
     used as follows
 
-    @code{.cpp}
+```
 
     vector<const Relatives*> relos{&Relatives::PARENTS, &Relatives::ANCESTORS, &Relatives::CHILDREN, &Relatives::DESCENDANTS};
     ConstGenVertexPtr startPosition;
@@ -818,47 +769,43 @@
       }
     }
 
-    @endcode
+```
 
-    ###########################################################################
-    @subsection Filters
-    ###########################################################################
 
-    A Filter is any object that has an operator that takes as input a
+## Filters
+A Filter is any object that has an operator that takes as input a
     ConstGenParticlePtr and returns a bool that reflects whether the input
     particle passes the filter requirements or not.  Filter is defined in
     Filter.h as
 
-    @code{.cpp}
+```
     using Filter = std::function<bool(ConstGenParticlePtr)>;
-    @endcode
+```
 
     Filter.h also contains some logical operators that allow filters to be
     combined to create new filters, for example
 
-    @code{.cpp}
+```
     Filter filter1, filter2, filter3;
     Filter filter4 = filter1 && filter2;
     Filter filter5 = filter3 || filter4;
     Filter filter6 = !filter1;
-    @endcode
+```
 
-    Filter.h additionally contains a dummy filter that always accepts every
+Filter.h additionally contains a dummy filter that always accepts every
     possible particle.  This may be needed in functions that require a default
     filter.  The dummy filter is accessed as
 
-    @code{.cpp}
+```
     Filter dummy = ACCEPT_ALL;
-    @endcode
+```
 
-    It is possible to define a Filter by hand.  However, there are some utility
+It is possible to define a Filter by hand.  However, there are some utility
     classes to define Filters based on features that can be obtained from GenParticles
 
-    ###########################################################################
-    @subsection Feature Interface
-    ###########################################################################
 
-    The Feature interface is defined in Feature.h.  The interface is templated
+## Feature Interface
+The Feature interface is defined in Feature.h.  The interface is templated
     on a Feature_type that is any type that can be extracted from a GenParticle.
     This is very flexible, and the only criteria is that the Feature must have
     the set of comparison operators.  While the templated Feature is general
@@ -870,22 +817,22 @@
     To create a Feature, one need only wrap a lambda expression in the Feature
     interface.  For example, to create a Feature based on particle status or pT:
 
-    @code{.cpp}
+```
     Feature<int> status([](ConstGenParticlePtr p)->int{return p->status();});
     Feature<double> pT([](ConstGenParticlePtr p)->double{return p->momentum().pt()});
-    @endcode
+```
 
-    The more general form for any type of Feature would be
+The more general form for any type of Feature would be
 
-    @code{.cpp}
+```
     Feature<type> foo([](ConstGenParticlePtr p)->type{return p->foo();});
-    @endcode
+```
 
-    Having created a Feature, it can be used to create Filters for particle
+Having created a Feature, it can be used to create Filters for particle
     selection.  Applying operators to Features creates the Filter, which is
     a functor that evaluates on a particle.  For example
 
-    @code{.cpp}
+```
     ConstGenParticlePtr p;
     Filter is_stable = (status == 1);
     bool stable = is_stable(p);
@@ -896,23 +843,21 @@
     // The Features can be combined
     bool combined = ((pT > 100.) && (status == 1))(p);
 
-    @endcode
+```
 
     It is also possible to make a new Feature from the absolute value of
     a previous Feature, e.g.
 
-    @code{.cpp}
+```
     Feature<double> rapidity([](ConstGenParticlePtr p)->double{return p->momentum().rapidity()});
     bool passes_rapCut = (abs(rapidity) < 2.5)(p);
-    @endcode
+```
 
-    Some standard features are contained within the non-templated Selector class
+Some standard features are contained within the non-templated Selector class
 
-    ###########################################################################
-    @section Standard Selectors and SelectorWrapper
-    ###########################################################################
 
-    Selector is a simplified interface that contains some predefined Features
+## Selectors and SelectorWrapper
+Selector is a simplified interface that contains some predefined Features
     that can be used to search.  Selector defines comparisons operators for
     both integral and floating point types, as well as the following selection
     Features:
@@ -930,53 +875,49 @@
 
     So, for example, a filter can be defined as follows
 
-    @code{.cpp}
+```
     Filter f = (Selector::STATUS == 1 && Selector::PT > 60.) || (Selector::MASS > 70. && Selector::MASS < 110.);
     GenParticlePtr p;
     bool passesCuts = f(p);
-    @endcode
+```
 
-    As with Feature, it is possible to take tbe absolute value of a Selector.
+As with Feature, it is possible to take tbe absolute value of a Selector.
     However, note that while Featue is templated, Selector is abstract and so
     it is not possible for abs() to return a Selector object directly, only a
     pointer
 
-    @code{.cpp}
+```
     Filter f = *abs(Selector::RAPIDITY) < 2.5;
     bool passRapidity = f(p);
-    @endcode
+```
 
-    Note that the ATTRIBUTE selection is different from the others and does not
+Note that the ATTRIBUTE selection is different from the others and does not
     have the full set of comparison operators.  This is a current limitation of
     the Attributes, which are not guaranteed to offer all comparisons.
     ATTRIBUTE takes a string, which is the name of the attribute, and permits
     the equality operator and the method exists, which checks if the attribute is
     even present
 
-    @code{.cpp}
+```
     string name = "MyAttribute";
     Filter f = Selector::ATTRIBUTE(name).exists() && Selector::ATTRIBUTE(name) == "My Value";
     bool passesAttribute = f(p);
-    @endcode
+```
 
-    ###########################################################################
-    @subsection Applying Filters
-    ###########################################################################
 
-    The function applyFilter is used to apply the Filter to a set of particles.
+## Applying Filters
+The function applyFilter is used to apply the Filter to a set of particles.
     See for example examples/BasicExamples/basic_tree.cc
 
-    @code{.cpp}
+```
     for(ConstGenParticlePtr p: applyFilter( *abs(Selector::PDG_ID) <= 6, someParticles)){
       Print::line(p);
     }
-    @endcode  
+```  
 
     
-   @section python Python Bindings
-
-
-  HepMC3 includes Python bindings codes suitable for compilation of python
+## Python Bindings
+HepMC3 includes Python bindings codes suitable for compilation of python
   modules for Python3.
 
   The binding codes were  generated automatically using the binder utility
@@ -991,14 +932,12 @@
   - Wenzel Jakob and Jason Rhinelander and Dean Moldovan,
     "pybind11 -- Seamless operability between C++11 and Python", 2017,  https://github.com/pybind/pybind11
 
-  @subsection installationsources Installation from repositories
+### Installation from repositories
+The Python bindings together with the HepMC3 itself can be installed from PyPy and multiple other repositories.
+  Please see [HepMC3 page](https://gitlab.cern.ch/hepmc/HepMC3) at CERN GitLab for details.
 
-  The Python bindings together with the HepMC3 itself can be installed from PyPy and multiple other repositories.
-  Please see <a href="https://gitlab.cern.ch/hepmc/HepMC3">HepMC3 page at CERN GitLab</a> for details.
-
-  @subsection installationnotes Installation from sources
-
-  To turn on the compilation of bindings use -DHEPMC3_ENABLE_PYTHON = ON.
+### Installation from sources
+To turn on the compilation of bindings use -DHEPMC3_ENABLE_PYTHON = ON.
   By default the python modules will be generated for python3 if these are found in the system.
   In case the test suite is enabled, tests of python bindings with all the enabled versions will run as well.
 
@@ -1006,30 +945,26 @@
   To do this, copy the python directory outside of source tree,  uncomment #project(pyHepMC3 CXX) in  python/CMakeLists.txt and
   run cmake inside python directory with -DUSE_INSTALLED_HEPMC3=ON  option.
 
-  @subsection usernotes Selected aspects of Python  bindings
-
-   In general, the syntax used in the python bindings is exactly the same as in the C++ code.
+### Selected aspects of Python  bindings
+In general, the syntax used in the python bindings is exactly the same as in the C++ code.
    However, some C++ classes and routines are don't have their Python equivalents, namsly:
    
     - The constructors of Readers/Writers with ifstreams/ostreams were not binded.
     - The multithread reader ReaderMT was not binded. 
     - The explicit readers and writers with compression support  ReaderGZ/WriterGZ were not binded. 
       It is recommended to use build-in python compression modules in combination with the  desired readers/writers.
-    - The deduce_reader was binded and uses the internal python compression libraries, i.e. it has no dependence on zlib, zstd etc.
+    - The `deduce_reader` was binded and uses the internal python compression libraries, i.e. it has no dependence on zlib, zstd etc.
       The only requirement is that the corresponding module is available.
-    - A limited support for the ROOTTree format I/O with the uproot ( see https://github.com/scikit-hep/uproot5) is offered, namely, with uproot module installed
+    - A limited support for the ROOTTree format I/O with the uproot ( see [uproot](https://github.com/scikit-hep/uproot5)) is offered, namely, with uproot module installed
        HepMC3 ROOTTree files can be read  with ReaderuprootTree.
 
 
-  @section LHEF LHEF - Handling Les Houches Event Files
-  
-  
-  This module contains helper classes and Reader and Writer classes
+#LHEF Handling Les Houches Event Files
+This module contains helper classes and Reader and Writer classes
   for handling Les Houches event files - LHEF.
   
-  @subsection lhef_intro Introduction
-  
-  The Les Houches accord on an event file format (LHEF) to be used
+## Introduction
+The Les Houches accord on an event file format (LHEF) to be used
   for passing events from a matrix element generator program (MEG)
   to an event generator program (EG) implementing parton showers,
   underlying event models, and hadronisation models etc., was not
@@ -1047,22 +982,21 @@
   documented. From now on these pages will serve as the defining
   information about the LHEF format.
   
-  @subsection lhef_background Background
-  
-  The original Les Houches accord for communicating between MEGs and EGs
+## Background
+The original Les Houches accord for communicating between MEGs and EGs
   was agreed upon in
-  2001 <a href="http://archive.org/abs/hep-ph/0109068">[arXiv:hep-ph/0109068]</a>
+  2001 [arXiv:hep-ph/0109068](http://archive.org/abs/hep-ph/0109068)
   and consisted of two simple FORTRAN common blocks. In fact this
   structure survived in the LHEF format, which was introduced in
-  2006 <a href="http://archive.org/abs/hep-ph/0609017">
-  [arXiv:hep-ph/0609017]</a>, and is still there after the updated
-  versions 2 in 2009 <a href="http://archive.org/abs/1003.1643">
-  [arXiv:1003.1643]</a>, and 3 in
-  2013 <a href="http://archive.org/abs/1405.1067">
-  [arXiv:1405.1067]</a>, and in the current proposal developed at the
-  Les Houches workshop on TeV Colliders 2015 <a href=""></a>.
+  2006 
+  [arXiv:hep-ph/0609017](http://archive.org/abs/hep-ph/0609017), and is still there after the updated
+  versions 2 in 2009 
+  [arXiv:1003.1643](http://archive.org/abs/1003.1643), and 3 in
+  2013 
+  [arXiv:1405.1067](http://archive.org/abs/1405.1067), and in the current proposal developed at the
+  Les Houches workshop on TeV Colliders 2015.
   
-  As the methods for combining MEGs and EGs has advanced since the first
+As the methods for combining MEGs and EGs has advanced since the first
   accord, from the tree-level merging methods and NLO matching at the
   turn of the millennium, to the multi-jet (N)NLO matching and merging
   methods being perfected to day, the LHEF format has developed and a lot
@@ -1071,29 +1005,28 @@
   also those that were added a bit prematurely and later became
   deprecated.
   
-  @subsection lhef_basics The basic structure
-  
-  The LHEF format is based on XML, but has some oddities that goes
+## The basic structure
+The LHEF format is based on XML, but has some oddities that goes
   beyond pure XML. As the name indicates, XML is extensible, and anyone
   writing a LHEF file can add whatever information she or he wants,
   however the following basic structure must be observed.
   
-  @code
+```
   <LesHouchesEvents version="3.0">
     <!--
-        # optional information in completely free format,
-        # except for the reserved end tag (see next line)
+    # optional information in completely free format,
+    # except for the reserved end tag (see next line)
       -->
     <header>
       <!-- individually designed XML tags, in fancy XML style -->
     </header>
     <init>
       compulsory initialization information
-      # optional initialization information
+  # optional initialization information
     </init>
     <event>
       compulsory event information
-      # optional event information
+  # optional event information
     </event>
     <event>
       compulsory event information
@@ -1101,7 +1034,7 @@
     </event>
     <!-- and as many events that you want, but ending with -->
   </LesHouchesEvents>
-  @endcode
+```
   
   This looks like fairly normal XML tags, and indeed they are. The only
   addition to the structure is that the <tt>init</tt> and
@@ -1111,13 +1044,13 @@
   exactly the structure of the fortran common block in original Les
   Houches Accord. This means that the first line in the
   <tt>init</tt> block must start with a line containing the numbers
-  @code
+```
   IDBMUP(1) IDBMUP(2) EBMUP(1) EBMUP(2) PDFGUP(1) PDFGUP(2) PDFSUP(1) PDFSUP(2) IDWTUP NPRUP
-  @endcode
+```
   and the following <tt>NPRUP</tt> lines should be numbers on the form
-  @code
+```
   XSECUP(IPR) XERRUP(IPR) XMAXUP(IPR) LPRUP(IPR)
-  @endcode
+```
   where the different  variable names are defined as follows:
   <ul>
     <li>
@@ -1163,14 +1096,14 @@
   
   Similarly, every <tt>event</tt> block must start with a line
   containing then numbers
-  @code
+```
   NUP IDPRUP XWGTUP SCALUP AQEDUP AQCDUP
-  @endcode
+```
   and the following <tt>NUP</tt> lines should be numbers describing
   each particle on the form
-  @code
+```
   IDUP(I) ISTUP(I) MOTHUP(1,I) MOTHUP(2,I) ICOLUP(1,I) ICOLUP(2,I) PUP(1,I) PUP(2,I) PUP(3,I) PUP(4,I) PUP(5,I) VTIMUP(I) SPINUP(I)
-  @endcode
+```
   where the different  variable names are defined as follows:
   <ul>
     <li>
@@ -1224,7 +1157,7 @@
   LHEF::HEPEUP with public members mimicking the Fortran common block
   variables.
   
-  @subsection LHEF-taglist Additional information
+## LHEF-taglist Additional information
   
   Over the years several additional XML-tags has been formalised to
   specify information on top of what is given in the original Les
@@ -1234,15 +1167,15 @@
   LHEF::HEPEUP class respectively.
   
   Note that a tag may contain attributes in the following ways:
-  @code
+```
   <tag attribute1="value" attribute2="value">things marked by the tag</tag>
   <tag attribute1="value" attribute2="value" attribute3="value" />
-  @endcode
+```
   where the second case is a tag with only attributes an no contents.
   In the following an attribute may be described as required (R) or
   optional with a default value (D).
   
-  @subsubsection LHEF-init Standardised tags in the init block
+###  LHEF-init Standardised tags in the init block
   
   The <tt>&lt;init&gt;</tt> block contains information about the full run
   (similar to the information contained in HepMC3::GenRunInfo). The
@@ -1497,7 +1430,7 @@
     </li>
   </ul>
   
-  @subsubsection LHEF-events Standardised tags in the events block.
+###  LHEF-events Standardised tags in the events block.
   
   After the <tt>init</tt> block any number of events can be given. In
   addition events can be given in separate files declared
@@ -1582,10 +1515,5 @@
       The contents of the tag gives the scale in GeV.
     </li>
   </ul>
-  
-  
-  
   <hr>
 
-
-*/
