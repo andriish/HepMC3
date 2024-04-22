@@ -1,5 +1,6 @@
 /**
     @page building Building instructions
+
     For the full list of the installation options including the description of the flags to build the
     HepMC3 from the sources see  at <a href="https://gitlab.cern.ch/hepmc/HepMC3">HepMC3 page at CERN GitLab</a>.
 

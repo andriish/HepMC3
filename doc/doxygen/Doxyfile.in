@@ -670,14 +670,13 @@ WARN_LOGFILE           =
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/../  \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/mainpage.txt \
-                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/features.txt \
+                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/attributes.txt \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/differences.txt \
-                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/modules.txt \
+                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/IO.txt \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/building.txt \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/LHEF.txt \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/search.txt \
-                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/ReaderFactory.txt \
-                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/Python.txt
+                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/python.txt
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

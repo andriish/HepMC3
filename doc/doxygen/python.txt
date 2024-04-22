@@ -1,0 +1,51 @@
+/**
+  @page python Python Bindings
+
+  HepMC3 includes Python bindings codes suitable for compilation of python
+  modules for Python3.
+
+  The binding codes were  generated automatically using the binder utility
+  version 1.4.0 created by Sergey Lyskov (Johns Hopkins University) et al..
+  See
+  - https://cppbinder.readthedocs.io/en/latest/ for details.
+
+  The binding codes use the pybind11 library version 2.6.0 by Wenzel Jakob,
+  EPFL's School of Computer and Communication Sciences.
+  See
+  - https://pybind11.readthedocs.io/en/master/
+  - Wenzel Jakob and Jason Rhinelander and Dean Moldovan,
+    "pybind11 -- Seamless operability between C++11 and Python", 2017,  https://github.com/pybind/pybind11
+
+  @subsection installationsources Installation from repositories
+
+  The Python bindings together with the HepMC3 itself can be installed from PyPy and multiple other repositories.
+  Please see <a href="https://gitlab.cern.ch/hepmc/HepMC3">HepMC3 page at CERN GitLab</a> for details.
+
+  @subsection installationnotes Installation from sources
+
+  To turn on the compilation of bindings use -DHEPMC3_ENABLE_PYTHON = ON.
+  By default the python modules will be generated for python3 if these are found in the system.
+  In case the test suite is enabled, tests of python bindings with all the enabled versions will run as well.
+
+  Despite not recommended, it should be possible to compile the python bindings using the installed version of HepMC3.
+  To do this, copy the python directory outside of source tree,  uncomment #project(pyHepMC3 CXX) in  python/CMakeLists.txt and
+  run cmake inside python directory with -DUSE_INSTALLED_HEPMC3=ON  option.
+
+  @section usernotes Selected aspects of Python  bindings
+
+   In general, the syntax used in the python bindings is exactly the same as in the C++ code.
+   However, some C++ classes and routines are don't have their Python equivalents, namsly:
+   
+    - The constructors of Readers/Writers with ifstreams/ostreams were not binded.
+    - The multithread reader ReaderMT was not binded. 
+    - The explicit readers and writers with compression support  ReaderGZ/WriterGZ were not binded. 
+      It is recommended to use build-in python compression modules in combination with the  desired readers/writers.
+    - The deduce_reader was binded and uses the internal python compression libraries, i.e. it has no dependence on zlib, zstd etc.
+      The only requirement is that the corresponding module is available.
+    - A limited support for the ROOTTree format I/O with the uproot ( see https://github.com/scikit-hep/uproot5) is offered, namely, with uproot module installed
+       HepMC3 ROOTTree files can be read  with ReaderuprootTree.
+      
+
+  Last update 22 Apr 2024
+*/
+

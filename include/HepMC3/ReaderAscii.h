@@ -115,7 +115,6 @@ private:
     /// @brief Parse particle
     ///
     /// Helper routine for parsing single particle information
-    /// @param[out] evt Event that will contain parsed particle
     /// @param[in] buf Line of text that needs to be parsed
     bool parse_particle_information(const char *buf);
 
@@ -162,8 +161,8 @@ private:
     std::vector<int> m_io_implicit_ids;
     /** @brief Temp storage to keep the order of explicit vertices.*/
     std::set<int> m_io_explicit_ids;
-    
-    GenEventData m_data;
+
+    GenEventData m_data; //!< To hold event information.
 };
 
 

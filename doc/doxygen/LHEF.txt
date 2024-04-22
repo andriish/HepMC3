@@ -1,5 +1,6 @@
 /**
-@defgroup LHEF LHEF - Handling Les Houches Event Files
+@page LHEF LHEF - Handling Les Houches Event Files
+
 
 This module contains helper classes and Reader and Writer classes
 for handling Les Houches event files - LHEF.

@@ -1,71 +1,58 @@
+
+
 /**
-    @page features New features
+    @defgroup IO IO-related classes and interfaces
 
-    The following is a list of the new features available in HepMC3
+    The main HepMC3 library contains the classes for the I/O of multiple event formats.
 
-    ###########################################################################
-    @section modules New modules
-    ###########################################################################
+    Optionally the I/O capabilities can be implemented as plugin Reader/Writer classes compiled
+    separately into dynamically loadable libraries and used via  RearedPlugin and WriterPlugin classes.
+    Please note that all required libraries/dlls should be loadable.
+    See examples for details.
 
-    See <a href="modules.html">modules</a> section for descriptions of new
-    modules, such as ROOT I/O, Search Engine and Attributes.
-
-    ###########################################################################
-    @section gen_run GenRunInfo class
-    ###########################################################################
-
-    A new class has been provided to store run-level information, such as
-    weight names, names and description of tools used to generate the event,
-    global attributes such as LHE run information or any other run information
-    provided by user. See HepMC::GenRunInfo class description for details.
-
-    @note This class can be serialized and parsed using ASCII I/O or ROOT I/O.
-
-    ###########################################################################
-    @section interfaces LHEF interface and new header-only HEPEVT wrapper
-    ###########################################################################
-
-    See <a href="examples.html">examples</a> section for examples of their use.
-
-    ###########################################################################
-    @section small Small enchantments
-    ###########################################################################
-    ###########################################################################
-    @subsection generated_mass Check if generated mass is set
-    ###########################################################################
-
-    To determine if field HepMC3::GenParticle::generated_mass() is set use:
+    In some cases the fine tuning of the Reader/Writer classes behavior can be done using a
+    map of string "options"
 
     @code{.cpp}
-        bool is_set = particle.is_generated_mass_set();
+           void Reader::set_options(const std::map<std::string, std::string>& options)
 
-        if(!is_set) particle.set_generated_mass(m);
-
-        cout<<particle.generated_mass()<<endl;
+           std::map<std::string, std::string> Reader::get_options() const
     @endcode
 
-    Note that if HepMC3::GenParticle::generated_mass() is not set, call to this function
-    will return mass calculated from 4-momentum using HepMC3::FourVector.m()
+    The options for ReaderAsciiHepMC2
+      "disable_pad_cross_sections"
+      "pad_cross_section_value"/"pad_cross_section_error"
+     If "disable_pad_cross_sections" is present the reader will keep a single cross-section per event, just
+     in the HepMC2 style. This is pre-3.2.6 default behaviour. 
+     Otherwise, the cross-section vector will be expanded to the size  of event weights. This is 3.2.6+ default behaviour.
+     If present, "pad_cross_section_value"/"pad_cross_section_error" values will be inserted into the cross-section vector.
+     Otherwise, the cross-sections and errors will be filled with zeros.
+     
 
-    ###########################################################################
-    @subsection newiterators Iterators
-    ###########################################################################
+      "particle_flows_are_separated"
+      "event_random_states_are_separated"
+      "vertex_weights_are_separated"
+      "particle_flows_are_separated"
+     Regulate if the corresponding information from IO_GenEvent would be stored into multiple attributes as
+     individual numbers, i.e. "separated" or as a single std::vector. The former behavior is used if
+     the corresponding option name is present in the list of options, regardless of the option value.
+     The later behavior is the default one.
 
-    GenEvent and GenVertex containers are now of std::vector type.
-    This greatly simplifies iteration over them
+    The option for WriterAscii and WriterAsciiHepMC2
 
-    e.g. (c++11):
+     "float_printf_specifier"
 
+     specifies the float printf specifier used for the output format of the floats.
+     Two first characters from the  option value are used.
+     The default behavior is equivalent to setting this option to "e" and results in the output formatted as
+     " %.*e". To save the disk space one can use the "g" option, e.g.
     @code{.cpp}
-        for( ConstGenParticlePtr p : event.particles() ) { {
-            ...
-        }
-
-        for( ConstGenParticlePtr p : vertex.particles_in() ) { {
-            ...
-        }
+    WriterAscii       outputA("someoutput.hepmc");
+    auto optionsA =  outputA.get_options();
+    optionsA["float_printf_specifier"] = "g";
+    outputA.set_options(optionsA);
     @endcode
-
+    This option will be the default on in the future.
 
 
 
@@ -128,5 +115,7 @@
 
     <hr>
 
-    Last update 27 Oct 2020
+
+
+
 */

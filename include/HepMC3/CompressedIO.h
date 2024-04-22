@@ -25,15 +25,17 @@
 
 namespace HepMC3
 {
-using ofstream = bxz::ofstream;
-using ostream = bxz::ostream;
-using ifstream = bxz::ifstream;
-using istream = bxz::istream;
+using ofstream = bxz::ofstream; //!< ofstream
+using ostream = bxz::ostream; //!< ostream
+using ifstream = bxz::ifstream;  //!< ifstream
+using istream = bxz::istream;  //!< istream
 
-using Compression = bxz::Compression;
+using Compression = bxz::Compression; //!< Compression types from bxzstr
+/** @brief Function to detect compression type */
 inline Compression detect_compression_type(const char* in_buff_start, const char* in_buff_end) {
     return bxz::detect_type(in_buff_start,in_buff_end);
 }
+/** @brief Number of supported compression types */
 constexpr int num_supported_compression_types = 0
 #if HEPMC3_Z_SUPPORT
         +1
@@ -48,6 +50,7 @@ constexpr int num_supported_compression_types = 0
         +1
 #endif
         ;
+/** @brief Array of supported compression types */
 constexpr std::array<Compression,num_supported_compression_types> supported_compression_types{
 #if HEPMC3_Z_SUPPORT
     Compression::z,
@@ -62,6 +65,7 @@ constexpr std::array<Compression,num_supported_compression_types> supported_comp
     Compression::zstd,
 #endif
 };
+/** @brief Array of known compression types */
 constexpr std::array<Compression, 4> known_compression_types{
     Compression::z,
     Compression::lzma,
@@ -69,6 +73,7 @@ constexpr std::array<Compression, 4> known_compression_types{
     Compression::zstd,
 };
 
+/** @brief Convert from the compression type to string */
 inline std::string to_string(HepMC3::Compression & c) {
     switch (c) {
     case HepMC3::Compression::z:
