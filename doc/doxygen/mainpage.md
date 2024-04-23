@@ -11,21 +11,21 @@ Since the first implementation, the package has undergone several modifications 
     and have out-of-the-box interfaces for the widely used in HEP community ROOT and Python.
 
 Further documentation that might be useful for the users of HepMC3 can be found in the following documents:
-     - [S. Gardiner, J. Isaacson and L. Pickering, NuHepMC: A standardized event record format for neutrino event generators](https://arxiv.org/abs/2310.13211)
-     - [E. Bothmann et al., A standard convention for particle-level Monte Carlo event-variation weights(SciPost Phys.Core 6 (2023) 007)](https://doi.org/10.21468/SciPostPhysCore.6.1.007)</a>
-     - [J. Alwall et al., A standard format for Les Houches Event Files (Comput.Phys.Commun. 176 (2007) 300-304)](https://doi.org/10.1016/j.cpc.2006.11.010)
-     - [T. Sjöstrand et al., A proposed standard event record, in `Z physics at LEP 1', eds. G. Altarelli, R. Kleiss and C. Verzegnassi, Geneva, Switzerland, September 4-5, 1989, CERN 89-08 (Geneva, 1989), Vol. 3, p. 327](https://inis.iaea.org/collection/NCLCollectionStore/_Public/21/009/21009075.pdf)
-     - [E. Boos et al., Generic User Process Interface for Event Generators](http://arxiv.org/abs/hep-ph/0109068)
-     - [J. Butterworth et al., THE TOOLS AND MONTE CARLO WORKING GROUP Summary Report from the Les Houches 2009 Workshop on TeV Colliders](http://arxiv.org/abs/1003.1643) 
-     - [J. R. Andersen et al., Les Houches 2013: Physics at TeV Colliders: Standard Model Working Group Report](http://arxiv.org/abs/1405.1067)
+      - [S. Gardiner, J. Isaacson and L. Pickering, NuHepMC: A standardized event record format for neutrino event generators](https://arxiv.org/abs/2310.13211)
+      - [E. Bothmann et al., A standard convention for particle-level Monte Carlo event-variation weights(SciPost Phys.Core 6 (2023) 007)](https://doi.org/10.21468/SciPostPhysCore.6.1.007)</a>
+      - [J. Alwall et al., A standard format for Les Houches Event Files (Comput.Phys.Commun. 176 (2007) 300-304)](https://doi.org/10.1016/j.cpc.2006.11.010)
+      - [T. Sjöstrand et al., A proposed standard event record, in `Z physics at LEP 1', eds. G. Altarelli, R. Kleiss and C. Verzegnassi, Geneva, Switzerland, September 4-5, 1989, CERN 89-08 (Geneva, 1989), Vol. 3, p. 327](https://inis.iaea.org/collection/NCLCollectionStore/_Public/21/009/21009075.pdf)
+      - [E. Boos et al., Generic User Process Interface for Event Generators](http://arxiv.org/abs/hep-ph/0109068)
+      - [J. Butterworth et al., THE TOOLS AND MONTE CARLO WORKING GROUP Summary Report from the Les Houches 2009 Workshop on TeV Colliders](http://arxiv.org/abs/1003.1643) 
+      - [J. R. Andersen et al., Les Houches 2013: Physics at TeV Colliders: Standard Model Working Group Report](http://arxiv.org/abs/1405.1067)
 
 ## Project documentation, code and contacts
 
 Project documentation, code and contacts
-     -  [One page documentation](full.md)
-     -  [HepMC3 CERN GitLab repository](https://gitlab.cern.ch/hepmc/HepMC3)
-     -  [hepmc-dev@NOSPAM.cern.ch mailing list](mailto:hepmc-dev@cern.ch)
-     -  [CERN GitLab issues tracker](https://gitlab.cern.ch/hepmc/HepMC3/-/issues)
+      -  [One page documentation](full.md)
+      -  [HepMC3 CERN GitLab repository](https://gitlab.cern.ch/hepmc/HepMC3)
+      -  [hepmc-dev@NOSPAM.cern.ch mailing list](mailto:hepmc-dev@cern.ch)
+      -  [CERN GitLab issues tracker](https://gitlab.cern.ch/hepmc/HepMC3/-/issues)
 
 ## Available tarfiles
 
