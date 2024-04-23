@@ -20,6 +20,8 @@ Further documentation that might be useful for the users of HepMC3 can be found 
      - [J. R. Andersen et al., Les Houches 2013: Physics at TeV Colliders: Standard Model Working Group Report](http://arxiv.org/abs/1405.1067)
 
 ## Project documentation, code and contacts
+
+Project documentation, code and contacts
      -  [One page documentation](full.md)
      -  [HepMC3 CERN GitLab repository](https://gitlab.cern.ch/hepmc/HepMC3)
      -  [hepmc-dev@NOSPAM.cern.ch mailing list](mailto:hepmc-dev@cern.ch)
