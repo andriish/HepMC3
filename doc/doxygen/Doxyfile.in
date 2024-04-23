@@ -669,7 +669,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/../  \
-                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/mainpage.txt \
+                         @CMAKE_CURRENT_SOURCE_DIR@/doxygen/mainpage.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/doxygen/full.md
 
 # This tag can be used to specify the character encoding of the source files
@@ -793,7 +793,7 @@ FILTER_SOURCE_PATTERNS =
 # This can be useful if you have a project on for instance GitHub and want reuse
 # the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = mainpage.md
 
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
