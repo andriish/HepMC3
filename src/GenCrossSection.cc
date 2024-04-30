@@ -73,12 +73,12 @@ bool GenCrossSection::from_string(const std::string &att) {
         cross_section_errors.emplace_back(atof(cursor));
     }
     if (cross_sections.size() >= max_n_cross_sections) {
-        HEPMC3_WARNING("GenCrossSection::from_string: too many optional cross-sections  N=" << cross_sections.size() << " or ill-formed input:" << att)
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::from_string: too many optional cross-sections  N=" << cross_sections.size() << " or ill-formed input:" << att)
     }
     // Use the default values to fill the vector to the size of N.
     size_t oldsize = cross_sections.size();
     if (oldsize != N) {
-        HEPMC3_WARNING("GenCrossSection::from_string: the number of cross-sections cross_sections.size()=" << cross_sections.size() << " does not match the number of weights " << event()->weights().size())
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::from_string: the number of cross-sections cross_sections.size()=" << cross_sections.size() << " does not match the number of weights " << event()->weights().size())
     }
     for (size_t i = oldsize; i < N; i++) {cross_sections.emplace_back(cross_section); cross_section_errors.emplace_back(cross_section_error);}
     return true;
@@ -93,7 +93,7 @@ bool GenCrossSection::to_string(std::string &att) const {
        << accepted_events << " "
        << attempted_events;
     if ( event() && event()->weights().size() != cross_sections.size() ) {
-        HEPMC3_WARNING("GenCrossSection::to_string: the number of cross-sections cross_sections.size()=" << cross_sections.size() << " does not match the number of weights" << event()->weights().size())
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::to_string: the number of cross-sections cross_sections.size()=" << cross_sections.size() << " does not match the number of weights" << event()->weights().size())
     }
     for (size_t i = 1; i < cross_sections.size(); ++i ) {
         os << " " << cross_sections.at(i)
