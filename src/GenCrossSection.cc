@@ -71,9 +71,9 @@ bool GenCrossSection::from_string(const std::string &att) {
         if ( !(cursor = strchr(cursor+1, ' ')) ) break;
         cross_section_errors.emplace_back(atof(cursor));
     }
-    if (cross_sections.size() != cross_sections_errors.size()) {
+    if (cross_sections.size() != cross_section_errors.size()) {
         HEPMC3_WARNING("GenCrossSection::from_string: number of cross-sections and errors differ "
-                       << cross_sections.size() << " vs  "  << cross_sections_errors.size() << "). Ill-formed input:" << att)
+                       << cross_sections.size() << " vs  "  << cross_section_errors.size() << "). Ill-formed input:" << att)
     }
     // Use the default values to fill the vector to the size of N.
     size_t oldxsecsize = cross_sections.size();
