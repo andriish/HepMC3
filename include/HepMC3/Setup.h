@@ -74,8 +74,8 @@ public:
 
 private:
 
-    static bool m_errors_level;   //!< Level for printing error messages
-    static bool m_warnings_level;   //!< Level for printing warnings messages
+    static int m_errors_level;   //!< Level for printing error messages
+    static int m_warnings_level;   //!< Level for printing warnings messages
     static bool m_is_printing_errors;   //!< Flag for printing error messages
     static bool m_is_printing_warnings; //!< Flag for printing warning messages
     static int  m_debug_level;          //!< Level of debug messages printed out
