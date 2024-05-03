@@ -63,7 +63,7 @@ bool ReaderRootTree::init()
             ri->read_data(*run);
             delete run;
             set_run_info(ri);
-            HEPMC3_WARNING_LEVEL(800,"ReaderRootTree::init The object was written with HepMC3 version 3.0")
+            HEPMC3_WARNING_LEVEL(900,"ReaderRootTree::init The object was written with HepMC3 version 3.0")
         } else {
             HEPMC3_ERROR_LEVEL(100,"ReaderRootTree: problem reading object GenRunInfoData")
             return false;

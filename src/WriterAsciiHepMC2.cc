@@ -210,7 +210,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         bool status = pi->to_string(st);
         if ( !status )
         {
-            HEPMC3_WARNING_LEVEL(600,"WriterAsciiHepMC2::write_event: problem serializing GenPdfInfo attribute")
+            HEPMC3_WARNING_LEVEL(300,"WriterAsciiHepMC2::write_event: problem serializing GenPdfInfo attribute")
         } else {
             m_cursor += sprintf(m_cursor, "F ");
             flush();

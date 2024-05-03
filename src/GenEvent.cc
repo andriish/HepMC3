@@ -667,7 +667,7 @@ void GenEvent::write_data(GenEventData& data) const {
             bool status = vt2.second->to_string(st);
 
             if ( !status ) {
-                HEPMC3_WARNING_LEVEL(600,"GenEvent::write_data: problem serializing attribute: " << vt1.first)
+                HEPMC3_WARNING_LEVEL(300,"GenEvent::write_data: problem serializing attribute: " << vt1.first)
             }
             else {
                 data.attribute_id.emplace_back(vt2.first);
@@ -758,12 +758,12 @@ void GenEvent::set_beam_particles(GenParticlePtr p1, GenParticlePtr p2) {
 void GenEvent::add_beam_particle(GenParticlePtr p1) {
     if (!p1)
     {
-        HEPMC3_WARNING_LEVEL(900,"Attempting to add an empty particle as beam particle. Ignored.")
+        HEPMC3_WARNING_LEVEL(700,"Attempting to add an empty particle as beam particle. Ignored.")
         return;
     }
     if (p1->in_event() && p1->parent_event() != this)
     {
-        HEPMC3_WARNING_LEVEL(900,"Attempting to add particle from another event. Ignored.")
+        HEPMC3_WARNING_LEVEL(700,"Attempting to add particle from another event. Ignored.")
         return;
     }
     if (p1->production_vertex())  p1->production_vertex()->remove_particle_out(p1);

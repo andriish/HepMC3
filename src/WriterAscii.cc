@@ -309,7 +309,7 @@ void WriterAscii::write_run_info() {
     for ( const auto& att: run_info()->attributes() ) {
         std::string st;
         if ( !att.second->to_string(st) ) {
-            HEPMC3_WARNING_LEVEL(600,"WriterAscii::write_run_info: problem serializing attribute: " << att.first)
+            HEPMC3_WARNING_LEVEL(300,"WriterAscii::write_run_info: problem serializing attribute: " << att.first)
         }
         else {
             m_cursor += sprintf(m_cursor, "A ");

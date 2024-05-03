@@ -75,15 +75,12 @@ bool GenCrossSection::from_string(const std::string &att) {
     }
     ///< @todo AB: Why are we imposing a limit on Nxsec (effectively on Nweights)?
     if (cross_sections.size() >= max_n_cross_sections) {
-        HEPMC3_WARNING("GenCrossSection::from_string: too many cross-sections (N = "
-                       << cross_sections.size() << ") or ill-formed input:" << att)
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::from_string: too many cross-sections (N = " << cross_sections.size() << ") or ill-formed input:" << att)
     }
     // Use the default values to fill the vector to the size of N.
     size_t oldxsecsize = cross_sections.size();
     if (oldxsecsize > 1 && oldxsecsize != nweights) {
-        HEPMC3_WARNING("GenCrossSection::from_string: the number of cross-sections (N = "
-                       << cross_sections.size() << ") does not match the number of weights (Nw = "
-                       << event()->weights().size() << ")")
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::from_string: the number of cross-sections (N = " << cross_sections.size() << ") does not match the number of weights (Nw = " << event()->weights().size() << ")")
     }
     for (size_t i = oldxsecsize; i < nweights; i++) {
       cross_sections.emplace_back(cross_section);
@@ -104,13 +101,10 @@ bool GenCrossSection::to_string(std::string &att) const {
     if (event() && event()->weights().size() > 0 &&
         cross_sections.size() > 1 &&
         event()->weights().size() != cross_sections.size() ) {
-        HEPMC3_WARNING("GenCrossSection::to_string: the number of cross-sections (N = "
-                       << cross_sections.size() << ") does not match the number of weights (Nw = "
-                       << event()->weights().size() << ")")
+        HEPMC3_WARNING_LEVEL(800,"GenCrossSection::to_string: the number of cross-sections (N = "<< cross_sections.size() << ") does not match the number of weights (Nw = "<< event()->weights().size() << ")")
     }
     for (size_t i = 1; i < cross_sections.size(); ++i ) {
-        os << " " << cross_sections.at(i)
-           << " " << (cross_section_errors.size()>i?cross_section_errors.at(i):0.0);
+        os << " " << cross_sections.at(i) << " " << (cross_section_errors.size()>i?cross_section_errors.at(i):0.0);
     }
     att = os.str();
 

@@ -124,7 +124,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
         if ( strncmp(buf.data(), "HepMC", 5) == 0 ) {
             if ( strncmp(buf.data(), "HepMC::Version", 14) != 0 && strncmp(buf.data(), "HepMC::Asciiv3", 14) != 0 )
             {
-                HEPMC3_WARNING_LEVEL(600,"ReaderAscii: found unsupported expression in header. Will close the input.")
+                HEPMC3_WARNING_LEVEL(500,"ReaderAscii: found unsupported expression in header. Will close the input.")
                 std::cout << buf.data() << std::endl;
                 m_isstream ? m_stream->clear(std::ios::eofbit) : m_file.clear(std::ios::eofbit);
             }
@@ -199,7 +199,7 @@ bool ReaderAscii::read_event(GenEvent &evt) {
             }
             break;
         default:
-            HEPMC3_WARNING_LEVEL(600,"ReaderAscii: skipping unrecognised prefix: " << buf[0])
+            HEPMC3_WARNING_LEVEL(500,"ReaderAscii: skipping unrecognised prefix: " << buf[0])
             is_parsing_successful = true;
             break;
         }
