@@ -437,7 +437,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
 
     int id = atoi(cursor);
     if ( id < 1 || id > static_cast<int>(m_data.particles.size()) ) {
-        HEPMC3_ERROR_LEVEL(500,"ReaderAscii: particle ID is out of expected range.")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAscii: particle ID is out of expected range.")
         return false;
     }
 
@@ -446,7 +446,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     mother_id = atoi(cursor);
     if ( mother_id < -static_cast<int>(m_data.vertices.size()) || mother_id > static_cast<int>(m_data.particles.size()) ) {
-        HEPMC3_ERROR_LEVEL(500,"ReaderAscii: ID of particle mother is out of expected range.")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAscii: ID of particle mother is out of expected range.")
         return false;
     }
 

@@ -19,7 +19,7 @@ WriterDOT::WriterDOT(const std::string &filename,std::shared_ptr<GenRunInfo> /*r
     m_buffer_size( 256*1024 )
 {
     if ( !m_file.is_open() ) {
-        HEPMC3_ERROR_LEVEL(100, "WriterDOT: could not open output file: "<<filename )
+        HEPMC3_ERROR_LEVEL(100,"WriterDOT: could not open output file: "<<filename )
     }
 }
 

@@ -117,7 +117,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
             parsing_result = parse_event_information(evt, buf.data());
             if (parsing_result < 0) {
                 is_parsing_successful = false;
-                HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing event information")
+                HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing event information")
             }
             else {
                 vertices_count = parsing_result;
@@ -148,7 +148,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
 
             if (parsing_result < 0) {
                 is_parsing_successful = false;
-                HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing vertex information")
+                HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing vertex information")
             }
             else {
                 current_vertex_particles_count = parsing_result;
@@ -161,7 +161,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
 
             if (parsing_result < 0) {
                 is_parsing_successful = false;
-                HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing particle information")
+                HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: HEPMC3_ERROR parsing particle information")
             }
             else {
                 ++current_vertex_particles_parsed;
@@ -200,17 +200,17 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
     /** HepMC2 files produced with Pythia8 are known to have wrong
              information about number of particles in vertex. Hence '<' sign */
     if (is_parsing_successful && current_vertex_particles_parsed < current_vertex_particles_count) {
-        HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: not all particles parsed")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: not all particles parsed")
         is_parsing_successful = false;
     }
     // Check if all vertices were parsed
     else if (is_parsing_successful && m_vertex_cache.size() != vertices_count) {
-        HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: not all vertices parsed")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: not all vertices parsed")
         is_parsing_successful = false;
     }
 
     if ( !is_parsing_successful ) {
-        HEPMC3_ERROR_LEVEL(500,"ReaderAsciiHepMC2: event parsing failed. Returning empty event")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAsciiHepMC2: event parsing failed. Returning empty event")
         HEPMC3_DEBUG(1, "Parsing failed at line:" << std::endl << buf.data())
         evt.clear();
         m_isstream ? m_stream->clear(std::ios::badbit) : m_file.clear(std::ios::badbit);

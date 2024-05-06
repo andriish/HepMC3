@@ -40,7 +40,7 @@ size_t write_message(std::ostream *out_stream, std::string const &msg_str,
   md.SerializeToString(&md_str);
 
   if (md_str.size() != MDBytesLength) {
-    HEPMC3_ERROR_LEVEL(500,"When writing protobuf message, the message digest was not the expected length ("<< MDBytesLength << " bytes), but was instead "<< md_str.size() << " bytes.")
+    HEPMC3_ERROR_LEVEL(100,"When writing protobuf message, the message digest was not the expected length ("<< MDBytesLength << " bytes), but was instead "<< md_str.size() << " bytes.")
   }
 
   (*out_stream) << md_str;
