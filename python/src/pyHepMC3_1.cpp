@@ -14,8 +14,8 @@
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
-	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>, false)
-	PYBIND11_DECLARE_HOLDER_TYPE(T, T*, false)
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>)
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*)
 	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>)
 #endif
 
@@ -70,10 +70,20 @@ void bind_pyHepMC3_1(std::function< pybind11::module &(std::string const &namesp
 		cl.def("phi", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::phi, "Azimuthal angle\n\nC++: HepMC3::FourVector::phi() const --> double");
 		cl.def("theta", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::theta, "Polar angle w.r.t. z direction\n\nC++: HepMC3::FourVector::theta() const --> double");
 		cl.def("eta", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::eta, "Pseudorapidity\n\nC++: HepMC3::FourVector::eta() const --> double");
+		cl.def("safe_eta", [](HepMC3::FourVector const &o) -> double { return o.safe_eta(); }, "");
+		cl.def("safe_eta", (double (HepMC3::FourVector::*)(double) const) &HepMC3::FourVector::safe_eta, "Pseudorapidity, safe\n Please note that here the equality for float should be used as e.g. std::atanh(1.0-std::numeric_limits<double>::epsilon()) is calculable and is not a large number.\n\nC++: HepMC3::FourVector::safe_eta(double) const --> double", pybind11::arg("maxvalue"));
 		cl.def("rap", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::rap, "Rapidity\n\nC++: HepMC3::FourVector::rap() const --> double");
+		cl.def("safe_rap", [](HepMC3::FourVector const &o) -> double { return o.safe_rap(); }, "");
+		cl.def("safe_rap", (double (HepMC3::FourVector::*)(double) const) &HepMC3::FourVector::safe_rap, "Rapidity, safe\n\nC++: HepMC3::FourVector::safe_rap(double) const --> double", pybind11::arg("maxvalue"));
 		cl.def("abs_eta", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::abs_eta, "Absolute pseudorapidity\n\nC++: HepMC3::FourVector::abs_eta() const --> double");
 		cl.def("abs_rap", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::abs_rap, "Absolute rapidity\n\nC++: HepMC3::FourVector::abs_rap() const --> double");
+		cl.def("safe_abs_eta", [](HepMC3::FourVector const &o) -> double { return o.safe_abs_eta(); }, "");
+		cl.def("safe_abs_eta", (double (HepMC3::FourVector::*)(double) const) &HepMC3::FourVector::safe_abs_eta, "Absolute pseudorapidity, safe\n\nC++: HepMC3::FourVector::safe_abs_eta(double) const --> double", pybind11::arg("maxvalue"));
+		cl.def("safe_abs_rap", [](HepMC3::FourVector const &o) -> double { return o.safe_abs_rap(); }, "");
+		cl.def("safe_abs_rap", (double (HepMC3::FourVector::*)(double) const) &HepMC3::FourVector::safe_abs_rap, "Absolute rapidity, safe\n\nC++: HepMC3::FourVector::safe_abs_rap(double) const --> double", pybind11::arg("maxvalue"));
 		cl.def("pseudoRapidity", (double (HepMC3::FourVector::*)() const) &HepMC3::FourVector::pseudoRapidity, "Same as eta()\n \n\n Prefer 'only one way to do it', and we don't have equivalent long names for e.g. pid, phi or eta\n\nC++: HepMC3::FourVector::pseudoRapidity() const --> double");
+		cl.def("safe_pseudoRapidity", [](HepMC3::FourVector const &o) -> double { return o.safe_pseudoRapidity(); }, "");
+		cl.def("safe_pseudoRapidity", (double (HepMC3::FourVector::*)(double) const) &HepMC3::FourVector::safe_pseudoRapidity, "Same as eta(), safe\n \n\n Prefer 'only one way to do it', and we don't have equivalent long names for e.g. pid, phi or eta\n\nC++: HepMC3::FourVector::safe_pseudoRapidity(double) const --> double", pybind11::arg("maxvalue"));
 		cl.def("is_zero", (bool (HepMC3::FourVector::*)() const) &HepMC3::FourVector::is_zero, "Check if the length of this vertex is zero\n\nC++: HepMC3::FourVector::is_zero() const --> bool");
 		cl.def("delta_phi", (double (HepMC3::FourVector::*)(const class HepMC3::FourVector &) const) &HepMC3::FourVector::delta_phi, "Signed azimuthal angle separation in [-pi, pi]\n\nC++: HepMC3::FourVector::delta_phi(const class HepMC3::FourVector &) const --> double", pybind11::arg("v"));
 		cl.def("delta_eta", (double (HepMC3::FourVector::*)(const class HepMC3::FourVector &) const) &HepMC3::FourVector::delta_eta, "Pseudorapidity separation\n\nC++: HepMC3::FourVector::delta_eta(const class HepMC3::FourVector &) const --> double", pybind11::arg("v"));
@@ -113,8 +123,5 @@ void bind_pyHepMC3_1(std::function< pybind11::module &(std::string const &namesp
 
 	// HepMC3::delta_r2_rap(const class HepMC3::FourVector &, const class HepMC3::FourVector &) file:HepMC3/FourVector.h line:
 	M("HepMC3").def("delta_r2_rap", (double (*)(const class HepMC3::FourVector &, const class HepMC3::FourVector &)) &HepMC3::delta_r2_rap, "R_rap^2-distance separation dR^2 = dphi^2 + drap^2 between vecs  and \n\nC++: HepMC3::delta_r2_rap(const class HepMC3::FourVector &, const class HepMC3::FourVector &) --> double", pybind11::arg("a"), pybind11::arg("b"));
-
-	// HepMC3::delta_r_rap(const class HepMC3::FourVector &, const class HepMC3::FourVector &) file:HepMC3/FourVector.h line:
-	M("HepMC3").def("delta_r_rap", (double (*)(const class HepMC3::FourVector &, const class HepMC3::FourVector &)) &HepMC3::delta_r_rap, "R_rap-distance separation dR = sqrt(dphi^2 + drap^2) between vecs  and \n\nC++: HepMC3::delta_r_rap(const class HepMC3::FourVector &, const class HepMC3::FourVector &) --> double", pybind11::arg("a"), pybind11::arg("b"));
 
 }
