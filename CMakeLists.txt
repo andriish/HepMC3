@@ -437,7 +437,6 @@ if (ASTYLE)
     test/*cc
     test/*h
     interfaces/*/include/*.h
-    interfaces/*/include/*/*.h
     interfaces/*/include/*/*.cc
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )
