@@ -38,12 +38,12 @@ int main()
                 std::numeric_limits<double>::max(),
                 -std::numeric_limits<double>::max(),
         */
-       std::atanh(3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0)),
-       std::atanh(3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0)),
-       std::atanh(-3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0)),
-       std::atanh(-3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0)),
-       std::atanh(-3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0)),
-       std::atanh(-3.0/std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0))
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0))*0.5,
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0))*0.5,
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0))*0.5,
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0))*0.5,
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0))*0.5,
+        std::log((std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) - 3.0) / (std::sqrt(1.0*1.0 + 2.0*2.0 + 3.0*3.0) + 3.0))*0.5
     };
 
     std::vector<double>   correct_rap{
@@ -53,17 +53,17 @@ int main()
         0.0,
         0.0,
         0.0,
-        std::atanh(3.0/std::abs(4.0)),
-        std::atanh(3.0/std::abs(4.0)),
-        std::atanh(-3.0/std::abs(4.0)),
-        std::atanh(-3.0/std::abs(-4.0)),
-        std::atanh(-3.0/std::abs(40.0)),
-        std::atanh(-3.0/std::abs(-40.0))
+        std::log((4.0 + 3.0) / (4.0 - 3.0))*0.5,
+        std::log((-4.0 + 3.0) / (-4.0 - 3.0))*0.5,
+        std::log((4.0 - 3.0) / (4.0 + 3.0))*0.5,
+        std::log((-4.0 - 3.0) / (-4.0 + 3.0))*0.5,
+        std::log((40.0 - 3.0) / (40.0 + 3.0))*0.5,
+        std::log((-40.0 - 3.0) / (-40.0 + 3.0))*0.5
 
     };
     cout.setf(ios_base::scientific);
-    cout.precision(12);
-    cout.width(18);
+    cout.precision(10);
+    cout.width(15);
     cout.setf(std::ios_base::showpos);
     for (size_t i = 0; i < vectors_to_test.size(); i++) {
         std::cout << "         eta() = " << vectors_to_test.at(i).eta() << "         rap()=" << vectors_to_test.at(i).rap() << " for " << vectors_to_test.at(i) << std::endl;
@@ -72,8 +72,8 @@ int main()
     for (size_t i=0; i<vectors_to_test.size(); i++)
     {
         std::cout << "Testing " << vectors_to_test.at(i) << std::endl;
-        assert(std::abs(vectors_to_test.at(i).eta() - correct_eta.at(i)) < std::numeric_limits<double>::epsilon() || vectors_to_test.at(i).eta() == correct_eta.at(i));
-        assert(std::abs(vectors_to_test.at(i).rap() - correct_rap.at(i)) < std::numeric_limits<double>::epsilon() || vectors_to_test.at(i).rap() == correct_rap.at(i));
+        assert(vectors_to_test.at(i).eta() == correct_eta.at(i) );
+        assert(vectors_to_test.at(i).rap() == correct_rap.at(i) );
 
     }
     return 0;
