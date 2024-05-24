@@ -142,6 +142,7 @@ void bind_pyHepMC3_9(std::function< pybind11::module &(std::string const &namesp
 		cl.def_readwrite("momentum", &HepMC3::GenParticleData::momentum);
 		cl.def("assign", (struct HepMC3::GenParticleData & (HepMC3::GenParticleData::*)(const struct HepMC3::GenParticleData &)) &HepMC3::GenParticleData::operator=, "C++: HepMC3::GenParticleData::operator=(const struct HepMC3::GenParticleData &) --> struct HepMC3::GenParticleData &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
+<<<<<<< HEAD
 	{ // HepMC3::GenPdfInfo file: line:
 		pybind11::class_<HepMC3::GenPdfInfo, std::shared_ptr<HepMC3::GenPdfInfo>, PyCallBack_HepMC3_GenPdfInfo, HepMC3::Attribute> cl(M("HepMC3"), "GenPdfInfo", "");
 		cl.def( pybind11::init( [](PyCallBack_HepMC3_GenPdfInfo const &o){ return new PyCallBack_HepMC3_GenPdfInfo(o); } ) );
@@ -157,6 +158,40 @@ void bind_pyHepMC3_9(std::function< pybind11::module &(std::string const &namesp
 		cl.def("__ne__", (bool (HepMC3::GenPdfInfo::*)(const class HepMC3::GenPdfInfo &) const) &HepMC3::GenPdfInfo::operator!=, "C++: HepMC3::GenPdfInfo::operator!=(const class HepMC3::GenPdfInfo &) const --> bool", pybind11::arg(""));
 		cl.def("is_valid", (bool (HepMC3::GenPdfInfo::*)() const) &HepMC3::GenPdfInfo::is_valid, "C++: HepMC3::GenPdfInfo::is_valid() const --> bool");
 		cl.def("assign", (class HepMC3::GenPdfInfo & (HepMC3::GenPdfInfo::*)(const class HepMC3::GenPdfInfo &)) &HepMC3::GenPdfInfo::operator=, "C++: HepMC3::GenPdfInfo::operator=(const class HepMC3::GenPdfInfo &) --> class HepMC3::GenPdfInfo &", pybind11::return_value_policy::automatic, pybind11::arg(""));
+=======
+	{ // HepMC3::GenVertex file:HepMC3/GenVertex.h line:
+		pybind11::class_<HepMC3::GenVertex, std::shared_ptr<HepMC3::GenVertex>> cl(M("HepMC3"), "GenVertex", "Stores vertex-related information");
+		cl.def( pybind11::init( [](){ return new HepMC3::GenVertex(); } ), "doc" );
+		cl.def( pybind11::init<const class HepMC3::FourVector &>(), pybind11::arg("position") );
+
+		cl.def( pybind11::init<const struct HepMC3::GenVertexData &>(), pybind11::arg("data") );
+
+		cl.def( pybind11::init( [](HepMC3::GenVertex const &o){ return new HepMC3::GenVertex(o); } ) );
+		cl.def("parent_event", (class HepMC3::GenEvent * (HepMC3::GenVertex::*)()) &HepMC3::GenVertex::parent_event, "Get parent event\n\nC++: HepMC3::GenVertex::parent_event() --> class HepMC3::GenEvent *", pybind11::return_value_policy::automatic);
+		cl.def("in_event", (bool (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::in_event, "Check if this vertex belongs to an event\n\nC++: HepMC3::GenVertex::in_event() const --> bool");
+		cl.def("id", (int (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::id, "Get the vertex unique identifier\n\n \n This is not the same as id() in HepMC v2, which is now \n\nC++: HepMC3::GenVertex::id() const --> int");
+		cl.def("status", (int (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::status, "Get vertex status code\n\nC++: HepMC3::GenVertex::status() const --> int");
+		cl.def("set_status", (void (HepMC3::GenVertex::*)(int)) &HepMC3::GenVertex::set_status, "Set vertex status code\n\nC++: HepMC3::GenVertex::set_status(int) --> void", pybind11::arg("stat"));
+		cl.def("data", (const struct HepMC3::GenVertexData & (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::data, "Get vertex data\n\nC++: HepMC3::GenVertex::data() const --> const struct HepMC3::GenVertexData &", pybind11::return_value_policy::automatic);
+		cl.def("add_particle_in", (void (HepMC3::GenVertex::*)(class std::shared_ptr<class HepMC3::GenParticle>)) &HepMC3::GenVertex::add_particle_in, "Add incoming particle\n\nC++: HepMC3::GenVertex::add_particle_in(class std::shared_ptr<class HepMC3::GenParticle>) --> void", pybind11::arg("p"));
+		cl.def("add_particle_out", (void (HepMC3::GenVertex::*)(class std::shared_ptr<class HepMC3::GenParticle>)) &HepMC3::GenVertex::add_particle_out, "Add outgoing particle\n\nC++: HepMC3::GenVertex::add_particle_out(class std::shared_ptr<class HepMC3::GenParticle>) --> void", pybind11::arg("p"));
+		cl.def("remove_particle_in", (void (HepMC3::GenVertex::*)(class std::shared_ptr<class HepMC3::GenParticle>)) &HepMC3::GenVertex::remove_particle_in, "Remove incoming particle\n\nC++: HepMC3::GenVertex::remove_particle_in(class std::shared_ptr<class HepMC3::GenParticle>) --> void", pybind11::arg("p"));
+		cl.def("remove_particle_out", (void (HepMC3::GenVertex::*)(class std::shared_ptr<class HepMC3::GenParticle>)) &HepMC3::GenVertex::remove_particle_out, "Remove outgoing particle\n\nC++: HepMC3::GenVertex::remove_particle_out(class std::shared_ptr<class HepMC3::GenParticle>) --> void", pybind11::arg("p"));
+		cl.def("particles_in_size", (int (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::particles_in_size, "Number of incoming particles, HepMC2 compatiility\n\nC++: HepMC3::GenVertex::particles_in_size() const --> int");
+		cl.def("particles_out_size", (int (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::particles_out_size, "Number of outgoing particles, HepMC2 compatiility\n\nC++: HepMC3::GenVertex::particles_out_size() const --> int");
+		cl.def("particles_in", (const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > & (HepMC3::GenVertex::*)()) &HepMC3::GenVertex::particles_in, "Get list of incoming particles\n\nC++: HepMC3::GenVertex::particles_in() --> const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > &", pybind11::return_value_policy::automatic);
+		cl.def("particles_out", (const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > & (HepMC3::GenVertex::*)()) &HepMC3::GenVertex::particles_out, "Get list of outgoing particles\n\nC++: HepMC3::GenVertex::particles_out() --> const class std::vector<class std::shared_ptr<class HepMC3::GenParticle> > &", pybind11::return_value_policy::automatic);
+		cl.def("position", (const class HepMC3::FourVector & (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::position, "Get vertex position\n\n Returns the position of this vertex. If a position is not set on _this_ vertex,\n the production vertices of ancestors are searched to find the inherited position.\n FourVector(0,0,0,0) is returned if no position information is found.\n\nC++: HepMC3::GenVertex::position() const --> const class HepMC3::FourVector &", pybind11::return_value_policy::automatic);
+		cl.def("has_set_position", (bool (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::has_set_position, "Check if position of this vertex is set\n\nC++: HepMC3::GenVertex::has_set_position() const --> bool");
+		cl.def("set_position", (void (HepMC3::GenVertex::*)(const class HepMC3::FourVector &)) &HepMC3::GenVertex::set_position, "Set vertex position\n\nC++: HepMC3::GenVertex::set_position(const class HepMC3::FourVector &) --> void", pybind11::arg("new_pos"));
+		cl.def("add_attribute", (bool (HepMC3::GenVertex::*)(const std::string &, class std::shared_ptr<class HepMC3::Attribute>)) &HepMC3::GenVertex::add_attribute, "Add event attribute to this vertex\n\n This will overwrite existing attribute if an attribute with\n the same name is present. The attribute will be stored in the\n parent_event(). \n\n false if there is no parent_event();\n\nC++: HepMC3::GenVertex::add_attribute(const std::string &, class std::shared_ptr<class HepMC3::Attribute>) --> bool", pybind11::arg("name"), pybind11::arg("att"));
+		cl.def("attribute_names", (class std::vector<std::string > (HepMC3::GenVertex::*)() const) &HepMC3::GenVertex::attribute_names, "Get list of names of attributes assigned to this particle\n\nC++: HepMC3::GenVertex::attribute_names() const --> class std::vector<std::string >");
+		cl.def("remove_attribute", (void (HepMC3::GenVertex::*)(const std::string &)) &HepMC3::GenVertex::remove_attribute, "Remove attribute\n\nC++: HepMC3::GenVertex::remove_attribute(const std::string &) --> void", pybind11::arg("name"));
+		cl.def("attribute_as_string", (std::string (HepMC3::GenVertex::*)(const std::string &) const) &HepMC3::GenVertex::attribute_as_string, "Get attribute of any type as string\n\nC++: HepMC3::GenVertex::attribute_as_string(const std::string &) const --> std::string", pybind11::arg("name"));
+		cl.def("assign", (class HepMC3::GenVertex & (HepMC3::GenVertex::*)(const class HepMC3::GenVertex &)) &HepMC3::GenVertex::operator=, "C++: HepMC3::GenVertex::operator=(const class HepMC3::GenVertex &) --> class HepMC3::GenVertex &", pybind11::return_value_policy::automatic, pybind11::arg(""));
+
+		binder::custom_GenVertex_binder(cl);
+>>>>>>> origin/master
 	}
 	{ // HepMC3::GenEvent file:HepMC3/GenEvent.h line:
 		pybind11::class_<HepMC3::GenEvent, std::shared_ptr<HepMC3::GenEvent>> cl(M("HepMC3"), "GenEvent", "Stores event-related information\n\n Manages event-related information.\n Contains lists of GenParticle and GenVertex objects");
