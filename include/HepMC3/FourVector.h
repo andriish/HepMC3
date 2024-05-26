@@ -175,16 +175,26 @@ public:
     /// Polar angle w.r.t. z direction
     double theta() const {  return std::atan2( perp(), z() ); }
     /// Pseudorapidity
-    double eta() const  { return ( p3mod() == 0.0 ) ? 0.0: (0.5*std::log( (p3mod() + pz()) / (p3mod() - pz()) )); }
+    double eta() const {
+      if ( p3mod() == 0.0 ) [[unlikely]] return 0.0;
+      if ( p3mod() == pz() ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      return 0.5*std::log( (p3mod() + pz()) / (p3mod() - pz()) );
+    }
     /// Rapidity
-    double rap() const {   return ( e() == 0.0 ) ? 0.0: (0.5*std::log( (e() + pz()) / (e() - pz()) )); }
+    double rap() const {
+      if ( e() == 0.0 ) [[unlikely]] return 0.0;
+      if ( e() == pz() ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      return 0.5*std::log( (e() + pz()) / (e() - pz()) );
+    }
     /// Absolute pseudorapidity
     double abs_eta() const { return std::abs( eta() ); }
     /// Absolute rapidity
     double abs_rap() const { return std::abs( rap() ); }
 
     /// Same as eta()
+    ///
     /// @deprecated Prefer 'only one way to do it', and we don't have equivalent long names for e.g. pid, phi or eta
+    [[ deprecated ]]
     double pseudoRapidity() const { return eta(); }
 
     /// @}
