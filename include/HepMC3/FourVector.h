@@ -177,13 +177,13 @@ public:
     /// Pseudorapidity
     double eta() const {
       if ( p3mod() == 0.0 ) [[unlikely]] return 0.0;
-      if ( p3mod() == pz() ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      if ( p3mod() == fabs(pz()) ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
       return 0.5*std::log( (p3mod() + pz()) / (p3mod() - pz()) );
     }
     /// Rapidity
     double rap() const {
       if ( e() == 0.0 ) [[unlikely]] return 0.0;
-      if ( e() == pz() ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      if ( e() == fabs(pz()) ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
       return 0.5*std::log( (e() + pz()) / (e() - pz()) );
     }
     /// Absolute pseudorapidity
