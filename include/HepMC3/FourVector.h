@@ -176,14 +176,14 @@ public:
     double theta() const {  return std::atan2( perp(), z() ); }
     /// Pseudorapidity
     double eta() const {
-      if ( p3mod() == 0.0 ) [[unlikely]] return 0.0;
-      if ( p3mod() == fabs(pz()) ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      if ( p3mod() == 0.0 )  return 0.0;
+      if ( p3mod() == fabs(pz()) ) return std::copysign(HUGE_VAL, pz());
       return 0.5*std::log( (p3mod() + pz()) / (p3mod() - pz()) );
     }
     /// Rapidity
     double rap() const {
-      if ( e() == 0.0 ) [[unlikely]] return 0.0;
-      if ( e() == fabs(pz()) ) [[unlikely]] return std::copysign(HUGE_VAL, pz());
+      if ( e() == 0.0 ) return 0.0;
+      if ( e() == fabs(pz()) ) return std::copysign(HUGE_VAL, pz());
       return 0.5*std::log( (e() + pz()) / (e() - pz()) );
     }
     /// Absolute pseudorapidity
@@ -194,7 +194,6 @@ public:
     /// Same as eta()
     ///
     /// @deprecated Prefer 'only one way to do it', and we don't have equivalent long names for e.g. pid, phi or eta
-    [[ deprecated ]]
     double pseudoRapidity() const { return eta(); }
 
     /// @}
