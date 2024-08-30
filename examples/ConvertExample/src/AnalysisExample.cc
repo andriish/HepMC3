@@ -40,7 +40,7 @@ AnalysisExample::AnalysisExample(std::ostream &stream, std::shared_ptr<GenRunInf
 
 void AnalysisExample::write_event(const GenEvent &evt)
 {
-    double w = evt.weight();
+    double w = (evt.weights().size() ? evt.weight() : 1.);
     m_sum_of_weights += w;
     m_sum_of_weights2 += w*w;
     for(const auto& p: evt.particles() )
