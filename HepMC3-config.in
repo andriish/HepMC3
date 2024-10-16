@@ -72,26 +72,35 @@ if test -n "$tmp"; then
 tmp=$( echo "$*" | egrep -- '--\<ldflags|libs\>')
 OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3-static.a"
 
+if [[ "@HEPMC3_FEATURES@" == *search* ]]; then
 tmp=$( echo "$*" | egrep -- '--\<search\>')
 test -n "$tmp" && OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3search-static.a"
+fi
 
+if [[ "@HEPMC3_FEATURES@" == *protobufIO* ]]; then
 tmp=$( echo "$*" | egrep -- '--\<protobufIO\>')
 test -n "$tmp" && OUT="$OUT @PACKAGE_CMAKE_INSTALL_LIBDIR@/libHepMC3protobufIO_static.a"
+fi
 
 else
 
 tmp=$( echo "$*" | egrep -- '--\<ldflags|libs\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ -lHepMC3"
 
+if [[ "@HEPMC3_FEATURES@" == *search* ]]; then
 tmp=$( echo "$*" | egrep -- '--\<search\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ -lHepMC3search"
+fi
 
+if [[ "@HEPMC3_FEATURES@" == *protobufIO* ]]; then
 tmp=$( echo "$*" | egrep -- '--\<protobufIO\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_CMAKE_INSTALL_LIBDIR@ -lHepMC3protobufIO"
+fi
 
+if [[ "@HEPMC3_FEATURES@" == *rootIO* ]]; then
 tmp=$( echo "$*" | egrep -- '--\<rootIO\>')
 test -n "$tmp" && OUT="$OUT -L@PACKAGE_HEPMC3_ROOTIO_INSTALL_LIBDIR@ -lHepMC3rootIO"
-
+fi
 fi
 
 tmp=$( echo "$*" | egrep -- '--\<features\>')
