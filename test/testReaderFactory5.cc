@@ -1,10 +1,3 @@
-// -*- C++ -*-
-//
-// This file is part of HepMC
-// Copyright (C) 2014-2024 The HepMC collaboration (see AUTHORS for details)
-//
-// -- Purpose: Test deduce_reader reading from std::cin
-//
 #if defined(__linux__) || defined(__darwin__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/ReaderFactory.h"
