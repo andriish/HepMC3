@@ -1,2 +1,3 @@
-#!/bin/sh
-cat inputReaderFactory5.hepmc | ./testReaderFactory
+#!/bin/bash
+
+cat inputReaderFactory5.hepmc | ./testReaderFactory5

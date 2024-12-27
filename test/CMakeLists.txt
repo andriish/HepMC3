@@ -36,9 +36,7 @@ macro( hepmc_unix_test testname )
   target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 )
   set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
   set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
-  add_test( ${testname} ${CMAKE_CURRENT_BINARY_DIR}/run${testname}".sh" )
-  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{PATH}"
-  )
+
   string(REPLACE "test" "" ${testname} name)
   file(GLOB INPUT${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/input${testname}*" )
   file(COPY ${INPUT${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -46,7 +44,8 @@ macro( hepmc_unix_test testname )
   file(COPY ${INPUT${name}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   file(GLOB RUN${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/run${testname}*" )
   file(COPY ${RUN${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endmacro( hepmc_root_test )
+  add_test( NAME ${testname} COMMAND sh ${CMAKE_CURRENT_BINARY_DIR}/run${testname}.sh WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endmacro( hepmc_unix_test )
 
 
 macro( hepmc_root_test testname )
