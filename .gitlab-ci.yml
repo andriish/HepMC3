@@ -35,6 +35,7 @@ LCG_x86_64-alma9:
       export PYTHON3DOTVERSION=$(echo $HM3_PYTHON_VERSION | cut -f 1,2 -d. )
       export HM3_HEPMC_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'HepMC;' | cut -f 3 -d';' | tr -d ' ')
       export HM3_PROTOBUF_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'protobuf;' | cut -f 3 -d';' | tr -d ' ')
+      export HM3_PROTOBUF2_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'protobuf2;' | cut -f 3 -d';' | tr -d ' ')
       export HM3_PYTHIA8_VERSION=$(cat  $LCGLOCATION/LCG_generators_$LCGPLATFORM'.txt' | grep 'pythia8;' | cut -f 3 -d';' | tr -d ' ')
       source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${GCCV}/${LCGPLATFORM}/setup.sh
       export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/latest/Linux-x86_64/bin/:${PATH}
@@ -44,7 +45,7 @@ LCG_x86_64-alma9:
       source ${LCGLOCATION}/graphviz/${HM3_GRAPHVIZ_VERSION}/${LCGPLATFORM}/graphviz-env.sh
       source ${LCGLOCATION}/Python/${HM3_PYTHON_VERSION}/${LCGPLATFORM}/Python-env.sh
       source ${LCGLOCATION}/HepMC/${HM3_HEPMC_VERSION}/${LCGPLATFORM}/HepMC-env.sh
-      source ${LCGLOCATION}/protobuf/${HM3_PROTOBUF_VERSION}/${LCGPLATFORM}/protobuf-env.sh
+      source ${LCGLOCATION}/protobuf2/${HM3_PROTOBUF2_VERSION}/${LCGPLATFORM}/protobuf2-env.sh
       export Protobuf_ROOT=$(pkg-config protobuf --variable=prefix)
       export LARG=" "
       export LARG="$LARG "-DPYTHIA8_ROOT_DIR=${LCGLOCATION}/MCGenerators/pythia8/${HM3_PYTHIA8_VERSION}/${LCGPLATFORM}
