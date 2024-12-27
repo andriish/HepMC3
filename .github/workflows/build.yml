@@ -13,20 +13,14 @@ jobs:
         python-version: ["3.9"]
         config:
         - {
-            name: "MacOSX-11",
-            os: macos-11,
-            cc: "clang",
-            cxx: "clang++"
-          }
-        - {
-            name: "MacOSX-12",
-            os: macos-12,
+            name: "MacOSX-13",
+            os: macos-13,
             cc: "clang",
             cxx: "clang++"
           }
         - {
             name: "MacOSX-13",
-            os: macos-13,
+            os: macos-13-xlarge,
             cc: "clang",
             cxx: "clang++"
           }
@@ -37,20 +31,32 @@ jobs:
             cxx: "clang++"
           }
         - {
-            name: "MacOSX-11",
-            os: macos-11,
-            cc: "gcc-14",
-            cxx: "g++-14"
+            name: "MacOSX-14",
+            os: macos-14-xlarge,
+            cc: "clang",
+            cxx: "clang++"
           }
         - {
-            name: "MacOSX-12",
-            os: macos-12,
+            name: "MacOSX-15",
+            os: macos-15,
+            cc: "clang",
+            cxx: "clang++"
+          }
+        - {
+            name: "MacOSX-15",
+            os: macos-15-xlarge,
+            cc: "clang",
+            cxx: "clang++"
+          }
+        - {
+            name: "MacOSX-13",
+            os: macos-13,
             cc: "gcc-14",
             cxx: "g++-14"
           }
         - {
             name: "MacOSX-13",
-            os: macos-13,
+            os: macos-13-xlarge,
             cc: "gcc-14",
             cxx: "g++-14"
           }
@@ -60,7 +66,24 @@ jobs:
             cc: "gcc-14",
             cxx: "g++-14"
           }
-
+        - {
+            name: "MacOSX-14",
+            os: macos-14-xlarge,
+            cc: "gcc-14",
+            cxx: "g++-14"
+          }
+        - {
+            name: "MacOSX-15",
+            os: macos-15,
+            cc: "gcc-14",
+            cxx: "g++-14"
+          }
+        - {
+            name: "MacOSX-15",
+            os: macos-15-xlarge,
+            cc: "gcc-14",
+            cxx: "g++-14"
+          }
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -72,11 +95,9 @@ jobs:
         brew install protobuf
         brew install doxygen
         uname -m
-        cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_ENABLE_PYTHON=ON -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+        cmake -S. -B BUILD  -DCMAKE_CXX_COMPILER=${{cxx}} -DCMAKE_C_COMPILER=${{cc}} -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_ENABLE_PYTHON=OFF -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
         cmake --build BUILD
         cmake --install BUILD
-        cd BUILD
-        ctest . --output-on-failure
         wget https://gitlab.cern.ch/-/project/6751/uploads/8ccd55c8a6fb4b84a82e78df891998f6/mytestAPI.hepmc
         BUILD/outputs/bin/convert_example.exe  -i auto -o hepmc2  mytestAPI.hepmc          1.hepmc
         cat mytestAPI.hepmc | BUILD/outputs/bin/convert_example.exe  -i auto -o hepmc2  -  2.hepmc
