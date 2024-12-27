@@ -44,7 +44,6 @@ LCG_x86_64-alma9:
       export HM3_HEPMC_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'HepMC;' | cut -f 3 -d';' | tr -d ' ')
       export HM3_PROTOBUF_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'protobuf;' | cut -f 3 -d';' | tr -d ' ')
       export HM3_PYTHIA8_VERSION=$(cat  $LCGLOCATION/LCG_generators_$LCGPLATFORM'.txt' | grep 'pythia8;' | cut -f 3 -d';' | tr -d ' ')
-#
       source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${GCCV}/${LCGPLATFORM}/setup.sh
       export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/latest/Linux-x86_64/bin/:${PATH}
       source ${LCGLOCATION}/ROOT/${HM3_ROOT_VERSION}/${LCGPLATFORM}/ROOT-env.sh
@@ -54,18 +53,16 @@ LCG_x86_64-alma9:
       source ${LCGLOCATION}/Python/${HM3_PYTHON_VERSION}/${LCGPLATFORM}/Python-env.sh
       source ${LCGLOCATION}/HepMC/${HM3_HEPMC_VERSION}/${LCGPLATFORM}/HepMC-env.sh
       source ${LCGLOCATION}/protobuf/${HM3_PROTOBUF_VERSION}/${LCGPLATFORM}/protobuf-env.sh
-#LCG 99 calls its variable Protobuf__HOME instead of Protobuf_HOME
       export Protobuf_ROOT=$(pkg-config protobuf --variable=prefix)
-#  script:
-      LARG=" "
-      LARG="$LARG "-DPYTHIA8_ROOT_DIR=${LCGLOCATION}/MCGenerators/pythia8/${HM3_PYTHIA8_VERSION}/${LCGPLATFORM}
-      LARG="$LARG "-DHEPMC2_ROOT_DIR=${LCGLOCATION}/HepMC/${HM3_HEPMC_VERSION}/${LCGPLATFORM}/
-      LARG="$LARG "-DGRAPHVIZ_ROOT=${LCGLOCATION}/graphviz/${HM3_GRAPHVIZ_VERSION}/${LCGPLATFORM}/
-      LARG="$LARG "-DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include
-      LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so
-      LARG="$LARG "-DHEPMC3_USE_INTERFACE_FROM_PYTHIA8:BOOL=OFF
-      LARG="$LARG "-DCMAKE_INSTALL_PREFIX=$(pwd)/install
-      LARG="$LARG "-DHEPMC3_Python_SITEARCH${PYTHON3VERSION}=$(pwd)/install/lib/python${PYTHON3DOTVERSION}/site-packages
+      export LARG=" "
+      export LARG="$LARG "-DPYTHIA8_ROOT_DIR=${LCGLOCATION}/MCGenerators/pythia8/${HM3_PYTHIA8_VERSION}/${LCGPLATFORM}
+      export LARG="$LARG "-DHEPMC2_ROOT_DIR=${LCGLOCATION}/HepMC/${HM3_HEPMC_VERSION}/${LCGPLATFORM}/
+      export LARG="$LARG "-DGRAPHVIZ_ROOT=${LCGLOCATION}/graphviz/${HM3_GRAPHVIZ_VERSION}/${LCGPLATFORM}/
+      export LARG="$LARG "-DProtobuf_INCLUDE_DIR=${Protobuf_ROOT}/include
+      export LARG="$LARG "-DProtobuf_LIBRARY=${Protobuf_ROOT}/lib/libprotobuf.so
+      export LARG="$LARG "-DHEPMC3_USE_INTERFACE_FROM_PYTHIA8:BOOL=OFF
+      export LARG="$LARG "-DCMAKE_INSTALL_PREFIX=$(pwd)/install
+      export LARG="$LARG "-DHEPMC3_Python_SITEARCH${PYTHON3VERSION}=$(pwd)/install/lib/python${PYTHON3DOTVERSION}/site-packages
       *LCGcmake
 
 .check_commit: &check_commit
