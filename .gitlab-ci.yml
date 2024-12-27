@@ -33,6 +33,7 @@ LCG_x86_64-alma9:
       export LCGRELEASE=LCG_106a_ATLAS_8 
       UNAME=$(uname -m)
       export GCCV=13
+      set -x
       export LCGPLATFORM=$UNAME"-el9-gcc"$GCCV"-opt"
       export LCGLOCATION=/cvmfs/sft.cern.ch/lcg/releases/$LCGRELEASE
       export HM3_ROOT_VERSION=$(cat  $LCGLOCATION/LCG_externals_$LCGPLATFORM'.txt' | grep 'ROOT;' | cut -f 3 -d';' | tr -d ' ')
