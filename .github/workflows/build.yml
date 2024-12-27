@@ -13,14 +13,14 @@ jobs:
         python-version: ["3.9"]
         config:
         - {
-            name: "MacOSX-12",
-            os: macos-12,
+            name: "MacOSX-11",
+            os: macos-11,
             cc: "clang",
             cxx: "clang++"
           }
         - {
-            name: "MacOSX-11",
-            os: macos-11,
+            name: "MacOSX-12",
+            os: macos-12,
             cc: "clang",
             cxx: "clang++"
           }
@@ -35,6 +35,30 @@ jobs:
             os: macos-14,
             cc: "clang",
             cxx: "clang++"
+          }
+        - {
+            name: "MacOSX-11",
+            os: macos-11,
+            cc: "gcc",
+            cxx: "g++"
+          }
+        - {
+            name: "MacOSX-12",
+            os: macos-12,
+            cc: "gcc",
+            cxx: "g++"
+          }
+        - {
+            name: "MacOSX-13",
+            os: macos-13,
+            cc: "gcc",
+            cxx: "g++"
+          }
+        - {
+            name: "MacOSX-14",
+            os: macos-14,
+            cc: "gcc",
+            cxx: "g++"
           }
 
     steps:
@@ -52,6 +76,11 @@ jobs:
         cmake --install BUILD
         cd BUILD
         ctest . --output-on-failure
+        wget https://gitlab.cern.ch/-/project/6751/uploads/8ccd55c8a6fb4b84a82e78df891998f6/mytestAPI.hepmc
+        BUILD/outputs/bin/convert_example.exe  -i auto -o hepmc2  mytestAPI.hepmc          1.hepmc
+        cat mytestAPI.hepmc | BUILD/outputs/bin/convert_example.exe  -i auto -o hepmc2  -  2.hepmc
+        ls -lah
+        diff 1.hepmc 2.hepmc
   nativewin:
     if: "contains(github.event.head_commit.message, 'githubwinci')"
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
