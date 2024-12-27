@@ -3,11 +3,9 @@ variables:
   STANDARDFLAGS: -DHEPMC3_TEST_VALGRIND=ON  -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
   #-DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"
 stages:
-  - gcc
   - check_if_dockerfile_updated
   - build_docker_image
   - build
-  - LCG
 ########################################################################
 newest-gcc:
   only:
@@ -16,7 +14,8 @@ newest-gcc:
   image: gcc:latest
   tags:
     - k8s-cvmfs
-  stage: gcc
+  stage: build
+  when: manual
   script:
     - |
       apt -y update 
@@ -24,7 +23,7 @@ newest-gcc:
       mkdir BUILD
       cd BUILD
       set -x
-      cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Werror=lto-type-mismatch -Werror=strict-aliasing -Werror=odr -flto" -DHEPMC3_TEST_VALGRIND=ON  -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON
+      cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra -Werror=lto-type-mismatch -Werror=strict-aliasing -Werror=odr -flto" -DHEPMC3_TEST_VALGRIND=ON  -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=OFF
       set +x
       make -j $(nproc)
       make -j $(nproc) install
@@ -37,7 +36,7 @@ LCG_x86_64-alma9:
   image: gitlab-registry.cern.ch/sft/docker/alma9-core:latest
   tags:
     - k8s-cvmfs
-  stage: LCG
+  stage: build
   script:
     - |
       export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
