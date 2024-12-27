@@ -92,10 +92,9 @@ jobs:
           python-version: "${{ matrix.python-version }}"
     - name: Build
       run:  |
-        brew install protobuf
-        brew install doxygen
+        set -x
         uname -m
-        cmake -S. -B BUILD  -DCMAKE_CXX_COMPILER=${{matrix.cxx}} -DCMAKE_C_COMPILER=${{matrix.cc}} -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_ENABLE_PYTHON=OFF -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+        cmake -S. -B BUILD  -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_ENABLE_PYTHON=OFF -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
         cmake --build BUILD
         cmake --install BUILD
         wget https://gitlab.cern.ch/-/project/6751/uploads/8ccd55c8a6fb4b84a82e78df891998f6/mytestAPI.hepmc
