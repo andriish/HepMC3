@@ -39,26 +39,26 @@ jobs:
         - {
             name: "MacOSX-11",
             os: macos-11,
-            cc: "gcc",
-            cxx: "g++"
+            cc: "gcc-14",
+            cxx: "g++-14"
           }
         - {
             name: "MacOSX-12",
             os: macos-12,
-            cc: "gcc",
-            cxx: "g++"
+            cc: "gcc-14",
+            cxx: "g++-14"
           }
         - {
             name: "MacOSX-13",
             os: macos-13,
-            cc: "gcc",
-            cxx: "g++"
+            cc: "gcc-14",
+            cxx: "g++-14"
           }
         - {
             name: "MacOSX-14",
             os: macos-14,
-            cc: "gcc",
-            cxx: "g++"
+            cc: "gcc-14",
+            cxx: "g++-14"
           }
 
     steps:
@@ -69,10 +69,10 @@ jobs:
           python-version: "${{ matrix.python-version }}"
     - name: Build
       run:  |
-        brew install gcc
         brew install protobuf
         brew install doxygen
-        cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
+        uname -m
+        cmake -S. -B BUILD -DCMAKE_INSTALL_PREFIX=./INSTALL -DHEPMC3_ENABLE_PYTHON=ON -DHEPMC3_BUILD_DOCS:BOOL=OFF -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_PYTHON_VERSIONS=3
         cmake --build BUILD
         cmake --install BUILD
         cd BUILD
