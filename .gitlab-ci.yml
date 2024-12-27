@@ -27,7 +27,7 @@ LCG_x86_64-alma9:
     - k8s-cvmfs
   stage: LCG
   before_script:
-   - |
+    - |
       export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
       uname -m
       export LCGRELEASE=LCG_106a_ATLAS_8 
