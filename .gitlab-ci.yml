@@ -8,15 +8,6 @@ stages:
   - build_docker_image
   - build
 ########################################################################
-.LCGcmake: &LCGcmake
-    - mkdir BUILD
-    - cd BUILD
-    - set -x
-    - cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" ${STANDARDFLAGS} ${LARG}  ${EXTRACMAKEFLAGS}
-    - set +x
-    - make -j $(nproc)
-    - make -j $(nproc) install
-    - ctest -j 5 --output-on-failure
 
 LCG_x86_64-alma9:
   only:
@@ -64,7 +55,14 @@ LCG_x86_64-alma9:
       export LARG="$LARG "-DHEPMC3_USE_INTERFACE_FROM_PYTHIA8:BOOL=OFF
       export LARG="$LARG "-DCMAKE_INSTALL_PREFIX=$(pwd)/install
       export LARG="$LARG "-DHEPMC3_Python_SITEARCH${PYTHON3VERSION}=$(pwd)/install/lib/python${PYTHON3DOTVERSION}/site-packages
-      *LCGcmake
+      mkdir BUILD
+      cd BUILD
+      set -x
+      cmake .. -DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra" ${STANDARDFLAGS} ${LARG}  ${EXTRACMAKEFLAGS}
+      set +x
+      make -j $(nproc)
+      make -j $(nproc) install
+      ctest -j 5 --output-on-failure
 
 .check_commit: &check_commit
   stage: check_if_dockerfile_updated
