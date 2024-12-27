@@ -19,6 +19,7 @@ newest-gcc:
   stage: gcc
   script:
     - |
+      apt -y update 
       apt-get install -y valgrind python3 python3-dev doxygen protobuf-compiler libprotobuf-dev
       mkdir BUILD
       cd BUILD
