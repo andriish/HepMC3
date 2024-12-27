@@ -7,19 +7,21 @@ stages:
   - build_docker_image
   - build
 ########################################################################
-newest-gcc:
+Fedora40-GNU-latest:
   only:
     variables:
      - $CI_SERVER_HOST=="gitlab.cern.ch"
-  image: gcc:latest
+  image: gitlab-registry.cern.ch/hepmc/hepmc3:Fedora_40
   tags:
     - k8s-cvmfs
   stage: build
   when: manual
   script:
     - |
-      apt -y update 
-      apt-get install -y valgrind python3 python3-dev doxygen protobuf-compiler libprotobuf-dev cmake
+      dnf copr -y enable -y jwakely/gcc-latest
+      dnf install -y  gcc-latest
+      export PATH=/opt/gcc-latest/bin:$PATH
+      export LD_LIBRARY_PATH=/opt/gcc-latest/lib:/opt/gcc-latest/lib64:$LD_LIBRARY_PATH
       mkdir BUILD
       cd BUILD
       set -x
