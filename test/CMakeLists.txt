@@ -26,6 +26,29 @@ macro( hepmc_test testname )
   file(COPY ${INPUT${name}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endmacro( hepmc_test )
 
+macro( hepmc_unix_test testname )
+  message( STATUS "HepMC3 test: building UNIX test ${testname} " )
+  find_file( ${testname}_source ${testname}.cc ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
+  ADD_EXECUTABLE(${testname} ${${testname}_source}  ${ARGN} )
+  target_include_directories(${testname} BEFORE
+  PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src )
+  target_link_libraries(${testname} PRIVATE HepMC3::HepMC3 )
+  set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
+  set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
+  add_test( ${testname} ${CMAKE_CURRENT_BINARY_DIR}/run${testname}".sh" )
+  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{PATH}"
+  )
+  string(REPLACE "test" "" ${testname} name)
+  file(GLOB INPUT${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/input${testname}*" )
+  file(COPY ${INPUT${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  file(GLOB INPUT${name}  "${CMAKE_CURRENT_SOURCE_DIR}/input${name}*" )
+  file(COPY ${INPUT${name}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  file(GLOB RUN${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/run${testname}*" )
+  file(COPY ${RUN${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endmacro( hepmc_root_test )
+
+
 macro( hepmc_root_test testname )
   message( STATUS "HepMC3 test: building ROOT test ${testname} " )
   find_file( ${testname}_source ${testname}.cc ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
@@ -137,6 +160,10 @@ set( HepMC_tests
         testOrder
         testVertexAttributes
          )
+                 
+set( HepMC_unix_tests
+        testReaderFactory5
+)
 set( HepMC_root_tests
         testIO2
         testIO4
@@ -313,6 +340,11 @@ if(HEPMC3_ENABLE_ROOTIO AND (NOT WIN32) )
   target_link_libraries(testIO4 PRIVATE ROOT::Hist)
 endif()
 
+if(NOT WIN32)
+  foreach ( test ${HepMC_unix_tests} )
+    hepmc_unix_test( ${test} )
+  endforeach ( test ${HepMC_unix_tests} )
+endif()
 
 set( convert_tests )
 
