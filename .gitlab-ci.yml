@@ -20,7 +20,7 @@ newest-gcc:
   script:
     - |
       apt -y update 
-      apt-get install -y valgrind python3 python3-dev doxygen protobuf-compiler libprotobuf-dev
+      apt-get install -y valgrind python3 python3-dev doxygen protobuf-compiler libprotobuf-dev cmake
       mkdir BUILD
       cd BUILD
       set -x
