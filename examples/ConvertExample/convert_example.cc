@@ -6,6 +6,7 @@
 /// @example convert_example.cc
 /// @brief Utility to convert between different types of event records
 ///
+#include <iostream>
 #include "HepMC3/Print.h"
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/Reader.h"
@@ -131,6 +132,13 @@ int main(int argc, char** argv)
     std::shared_ptr<Reader>      input_file;
     bool input_is_stdin = (std::string(ai.inputs[0]) == std::string("-"));
     if (input_is_stdin) std::ios_base::sync_with_stdio(false);
+#ifdef _LIBCPP_VERSION
+    if (input_is_stdin) {
+		printf("std::ios_base::sync_with_stdio(bool) is not implemented in libc++, the program cannot process inputs from standard input\n");
+		exit(4);
+    }
+#endif    
+    
     bool ignore_writer = false;
     switch (format_map.at(std::string(ai.input_format_arg)))
     {

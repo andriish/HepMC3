@@ -437,7 +437,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
 
     int id = atoi(cursor);
     if ( id < 1 || id > static_cast<int>(m_data.particles.size()) ) {
-        HEPMC3_ERROR_LEVEL(600,"ReaderAscii: particle ID is out of expected range.")
+        HEPMC3_ERROR_LEVEL(600,"ReaderAscii: particle ID is out of expected range: " + std::to_string(id) + " 1.." + std::to_string(m_data.particles.size()))
         return false;
     }
 
