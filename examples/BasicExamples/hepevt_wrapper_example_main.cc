@@ -39,7 +39,7 @@ using  namespace HepMC3;
 #endif
 extern "C"  void FC_SIMPLE_TAU_HEPEVT_EVENT(); //!< Forward declaration of function defined in hepevt_wrapper_example_fortran.f
 extern "C" void FC_PHODMP();                  //!< Forward declaration of function defined in hepevt_wrapper_example_fortran.f
-extern "C" struct HEPEVT hepevt_;                   //!< Forward declaration of fortran block pointer
+extern "C" struct HEPEVT_Templated_Simple<10000,double> hepevt_;                   //!< Forward declaration of fortran block pointer
 
 
 /** @brief Add single particle to HEPEVT event */
