@@ -45,7 +45,6 @@ C...HepMC3
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       include "Pythia6ToHepMC3.inc"
       INTEGER OUTID(2), HEPMC3STATUS
-      INTEGER PDF1,PDF2
 
 C-----------------------------------------------------------------
 
@@ -139,8 +138,6 @@ C...Note: no explicit XS uncertainty
      &    1.0E9*XSEC(0,3),
      &    1.0E9*XSEC(0,3)/sqrt(1.0*NGEN(0,3)),
      &    NGEN(0,3),0)
-          PDF1=1
-          PDF2=1
 C    int hepmc3_set_pdf_info_(const int & position, 
 C                             const int& parton_id1, const int& parton_id2, 
 C                             const double& x1, const double& x2, const double& scale_in, 
