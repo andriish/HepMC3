@@ -349,7 +349,7 @@ Fedora38-GNU:
     - job: build_image_Fedora38
 
 Fedora37-LLVM:
-  variables: { OS: Fedora, FREL: 37, TOOLSET: LLVM,  EXTRACMAKEFLAGS: }
+  variables: { OS: Fedora, FREL: 37, TOOLSET: LLVM,  EXTRACMAKEFLAGS: -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora37
@@ -367,7 +367,7 @@ Fedora34-GNU:
     - job: build_image_Fedora34
 
 Fedora34-LLVM:
-  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS: }
+  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS:  -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora34
