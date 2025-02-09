@@ -213,8 +213,8 @@ LCG_x86_64-alma9:
 
 ###########################################################################
 #Check commit messages
-check_commit_Fedora42:
-  variables: { OS: Fedora, FREL: 42}
+check_commit_Fedora41:
+  variables: { OS: Fedora, FREL: 41}
   extends: .check_commit
 
 check_commit_Fedora40:
@@ -271,11 +271,11 @@ check_commit_Archlinux0:
 
 ###########################################################################
 #Build images
-build_image_Fedora42:
-  variables: { OS: Fedora, FREL: 42}
+build_image_Fedora41:
+  variables: { OS: Fedora, FREL: 41}
   extends: .build_image
   needs:
-    - job: check_commit_Fedora42
+    - job: check_commit_Fedora41
 
 build_image_Fedora40:
   variables: { OS: Fedora, FREL: 40}
@@ -356,11 +356,11 @@ build_image_Archlinux0:
     - job: check_commit_Archlinux0
 
 ###########################################################################
-Fedora42-GNU:
-  variables: { OS: Fedora, FREL: 42, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+Fedora41-GNU:
+  variables: { OS: Fedora, FREL: 41, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
   extends: .any-cmake
   needs:
-    - job: build_image_Fedora42
+    - job: build_image_Fedora41
 
 Fedora40-GNU:
   variables: { OS: Fedora, FREL: 40, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
