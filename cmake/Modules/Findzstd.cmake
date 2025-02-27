@@ -24,7 +24,6 @@ find_library(zstd_STATIC_LIBRARY NAMES
   zstd_static
   "${CMAKE_STATIC_LIBRARY_PREFIX}zstd${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     zstd DEFAULT_MSG
