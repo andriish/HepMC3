@@ -241,13 +241,13 @@ check_commit_Fedora33:
   variables: { OS: Fedora, FREL: 33}
   extends: .check_commit
 
-check_commit_Fedora24:
+check_commit_Fedora25:
   variables: { OS: Fedora, FREL: 24}
   extends: .check_commit
 
-check_commit_Fedora23:
-  variables: { OS: Fedora, FREL: 23}
-  extends: .check_commit
+#check_commit_Fedora23:
+  #variables: { OS: Fedora, FREL: 23}
+  #extends: .check_commit
 
 check_commit_CentOS10:
   variables: { OS: CentOS, FREL: 10}
@@ -313,17 +313,17 @@ build_image_Fedora33:
   needs:
     - job: check_commit_Fedora33
 
-build_image_Fedora24:
-  variables: { OS: Fedora, FREL: 24}
+build_image_Fedora25:
+  variables: { OS: Fedora, FREL: 25}
   extends: .build_image
   needs:
-    - job: check_commit_Fedora24
+    - job: check_commit_Fedora25
 
-build_image_Fedora23:
-  variables: { OS: Fedora, FREL: 23}
-  extends: .build_image
-  needs:
-    - job: check_commit_Fedora23
+#build_image_Fedora23:
+  #variables: { OS: Fedora, FREL: 23}
+  #extends: .build_image
+  #needs:
+    #- job: check_commit_Fedora23
 
 build_image_CentOS10:
   variables: { OS: CentOS, FREL: 10}
