@@ -18,28 +18,11 @@ else()
   set(zstd_STATIC_LIBRARY_SUFFIX "\\${CMAKE_STATIC_LIBRARY_SUFFIX}$")
 endif()
 
-
-if (ZSTD_DIR OR ZSTD_ROOT_DIR)
-  set(ZSTD_SEARCH_DIRS "" CACHE STRING "" FORCE)
-  if (ZSTD_ROOT_DIR)
-    list (APPEND LHAPDF_SEARCH_DIRS "${ZSTD_ROOT_DIR}" )
-  endif()
-  if (ZSTD_DIR)
-    list (APPEND ZSTD_SEARCH_DIRS "${ZSTD_DIR}" )
-  endif()
-endif()
-if (ZSTD_SEARCH_DIRS)
-  find_path(zstd_INCLUDE_DIR NAMES zstd.h  PATH_SUFFIXES include ../include NO_DEFAULT_PATH)
-  find_library(zstd_LIBRARY NAMES zstd zstd_static  PATH_SUFFIXES  lib64  lib  ../lib64 ../lib  NO_DEFAULT_PATH)
-  find_library(zstd_STATIC_LIBRARY NAMES zstd_static "${CMAKE_STATIC_LIBRARY_PREFIX}zstd${CMAKE_STATIC_LIBRARY_SUFFIX}"  PATH_SUFFIXES  lib64  lib  ../lib64 ../lib  NO_DEFAULT_PATH)
-else()
-  find_path(zstd_INCLUDE_DIR NAMES zstd.h  PATH_SUFFIXES include ../include )
-  find_library(zstd_LIBRARY NAMES zstd zstd_static  PATH_SUFFIXES lib64  lib  ../lib64 ../lib )
-  find_library(zstd_STATIC_LIBRARY NAMES zstd_static "${CMAKE_STATIC_LIBRARY_PREFIX}zstd${CMAKE_STATIC_LIBRARY_SUFFIX}"  PATH_SUFFIXES  lib64  lib  ../lib64 ../lib )
-endif()
-
-
-
+find_path(zstd_INCLUDE_DIR NAMES zstd.h)
+find_library(zstd_LIBRARY NAMES zstd zstd_static)
+find_library(zstd_STATIC_LIBRARY NAMES
+  zstd_static
+  "${CMAKE_STATIC_LIBRARY_PREFIX}zstd${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 
 include(FindPackageHandleStandardArgs)
