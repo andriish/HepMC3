@@ -241,8 +241,8 @@ check_commit_Fedora33:
   variables: { OS: Fedora, FREL: 33}
   extends: .check_commit
 
-check_commit_Fedora25:
-  variables: { OS: Fedora, FREL: 25}
+check_commit_Fedora27:
+  variables: { OS: Fedora, FREL: 27}
   extends: .check_commit
 
 #check_commit_Fedora23:
@@ -313,11 +313,11 @@ build_image_Fedora33:
   needs:
     - job: check_commit_Fedora33
 
-build_image_Fedora25:
-  variables: { OS: Fedora, FREL: 25}
+build_image_Fedora27:
+  variables: { OS: Fedora, FREL: 27}
   extends: .build_image
   needs:
-    - job: check_commit_Fedora25
+    - job: check_commit_Fedora27
 
 #build_image_Fedora23:
   #variables: { OS: Fedora, FREL: 23}
@@ -404,11 +404,11 @@ Fedora33-GNU-pypy:
   needs:
     - job: build_image_Fedora33
 
-Fedora25-GNU:
-  variables: { OS: Fedora, FREL: 25, TOOLSET: GNU, EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF"}
+Fedora27-GNU:
+  variables: { OS: Fedora, FREL: 27, TOOLSET: GNU, EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF"}
   extends: .any-oldcmake
   needs:
-    - job: build_image_Fedora25
+    - job: build_image_Fedora27
 
 #Fedora23-LLVM-noroot-nopython-noprotobuf:
   #variables: { OS: Fedora, FREL: 23, TOOLSET: LLVM, EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF"}
