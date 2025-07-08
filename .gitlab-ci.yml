@@ -483,11 +483,12 @@ Archlinux0-GNU:
 
 
 CentOS10-GNU-cmake-ranges:
+#  stage: LCG
   needs:
     - job: build_image_CentOS10
   parallel:
     matrix:
-     - CMAKEVERSION: [ "3.10.0", "3.12.0", "3.14.0", "3.16.0",  "3.18.0", "3.20.0", "3.22.0", "3.24.0", "3.26.0", "3.28.0", "3.30.0",  "3.31.8", "4.0.3" ]
+     - CMAKEVERSION: ["3.16.0",  "3.18.0", "3.20.0", "3.22.0", "3.24.0", "3.26.0", "3.28.0", "3.30.0",  "3.31.8", "4.0.3" ]
   variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
   extends: .any
   script:
@@ -496,3 +497,17 @@ CentOS10-GNU-cmake-ranges:
       - *standalone  
 
 
+CentOS10-GNU-oldcmake-ranges:
+#  stage: LCG
+  needs:
+    - job: build_image_CentOS10
+  parallel:
+    matrix:
+     - CMAKEVERSION: [ "3.10.0", "3.12.0", "3.14.0", "3.15.0"]
+  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+  extends: .any
+  script:
+      - *excmake
+      - *oldcmake
+      - *oldstandaloneexamples
+      - *oldstandalonepython
