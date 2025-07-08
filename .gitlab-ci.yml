@@ -494,13 +494,20 @@ Archlinux0-GNU:
 
 
 CentOS10-GNU-cmake-ranges:
-#  stage: LCG
   needs:
     - job: build_image_CentOS10
   parallel:
     matrix:
-     - CMAKEVERSION: ["3.16.0",  "3.18.0", "3.20.0", "3.22.0", "3.24.0", "3.26.0", "3.28.0", "3.30.0",  "3.31.8", "4.0.3" ]
-  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.16.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.18.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.20.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.22.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.24.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.26.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.28.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.30.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.31.8" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "4.0.3" }
   extends: .any
   script:
       - *excmake
@@ -509,14 +516,14 @@ CentOS10-GNU-cmake-ranges:
 
 
 CentOS10-GNU-oldcmake-ranges:
-#  stage: LCG
   needs:
     - job: build_image_CentOS10
   parallel:
     matrix:
-     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF", CMAKEVERSION: "3.10.0" }
-     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF" , CMAKEVERSION: "3.12.0" }
-     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF", CMAKEVERSION: "3.14.0" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.10.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.12.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF"  }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.13.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF"  }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.14.0" }
      - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.15.0" }
   extends: .any
   script:
