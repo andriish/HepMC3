@@ -1,6 +1,9 @@
 name: HepMC3 Build Matrix for Windows and MacOSX
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   nativeosx:
@@ -90,7 +93,7 @@ jobs:
         cd BUILD
         ctest . --output-on-failure
   nativewin:
-    if: "contains(github.event.head_commit.message, 'githubwinci')"
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'githubwinci')
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
     runs-on: ${{ matrix.config.os }}
     strategy:
