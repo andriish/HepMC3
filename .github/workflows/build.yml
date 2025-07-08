@@ -40,11 +40,11 @@ jobs:
             #os: macos-15,
             #cxx: "clang++"
           #}
-        #- {
-            #name: "MacOSX-15",
-            #os: macos-15-xlarge,
-            #cxx: "clang++"
-          #}
+        - {
+            name: "MacOSX-15",
+            os: macos-15,
+            cxx: "clang++"
+          }
         #- {
             #name: "MacOSX-13",
             #os: macos-13,
@@ -65,6 +65,7 @@ jobs:
             #os: macos-14-xlarge,
             #cxx: "g++-14"
           #}
+# This one is broken, see https://github.com/munich-quantum-toolkit/core/issues/979
         - {
             name: "MacOSX-15",
             os: macos-15,
