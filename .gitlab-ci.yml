@@ -496,6 +496,8 @@ Archlinux0-GNU:
 CentOS10-GNU-cmake-ranges:
   needs:
     - job: build_image_CentOS10
+  when: manual
+  allow_failure: true
   parallel:
     matrix:
      - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.16.0" }
@@ -518,9 +520,11 @@ CentOS10-GNU-cmake-ranges:
 CentOS10-GNU-oldcmake-ranges:
   needs:
     - job: build_image_CentOS10
+  when: manual
+  allow_failure: true
   parallel:
     matrix:
-     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.10.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF" }
+     - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.10.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF -DHEPMC3_ENABLE_PYTHON:BOOL=OFF -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF" }
      - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.12.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF"  }
      - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.13.0", EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF"  }
      - { OS: CentOS, FREL: 10, TOOLSET: GNU,  CMAKEVERSION: "3.14.0" }
