@@ -458,4 +458,75 @@ Archlinux0-GNU:
   needs:
     - job: build_image_Archlinux0
 
+########################################################################
+
+.excmake:  &excmake
+    - wget https://github.com/Kitware/CMake/releases/download/v${CMAKEVERSION}/cmake-${CMAKEVERSION}-linux-x86_64.sh
+    - mkdir -p $(pwd)/${CMAKEVERSION}
+    - sh cmake-${CMAKEVERSION}-linux-x86_64.sh  --skip-license --prefix=$(pwd)/${CMAKEVERSION}
+    - export PATH=$(pwd)/${CMAKEVERSION}/bin:$PATH
+    - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi
+    - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi
+    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi
+    - export CCACHE_BASEDIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}-${CMAKEVERSION}
+    - export CCACHE_DIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}-${CMAKEVERSION}/ccache
+    - mkdir -p CCACHE_DIR
+    - export CCACHE_COMPILERCHECK=content
+    - export CMAKE=cmake
+    - export CTEST=ctest
+    - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
+    - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
+    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
+    - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
+    - $CMAKE --version
+    - $CTEST --version
+
+.any-cmake: &any-cmake
+  extends: .any
+  script:
+      - *ex
+      - *cmake
+      - *standalone
+
+.CentOS10-GNU-cmake-ranges: &CentOS10-GNU-cmake-ranges
+  extends: .any
+  script:
+      - *excmake
+      - *cmake
+      - *standalone  
+  needs:
+    - job: build_image_CentOS10
+
+
+CentOS10-GNU-cmake-ranges-4.1.0-rc1:
+  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 4.1.0-rc1}
+  extends: .CentOS10-GNU-cmake-ranges
+
+CentOS10-GNU-cmake-ranges-3.31.8:
+  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 3.31.8}
+  extends: .CentOS10-GNU-cmake-ranges
+
+
+
+
+
+CentOS10-GNU-cmake-ranges-3.10.0:
+  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 3.10.0}
+  extends: .CentOS10-GNU-cmake-ranges
+
+
+
+CentOS10-GNU-cmake-ranges2:
+  needs:
+    - job: build_image_CentOS10
+  parallel:
+    matrix:
+     - CMAKEVERSION: [ "3.31.8", "3.10.0"]
+  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+  extends: .any
+  script:
+      - *excmake
+      - *cmake
+      - *standalone  
+
 
