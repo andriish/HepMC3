@@ -494,6 +494,7 @@ Archlinux0-GNU:
 
 
 CentOS10-GNU-cmake-ranges:
+  stage: LCG
   needs:
     - job: build_image_CentOS10
   when: manual
@@ -518,6 +519,7 @@ CentOS10-GNU-cmake-ranges:
 
 
 CentOS10-GNU-oldcmake-ranges:
+  stage: LCG
   needs:
     - job: build_image_CentOS10
   when: manual
