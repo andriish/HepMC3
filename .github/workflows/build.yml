@@ -7,7 +7,7 @@ on:
 
 jobs:
   nativeosx:
-    if: "contains(github.event.head_commit.message, 'githubosxci')"
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'githubosxci')
     name: "${{ matrix.config.name }} ${{ matrix.python-version }}"
     runs-on: ${{ matrix.config.os }}
     strategy:
