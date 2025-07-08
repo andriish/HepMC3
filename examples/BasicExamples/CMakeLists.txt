@@ -1,11 +1,8 @@
 # building tests
 #------------------
-cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.0...4.0.3)
 #
-if (${CMAKE_VERSION} VERSION_GREATER "3.8")
-  cmake_policy(SET CMP0069 NEW)
-  include(CheckIPOSupported)
-endif()
+include(CheckIPOSupported)
 
 #---Add executables------------------------------------------------------------
 add_executable(basic_tree.exe ${CMAKE_CURRENT_SOURCE_DIR}/basic_tree.cc)

@@ -481,47 +481,13 @@ Archlinux0-GNU:
     - $CMAKE --version
     - $CTEST --version
 
-.any-cmake: &any-cmake
-  extends: .any
-  script:
-      - *ex
-      - *cmake
-      - *standalone
 
-.CentOS10-GNU-cmake-ranges: &CentOS10-GNU-cmake-ranges
-  extends: .any
-  script:
-      - *excmake
-      - *cmake
-      - *standalone  
-  needs:
-    - job: build_image_CentOS10
-
-
-CentOS10-GNU-cmake-ranges-4.1.0-rc1:
-  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 4.1.0-rc1}
-  extends: .CentOS10-GNU-cmake-ranges
-
-CentOS10-GNU-cmake-ranges-3.31.8:
-  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 3.31.8}
-  extends: .CentOS10-GNU-cmake-ranges
-
-
-
-
-
-CentOS10-GNU-cmake-ranges-3.10.0:
-  variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: , CMAKEVERSION: 3.10.0}
-  extends: .CentOS10-GNU-cmake-ranges
-
-
-
-CentOS10-GNU-cmake-ranges2:
+CentOS10-GNU-cmake-ranges:
   needs:
     - job: build_image_CentOS10
   parallel:
     matrix:
-     - CMAKEVERSION: [ "3.31.8", "3.10.0"]
+     - CMAKEVERSION: [ "3.10.0", "3.12.0", "3.14.0", "3.16.0",  "3.18.0", "3.20.0", "3.22.0", "3.24.0", "3.26.0", "3.28.0", "3.30.0",  "3.31.8", "4.0.3" ]
   variables: { OS: CentOS, FREL: 10, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
   extends: .any
   script:

@@ -1,9 +1,9 @@
 #Beacause of LZMA targets
 if (HEPMC3_TEST_LZMA)
-  cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.14.0...4.0.3)
 endif()
 if (HEPMC3_TEST_BZIP2)
-  cmake_minimum_required(VERSION 3.12.0 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.12.0...4.0.3)
 endif()
 
 
