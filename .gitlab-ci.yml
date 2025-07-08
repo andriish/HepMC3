@@ -460,26 +460,37 @@ Archlinux0-GNU:
 
 ########################################################################
 
-.excmake:  &excmake
-    - wget https://github.com/Kitware/CMake/releases/download/v${CMAKEVERSION}/cmake-${CMAKEVERSION}-linux-x86_64.sh
-    - mkdir -p $(pwd)/${CMAKEVERSION}
-    - sh cmake-${CMAKEVERSION}-linux-x86_64.sh  --skip-license --prefix=$(pwd)/${CMAKEVERSION}
-    - export PATH=$(pwd)/${CMAKEVERSION}/bin:$PATH
-    - if [ "${TOOLSET}" == "LLVM" ]; then export CXX=clang++; export CC=clang; export FC=gfortran; fi
-    - if [ "${TOOLSET}" == "GNU" ]; then export CXX=g++; export CC=gcc; export FC=gfortran; fi
-    - if [ "${TOOLSET}" == "INTEL" ]; then source /opt/intel/oneapi/setvars.sh; export CXX=icx; export CC=icx; export FC=ifx; fi
-    - export CCACHE_BASEDIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}-${CMAKEVERSION}
-    - export CCACHE_DIR=`pwd`/CACHES/cache-${OS}-${FREL}-${TOOLSET}-${CMAKEVERSION}/ccache
-    - mkdir -p CCACHE_DIR
-    - export CCACHE_COMPILERCHECK=content
-    - export CMAKE=cmake
-    - export CTEST=ctest
-    - if [ "${FREL}" == "7" ]; then export CMAKE=cmake3; CTEST=ctest3; fi
-    - if [ "${FREL}" == "0" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - if [ "${FREL}" == "23" ]; then export CMAKE=cmake; CTEST=ctest; fi
-    - export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache "
-    - $CMAKE --version
-    - $CTEST --version
+.excmake: &excmake |
+  wget https://github.com/Kitware/CMake/releases/download/v${CMAKEVERSION}/cmake-${CMAKEVERSION}-linux-x86_64.sh
+  mkdir -p "$(pwd)/${CMAKEVERSION}"
+  sh cmake-${CMAKEVERSION}-linux-x86_64.sh --skip-license --prefix="$(pwd)/${CMAKEVERSION}"
+  export PATH="$(pwd)/${CMAKEVERSION}/bin:$PATH"
+  export CCACHE_BASEDIR="$(pwd)/CACHES/cache-${OS}-${FREL}-${TOOLSET}-${CMAKEVERSION}"
+  if [ "${TOOLSET}" == "LLVM" ]; then
+    export CXX=clang++; export CC=clang; export FC=gfortran
+  fi
+  if [ "${TOOLSET}" == "GNU" ]; then
+    export CXX=g++; export CC=gcc; export FC=gfortran
+  fi
+  if [ "${TOOLSET}" == "INTEL" ]; then
+    source /opt/intel/oneapi/setvars.sh
+    export CXX=icx; export CC=icx; export FC=ifx
+  fi
+  export CCACHE_DIR="${CCACHE_BASEDIR}/ccache"
+  mkdir -p "$CCACHE_DIR"
+  export CCACHE_COMPILERCHECK=content
+  export CMAKE=cmake
+  export CTEST=ctest
+  if [ "${FREL}" == "7" ]; then
+    export CMAKE=cmake3; export CTEST=ctest3
+  fi
+  if [ "${FREL}" == "0" ] || [ "${FREL}" == "23" ]; then
+    export CMAKE=cmake; export CTEST=ctest
+  fi
+  export CACHINGFLAGS="-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache"
+  $CMAKE --version
+  $CTEST --version
+
 
 
 CentOS10-GNU-cmake-ranges:
