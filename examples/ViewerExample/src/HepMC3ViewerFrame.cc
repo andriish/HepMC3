@@ -21,7 +21,7 @@ static  char*  create_image_from_dot(char* m_buffer)
 
     int err;
     char *data;
-    unsigned int length;
+    size_t length;
 
     if (!g)
         return nullptr;
