@@ -1,29 +1,28 @@
+// -*- C++ -*-
+//
+// This file is part of HepMC
+// Copyright (C) 2014-2025 The HepMC collaboration (see AUTHORS for details)
+//
 #include "HepMC3/GenEvent.h"
-#include "HepMC3/ReaderFactory.h"
+#include "HepMC3/ReaderAsciiHepMC2.h"
 using namespace HepMC3;
-int main(int argc, char* argv[])
+int main()
 {
-    std::shared_ptr<Reader> inputA = deduce_reader("inputSherpa140Crash.hepmc");
-    if (!inputA) return 1;
-
-    int i = 0;
-
-    while (true) {
-        std::cout << "Reading event #" << (i+1) << " ..."  << std::endl;
-        GenEvent evt;
-        inputA->read_event(evt);
-        if (inputA->failed()) {
-            std::cout << "End of file reached, stop" << std::endl;
+    ReaderAsciiHepMC2 inputA("inputSherpa140Crash.hepmc");
+    if(inputA.failed()) return 1;
+    std::vector<std::shared_ptr<GenEvent> > evts;
+    while( !inputA.failed() )
+    {
+        std::shared_ptr<GenEvent>  evt= std::make_shared<GenEvent>();
+        inputA.read_event(*evt);
+        if( inputA.failed() )  {
+            printf("End of file reached. Exit.\n");
             break;
         }
-
-        i += 1;
+        evts.push_back(evt);
     }
+    inputA.close();
 
-    inputA->close();
-
-    std::cout << "Total events read = " << i << std::endl;
-
-    return 0;
+   return EXIT_SUCCESS;
 }
 
