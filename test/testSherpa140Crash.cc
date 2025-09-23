@@ -23,6 +23,6 @@ int main()
     }
     inputA.close();
 
-   return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
