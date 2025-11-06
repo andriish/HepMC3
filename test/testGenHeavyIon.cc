@@ -41,5 +41,5 @@ int main() {
     std::string S2;
     HI2->from_string(S1);
     HI2->to_string(S2);
-    return (S1 = = S2) ? 0 : 1;
+    return (S1 == S2) ? 0 : 1;
 }
