@@ -41,14 +41,17 @@ bool GenHeavyIon::from_string(const std::string &att) {
 
     is >> Ncoll_hard >> Npart_proj >> Npart_targ >> Ncoll;
     if ( version == "v0" ) is >> spectator_neutrons >> spectator_protons;
-    is >> N_Nwounded_collisions >> Nwounded_N_collisions >> Nwounded_Nwounded_collisions >> impact_parameter >> event_plane_angle;
+    is >> N_Nwounded_collisions >> Nwounded_N_collisions
+       >> Nwounded_Nwounded_collisions >> impact_parameter
+       >> event_plane_angle;
     if ( version == "v0" ) is >> eccentricity;
     is >> sigma_inel_NN >> centrality;
+    /* For version == "", version == "v1" etc */
     if ( version != "v0" ) is >> user_cent_estimate;
     is >> Nspec_proj_n >> Nspec_targ_n >> Nspec_proj_p >> Nspec_targ_p;
 
-    int N = 0;
-    int ord = 0;
+    int N=0;
+    int ord=0;
     is >> N;
     for ( int i = 0; i < N; ++i ) {
         is >> ord;
