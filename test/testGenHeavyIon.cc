@@ -35,11 +35,14 @@ int main() {
     HI1->participant_plane_angles[1] = 21;
     HI1-> eccentricities[0]  = 22;
     HI1-> eccentricities[1]  = 23;
+
     std::string S1;
     HI1->to_string(S1);
     auto HI2 = std::make_shared<GenHeavyIon>();
     std::string S2;
     HI2->from_string(S1);
     HI2->to_string(S2);
-    return (S1 == S2) ? 0 : 1;
+    if (S1 != S2) { printf("1->%s<-\n!=\n1->%s<-\n",S1.c_str(),S2.c_str()); return 1; }
+
+    return 0;
 }

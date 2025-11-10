@@ -68,30 +68,25 @@ bool GenHeavyIon::from_string(const std::string &att) {
 
 bool GenHeavyIon::to_string(std::string &att) const {
     std::ostringstream os;
+    std::string version;
 
 #ifndef HEPMC3_NO_DEPRECATED
-    if ( !forceoldformat ) os << "v0 ";
+    if ( !forceoldformat ) version = "v0";
 #else
-    os << "v1 ";
+    version = "v1";
 #endif
-
+    os << version << (version.empty() ? "" : " ");
     os << std::setprecision(8)
        << Ncoll_hard << " " << Npart_proj << " "
-       << Npart_targ << " " << Ncoll << " "
-#ifndef HEPMC3_NO_DEPRECATED
-       << spectator_neutrons << " " << spectator_protons << " "
-#endif
-       << N_Nwounded_collisions << " " << Nwounded_N_collisions << " "
+       << Npart_targ << " " << Ncoll << " ";
+    if ( version == "v0" )  os << spectator_neutrons << " " << spectator_protons << " ";
+    os << N_Nwounded_collisions << " " << Nwounded_N_collisions << " "
        << Nwounded_Nwounded_collisions << " " << impact_parameter << " "
-       << event_plane_angle << " "
-#ifndef HEPMC3_NO_DEPRECATED
-       << eccentricity << " "
-#endif
-       << sigma_inel_NN << " " << centrality << " "
-#ifdef HEPMC3_NO_DEPRECATED
-       << user_cent_estimate << " "
-#endif
-       << Nspec_proj_n << " " << Nspec_targ_n << " "
+       << event_plane_angle << " ";
+    if ( version == "v0" ) os << eccentricity << " ";
+    os << sigma_inel_NN << " " << centrality << " ";
+    if ( version != "v0" ) os << user_cent_estimate << " ";
+    os << Nspec_proj_n << " " << Nspec_targ_n << " "
        << Nspec_proj_p << " " << Nspec_targ_p << " ";
 
     os << participant_plane_angles.size();
