@@ -35,6 +35,26 @@ endif()
 
 set(Graphviz_INCLUDE_DIRS ${Graphviz_INCLUDE_DIR} ${Graphviz_INCLUDE_DIR}/graphviz)
 get_filename_component(Graphviz_LIBRARY_DIR ${Graphviz_GVC_LIBRARY} PATH)
+
+# Detect graphviz version to determine gvRenderData signature: In the 13 series
+# a parameter changed from unsigned int* to size_t*. Set GRAPHVIZ_13 when the
+# installed version is >= 13.
+find_program(GRAPHVIZ_DOT_EXECUTABLE dot)
+if(GRAPHVIZ_DOT_EXECUTABLE)
+  execute_process(COMMAND ${GRAPHVIZ_DOT_EXECUTABLE} -V
+    OUTPUT_VARIABLE _gv_version_output
+    ERROR_VARIABLE  _gv_version_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE)
+  string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)" _gv_version_match "${_gv_version_output}")
+  if(_gv_version_match)
+    set(Graphviz_VERSION "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}")
+    if(CMAKE_MATCH_1 GREATER_EQUAL 13)
+      set(Graphviz_USE_SIZE_T TRUE)
+    endif()
+  endif()
+endif()
+
 set ( TEST_SOURCE "#include <graphviz/gvc.h>\n#include <string>\n #include <graphviz/cdt.h>\n int main(){\nreturn strcmp(\"XX\",\"XXY\");\n}\n")
 if (Graphviz_INCLUDE_DIR)
   set(CMAKE_REQUIRED_INCLUDES ${Graphviz_INCLUDE_DIRS})
@@ -44,7 +64,11 @@ check_cxx_source_compiles("#define _PACKAGE_ast 1\n${TEST_SOURCE}" TEST_SOURCE_A
 if (TEST_SOURCE_AST_COMPILES AND (NOT TEST_SOURCE_NOAST_COMPILES))
   set(Graphviz_DEFINES "_PACKAGE_ast=1")
 else()
-  set(Graphviz_DEFINES "_UNUSED_DUMMY_DEFINE")  
+  set(Graphviz_DEFINES "_UNUSED_DUMMY_DEFINE")
+endif()
+
+if(Graphviz_USE_SIZE_T)
+  list(APPEND Graphviz_DEFINES "GRAPHVIZ_13")
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)
