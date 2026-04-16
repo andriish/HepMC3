@@ -21,7 +21,7 @@ static  char*  create_image_from_dot(char* m_buffer)
 
     int err;
     char *data;
-#if defined(GRAPHVIZ_VERSION_CODE) && (GRAPHVIZ_VERSION_CODE > 130000)
+#if defined(GRAPHVIZ_VERSION_CODE) && (GRAPHVIZ_VERSION_CODE >= 130000)
     size_t length = 0;
 #else
     unsigned int length = 0;
