@@ -200,7 +200,7 @@ void HepMC3ViewerFrame::DoAnalysis()
     std::vector<double> masses;
     for(auto p: fCurrentEvent->particles() )
         if(show_as_parton(p)) masses.push_back(p->momentum().m());
-    TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles",masses.size(), 0, *std::max_element(masses.begin(),masses.end()));
+    TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);
     for(auto m: masses) particles3->Fill(m);
