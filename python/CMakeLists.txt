@@ -257,29 +257,12 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     else()
       set(__comp HepMC3::${_comp})   
     endif()
-    if (${ver} STREQUAL 3)
-      Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
-      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
-    endif()
-    if (${verin} MATCHES "pypy.*")
-      execute_process(
-        COMMAND ${Python_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))"
-        OUTPUT_VARIABLE PY_EXT_SUFFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
-      message(STATUS "HepMC3 python: Detected PyPy EXT_SUFFIX = ${PY_EXT_SUFFIX}")
-      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
-        PROPERTIES
-         PREFIX ""
-         SUFFIX "${PY_EXT_SUFFIX}"
-         OUTPUT_NAME "pyHepMC3${_comp}"
-      )
-    endif()
-
+#See https://gitlab.kitware.com/cmake/cmake/-/work_items/24121
+    Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE WITH_SOABI ${BN${_comp}})
+    set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     if (RERUN_BINDER)
       add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
     endif()
-  
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
