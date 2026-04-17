@@ -261,12 +261,21 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     endif()
-    if (${verin} MATCHES pypy* )
-      execute_process( COMMAND ${Python_EXECUTABLE} -c "import  sys;v=sys.pypy_version_info;print(str(v[0])+str(v[1]))" 
-      OUTPUT_VARIABLE PyPy_PyPy_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (${verin} MATCHES "pypy.*")
+      execute_process(
+        COMMAND ${Python_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))"
+        OUTPUT_VARIABLE PY_EXT_SUFFIX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      message(STATUS "HepMC3 python: Detected PyPy EXT_SUFFIX = ${PY_EXT_SUFFIX}")
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
-      PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION})
+        PROPERTIES
+         PREFIX ""
+         SUFFIX "${PY_EXT_SUFFIX}"
+         OUTPUT_NAME "pyHepMC3${_comp}"
+      )
     endif()
+
     if (RERUN_BINDER)
       add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
     endif()
