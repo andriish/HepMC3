@@ -258,11 +258,25 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       set(__comp HepMC3::${_comp})   
     endif()
 #See https://gitlab.kitware.com/cmake/cmake/-/work_items/24121
-    Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE WITH_SOABI ${BN${_comp}})
-    set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+    message(STATUS "HepMC3 python: Original Python_SOABI = ${Python_SOABI}")
+    if(CMAKE_VERSION VERSION_LESS 3.17)
+      execute_process(
+        COMMAND ${Python_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX').split('.')[1])"
+        OUTPUT_VARIABLE Python_SOABI
+        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
+      )
+  
+      Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES PREFIX "" SUFFIX "${Python_SOABI}.${CMAKE_SHARED_MODULE_SUFFIX}" OUTPUT_NAME pyHepMC3${_comp})
+    else()
+      Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE WITH_SOABI ${BN${_comp}})
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
+    endif()
+    message(STATUS "HepMC3 python: Corrected Python_SOABI = ${Python_SOABI}")  
     if (RERUN_BINDER)
       add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
     endif()
+  
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
