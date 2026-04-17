@@ -392,8 +392,8 @@ build_image_Archlinux0:
     - job: check_commit_Archlinux0
 
 ###########################################################################
-Fedora44-GNU:
-  variables: { OS: Fedora, FREL: 44, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+Fedora44-GNU-pypy:
+  variables: { OS: Fedora, FREL: 44, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=3,pypy3"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora44
