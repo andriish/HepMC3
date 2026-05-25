@@ -41,7 +41,7 @@ public:
     /// Constructor based on vertex data
     GenVertex( const GenVertexData& data );
 
-#ifdef defined(HEPMC3_PROTOBUFIO) || defined(DOXYGEN)
+#if defined(HEPMC3_PROTOBUFIO) || defined(DOXYGEN)
     /// Constructor based on protobuf messages
     GenVertex( HepMC3_pb::GenEventData_GenVertexData const &data );
 #endif
