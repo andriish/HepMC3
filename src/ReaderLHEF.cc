@@ -200,7 +200,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         // 2. Beam energies (EBMUP) are used to give the beams opposite signs along pz
         // 3. Each beam particle gets connected to its corresponding incoming parton via a vertex
 
-        int particle_from_beam_index = 0;
+        std::size_t particle_from_beam_index = 0;
 
         // First beam (positive z-direction)
         if (m_hepr->heprup.IDBMUP.first != 0) {
