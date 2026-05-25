@@ -249,9 +249,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     v->m_event = nullptr;
     v->m_id    = 0;
 }
-/* This looks dangerously similar to the recusive event traversel that we forbade in the
-       Core library due to wories about generator dependence
-*/
+/** @brief Visit child vertices recursively to detect cycles in an event graph. */
 static bool visit_children(std::map<ConstGenVertexPtr, int>  &a, const ConstGenVertexPtr& v)
 {
     for (const ConstGenParticlePtr& p: v->particles_out()) {

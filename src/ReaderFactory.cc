@@ -16,13 +16,10 @@
 #include "HepMC3/ReaderFactory_fwd.h"
 
 namespace HepMC3 {
-/**
- *  @brief Class to hold generic information on the input
- *
- *  Class to hold generic information on the input.
+/** @fn InputInfo::InputInfo(const std::string &filename)
+ *  @brief Constructor with filename
+ *  @memberof InputInfo
  */
-
-/** @brief Constructor with filename*/
 InputInfo::InputInfo (const std::string &filename) {
 
     if (filename.find("http://") != std::string::npos)    m_remote = true;
@@ -88,7 +85,10 @@ InputInfo::InputInfo (const std::string &filename) {
     m_init = true;
 }
 
-/** @brief  The actuall classification routine */
+/** @fn void InputInfo::classify()
+ *  @brief The actual classification routine
+ *  @memberof InputInfo
+ */
 void InputInfo::classify() {
 
     if ( strncmp(m_head.at(0).c_str(), "root", 4) == 0 ) m_root = true;

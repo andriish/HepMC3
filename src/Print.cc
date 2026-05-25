@@ -224,6 +224,7 @@ void Print::line(std::ostream& os, const GenRunInfo::ToolInfo& t) {
     os << "GenRunInfo::ToolInfo " << t.name<< " " << t.version << " " << t.description;
 }
 
+/** @brief Print a vertex and its details, optionally including attributes. */
 template <class T>
 void line_v(std::ostream& os, T v, bool attributes) {
     if (!v) { os << "GenVertex: Empty" << std::endl; return;}
@@ -272,6 +273,7 @@ void Print::line(std::ostream& os, const FourVector& p) {
     os.precision(prec);
 }
 
+/** @brief Print a particle and its details, optionally including attributes. */
 template <class T>
 void line_p(std::ostream& os, T p, bool attributes) {
     if (!p) { os << "GenParticle: Empty" << std::endl; return;}
