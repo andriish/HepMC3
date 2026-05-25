@@ -16,10 +16,13 @@
 #include "HepMC3/ReaderFactory_fwd.h"
 
 namespace HepMC3 {
-/** @fn InputInfo::InputInfo(const std::string &filename)
- *  @brief Constructor with filename
- *  @memberof InputInfo
+/**
+ *  @brief Class to hold generic information on the input
+ *
+ *  Class to hold generic information on the input.
  */
+
+/** @brief Constructor with filename*/
 InputInfo::InputInfo (const std::string &filename) {
 
     if (filename.find("http://") != std::string::npos)    m_remote = true;
