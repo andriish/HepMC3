@@ -200,7 +200,7 @@ extern "C" {
     int hepmc3_set_hepevt_address_(int* a)
     {
         printf("Info in %s: setting /hepevt/ block adress\n", __FUNCTION__);
-        hepmc3_gInterface.set_hepevt_address((char*)a);
+        hepmc3_gInterface.set_hepevt_address(reinterpret_cast<char*>(a));
         return 0;
     }
     int hepmc3_set_attribute_int_(const int & position, const int & attval, const char* attname, size_t)
@@ -293,7 +293,7 @@ extern "C" {
             printf("Warning in %s: Writer at position %i does not exist\n", __FUNCTION__, position);
             return 1;
         }
-        if (hepmc3_gWriters[position].second->weights().size() < (unsigned long int)index) {
+        if (hepmc3_gWriters[position].second->weights().size() < static_cast<unsigned long>(index)) {
             printf("Warning in %s: Event has no weight with index %i\n", __FUNCTION__, index);
             return 2;
         }
