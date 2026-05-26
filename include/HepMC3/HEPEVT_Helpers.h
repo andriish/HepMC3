@@ -48,7 +48,7 @@ struct HEPEVT_Templated
     momentum_type vhep  [max_particles][4];  //!< Time-space position: x, y, z, t
 };
 
-/** @struct HEPEVT_Templated
+/** @struct HEPEVT_Templated_Simple
  *  @brief  C structure representing Fortran common block HEPEVT
  * T. Sjöstrand et al., "A proposed standard event record",
  *  in `Z physics at LEP 1', eds. G. Altarelli, R. Kleiss and C. Verzegnassi,

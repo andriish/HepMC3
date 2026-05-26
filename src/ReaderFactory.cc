@@ -88,7 +88,10 @@ InputInfo::InputInfo (const std::string &filename) {
     m_init = true;
 }
 
-/** @brief  The actuall classification routine */
+/** @fn void InputInfo::classify()
+ *  @brief The actual classification routine
+ *  @memberof InputInfo
+ */
 void InputInfo::classify() {
 
     if ( strncmp(m_head.at(0).c_str(), "root", 4) == 0 ) m_root = true;
