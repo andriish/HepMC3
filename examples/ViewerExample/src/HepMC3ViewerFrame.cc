@@ -4,6 +4,7 @@
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
 #include "HepMC3ViewerFrame.h"
+#include <array>
 
 /* Older graphviz versions can have conflictiong declarations  of memcmp/strcmp function
  * This can break compilation with -pedantic. Uncomenting line below can fix it.
@@ -148,13 +149,15 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
 
 void HepMC3ViewerFrame::DrawEvent()
 {
-    char* m_buffer = new char[m_char_buffer_size]();
-    char* m_cursor = m_buffer;
+    auto m_buffer = new char[m_char_buffer_size]();
+    auto m_cursor = m_buffer;
     m_cursor = write_event_to_dot(m_cursor, *(fCurrentEvent));
-    char *buf = create_image_from_dot(m_buffer);
+    auto buf = create_image_from_dot(m_buffer);
     fEmbEventImageCanvas->MapSubwindows();
 
-    if(!fEventImageCanvas)  fEventImageCanvas=new TCanvas("fEmbEventImageCanvas","fEmbEventImageCanvas", 1024, 768);
+    if (!fEventImageCanvas) {
+        fEventImageCanvas = new TCanvas("fEmbEventImageCanvas","fEmbEventImageCanvas", 1024, 768);
+    }
 
     fEventImageCanvas->cd();
     fEventImageCanvas->Clear();
@@ -191,21 +194,28 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH["particles1"] = particles1;
     particles1->SetTitle("Flavour: all particles; PDG ID; Number of particles");
     particles1->SetFillColor(kBlue);
-    for (const auto& p: fCurrentEvent->particles() )
+    for (const auto& p: fCurrentEvent->particles() ) {
         particles1->Fill((std::to_string(p->pid())).c_str(), 1.0);
+    }
     particles1->LabelsOption(">","X");
     /*   */
     TH1S* particles2 = new TH1S();
     fAnalysisH["particles2"] = particles2;
     particles2->SetTitle("Flavour: particles with status 1; PDG ID; Number of particles");
     particles2->SetFillColor(kBlue);
-    for (const auto& p: fCurrentEvent->particles() )
-        if (p->status() == 1) particles2->Fill((std::to_string(p->pid())).c_str(), 1.0);
+    for (const auto& p: fCurrentEvent->particles() ) {
+        if (p->status() == 1) {
+            particles2->Fill((std::to_string(p->pid())).c_str(), 1.0);
+        }
+    }
     particles2->LabelsOption(">","X");
     /*   */
     std::vector<double> masses;
-    for (const auto& p: fCurrentEvent->particles() )
-        if (show_as_parton(p)) masses.push_back(p->momentum().m());
+    for (const auto& p: fCurrentEvent->particles() ) {
+        if (show_as_parton(p)) {
+            masses.push_back(p->momentum().m());
+        }
+    }
     TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);
@@ -255,7 +265,7 @@ void HepMC3ViewerFrame::NextEvent()
 {
     if (fCurrentEvent == nullptr || fEventsCache.back() == fCurrentEvent)
     {
-        HepMC3::GenEvent* evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
+        auto evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
         bool ok = fReader->read_event(*(evt1));
         ok = (ok && !fReader->failed());
         if (ok)
@@ -275,10 +285,10 @@ void HepMC3ViewerFrame::NextEvent()
 }
 void HepMC3ViewerFrame::ChooseInput()
 {
-    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", 0, 0 };
-    static TString dir("./");
+    static const std::array<const char*, 10> FileType = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", nullptr, nullptr };
+    static const TString dir("./");
     TGFileInfo fi;
-    fi.fFileTypes = FileType;
+    fi.fFileTypes = FileType.data();
     fi.fIniDir = StrDup(dir);
     new TGFileDialog(gClient->GetRoot(), this, kFDOpen, &fi);
     if (fReader) fReader->close();

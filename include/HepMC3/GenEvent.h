@@ -268,7 +268,7 @@ public:
     /// @brief Get a copy of the list of attributes
     /// @note To avoid thread issues, this is returns a copy. Better solution may be needed.
     std::map< std::string, std::map<int, std::shared_ptr<Attribute> > > attributes() const {
-        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
         return m_attributes;
     }
 
@@ -418,7 +418,7 @@ private:
 //
 template<class T>
 std::shared_ptr<T> GenEvent::attribute(const std::string &name,  const int& id) const {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     std::map< std::string, std::map<int, std::shared_ptr<Attribute> > >::iterator i1 = m_attributes.find(name);
     if ( i1 == m_attributes.end() ) {
         if ( id == 0 && run_info() ) {

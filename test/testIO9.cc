@@ -51,11 +51,11 @@ int main()
             printf("End of file reached. Exit.\n");
             break;
         }
-        for (auto w: writersGZ) w->write_event(evt);
+        for (const auto &w: writersGZ) w->write_event(evt);
         evt.clear();
     }
     inputA.close();
-    for (auto w: writersGZ) w->close();
+    for (const auto &w: writersGZ) w->close();
     writersGZ.clear();
 
     int result = 0;

@@ -19,7 +19,7 @@ using namespace HepMC3;
 int main()
 {
     GenEvent evt;
-    std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();;
+    const std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
     evt.set_run_info(run);
     // original functionality
     evt.weights().push_back(2.0);
@@ -30,9 +30,10 @@ int main()
     assert( !evt.weights().empty() );
 
     std::vector<double> vec;
+    vec.reserve(15);
     for( int i = 0; i < 15; ++i )
     {
-        double x = static_cast<double>(i) + 0.14*static_cast<double>(i);
+        const double x = static_cast<double>(i) + 0.14*static_cast<double>(i);
         vec.push_back( x );
     }
     evt.weights() = vec;
@@ -42,8 +43,9 @@ int main()
 
     // new functionality
     std::vector<std::string> names;
+    names.reserve(evt.weights().size());
     for( size_t i = 0; i < evt.weights().size() - 1; ++i ) names.push_back(std::to_string(static_cast<unsigned long long>(i)));
-    std::string nm = "tau";
+    const std::string nm = "tau";
     names.push_back(nm);
     run->set_weight_names(names);
 
@@ -53,7 +55,7 @@ int main()
     // lookup a nonexistent name
     try
     {
-        double x = evt.weight("bad");
+        const double x = evt.weight("bad");
         std::cout << "lookup of nonexistent name returns " << x << std::endl;
     }
     catch (std::exception& e)

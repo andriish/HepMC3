@@ -38,7 +38,7 @@ void GenRunInfo::set_weight_names(const std::vector<std::string> & names) {
 }
 
 std::string GenRunInfo::attribute_as_string(const std::string &name) const {
-    const std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     auto i = m_attributes.find(name);
     if ( i == m_attributes.end() ) return {};
 
@@ -109,8 +109,8 @@ GenRunInfo::GenRunInfo(const GenRunInfo& r)
     if (this != &r)
     {
         std::lock(m_lock_attributes, r.m_lock_attributes);
-        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock);
-        std::lock_guard<std::recursive_mutex> rhs_lk(r.m_lock_attributes, std::adopt_lock);
+        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
+        std::lock_guard<std::recursive_mutex> rhs_lk(r.m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
         GenRunInfoData tdata;
         r.write_data(tdata);
         read_data(tdata);
@@ -121,8 +121,8 @@ GenRunInfo& GenRunInfo::operator=(const GenRunInfo& r)
     if (this != &r)
     {
         std::lock(m_lock_attributes, r.m_lock_attributes);
-        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock);
-        std::lock_guard<std::recursive_mutex> rhs_lk(r.m_lock_attributes, std::adopt_lock);
+        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
+        std::lock_guard<std::recursive_mutex> rhs_lk(r.m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
         GenRunInfoData tdata;
         r.write_data(tdata);
         read_data(tdata);

@@ -101,13 +101,13 @@ public:
     /// with the same name is present
     void add_attribute(const std::string &name,
                        const std::shared_ptr<Attribute> &att) {
-        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
         if ( att ) m_attributes[name] = att;
     }
 
     /// @brief Remove attribute
     void remove_attribute(const std::string &name) {
-        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+        std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
         m_attributes.erase(name);
     }
 
@@ -179,7 +179,7 @@ private:
 
 template<class T>
 std::shared_ptr<T> GenRunInfo::attribute(const std::string &name) const {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     std::map< std::string, std::shared_ptr<Attribute> >::iterator i =
         m_attributes.find(name);
     if ( i == m_attributes.end() ) return std::shared_ptr<T>();

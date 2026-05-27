@@ -10,7 +10,7 @@ int main() {
 using namespace HepMC3;
 int main() {
     std::ios_base::sync_with_stdio(false);
-    std::shared_ptr<Reader>  input_file = deduce_reader(std::cin);
+    const std::shared_ptr<Reader> input_file = deduce_reader(std::cin);
     int N = 0;
     while (!input_file->failed()) {
         GenEvent evt(Units::GEV, Units::MM);

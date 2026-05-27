@@ -64,8 +64,8 @@ GenEvent::GenEvent(const GenEvent&e) {
     if (this != &e)
     {
         std::lock(m_lock_attributes, e.m_lock_attributes);
-        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock);
-        std::lock_guard<std::recursive_mutex> rhs_lk(e.m_lock_attributes, std::adopt_lock);
+        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
+        std::lock_guard<std::recursive_mutex> rhs_lk(e.m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
         GenEventData tdata;
         e.write_data(tdata);
         read_data(tdata);
@@ -85,8 +85,8 @@ GenEvent& GenEvent::operator=(const GenEvent& e) {
     if (this != &e)
     {
         std::lock(m_lock_attributes, e.m_lock_attributes);
-        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock);
-        std::lock_guard<std::recursive_mutex> rhs_lk(e.m_lock_attributes, std::adopt_lock);
+        std::lock_guard<std::recursive_mutex> lhs_lk(m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
+        std::lock_guard<std::recursive_mutex> rhs_lk(e.m_lock_attributes, std::adopt_lock); // NOLINT(misc-const-correctness)
         GenEventData tdata;
         e.write_data(tdata);
         read_data(tdata);
@@ -142,7 +142,7 @@ void GenEvent::remove_particle(GenParticlePtr p) {
     auto it = m_particles.erase(m_particles.begin() + idx-1);
 
     // Remove attributes of this particle
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     for (att_key_t& vt1: m_attributes) {
         auto vt2 = vt1.second.find(idx);
         if (vt2 == vt1.second.end()) continue;
@@ -210,7 +210,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     const int idx = -v->id();
     auto it = m_vertices.erase(m_vertices.begin() + idx-1);
     // Remove attributes of this vertex
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     for (att_key_t& vt1: m_attributes) {
         auto vt2 = vt1.second.find(-idx);
         if (vt2 == vt1.second.end()) continue;
@@ -359,7 +359,7 @@ void GenEvent::add_tree(const std::vector<GenParticlePtr> &parts) {
         const int rootid = m_rootvertex->id();
         if ( vx >= 0 && vx < static_cast<int>(m_vertices.size()) && m_vertices[vx] == m_rootvertex ) {
             auto next = m_vertices.erase(m_vertices.begin() + vx);
-            std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+            std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
             for (auto & vt1: m_attributes) {
                 std::vector< std::pair< int, std::shared_ptr<Attribute> > > changed_attributes;
                 for ( const auto& vt2 : vt1.second ) {
@@ -591,7 +591,7 @@ bool GenEvent::boost(const FourVector&  delta)
 }
 
 void GenEvent::clear() {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     m_event_number = 0;
     m_rootvertex = std::make_shared<GenVertex>();
     m_weights.clear();
@@ -601,7 +601,7 @@ void GenEvent::clear() {
 }
 
 void GenEvent::remove_attribute(const std::string &name,  const int& id) {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     auto i1 = m_attributes.find(name);
     if ( i1 == m_attributes.end() ) return;
 
@@ -727,7 +727,7 @@ void GenEvent::read_data(const GenEventData &data) {
     for (auto& p:  m_particles) if (!p->production_vertex()) m_rootvertex->add_particle_out(p);
 
     // Read attributes
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     for (unsigned int i = 0; i < data.attribute_id.size(); ++i) {
         ///Disallow empty strings
         const std::string name = data.attribute_name[i];
@@ -775,7 +775,7 @@ void GenEvent::add_beam_particle(GenParticlePtr p1) {
 
 
 std::string GenEvent::attribute_as_string(const std::string &name, const int& id) const {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     auto i1 = m_attributes.find(name);
     if ( i1 == m_attributes.end() ) {
         if ( id == 0 && run_info() ) {
@@ -799,7 +799,7 @@ void GenEvent::add_attribute(const std::string &name, const std::shared_ptr<Attr
     ///Disallow empty strings
     if (name.empty()) return;
     if (!att)  return;
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
     m_attributes[name][id] = att;
     att->m_event = this;
@@ -822,7 +822,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
     vector<std::string>::iterator ip;
     ip = std::unique(unames.begin(), unames.end());
     unames.resize(std::distance(unames.begin(), ip));
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     for (const auto& name: unames) {
         if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
     }
@@ -850,7 +850,7 @@ void GenEvent::add_attributes(const std::string& name, const std::vector<std::sh
     if(!N) return;
     if ( N != atts.size()) return;
 
-    const std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
     auto& tmap = m_attributes[name];
     const int particles_size = static_cast<int>(m_particles.size());
@@ -872,7 +872,7 @@ void GenEvent::add_attributes(const std::string& name, const std::vector<std::sh
 void GenEvent::add_attributes(const std::string& name, const std::vector<std::pair<int, std::shared_ptr<Attribute> > > &atts) {
     if (name.length() == 0) return;
     if (atts.empty()) return;
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
     auto& tmap = m_attributes[name];
     const int particles_size = static_cast<int>(m_particles.size());

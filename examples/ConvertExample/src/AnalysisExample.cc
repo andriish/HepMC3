@@ -40,15 +40,15 @@ AnalysisExample::AnalysisExample(std::ostream &stream, std::shared_ptr<GenRunInf
 
 void AnalysisExample::write_event(const GenEvent &evt)
 {
-    double w = (evt.weights().size() ? evt.weight() : 1.);
+    const double w = (evt.weights().size() ? evt.weight() : 1.);
     m_sum_of_weights += w;
     m_sum_of_weights2 += w*w;
     for(const auto& p: evt.particles() )
     {
         if (p->status() != 1) continue;
-        double eta = p->momentum().eta();
+        const double eta = p->momentum().eta();
         int bin = std::distance(m_bins["rapidity"].begin(), lower_bound(m_bins["rapidity"].begin(),m_bins["rapidity"].end(),eta))-1;
-        if (bin < 0) bin = 0;
+        bin = std::max(bin, 0);
         m_vals["rapidity"][bin] += w;
         m_errs["rapidity"][bin] += w*w;
     }
@@ -60,8 +60,8 @@ void AnalysisExample::close() {
     auto* ofs = dynamic_cast<std::ofstream*>(m_stream);
     for (size_t i = 1; i < m_vals["rapidity"].size()-1; i++)
     {
-        double val=m_vals["rapidity"][i]/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
-        double err=sqrt(m_errs["rapidity"][i])/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
+        const double val=m_vals["rapidity"][i]/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
+        const double err=sqrt(m_errs["rapidity"][i])/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
         (*ofs)<< std::fixed  << std::setprecision( 6 )<<m_bins["rapidity"][i]<<" "<<m_bins["rapidity"][i+1]<<" "<<val<<" "<<err<<std::endl;
     }
     if (ofs && !ofs->is_open()) return;

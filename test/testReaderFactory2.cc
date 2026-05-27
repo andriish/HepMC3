@@ -17,7 +17,7 @@
 using namespace HepMC3;
 int main()
 {
-    std::shared_ptr<Reader> input = deduce_reader("inputReaderFactory2.hepmc");
+    const std::shared_ptr<Reader> input = deduce_reader("inputReaderFactory2.hepmc");
     if(input->failed()) return 1;
     WriterAscii             outputA("frominputReaderFactory2.hepmc3");
     WriterAsciiHepMC2       outputB("frominputReaderFactory2.hepmc2");

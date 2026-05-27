@@ -23,7 +23,7 @@ ReaderRoot::ReaderRoot(const std::string &filename) {
         return;
     }
 
-    std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
+    const std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
 
     auto *run = reinterpret_cast<GenRunInfoData*>(m_file->Get("GenRunInfoData"));
 
@@ -48,7 +48,7 @@ bool ReaderRoot::skip(const int n)
 
 bool ReaderRoot::read_event(GenEvent& evt) {
     // Skip object of different type than GenEventData
-    GenEventData *data = nullptr;
+    const GenEventData *data = nullptr;
 
     while (true) {
         TKey *key = (TKey*) (*m_next)();
@@ -61,13 +61,13 @@ bool ReaderRoot::read_event(GenEvent& evt) {
         const char *cl = key->GetClassName();
 
         if ( !cl ) continue;
-        size_t geneventdata30 = strncmp(cl, "HepMC::GenEventData", 19);
-        size_t geneventdata31 = strncmp(cl, "HepMC3::GenEventData", 20);
+        const size_t geneventdata30 = strncmp(cl, "HepMC::GenEventData", 19);
+        const size_t geneventdata31 = strncmp(cl, "HepMC3::GenEventData", 20);
         if ( geneventdata31 == 0 || geneventdata30 == 0 ) {
             if (geneventdata30 == 0) {
                 HEPMC3_WARNING_LEVEL(900,"ReaderRoot::read_event: The object was written with HepMC3 version 3.0")
             }
-            data = reinterpret_cast<GenEventData*>(key->ReadObj());
+            data = reinterpret_cast<const GenEventData*>(key->ReadObj());
             break;
         }
     }

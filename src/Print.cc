@@ -250,7 +250,7 @@ void line_v(std::ostream& os, T v, bool attributes) {
         }
     }
 }
-} /// end namespace
+} // namespace
 void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) { line_v(os,v,attributes); }
 void Print::line(std::ostream& os, GenVertexPtr v, bool attributes) { line_v(os,v,attributes); }
 
@@ -324,7 +324,7 @@ static void line_p(std::ostream& os, T p, bool attributes) {
         }
     }
 }
-} /// end namespace
+} // namespace
 void Print::line(std::ostream& os, ConstGenParticlePtr p, bool attributes) { line_p(os,p,attributes); }
 void Print::line(std::ostream& os, GenParticlePtr p, bool attributes) { line_p(os,p,attributes); }
 

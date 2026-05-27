@@ -420,7 +420,7 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
         if (!p->production_vertex()) m_rootvertex->add_particle_out(p);
     }
     // Read attributes
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes); // NOLINT(misc-const-correctness)
     for (unsigned int i = 0; i < static_cast<unsigned int>(data.attribute_id_size()); ++i) {
         /// Disallow empty strings
         const std::string& name = data.attribute_name(i);
