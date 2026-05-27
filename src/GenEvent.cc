@@ -423,7 +423,7 @@ const FourVector& GenEvent::event_pos() const {
 std::vector<ConstGenParticlePtr> GenEvent::beams(const int status) const {
     if (!status) return std::const_pointer_cast<const GenVertex>(m_rootvertex)->particles_out();
     std::vector<ConstGenParticlePtr> ret;
-    for (auto& p: m_rootvertex->particles_out()) if (p->status() == status) ret.emplace_back(p);
+    for (const auto& p: m_rootvertex->particles_out()) if (p->status() == status) ret.emplace_back(p);
     return ret;
 }
 
@@ -463,13 +463,13 @@ bool GenEvent::rotate(const FourVector&  delta)
         long double tempY = mom.y();
         long double tempZ = mom.z();
 
-        long double tempY_ = cosa*tempY+sina*tempZ;
-        long double tempZ_ = -sina*tempY+cosa*tempZ;
+        long double tempY_ = (cosa * tempY) + (sina * tempZ);
+        long double tempZ_ = (-sina * tempY) + (cosa * tempZ);
         tempY = tempY_;
         tempZ = tempZ_;
 
-        long double tempX_ = cosb*tempX-sinb*tempZ;
-        tempZ_ = sinb*tempX+cosb*tempZ;
+        long double tempX_ = (cosb * tempX) - (sinb * tempZ);
+        tempZ_ = (sinb * tempX) + (cosb * tempZ);
         tempX = tempX_;
         tempZ = tempZ_;
 
@@ -797,7 +797,7 @@ std::string GenEvent::attribute_as_string(const std::string &name, const int& id
 
 void GenEvent::add_attribute(const std::string &name, const std::shared_ptr<Attribute> &att, const int& id ) {
     ///Disallow empty strings
-    if (name.length() == 0) return;
+    if (name.empty()) return;
     if (!att)  return;
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();

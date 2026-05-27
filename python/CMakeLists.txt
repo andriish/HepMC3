@@ -125,6 +125,8 @@ set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
 set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
 
+set_source_files_properties(${autoBN} ${autoBNrootIO} ${autoBNsearch} ${autoBNprotobufIO} ${BN} ${BNrootIO} ${BNsearch} ${BNprotobufIO} PROPERTIES SKIP_CLANG_TIDY ON)
+ 
 foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   if (${_comp} STREQUAL " ")
     set(_dotcomp "") 

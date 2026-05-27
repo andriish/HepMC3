@@ -135,7 +135,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
     if ( !pos.is_zero() ) {
         os << " (X,cT): " << pos.x() << " " << pos.y() << " " << pos.z() << " " << pos.t();
     }
-    else os << " (X,cT): 0";
+    else { os << " (X,cT): 0"; }
 
     os << std::endl;
 
@@ -147,7 +147,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
             os << " I: ";
             printed_header = true;
         }
-        else os << "    ";
+        else { os << "    "; }
 
         Print::listing(os, p);
     }
@@ -160,7 +160,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
             os << " O: ";
             printed_header = true;
         }
-        else os << "    ";
+        else { os << "    "; }
 
         Print::listing(os, p);
     }
@@ -224,6 +224,7 @@ void Print::line(std::ostream& os, const GenRunInfo::ToolInfo& t) {
     os << "GenRunInfo::ToolInfo " << t.name<< " " << t.version << " " << t.description;
 }
 
+namespace {
 /** @brief Print a vertex and its details, optionally including attributes. */
 template <class T>
 void line_v(std::ostream& os, T v, bool attributes) {
@@ -249,6 +250,7 @@ void line_v(std::ostream& os, T v, bool attributes) {
         }
     }
 }
+} /// end namespace
 void Print::line(std::ostream& os, ConstGenVertexPtr v, bool attributes) { line_v(os,v,attributes); }
 void Print::line(std::ostream& os, GenVertexPtr v, bool attributes) { line_v(os,v,attributes); }
 
@@ -272,10 +274,10 @@ void Print::line(std::ostream& os, const FourVector& p) {
     os.flags(orig);
     os.precision(prec);
 }
-
+namespace {
 /** @brief Print a particle and its details, optionally including attributes. */
 template <class T>
-void line_p(std::ostream& os, T p, bool attributes) {
+static void line_p(std::ostream& os, T p, bool attributes) {
     if (!p) { os << "GenParticle: Empty" << std::endl; return;}
     os << "GenParticle: ";
     os.width(3);
@@ -322,7 +324,7 @@ void line_p(std::ostream& os, T p, bool attributes) {
         }
     }
 }
-
+} /// end namespace
 void Print::line(std::ostream& os, ConstGenParticlePtr p, bool attributes) { line_p(os,p,attributes); }
 void Print::line(std::ostream& os, GenParticlePtr p, bool attributes) { line_p(os,p,attributes); }
 

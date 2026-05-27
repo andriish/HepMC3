@@ -199,12 +199,12 @@ int main(int argc, char** argv)
             printf("InputPluginLibrary option required\n");
             exit(2);
         }
-        else InputPluginLibrary = options.at("InputPluginLibrary");
+        else { InputPluginLibrary = options.at("InputPluginLibrary"); }
         if (options.find("InputPluginName") == options.end())            {
             printf("InputPluginName option required\n");
             exit(2);
         }
-        else InputPluginName = options.at("InputPluginName");
+        else { InputPluginName = options.at("InputPluginName"); }
         input_file = std::make_shared<ReaderPlugin>(std::string(ai.inputs[0]), InputPluginLibrary, InputPluginName);
         if (input_file->failed()) {
             printf("Plugin initialization failed\n");
@@ -296,12 +296,12 @@ int main(int argc, char** argv)
             printf("OutputPluginLibrary option required, e.g. OutputPluginLibrary=libAnalysis.so\n");
             exit(2);
         }
-        else OutputPluginLibrary = options.at("OutputPluginLibrary");
+        else { OutputPluginLibrary = options.at("OutputPluginLibrary"); }
         if (options.find("OutputPluginName") == options.end())            {
             printf("OutputPluginName option required, e.g. OutputPluginName=newAnalysisExamplefile\n");
             exit(2);
         }
-        else OutputPluginName = options.at("OutputPluginName");
+        else { OutputPluginName = options.at("OutputPluginName"); }
         output_file = std::make_shared<WriterPlugin>(std::string(ai.inputs[1]), OutputPluginLibrary, OutputPluginName);
         if (output_file->failed()) {
             printf("Plugin initialization failed\n");

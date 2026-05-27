@@ -257,7 +257,7 @@ void HepMC3ViewerFrame::NextEvent()
             fEventsCache.push_back(evt1);
             fCurrentEvent = evt1;
         }
-        else return;
+        else {return; }
     }
     else
     {
@@ -315,7 +315,7 @@ HepMC3ViewerFrame::HepMC3ViewerFrame(const TGWindow *p, UInt_t w, UInt_t h) :
 
     fExit = new TGTextButton(fButtonFrame, "&Exit ","gApplication->Terminate(0)");
     fExit->SetToolTipText("Click to exit");
-    fButtonFrame->AddFrame(fExit, new TGLayoutHints( kLHintsExpandX|kLHintsLeft,1,1,2,2));
+    fButtonFrame->AddFrame(fExit, new TGLayoutHints( kLHintsExpandX|kLHintsLeft, 1, 1, 2, 2));
 
     AddFrame(fMainFrame, new TGLayoutHints(kLHintsTop |kLHintsExpandX| kLHintsExpandY, 1, 1, 2, 2));
 
