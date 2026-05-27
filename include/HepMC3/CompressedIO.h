@@ -97,6 +97,7 @@ inline std::string to_string(HepMC3::Compression & c) {
 
 }
 
+/** @brief Output the compression type as text to a stream. */
 inline std::ostream& operator<<(std::ostream& os, HepMC3::Compression & c) {
     return os << HepMC3::to_string(c);
 }

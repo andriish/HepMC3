@@ -71,13 +71,11 @@ private:
     /// retrieve the attribute of type int
     double retrieveIntAttribute(const GenEvent& evt, std::string name);
 
-    /// @}
-
 private:
     unsigned long m_particle_counter;              //!< Used to set bar codes
 
-    bool m_edm4hepWriterClosed;
-    podio::ROOTWriter m_edm4hepWriter;
+    bool m_edm4hepWriterClosed;                     //!< True when the EDM4HEP writer is closed
+    podio::ROOTWriter m_edm4hepWriter;              //!< Underlying ROOT writer used for output
 };
 
 } // namespace HepMC3
