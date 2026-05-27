@@ -11,7 +11,7 @@
 // #define _PACKAGE_ast 1
 
 #include <graphviz/gvc.h>
-#define CONSERVATION_TOLERANCE 1e-5
+static constexpr double CONSERVATION_TOLERANCE = 1e-5;
 
 static  char*  create_image_from_dot(char* m_buffer)
 {
@@ -19,18 +19,20 @@ static  char*  create_image_from_dot(char* m_buffer)
     Agraph_t *g = agmemread(m_buffer);
     gvLayout(gvc, g, "dot");
 
-    int err;
-    char *data;
+    int err = 0;
+    char *data = nullptr;
 #if defined(GRAPHVIZ_VERSION_CODE) && (GRAPHVIZ_VERSION_CODE >= 130000)
     size_t length = 0;
 #else
     unsigned int length = 0;
 #endif
-    if (!g)
+    if (!g) {
         return nullptr;
+    }
     err = gvRenderData(gvc, g, "png", &data, &length);
-    if (err)
+    if (err) {
         return nullptr;
+    }
     data =  static_cast<char*>(realloc(data, length + 1));
     gvFreeLayout(gvc, g);
     agclose(g);
@@ -62,7 +64,7 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
 {
     used_cursor += sprintf(used_cursor, "digraph graphname%d {\n", evt.event_number());
     used_cursor += sprintf(used_cursor, "v0[label=\"Machine\"];\n");
-    for(auto v: evt.vertices() )
+    for (const auto& v: evt.vertices() )
     {
         if (used_style != 0)
         {
@@ -74,12 +76,12 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
         }
         HepMC3::FourVector in(0, 0, 0, 0);
         HepMC3::FourVector out(0, 0, 0, 0);
-        double energy=0;
-        for(auto p1: v->particles_in()  ) {
-            in+=p1->momentum();
+        double energy = 0;
+        for (const auto& p1: v->particles_in()  ) {
+            in += p1->momentum();
             energy += std::abs(p1->momentum().e());
         }
-        for(auto p2: v->particles_out() ) {
+        for (const auto& p2: v->particles_out() ) {
             out += p2->momentum();
             energy += std::abs(p2->momentum().e());
         }
@@ -103,17 +105,19 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
 
         used_cursor += sprintf(used_cursor, "node [shape=ellipse];\n");
     }
-    for(auto p: evt.beams() )
+    for (const auto& p: evt.beams() )
     {
-        if (!p->end_vertex()) continue;
+        if (!p->end_vertex()) {
+            continue;
+        }
         used_cursor += sprintf(used_cursor, "node [shape=point];\n");
         used_cursor += sprintf(used_cursor, "v0 -> v%d [label=\"%d(%d)\"];\n", -p->end_vertex()->id(), p->id(), p->pid());
     }
 
-    for(auto v: evt.vertices() )
+    for (const auto& v: evt.vertices() )
     {
 
-        for(auto p: v->particles_out() )
+        for (const auto& p: v->particles_out() )
         {
             {
                 if (used_style != 0)
@@ -177,7 +181,9 @@ void HepMC3ViewerFrame::DoAnalysis()
     fEmbAnalysisCanvas->MapSubwindows();
     fAnalysisCanvas->cd();
     fAnalysisCanvas->Clear();
-    for (auto h: fAnalysisH) h.second->Delete();
+    for (auto& h: fAnalysisH) {
+        h.second->Delete();
+    }
     fAnalysisH.clear();
 
     /*   */
@@ -185,7 +191,7 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH["particles1"] = particles1;
     particles1->SetTitle("Flavour: all particles; PDG ID; Number of particles");
     particles1->SetFillColor(kBlue);
-    for(auto p: fCurrentEvent->particles() )
+    for (const auto& p: fCurrentEvent->particles() )
         particles1->Fill((std::to_string(p->pid())).c_str(), 1.0);
     particles1->LabelsOption(">","X");
     /*   */
@@ -193,13 +199,13 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH["particles2"] = particles2;
     particles2->SetTitle("Flavour: particles with status 1; PDG ID; Number of particles");
     particles2->SetFillColor(kBlue);
-    for(auto p: fCurrentEvent->particles() )
-        if(p->status() == 1) particles2->Fill((std::to_string(p->pid())).c_str(), 1.0);
+    for (const auto& p: fCurrentEvent->particles() )
+        if (p->status() == 1) particles2->Fill((std::to_string(p->pid())).c_str(), 1.0);
     particles2->LabelsOption(">","X");
     /*   */
     std::vector<double> masses;
-    for(auto p: fCurrentEvent->particles() )
-        if(show_as_parton(p)) masses.push_back(p->momentum().m());
+    for (const auto& p: fCurrentEvent->particles() )
+        if (show_as_parton(p)) masses.push_back(p->momentum().m());
     TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);

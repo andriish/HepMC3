@@ -93,12 +93,12 @@ const FourVector& GenVertex::position() const {
     // No position information - look at event and/or search ancestors
     if ( parent_event() )
     {
-        std::shared_ptr<IntAttribute> cycles = parent_event()->attribute<IntAttribute>("cycles");
+        const std::shared_ptr<IntAttribute> cycles = parent_event()->attribute<IntAttribute>("cycles");
         //This could be a recussive call.  Try to prevent it.
         if (!cycles || cycles->value() == 0)
         {
             for (const auto& p: m_particles_in) {
-                ConstGenVertexPtr v = p->production_vertex();
+                const ConstGenVertexPtr v = p->production_vertex();
                 if (v) return v->position();
             }
         }

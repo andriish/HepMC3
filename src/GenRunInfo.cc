@@ -38,7 +38,7 @@ void GenRunInfo::set_weight_names(const std::vector<std::string> & names) {
 }
 
 std::string GenRunInfo::attribute_as_string(const std::string &name) const {
-    std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
+    const std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
     auto i = m_attributes.find(name);
     if ( i == m_attributes.end() ) return {};
 

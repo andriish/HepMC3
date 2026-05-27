@@ -40,20 +40,22 @@ void WriterDOT::close() {
 }
 namespace {
 /// @brief Detects if particle is parton. Might be used to draw partons different from hadrons
-bool is_parton(const int& pd)
+bool is_parton(int pd)
 {
     bool parton = false;
 
-    if (pd == 81 || pd == 82 || pd < 25) parton = true;
-    if (
-        (pd/1000 == 1 || pd/1000 == 2 || pd/1000 == 3 || pd/1000 == 4 || pd/1000 == 5)
-        &&(pd%1000/100 == 1 || pd%1000/100 == 2 || pd%1000/100 == 3 || pd%1000/100 == 4)
-        &&(pd%100 == 1 || pd%100 == 3)
-    )
-    { parton = true;}
+    if (pd == 81 || pd == 82 || pd < 25) {
+        parton = true;
+    }
+    if ((pd/1000 == 1 || pd/1000 == 2 || pd/1000 == 3 || pd/1000 == 4 || pd/1000 == 5)
+        && (pd%1000/100 == 1 || pd%1000/100 == 2 || pd%1000/100 == 3 || pd%1000/100 == 4)
+        && (pd%100 == 1 || pd%100 == 3))
+    {
+        parton = true;
+    }
     return parton;
 }
-} /// end namespace
+} // anonymous namespace
 void WriterDOT::write_event(const GenEvent &evt)
 {
     allocate_buffer();

@@ -28,7 +28,7 @@ public:
     /** @brief Write the header */
     void write_hepevt_event_header() override;
     /** @brief Write particles */
-    void write_hepevt_particle( int index, bool iflong = true )  override;
+    void write_hepevt_particle( int index, bool iflong ) override;
 };
 }
 #endif

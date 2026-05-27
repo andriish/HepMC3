@@ -269,9 +269,9 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
 
     if (m_options.count("event_random_states_are_separated") != 0)
     {
-        std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
+        const std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
         if (random_states_a) {
-            std::vector<long int> random_states_v = random_states_a->value();
+            const std::vector<long int> random_states_v = random_states_a->value();
             for (size_t i = 0; i < random_states_v.size(); ++i ) {
                 evt.add_attribute("random_states" + std::to_string(static_cast<long long unsigned int>(i)), std::make_shared<IntAttribute>(random_states_v[i]));
             }
@@ -288,9 +288,9 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
         } else  {
             for (const auto& f: flows) {
                 if (f.first > 0 && f.first <= static_cast<int>(m_particle_cache.size())) {
-                    std::shared_ptr<VectorIntAttribute>  casted = std::dynamic_pointer_cast<VectorIntAttribute>(f.second);
+                    const std::shared_ptr<VectorIntAttribute>  casted = std::dynamic_pointer_cast<VectorIntAttribute>(f.second);
                     if (!casted) continue;//Should not happen
-                    std::vector<int> this_p_flow = casted->value();
+                    const std::vector<int> this_p_flow = casted->value();
                     for (size_t i = 0; i<this_p_flow.size(); i++) m_particle_cache[f.first-1]->add_attribute("flow" + std::to_string(i + 1), std::make_shared<IntAttribute>(this_p_flow[i]));
                 }
             }
@@ -314,23 +314,23 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
         } else {
             for (const auto& f: weights) {
                 if (f.first < 0 && f.first >= -static_cast<int>(m_vertex_cache.size()) && m_vertex_cache.at(-f.first-1)) {
-                    std::shared_ptr<VectorDoubleAttribute>  casted = std::dynamic_pointer_cast<VectorDoubleAttribute>(f.second);
+                    const std::shared_ptr<VectorDoubleAttribute>  casted = std::dynamic_pointer_cast<VectorDoubleAttribute>(f.second);
                     if (!casted) continue;//Should not happen
-                    std::vector<double> this_v_weight = casted->value();
+                    const std::vector<double> this_v_weight = casted->value();
                     for (size_t i = 0; i < this_v_weight.size(); i++) m_particle_cache[-f.first-1]->add_attribute("weight"+std::to_string(i), std::make_shared<DoubleAttribute>(this_v_weight[i]));
                 }
             }
         }
     }
-    std::shared_ptr<IntAttribute> signal_process_vertex_barcode = evt.attribute<IntAttribute>("signal_process_vertex");
+    const std::shared_ptr<IntAttribute> signal_process_vertex_barcode = evt.attribute<IntAttribute>("signal_process_vertex");
     if (signal_process_vertex_barcode) {
-        int signal_process_vertex_barcode_value = signal_process_vertex_barcode->value();
+        const int signal_process_vertex_barcode_value = signal_process_vertex_barcode->value();
         for (unsigned int i = 0; i < m_vertex_cache.size(); ++i)
         {
             if (i >= m_vertex_barcodes.size()) continue;//this should not happen!
             if (signal_process_vertex_barcode_value != m_vertex_barcodes.at(i)) continue;
             if (!m_vertex_cache.at(i)) continue;//this should not happen!
-            std::shared_ptr<IntAttribute> signal_process_vertex = std::make_shared<IntAttribute>(m_vertex_cache.at(i)->id());
+            const std::shared_ptr<IntAttribute> signal_process_vertex = std::make_shared<IntAttribute>(m_vertex_cache.at(i)->id());
             evt.add_attribute("signal_process_vertex", signal_process_vertex);
             break;
         }
@@ -428,12 +428,12 @@ bool ReaderAsciiHepMC2::parse_units(GenEvent &evt, const char *buf) {
     // momentum
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     ++cursor;
-    Units::MomentumUnit momentum_unit = Units::momentum_unit(cursor);
+    const Units::MomentumUnit momentum_unit = Units::momentum_unit(cursor);
 
     // length
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     ++cursor;
-    Units::LengthUnit length_unit = Units::length_unit(cursor);
+    const Units::LengthUnit length_unit = Units::length_unit(cursor);
 
     evt.set_units(momentum_unit, length_unit);
 
@@ -460,19 +460,19 @@ int ReaderAsciiHepMC2::parse_vertex_information(const char *buf) {
 
     // x
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double X(atof(cursor));
+    const double X(atof(cursor));
 
     // y
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Y(atof(cursor));
+    const double Y(atof(cursor));
 
     // z
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Z(atof(cursor));
+    const double Z(atof(cursor));
 
     // t
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double T(atof(cursor));
+    const double T(atof(cursor));
     data->set_position(FourVector(X,Y,Z,T));
 
     // SKIPPED: num_orphans_in
@@ -525,19 +525,19 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     // px
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Px(atof(cursor));
+    const double Px(atof(cursor));
 
     // py
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Py(atof(cursor));
+    const double Py(atof(cursor));
 
     // pz
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Pz(atof(cursor));
+    const double Pz(atof(cursor));
 
     // pe
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double E(atof(cursor));
+    const double E(atof(cursor));
     data->set_momentum(FourVector(Px,Py,Pz,E));
 
     // m
@@ -550,12 +550,12 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     //theta
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double theta_v = atof(cursor);
+    const double theta_v = atof(cursor);
     if (theta_v != 0.0) data_ghost->add_attribute("theta", std::make_shared<DoubleAttribute>(theta_v));
 
     //phi
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double phi_v = atof(cursor);
+    const double phi_v = atof(cursor);
     if (phi_v != 0.0) data_ghost->add_attribute("phi", std::make_shared<DoubleAttribute>(phi_v));
 
     // end_vtx_code
@@ -564,15 +564,15 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     //flow
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    int flowsize = atoi(cursor);
+    const int flowsize = atoi(cursor);
 
     std::map<int, int> flows;
     for (int i = 0; i < flowsize; i++)
     {
         if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-        int  flowindex = atoi(cursor);
+        const int flowindex = atoi(cursor);
         if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-        int flowvalue = atoi(cursor);
+        const int flowvalue = atoi(cursor);
         flows[flowindex] = flowvalue;
     }
     if (flowsize)
@@ -603,7 +603,7 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
 bool ReaderAsciiHepMC2::parse_xs_info(GenEvent &evt, const char *buf) {
     const char *cursor  = buf;
-    std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
+    const std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     const double xs_val  = atof(cursor);
@@ -656,7 +656,7 @@ bool ReaderAsciiHepMC2::parse_weight_names(const char *buf) {
 }
 
 bool ReaderAsciiHepMC2::parse_heavy_ion(GenEvent &evt, const char *buf) {
-    std::shared_ptr<GenHeavyIon>  hi     = std::make_shared<GenHeavyIon>();
+    const std::shared_ptr<GenHeavyIon>  hi     = std::make_shared<GenHeavyIon>();
     const char              *cursor = buf;
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
@@ -707,7 +707,7 @@ bool ReaderAsciiHepMC2::parse_heavy_ion(GenEvent &evt, const char *buf) {
 }
 
 bool ReaderAsciiHepMC2::parse_pdf_info(GenEvent &evt, const char *buf) {
-    std::shared_ptr<GenPdfInfo>  pi     = std::make_shared<GenPdfInfo>();
+    const std::shared_ptr<GenPdfInfo>  pi     = std::make_shared<GenPdfInfo>();
     const char             *cursor = buf;
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;

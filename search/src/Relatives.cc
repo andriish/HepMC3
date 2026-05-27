@@ -132,11 +132,11 @@ template <class O>  std::vector<O> descendants_of_same_type(const O& obj)
 /// @brief Returns descendands of the other type, i.e. vertices for  particle and particles for vertex
 template <class O, class R>  std::vector<R> descendants_of_other_type(const O& obj)
 {
-    std::vector<R> localchildren = children(obj);
+    const std::vector<R> localchildren = children(obj);
     std::vector<R>  result = localchildren;
     for (const auto& c: localchildren)
     {
-        std::vector<R> desc = descendants_of_same_type(c);
+        const std::vector<R> desc = descendants_of_same_type(c);
         for (const auto& d: desc) if (std::find(result.begin(), result.end(), d) == result.end()) result.emplace_back(d);
     }
     return result;
@@ -163,11 +163,11 @@ template <class O>  std::vector<O> ancestors_of_same_type(const O& obj)
 /// @brief Returns ancestors of the other type, i.e. vertices for  particle and particles for vertex
 template <class O, class R>  std::vector<R> ancestors_of_other_type(const O& obj)
 {
-    std::vector<R> localparents = parents(obj);
+    const std::vector<R> localparents = parents(obj);
     std::vector<R>  result = localparents;
     for (const auto& c: localparents)
     {
-        std::vector<R> desc = ancestors_of_same_type(c);
+        const std::vector<R> desc = ancestors_of_same_type(c);
         for (const auto& d: desc) if (std::find(result.begin(), result.end(), d) == result.end()) result.emplace_back(d);
     }
     return result;

@@ -91,7 +91,7 @@ void ReaderLHEF::init()
     // the GenRunInfo object.
 
     std::vector<std::string> weightnames;
-    size_t N = m_hepr->heprup.weightinfo.size();
+    const size_t N = m_hepr->heprup.weightinfo.size();
     weightnames.reserve(N);
     for ( size_t i = 0; i < N; ++i ) weightnames.emplace_back(m_hepr->heprup.weightNameHepMC(i));
     if (nweights == 0) {
@@ -126,7 +126,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         m_storage.pop_front();
         return true;
     }
-    bool read_result = m_reader->readEvent();
+    const bool read_result = m_reader->readEvent();
     if (!read_result) {
         return false;
     }
@@ -134,7 +134,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     // the HEPEUP. Also here there may be additional non-standard
     // information outside the LHEF <event> tags, which we may want to
     // add.
-    std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
+    const std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
     if ( m_reader->outsideBlock.length() ) {
         hepe->tags =  LHEF::XMLTag::findXMLTags(m_reader->outsideBlock);
     }
@@ -142,7 +142,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     std::vector<LHEF::HEPEUP*> input;
     if (!m_reader->hepeup.subevents.empty()) { input.insert(input.end(), hepe->hepeup.subevents.begin(), hepe->hepeup.subevents.end()); }
     else { input.emplace_back(&m_reader->hepeup);}
-    int first_group_event = m_neve;
+    const int first_group_event = m_neve;
     m_neve++;
     for (auto* ahepeup: input)
     {
@@ -158,24 +158,24 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         std::map< std::pair<int, int>, GenVertexPtr> vertices;
         for ( int i = 0; i < ahepeup->NUP; ++i )
         {
-            FourVector mom((ahepeup->PUP)[i][0], (ahepeup->PUP)[i][1], (ahepeup->PUP)[i][2], (ahepeup->PUP)[i][3]);
+            const FourVector mom((ahepeup->PUP)[i][0], (ahepeup->PUP)[i][1], (ahepeup->PUP)[i][2], (ahepeup->PUP)[i][3]);
             particles.emplace_back(std::make_shared<GenParticle>(mom, ahepeup->IDUP[i], ahepeup->ISTUP[i]));
             if ( i < 2 ) continue;
-            std::pair<int, int> vertex_index(ahepeup->MOTHUP[i].first, ahepeup->MOTHUP[i].second);
+            const std::pair<int, int> vertex_index(ahepeup->MOTHUP[i].first, ahepeup->MOTHUP[i].second);
             if (vertices.count(vertex_index) == 0) vertices[vertex_index] = std::make_shared<GenVertex>();
             vertices[vertex_index]->add_particle_out(particles.back());
         }
         for ( auto& v: vertices )
         {
-            std::pair<int, int> vertex_index = v.first;
-            GenVertexPtr          vertex = v.second;
+            const std::pair<int, int> vertex_index = v.first;
+            const GenVertexPtr          vertex = v.second;
             for (int i = vertex_index.first-1; i < vertex_index.second; ++i) {
                 if ( i >= 0 && i < static_cast<int>(particles.size())) {
                     vertex->add_particle_in(particles[i]);
                 }
             }
         }
-        std::pair<int, int> vertex_index(0, 0);
+        const std::pair<int, int> vertex_index(0, 0);
         if (vertices.count(vertex_index) == 0) vertices[vertex_index] = std::make_shared<GenVertex>();
         for (size_t i = 0; i < particles.size(); ++i) {
             if (!particles[i]->end_vertex() && !particles[i]->production_vertex())
@@ -205,8 +205,8 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         // First beam (positive z-direction)
         if (m_hepr->heprup.IDBMUP.first != 0) {
             // Create beam particle with momentum (0, 0, +E, E) where E = beam energy
-            FourVector beam_mom(0, 0, m_hepr->heprup.EBMUP.first, m_hepr->heprup.EBMUP.first);
-            GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.first, 4);
+            const FourVector beam_mom(0, 0, m_hepr->heprup.EBMUP.first, m_hepr->heprup.EBMUP.first);
+            const GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.first, 4);
             evt.add_beam_particle(beam);
             // Validate that we have enough particles and the first one is incoming (status -1)
             if (particles.size() > particle_from_beam_index) {
@@ -215,7 +215,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
                     return false;
                 }
                 // Connect beam to the corresponding incoming parton via a vertex
-                GenVertexPtr v = std::make_shared<GenVertex>();
+                const GenVertexPtr v = std::make_shared<GenVertex>();
                 v->add_particle_out(particles[particle_from_beam_index]);
                 particle_from_beam_index++;
                 v->add_particle_in(beam);
@@ -229,8 +229,8 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         // Second beam (negative z-direction)
         if (m_hepr->heprup.IDBMUP.second != 0) {
             // Create beam particle with momentum (0, 0, -E, E) where E = beam energy
-            FourVector beam_mom(0, 0, -m_hepr->heprup.EBMUP.second, m_hepr->heprup.EBMUP.second);
-            GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.second, 4);
+            const FourVector beam_mom(0, 0, -m_hepr->heprup.EBMUP.second, m_hepr->heprup.EBMUP.second);
+            const GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.second, 4);
             evt.add_beam_particle(beam);
             // Validate that we have enough particles and the next one is incoming (status -1)
             if (particles.size() > particle_from_beam_index) {
@@ -239,7 +239,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
                     return false;
                 }
                 // Connect beam to the corresponding incoming parton via a vertex
-                GenVertexPtr v = std::make_shared<GenVertex>();
+                const GenVertexPtr v = std::make_shared<GenVertex>();
                 v->add_particle_out(particles[particle_from_beam_index]);
                 particle_from_beam_index++;
                 v->add_particle_in(beam);
@@ -253,7 +253,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
 
         // And we also want to add the weights.
         std::vector<double> wts;
-        size_t N = ahepeup->weights.size();
+        const size_t N = ahepeup->weights.size();
         wts.reserve(N);
         for ( size_t i = 0; i < N; ++i )
         {
@@ -261,12 +261,12 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         }
         evt.weights() = wts;
         /// Cross-section
-        std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
+        const std::shared_ptr<GenCrossSection>  xs     = std::make_shared<GenCrossSection>();
         evt.add_attribute("GenCrossSection", xs);
         /// In this order the number of cross-sections will match the number of weights
         xs->set_cross_section(m_hepr->heprup.XSECUP, m_hepr->heprup.XERRUP);
         /// PDF info
-        std::shared_ptr<GenPdfInfo> pi  = std::make_shared<GenPdfInfo>();
+        const std::shared_ptr<GenPdfInfo> pi  = std::make_shared<GenPdfInfo>();
         pi->parton_id[0] = particles[0]->pdg_id();
         pi->parton_id[1] = particles[1]->pdg_id();
         pi->x[0] = std::abs(particles[0]->momentum().pz()/m_hepr->heprup.EBMUP.first);

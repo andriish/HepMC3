@@ -117,7 +117,9 @@ int main() {
         cs->set_cross_section(-1.0,0.0);
         Print::line(cs);
     }
-    else std::cout << "Problem accessing attribute!" <<std::endl;
+    else {
+        std::cout << "Problem accessing attribute!" << std::endl;
+    }
 
     // remove attribute
     evt.remove_attribute("GenCrossSection");
@@ -133,10 +135,10 @@ int main() {
     // Example of adding attributes and finding particles with attributes
     //
 
-    std::shared_ptr<Attribute> tool1           = std::make_shared<IntAttribute>(1);
-    std::shared_ptr<Attribute> tool999         = std::make_shared<IntAttribute>(999);
-    std::shared_ptr<Attribute> test_attribute  = std::make_shared<StringAttribute>("test attribute");
-    std::shared_ptr<Attribute> test_attribute2 = std::make_shared<StringAttribute>("test attribute2");
+    const std::shared_ptr<Attribute> tool1           = std::make_shared<IntAttribute>(1);
+    const std::shared_ptr<Attribute> tool999         = std::make_shared<IntAttribute>(999);
+    const std::shared_ptr<Attribute> test_attribute  = std::make_shared<StringAttribute>("test attribute");
+    const std::shared_ptr<Attribute> test_attribute2 = std::make_shared<StringAttribute>("test attribute2");
 
     p2->add_attribute( "tool" ,  tool1           );
     p2->add_attribute( "other" , test_attribute  );

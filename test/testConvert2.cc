@@ -11,14 +11,14 @@ int main()
     std::ifstream inputA( "inputConvert2.hepmc" );
     if( !inputA ) return 1;
     HepMC3::WriterAsciiHepMC2 outputA("frominputConvert2.hepmc");
-    std::shared_ptr<HepMC3::GenRunInfo> run =std::make_shared<HepMC3::GenRunInfo>();
+    const std::shared_ptr<HepMC3::GenRunInfo> run = std::make_shared<HepMC3::GenRunInfo>();
     while(inputA)
     {
         HepMC::GenEvent evt;
         evt.clear();
         evt.read( inputA );
         if( !evt.is_valid() )  break;
-        HepMC3::GenEvent* evt3=ConvertHepMCGenEvent_2to3(evt,run);
+        const HepMC3::GenEvent* evt3 = ConvertHepMCGenEvent_2to3(evt,run);
         if (!evt3) return 4;
         outputA.write_event(*evt3);
         delete evt3;

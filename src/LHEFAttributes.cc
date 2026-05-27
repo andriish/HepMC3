@@ -73,7 +73,7 @@ bool HEPEUPAttribute::to_string(std::string &att) const {
 }
 
 bool HEPEUPAttribute::init() {
-    std::shared_ptr<HEPRUPAttribute> hepr =
+    const std::shared_ptr<HEPRUPAttribute> hepr =
         event()->attribute<HEPRUPAttribute>("HEPRUP");
     bool found = false;
     for ( int i = 0, N = tags.size(); i < N; ++i ) {

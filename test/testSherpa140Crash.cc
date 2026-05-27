@@ -13,7 +13,7 @@ int main()
     std::vector<std::shared_ptr<GenEvent> > evts;
     while( !inputA.failed() )
     {
-        std::shared_ptr<GenEvent>  evt= std::make_shared<GenEvent>();
+        const std::shared_ptr<GenEvent> evt = std::make_shared<GenEvent>();
         inputA.read_event(*evt);
         if( inputA.failed() )  {
             printf("End of file reached. Exit.\n");

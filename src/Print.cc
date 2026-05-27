@@ -51,8 +51,8 @@ void Print::content(std::ostream& os, const GenEvent &event) {
 
 void Print::listing(std::ostream& os, const GenEvent &event, unsigned short precision) {
     // Find the current stream state
-    std::ios_base::fmtflags orig = os.flags();
-    std::streamsize         prec = os.precision();
+    const std::ios_base::fmtflags orig = os.flags();
+    const std::streamsize         prec = os.precision();
 
     // Set precision
     os.precision(precision);
@@ -88,8 +88,8 @@ void Print::listing(std::ostream& os, const GenEvent &event, unsigned short prec
 
 void Print::listing(std::ostream& os, const GenRunInfo &ri, unsigned short precision) {
     // Find the current stream state
-    std::ios_base::fmtflags orig = os.flags();
-    std::streamsize         prec = os.precision();
+    const std::ios_base::fmtflags orig = os.flags();
+    const std::streamsize         prec = os.precision();
 
     // Set precision
     os.precision(precision);
@@ -97,7 +97,7 @@ void Print::listing(std::ostream& os, const GenRunInfo &ri, unsigned short preci
     os << "________________________________________________________________________" << std::endl;
     os << "GenRunInfo:" << std::endl;
 
-    std::vector<std::string> names = ri.weight_names();
+    const std::vector<std::string> names = ri.weight_names();
     os << " Names: ( ";
     for (const auto& n: names) os << n;
     os << " )" << std::endl;
@@ -259,10 +259,10 @@ void Print::line(std::ostream& os, GenVertexPtr v, bool attributes) { line_v(os,
 void Print::line(std::ostream& os, const FourVector& p) {
     os << "FourVector: ";
     // Find the current stream state
-    std::ios_base::fmtflags orig = os.flags();
+    const std::ios_base::fmtflags orig = os.flags();
     os.setf(std::ios::scientific, std::ios::floatfield);
     os.setf(std::ios_base::showpos);
-    std::streamsize prec = os.precision();
+    const std::streamsize prec = os.precision();
     // Set precision
     os.precision(2);
     os << " (P,E)=" << p.x()
@@ -286,11 +286,11 @@ static void line_p(std::ostream& os, T p, bool attributes) {
     os << p->pid();
 
     // Find the current stream state
-    std::ios_base::fmtflags orig = os.flags();
+    const std::ios_base::fmtflags orig = os.flags();
 
     os.setf(std::ios::scientific, std::ios::floatfield);
     os.setf(std::ios_base::showpos);
-    std::streamsize prec = os.precision();
+    const std::streamsize prec = os.precision();
 
     // Set precision
     os.precision(2);
@@ -308,9 +308,9 @@ static void line_p(std::ostream& os, T p, bool attributes) {
 
     const ConstGenVertexPtr prod = p->production_vertex();
     const ConstGenVertexPtr end  = p->end_vertex();
-    int prod_vtx_id   = (prod) ? prod->id() : 0;
-    int end_vtx_id    = (end)  ? end->id()  : 0;
-    auto names        = p->attribute_names();
+    const int prod_vtx_id   = (prod) ? prod->id() : 0;
+    const int end_vtx_id    = (end)  ? end->id()  : 0;
+    const auto names        = p->attribute_names();
 
     os << " Stat: " << p->status()
        << " PV: " << prod_vtx_id

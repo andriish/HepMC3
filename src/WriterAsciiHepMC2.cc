@@ -86,19 +86,19 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     if ( evt.run_info() && run_info() != evt.run_info() ) set_run_info(evt.run_info());
 
 
-    std::shared_ptr<DoubleAttribute> A_event_scale = evt.attribute<DoubleAttribute>("event_scale");
-    std::shared_ptr<DoubleAttribute> A_alphaQED = evt.attribute<DoubleAttribute>("alphaQED");
-    std::shared_ptr<DoubleAttribute> A_alphaQCD = evt.attribute<DoubleAttribute>("alphaQCD");
-    std::shared_ptr<IntAttribute> A_signal_process_id = evt.attribute<IntAttribute>("signal_process_id");
-    std::shared_ptr<IntAttribute> A_mpi = evt.attribute<IntAttribute>("mpi");
-    std::shared_ptr<IntAttribute> A_signal_process_vertex = evt.attribute<IntAttribute>("signal_process_vertex");
+    const std::shared_ptr<DoubleAttribute> A_event_scale = evt.attribute<DoubleAttribute>("event_scale");
+    const std::shared_ptr<DoubleAttribute> A_alphaQED = evt.attribute<DoubleAttribute>("alphaQED");
+    const std::shared_ptr<DoubleAttribute> A_alphaQCD = evt.attribute<DoubleAttribute>("alphaQCD");
+    const std::shared_ptr<IntAttribute> A_signal_process_id = evt.attribute<IntAttribute>("signal_process_id");
+    const std::shared_ptr<IntAttribute> A_mpi = evt.attribute<IntAttribute>("mpi");
+    const std::shared_ptr<IntAttribute> A_signal_process_vertex = evt.attribute<IntAttribute>("signal_process_vertex");
 
-    double event_scale = A_event_scale?(A_event_scale->value()):0.0;
-    double alphaQED = A_alphaQED?(A_alphaQED->value()):0.0;
-    double alphaQCD = A_alphaQCD?(A_alphaQCD->value()):0.0;
-    int signal_process_id = A_signal_process_id?(A_signal_process_id->value()):0;
-    int mpi = A_mpi?(A_mpi->value()):0;
-    int signal_process_vertex = A_signal_process_vertex?(A_signal_process_vertex->value()):0;
+    const double event_scale = A_event_scale?(A_event_scale->value()):0.0;
+    const double alphaQED = A_alphaQED?(A_alphaQED->value()):0.0;
+    const double alphaQCD = A_alphaQCD?(A_alphaQCD->value()):0.0;
+    const int signal_process_id = A_signal_process_id?(A_signal_process_id->value()):0;
+    const int mpi = A_mpi?(A_mpi->value()):0;
+    const int signal_process_vertex = A_signal_process_vertex?(A_signal_process_vertex->value()):0;
 
     std::vector<long> m_random_states;
     std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
@@ -108,7 +108,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         m_random_states.reserve(100);
         for (int i = 0; i < 100; i++)
         {
-            std::shared_ptr<LongAttribute> rs = evt.attribute<LongAttribute>("random_states"+std::to_string(static_cast<long long unsigned int>(i)));
+            const std::shared_ptr<LongAttribute> rs = evt.attribute<LongAttribute>("random_states"+std::to_string(static_cast<long long unsigned int>(i)));
             if (!rs) break;
             m_random_states.emplace_back(rs->value());
         }
@@ -178,13 +178,13 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     // Write units
     m_cursor += sprintf(m_cursor, "U %s %s\n", Units::name(evt.momentum_unit()).c_str(), Units::name(evt.length_unit()).c_str());
     flush();
-    std::shared_ptr<GenCrossSection> cs = evt.attribute<GenCrossSection>("GenCrossSection");
+    const std::shared_ptr<GenCrossSection> cs = evt.attribute<GenCrossSection>("GenCrossSection");
     if (cs) {
         m_cursor += sprintf(m_cursor, ("C" + m_float_printf_specifier + m_float_printf_specifier + "\n").c_str(), cs->xsec(), cs->xsec_err() );
         flush();
     }
 
-    std::shared_ptr<GenHeavyIon> hi = evt.attribute<GenHeavyIon>("GenHeavyIon");
+    const std::shared_ptr<GenHeavyIon> hi = evt.attribute<GenHeavyIon>("GenHeavyIon");
     if (hi) {
         m_cursor += sprintf(m_cursor, "H %i %i %i %i %i %i %i %i %i %e %e %e %e\n",
                             hi->Ncoll_hard,
@@ -203,11 +203,11 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
         flush();
     }
 
-    std::shared_ptr<GenPdfInfo> pi = evt.attribute<GenPdfInfo>("GenPdfInfo");
+    const std::shared_ptr<GenPdfInfo> pi = evt.attribute<GenPdfInfo>("GenPdfInfo");
     if (pi) {
         std::string st;
         // We use it here because the HepMC3 GenPdfInfo has the same format as in HepMC2 IO_GenEvent and get error handeling for free.
-        bool status = pi->to_string(st);
+        const bool status = pi->to_string(st);
         if ( !status )
         {
             HEPMC3_WARNING_LEVEL(300,"WriterAsciiHepMC2::write_event: problem serializing GenPdfInfo attribute")
@@ -292,14 +292,14 @@ std::string WriterAsciiHepMC2::escape(const std::string& s)
 void WriterAsciiHepMC2::write_vertex(const ConstGenVertexPtr& v)
 {
     std::vector<double> weights;
-    std::shared_ptr<VectorDoubleAttribute> weights_a = v->attribute<VectorDoubleAttribute>("weights");
+    const std::shared_ptr<VectorDoubleAttribute> weights_a = v->attribute<VectorDoubleAttribute>("weights");
     if (weights_a) {
         weights = weights_a->value();
     } else {
         weights.reserve(100);
         for (int i = 0; i < 100; i++)
         {
-            std::shared_ptr<DoubleAttribute> rs = v->attribute<DoubleAttribute>("weight"+std::to_string(static_cast<long long unsigned int>(i)));
+            const std::shared_ptr<DoubleAttribute> rs = v->attribute<DoubleAttribute>("weight"+std::to_string(static_cast<long long unsigned int>(i)));
             if (!rs) break;
             weights.emplace_back(rs->value());
         }
@@ -341,7 +341,7 @@ inline void WriterAsciiHepMC2::flush()
     // we will not allow precision larger than 24 anyway
     if ( m_buffer + m_buffer_size < m_cursor + 512 )
     {
-        std::ptrdiff_t length = m_cursor - m_buffer;
+        const std::ptrdiff_t length = m_cursor - m_buffer;
         m_stream->write(m_buffer, length);
         m_cursor = m_buffer;
     }
@@ -350,7 +350,7 @@ inline void WriterAsciiHepMC2::flush()
 
 inline void WriterAsciiHepMC2::forced_flush()
 {
-    std::ptrdiff_t length = m_cursor - m_buffer;
+    const std::ptrdiff_t length = m_cursor - m_buffer;
     m_stream->write(m_buffer, length);
     m_cursor = m_buffer;
 }
@@ -376,15 +376,15 @@ void WriterAsciiHepMC2::write_particle(const ConstGenParticlePtr& p, int /*secon
         if (p->end_vertex()->id() != 0)
         { ev = p->end_vertex()->id(); }
     }
-    std::shared_ptr<DoubleAttribute> A_theta = p->attribute<DoubleAttribute>("theta");
-    std:: shared_ptr<DoubleAttribute> A_phi = p->attribute<DoubleAttribute>("phi");
+    const std::shared_ptr<DoubleAttribute> A_theta = p->attribute<DoubleAttribute>("theta");
+    const std::shared_ptr<DoubleAttribute> A_phi = p->attribute<DoubleAttribute>("phi");
     if (A_theta) { m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_theta->value()); }
     else { m_cursor += sprintf(m_cursor, " 0");}
     if (A_phi) { m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), A_phi->value()); }
     else { m_cursor += sprintf(m_cursor, " 0");}
     m_cursor += sprintf(m_cursor, " %i", ev);
     flush();
-    std::shared_ptr<VectorIntAttribute> A_flows = p->attribute<VectorIntAttribute>("flows");
+    const std::shared_ptr<VectorIntAttribute> A_flows = p->attribute<VectorIntAttribute>("flows");
     if (A_flows)
     {
         std::vector<int> flowsv = A_flows->value();
@@ -393,9 +393,9 @@ void WriterAsciiHepMC2::write_particle(const ConstGenParticlePtr& p, int /*secon
         flowss += "\n";
         write_string(flowss);
     } else {
-        std::shared_ptr<IntAttribute> A_flow1 = p->attribute<IntAttribute>("flow1");
-        std::shared_ptr<IntAttribute> A_flow2 = p->attribute<IntAttribute>("flow2");
-        std::shared_ptr<IntAttribute> A_flow3 = p->attribute<IntAttribute>("flow3");
+        const std::shared_ptr<IntAttribute> A_flow1 = p->attribute<IntAttribute>("flow1");
+        const std::shared_ptr<IntAttribute> A_flow2 = p->attribute<IntAttribute>("flow2");
+        const std::shared_ptr<IntAttribute> A_flow3 = p->attribute<IntAttribute>("flow3");
         int flowsize = 0;
         if (A_flow1) flowsize++;
         if (A_flow2) flowsize++;

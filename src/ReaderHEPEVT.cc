@@ -166,9 +166,9 @@ bool ReaderHEPEVT::read_event(GenEvent& evt)
     if (fileok)
     {
         result = m_hepevt_interface.HEPEVT_to_GenEvent(&evt);
-        std::shared_ptr<GenRunInfo> g = std::make_shared<GenRunInfo>();
-        std::vector<std::string> weightnames(1,"0");
-        std::vector<double> wts(1,1.0);
+        const std::shared_ptr<GenRunInfo> g = std::make_shared<GenRunInfo>();
+        const std::vector<std::string> weightnames(1,"0");
+        const std::vector<double> wts(1,1.0);
         g->set_weight_names(weightnames);
         evt.set_run_info(g);
         evt.weights() = wts;
