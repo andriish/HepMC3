@@ -96,13 +96,9 @@ void writeEvent(HighFive::Group& g, const GenEvent& evt) {
     // Strings (HighFive handles variable-length strings)
     if (!ev.attribute_name.empty())
         g.createDataSet("attribute_name", ev.attribute_name);
-    else
-        g.createDataSet<std::string>("attribute_name", HighFive::DataSpace::From(ev.attribute_name));
 
     if (!ev.attribute_string.empty())
         g.createDataSet("attribute_string", ev.attribute_string);
-    else
-        g.createDataSet<std::string>("attribute_string", HighFive::DataSpace::From(ev.attribute_string));
 }
 
 // ======================= Write GenRunInfo =======================
@@ -115,33 +111,21 @@ void writeRunInfo(HighFive::Group& g, const GenRunInfo& run) {
 
     if (!rd.weight_names.empty())
         rg.createDataSet("weight_names", rd.weight_names);
-    else
-        rg.createDataSet<std::string>("weight_names", HighFive::DataSpace::From(rd.weight_names));
 
     if (!rd.tool_name.empty())
         rg.createDataSet("tool_name", rd.tool_name);
-    else
-        rg.createDataSet<std::string>("tool_name", HighFive::DataSpace::From(rd.tool_name));
 
     if (!rd.tool_version.empty())
         rg.createDataSet("tool_version", rd.tool_version);
-    else
-        rg.createDataSet<std::string>("tool_version", HighFive::DataSpace::From(rd.tool_version));
 
     if (!rd.tool_description.empty())
         rg.createDataSet("tool_description", rd.tool_description);
-    else
-        rg.createDataSet<std::string>("tool_description", HighFive::DataSpace::From(rd.tool_description));
 
     if (!rd.attribute_name.empty())
         rg.createDataSet("attribute_name", rd.attribute_name);
-    else
-        rg.createDataSet<std::string>("attribute_name", HighFive::DataSpace::From(rd.attribute_name));
 
     if (!rd.attribute_string.empty())
         rg.createDataSet("attribute_string", rd.attribute_string);
-    else
-        rg.createDataSet<std::string>("attribute_string", HighFive::DataSpace::From(rd.attribute_string));
 }
 
 // ======================= Read GenRunInfo =======================
