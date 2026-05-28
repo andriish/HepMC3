@@ -101,7 +101,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     const int signal_process_vertex = A_signal_process_vertex?(A_signal_process_vertex->value()):0;
 
     std::vector<long> m_random_states;
-    std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
+    const std::shared_ptr<VectorLongIntAttribute> random_states_a = evt.attribute<VectorLongIntAttribute>("random_states");
     if (random_states_a) {
         m_random_states = random_states_a->value();
     } else {

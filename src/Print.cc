@@ -97,7 +97,7 @@ void Print::listing(std::ostream& os, const GenRunInfo &ri, unsigned short preci
     os << "________________________________________________________________________" << std::endl;
     os << "GenRunInfo:" << std::endl;
 
-    const std::vector<std::string> names = ri.weight_names();
+    const std::vector<std::string>& names = ri.weight_names();
     os << " Names: ( ";
     for (const auto& n: names) os << n;
     os << " )" << std::endl;
@@ -192,7 +192,7 @@ void Print::listing(std::ostream& os, ConstGenParticlePtr p) {
     os.width(3);
     os << p->status();
 
-    ConstGenVertexPtr prod = p->production_vertex();
+    const auto prod = p->production_vertex();
 
     if ( prod ) {
         os.width(6);
@@ -277,7 +277,7 @@ void Print::line(std::ostream& os, const FourVector& p) {
 namespace {
 /** @brief Print a particle and its details, optionally including attributes. */
 template <class T>
-static void line_p(std::ostream& os, T p, bool attributes) {
+void line_p(std::ostream& os, T p, bool attributes) {
     if (!p) { os << "GenParticle: Empty" << std::endl; return;}
     os << "GenParticle: ";
     os.width(3);

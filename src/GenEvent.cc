@@ -120,7 +120,7 @@ void GenEvent::remove_particle(GenParticlePtr p) {
     if ( !p || p->parent_event() != this ) return;
 
     HEPMC3_DEBUG(30, "GenEvent::remove_particle - called with particle: " << p->id());
-    GenVertexPtr end_vtx = p->end_vertex();
+    const GenVertexPtr end_vtx = p->end_vertex();
     if ( end_vtx ) {
         end_vtx->remove_particle_in(p);
 

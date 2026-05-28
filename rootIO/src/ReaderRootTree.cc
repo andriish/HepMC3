@@ -57,7 +57,7 @@ bool ReaderRootTree::init()
     if (result < 0)
     {
         HEPMC3_WARNING_LEVEL(100,"ReaderRootTree: problem reading branch tree: GenRunInfo. Will attempt to read GenRunInfoData object.")
-        std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
+        const std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
         auto *run = reinterpret_cast<GenRunInfoData*>(m_file->Get("GenRunInfoData"));
         if (run) {
             ri->read_data(*run);

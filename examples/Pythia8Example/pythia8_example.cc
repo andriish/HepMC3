@@ -23,10 +23,10 @@ int main(int argc, char **argv) {
     Pythia8ToHepMC3 pythiaToHepMC;
     pythia.readFile(argv[1]);
     pythia.init();
-    std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
-    struct GenRunInfo::ToolInfo generator = {std::string("Pythia8"),std::to_string(PYTHIA_VERSION).substr(0,5),std::string("Used generator")};
+    const std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
+    const struct GenRunInfo::ToolInfo generator = {std::string("Pythia8"),std::to_string(PYTHIA_VERSION).substr(0,5),std::string("Used generator")};
     run->tools().push_back(generator);
-    struct GenRunInfo::ToolInfo config = {std::string(argv[1]),"1.0",std::string("Control cards")};
+    const struct GenRunInfo::ToolInfo config = {std::string(argv[1]),"1.0",std::string("Control cards")};
     run->tools().push_back(config);
     std::vector<std::string> names;
     for (int iWeight = 0; iWeight < pythia.info.nWeights(); ++iWeight) {
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     run->set_weight_names(names);
     WriterAscii file(argv[2],run);
 
-    int nEvent = pythia.mode("Main:numberOfEvents");
+    const int nEvent = pythia.mode("Main:numberOfEvents");
 
     for( int i = 0; i < nEvent; ++i ) {
         if( !pythia.next() ) continue;

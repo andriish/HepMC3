@@ -176,7 +176,7 @@ int main(int /*argc*/, char ** /*argv*/) {
         }
 
         // Now we can access the HEPEUP attribute of the current event.
-        std::shared_ptr<HEPEUPAttribute> hepe = ev.attribute<HEPEUPAttribute>("HEPEUP");
+        const std::shared_ptr<HEPEUPAttribute> hepe = ev.attribute<HEPEUPAttribute>("HEPEUP");
 
         // Again, there may be addisional non-standard information we want
         // to keep.

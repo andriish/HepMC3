@@ -298,13 +298,13 @@ char const * find_next_token(char const *buf){
   }
   return ((*buf) == '\0') ? nullptr : buf;
 }
-}
+} // namespace
 
 std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
     static const std::pair<int, int>  err(-1, -1);
     std::pair<int, int>               ret(-1, -1);
     const char                 *cursor   = buf + 1;
-    char * after_parse = nullptr;
+    char * after_parse = nullptr; // NOLINT(misc-const-correctness)
     FourVector&                  position = m_data.event_pos;
 
     // event number
@@ -405,7 +405,7 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
     GenVertexPtr  data = std::make_shared<GenVertex>();
     const char   *cursor   = buf + 1;
     const char   *cursor2   = buf + 1;
-    char * after_parse = nullptr;
+    char * after_parse = nullptr; // NOLINT(misc-const-correctness)
     int           id              = 0;
 
     // id
@@ -426,7 +426,7 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
     if ( !(cursor = find_next_token(cursor+1)) ) return false;
 
     while (true) {
-        int  particle_in = std::strtol(cursor, &after_parse, 10);
+        const int  particle_in = std::strtol(cursor, &after_parse, 10);
         if(cursor == after_parse) return false;
         cursor = after_parse;
         cursor2 = cursor;
@@ -480,13 +480,13 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
 
 bool ReaderAscii::parse_particle_information(const char *buf) {
     const char     *cursor  = buf + 1;
-    char * after_parse = nullptr;
+    char * after_parse = nullptr; // NOLINT(misc-const-correctness)
     int             mother_id = 0;
 
     // verify id
     if ( !(cursor = find_next_token(cursor)) ) return false;
 
-    int id = std::strtol(cursor, &after_parse, 10);
+    const int id = std::strtol(cursor, &after_parse, 10);
     if(cursor == after_parse) return false;
 
     cursor = after_parse;
@@ -566,7 +566,7 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
 bool ReaderAscii::parse_attribute(const char *buf) {
     const char     *cursor  = buf + 1;
     const char     *cursor2 = buf + 1;
-    char * after_parse = nullptr;
+    char * after_parse = nullptr; // NOLINT(misc-const-correctness)
     std::array<char, 512> name{};
     int             id = 0;
 
@@ -608,8 +608,7 @@ bool ReaderAscii::parse_run_attribute(const char *buf) {
       return true;
     }
 
-    std::shared_ptr<StringAttribute> att =
-        std::make_shared<StringAttribute>(StringAttribute(unescape(cursor)));
+    const auto att = std::make_shared<StringAttribute>(StringAttribute(unescape(cursor)));
 
     run_info()->add_attribute(std::string(name.data()), att);
 

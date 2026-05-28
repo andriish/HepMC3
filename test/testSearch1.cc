@@ -40,6 +40,6 @@ std::shared_ptr<HepMC3::GenEvent> generate_event(const size_t n, const size_t it
 int main() {
     auto evt = generate_event(3,4);
     size_t np = 0;
-    for (auto p: evt->particles()) np += (HepMC3::Relatives::ANCESTORS(p)).size();
+    for (const auto& p: evt->particles()) np += (HepMC3::Relatives::ANCESTORS(p)).size();
     return 0;
 }

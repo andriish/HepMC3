@@ -98,7 +98,7 @@ int main() {
 
     heavy_ion->set( 1,2,3,4,5,6,7,8,9,0.1,2.3,4.5,6.7);
 
-    std::shared_ptr<GenCrossSection> cross_section = std::make_shared<GenCrossSection>();
+    const std::shared_ptr<GenCrossSection> cross_section = std::make_shared<GenCrossSection>();
     evt.add_attribute("GenCrossSection",cross_section);
 
     cross_section->set_cross_section(1.2,3.4);

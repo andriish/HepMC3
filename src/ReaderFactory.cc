@@ -45,7 +45,7 @@ InputInfo::InputInfo (const std::string &filename) {
             return;
         }
 
-        std::shared_ptr< std::ifstream > file = std::make_shared< std::ifstream >(filename);
+        const std::shared_ptr< std::ifstream > file = std::make_shared< std::ifstream >(filename);
         if (!file)
         {
             HEPMC3_ERROR_LEVEL(100,"deduce_reader could not open file for testing HepMC version: " << filename)

@@ -71,8 +71,8 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
         {
             if (used_style == 1) //paint decay and fragmentation vertices in green
             {
-                if (v->status() == 2) used_cursor += sprintf(used_cursor, "node [color=\"green\"];\n");
-                else  used_cursor += sprintf(used_cursor, "node [color=\"black\"];\n");
+                if (v->status() == 2) {used_cursor += sprintf(used_cursor, "node [color=\"green\"];\n");}
+                else  {used_cursor += sprintf(used_cursor, "node [color=\"black\"];\n");}
             }
         }
         HepMC3::FourVector in(0, 0, 0, 0);
@@ -89,9 +89,8 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
         HepMC3::FourVector momviolation(0, 0, 0, 0);
         momviolation += in;
         momviolation -= out;
-        double energyviolation = std::sqrt(momviolation.length2() + momviolation.e() * momviolation.e());
-        bool violation = false;
-        if (energyviolation > CONSERVATION_TOLERANCE * energy) violation = true;
+        const double energyviolation = std::sqrt(momviolation.length2() + momviolation.e() * momviolation.e());
+        const bool violation = (energyviolation > CONSERVATION_TOLERANCE * energy);
 
         if(violation)
         {
@@ -125,8 +124,8 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
                 {
                     if (used_style == 1) //paint suspected partons and 81/82 in red
                     {
-                        if (show_as_parton(p) && p->status() != 1) used_cursor += sprintf(used_cursor, "edge [color=\"red\"];\n");
-                        else        used_cursor += sprintf(used_cursor, "edge [color=\"black\"];\n");
+                        if (show_as_parton(p) && p->status() != 1) { used_cursor += sprintf(used_cursor, "edge [color=\"red\"];\n"); }
+                        else      {  used_cursor += sprintf(used_cursor, "edge [color=\"black\"];\n"); }
                     }
                 }
                 if (!p->end_vertex())
@@ -135,8 +134,7 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
                     used_cursor += sprintf(used_cursor, "v%d -> o%d [label=\"%d(%d)\"];\n", -v->id(), p->id(), p->id(), p->pid());
                     continue;
                 }
-                else
-                    used_cursor += sprintf(used_cursor, "v%d -> v%d [label=\"%d(%d)\"];\n", -v->id(), -p->end_vertex()->id(), p->id(), p->pid());
+                used_cursor += sprintf(used_cursor, "v%d -> v%d [label=\"%d(%d)\"];\n", -v->id(), -p->end_vertex()->id(), p->id(), p->pid());
             }
         }
     }
@@ -265,7 +263,7 @@ void HepMC3ViewerFrame::NextEvent()
 {
     if (fCurrentEvent == nullptr || fEventsCache.back() == fCurrentEvent)
     {
-        auto evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
+        auto* evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
         bool ok = fReader->read_event(*(evt1));
         ok = (ok && !fReader->failed());
         if (ok)
@@ -285,10 +283,10 @@ void HepMC3ViewerFrame::NextEvent()
 }
 void HepMC3ViewerFrame::ChooseInput()
 {
-    static const std::array<const char*, 10> FileType = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", nullptr, nullptr };
+    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", 0, 0 };
     static const TString dir("./");
     TGFileInfo fi;
-    fi.fFileTypes = FileType.data();
+    fi.fFileTypes = FileType;
     fi.fIniDir = StrDup(dir);
     new TGFileDialog(gClient->GetRoot(), this, kFDOpen, &fi);
     if (fReader) fReader->close();
