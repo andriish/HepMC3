@@ -115,6 +115,19 @@ option(HEPMC3_TEST_LZMA      "Use lzma in tests if available" ON)
 option(HEPMC3_TEST_BZIP2     "Use bzip2 in tests if available" ON)
 option(HEPMC3_TEST_ZSTD      "Use zstd in tests if available" ON)
 
+if(HEPMC3_ENABLE_HDF5IO)
+  find_path(HIGHFIVE_INCLUDE_DIR HighFive/H5File.hpp)
+  find_library(HDF5_LIBRARY NAMES hdf5)
+  if(NOT HIGHFIVE_INCLUDE_DIR OR NOT HDF5_LIBRARY)
+    message(STATUS "HepMC3: HDF5 tests disabled because HighFive or HDF5 was not found.")
+    set(HEPMC3_ENABLE_HDF5_TESTS OFF)
+  else()
+    set(HEPMC3_ENABLE_HDF5_TESTS ON)
+  endif()
+else()
+  set(HEPMC3_ENABLE_HDF5_TESTS OFF)
+endif()
+
 set(HEPMC3_TEST_PACKAGES_LIST "")
 if (HEPMC3_TEST_THREADS)
  LIST(APPEND HEPMC3_TEST_PACKAGES_LIST "Threads")
@@ -174,7 +187,7 @@ set( HepMC_tests
         testVertexAttributes
         testSherpa140Crash
          )
-                 
+
 set( HepMC_unix_tests
         testReaderFactory5
 )
@@ -276,6 +289,13 @@ if(HEPMC3_ENABLE_PROTOBUFIO )
     hepmc_protobuf_test( ${test} )
   target_link_libraries(${test} PRIVATE HepMC3::protobufIO)
   endforeach ( test ${HepMC_protobuf_tests} )
+endif()
+
+if(HEPMC3_ENABLE_HDF5IO AND HEPMC3_ENABLE_HDF5_TESTS)
+  hepmc_test( testHDF5 )
+  target_include_directories(testHDF5 PRIVATE ${HIGHFIVE_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/hdf5IO/include)
+  target_link_libraries(testHDF5 PRIVATE ${HDF5_LIBRARY})
+  set_tests_properties(testHDF5 PROPERTIES TIMEOUT 2000)
 endif()
 
 

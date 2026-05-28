@@ -9,6 +9,7 @@ RUN  yum -y  install  dnf-plugins-core \
                       protobuf protobuf-devel  \
                       python3 python3-devel  python3-numpy   \
                       root-core root root-physics   \
+                      hdf5 hdf5-devel highfive-devel \
                       && yum -y clean all
 
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  24 ]; then sed -i 's@message(FATAL_ERROR \"The imported @message(STATUS \"The imported@g' /usr/share/root/cmake/ROOTConfig-targets.cmake ; fi
