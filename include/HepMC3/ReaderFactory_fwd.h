@@ -22,14 +22,17 @@ namespace HepMC3 {
 #if ! (defined(__darwin__) || defined(__APPLE__)) &&  ! ((defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__))
 const std::string libHepMC3rootIO = "libHepMC3rootIO.so.3";
 const std::string libHepMC3protobufIO = "libHepMC3protobufIO.so.1";
+const std::string libHepMC3HDF5IO = "libHepMC3hdf5IO.so.1";
 #endif
 #if defined(__darwin__) || defined(__APPLE__)
 const std::string libHepMC3rootIO = "libHepMC3rootIO.dylib";
 const std::string libHepMC3protobufIO = "libHepMC3protobufIO.dylib";
+const std::string libHepMC3HDF5IO = "libHepMC3hdf5IO.dylib";
 #endif
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
 const std::string libHepMC3protobufIO = "HepMC3protobufIO.dll";
 const std::string libHepMC3rootIO = "HepMC3rootIO.dll";
+const std::string libHepMC3HDF5IO = "HepMC3hdf5IO.dll";
 #endif
 /** Information about input.
 
@@ -66,6 +69,7 @@ public:
     bool m_iogenevent = false;
     bool m_lhef = false;
     bool m_hepevt = false;
+    bool m_hdf5 = false;
     std::shared_ptr<Reader> m_reader = nullptr;
     /// @brief Get native (built-in) reader
     template <class T> std::shared_ptr<Reader> native_reader(T& argument);

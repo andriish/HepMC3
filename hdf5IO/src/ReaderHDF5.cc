@@ -5,6 +5,7 @@
 //
 
 #include "HepMC3/ReaderHDF5.h"
+#include "HepMC3/Version.h"
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenRunInfo.h"
 #include "HepMC3/Data/GenEventData.h"
@@ -18,6 +19,8 @@
 #include <vector>
 
 namespace HepMC3 {
+
+HEPMC3_DECLARE_READER_FILE(ReaderHDF5)
 
 namespace {
 
@@ -172,3 +175,4 @@ void ReaderHDF5::close() {
 }
 
 } // namespace HepMC3
+

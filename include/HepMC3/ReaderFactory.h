@@ -31,6 +31,12 @@ inline std::shared_ptr<Reader> deduce_reader(const std::string &filename)
         HEPMC3_DEBUG(10, "deduce_reader: Attempt ReaderRootTree for " << filename);
         return   std::make_shared<ReaderPlugin>(filename, libHepMC3rootIO, std::string("newReaderRootTreefile"));
     }
+#ifdef HEPMC3_ENABLE_HDF5IO
+    if (input.m_hdf5) {
+        HEPMC3_DEBUG(10, "deduce_reader: Attempt ReaderHDF5 for " << filename);
+        return std::make_shared<ReaderPlugin>(filename, libHepMC3HDF5IO, std::string("newReaderHDF5file"));
+    }
+#endif
     if (input.m_protobuf) {
         HEPMC3_DEBUG(10, "deduce_reader: Attempt ProtobufIO for " << filename);
         return std::make_shared<ReaderPlugin>(filename, libHepMC3protobufIO, std::string("newReaderprotobuffile"));
