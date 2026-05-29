@@ -1,0 +1,10 @@
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/Version.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/Reader.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/Writer.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/Print.h>
+
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/ReaderHDF5.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/WriterHDF5.h>
+#include <@HEPMC3_INCLUDE_DIR@HepMC3/hdf5Utils.h>
+
+#include <memory>

@@ -1,0 +1,15 @@
++include <HepMC3/Version.h>
++include <HepMC3/Reader.h>
++include <HepMC3/Writer.h>
++include <HepMC3/Print.h>
++include <HepMC3/GenRunInfo.h>
+
++include <HepMC3/ReaderHDF5.h>
++include <HepMC3/WriterHDF5.h>
++include <HepMC3/hdf5Utils.h>
+
++class HepMC3::ReaderHDF5
++class HepMC3::WriterHDF5
+
++binder HepMC3::ReaderHDF5 binder::ReaderHDF5_binder
++binder HepMC3::WriterHDF5 binder::WriterHDF5_binder
