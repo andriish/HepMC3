@@ -1,5 +1,4 @@
 #include <HepMC3/LHEF.h>
-#include <bits/ostream.h>
 #include <ios>
 #include <iterator>
 #include <memory>
