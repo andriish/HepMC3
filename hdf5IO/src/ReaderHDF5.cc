@@ -12,6 +12,7 @@
 #include "HepMC3/hdf5Utils.h"
 
 #include <highfive/H5File.hpp>
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,18 +23,6 @@ namespace {
 
 using namespace HDF5Utils;
 
-bool is_event_group_name(const std::string &name) {
-    return name.rfind("event_", 0) == 0;
-}
-
-std::string choose_event_group(const HighFive::File &file) {
-    for (const auto &name : file.listObjectNames()) {
-        if (is_event_group_name(name)) {
-            return name;
-        }
-    }
-    return std::string();
-}
 
 void readRunInfoFromGroup(const HighFive::Group &g, GenRunInfo &run) {
     if (!g.exist("run_info")) return;
@@ -124,17 +113,25 @@ void readEventFromGroup(const HighFive::Group &g, GenEvent &evt) {
 ReaderHDF5::ReaderHDF5(const std::string &filename)
     : m_failed(false)
     , m_file(filename, HighFive::File::ReadOnly)
+    , m_object_names(m_file.listObjectNames())
 {
+    std::sort(m_object_names.begin(), m_object_names.end());
+    auto it = std::remove_if(m_object_names.begin(), m_object_names.end(), [](const std::string &name){
+        return name.rfind("event_", 0) != 0;
+    });
+    m_object_names.erase(it, m_object_names.end());
 }
 
 ReaderHDF5::~ReaderHDF5() = default;
 
 bool ReaderHDF5::read_event(GenEvent &evt) {
-    std::string group_name = choose_event_group(m_file);
-    if (group_name.empty()) {
+    if (m_next_index >= m_object_names.size()) {
         m_failed = true;
         return false;
     }
+
+    std::string group_name = m_object_names[m_next_index];
+    ++m_next_index;
 
     HighFive::Group g = m_file.getGroup(group_name);
     readEventFromGroup(g, evt);
@@ -144,6 +141,25 @@ bool ReaderHDF5::read_event(GenEvent &evt) {
     evt.set_run_info(run_info);
 
     m_failed = false;
+    return true;
+}
+
+bool ReaderHDF5::skip(const int n) {
+    if (n < 0) {
+        return false;
+    }
+    if (m_next_index >= m_object_names.size()) {
+        m_failed = true;
+        return false;
+    }
+
+    std::size_t remaining = m_object_names.size() - m_next_index;
+    if (static_cast<std::size_t>(n) > remaining) {
+        m_next_index = m_object_names.size();
+        return false;
+    }
+
+    m_next_index += static_cast<std::size_t>(n);
     return true;
 }
 
