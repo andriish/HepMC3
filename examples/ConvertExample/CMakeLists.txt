@@ -56,6 +56,10 @@ if(Protobuf_FOUND)
   # create environment scripts
   set(basic_libdir "${basic_libdir}:${Protobuf_LIBRARY_DIR}")
 endif()
+if(HEPMC3_ENABLE_HDF5IO)
+  list(APPEND basic_libraries HepMC3::hdf5IO HDF5::HDF5 HighFive)
+  list(APPEND basic_defines HEPMC3_ENABLE_HDF5IO=1)
+endif()
 if(HEPMC3_ENABLE_EDM4HEP)
   # add the PATH to find HepPDT
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})

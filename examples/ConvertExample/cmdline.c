@@ -34,8 +34,8 @@ const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
-  "  -i, --input-format=STRING     Input format  (possible values=\"hepmc2\",\n                                  \"auto\", \"hepmc3\", \"hpe\", \"root\",\n                                  \"treeroot\", \"lhef\", \"plugin\",\n                                  \"proto\") (mandatory)",
-  "  -o, --output-format=STRING    Output format  (possible values=\"hepmc2\",\n                                  \"hepmc3\", \"edm4hep\", \"hpe\", \"root\", \"treeroot\",\n                                  \"treerootopal\", \"hpezeus\", \"dump\",\n                                  \"plugin\", \"dot\", \"none\", \"proto\")\n                                  (mandatory)",
+  "  -i, --input-format=STRING     Input format  (possible values=\"hepmc2\",\n                                  \"auto\", \"hepmc3\", \"hpe\", \"hdf5\",\n                                  \"root\", \"treeroot\", \"lhef\", \"plugin\",\n                                  \"proto\") (mandatory)",
+  "  -o, --output-format=STRING    Output format  (possible values=\"hepmc2\",\n                                  \"hepmc3\", \"edm4hep\", \"hpe\", \"hdf5\",\n                                  \"root\", \"treeroot\", \"treerootopal\",\n                                  \"hpezeus\", \"dump\", \"plugin\", \"dot\",\n                                  \"none\", \"proto\") (mandatory)",
   "  -e, --extensions=STRING       Extensions, in a form extension=value, could be\n                                  passed to readers/writers",
   "      --strict-read=LONG        Exit in case of reading broken event.\n                                  (default=`0')",
   "      --events-limit=LONG       Limit of events to read from input\n                                  (default=`100000000')",
@@ -65,8 +65,8 @@ cmdline_parser_internal (int argc, char **argv, struct gengetopt_args_info *args
 static int
 cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
-const char *cmdline_parser_input_format_values[] = {"hepmc2", "auto", "hepmc3", "hpe", "root", "treeroot", "lhef", "plugin", "proto", 0}; /*< Possible values for input-format. */
-const char *cmdline_parser_output_format_values[] = {"hepmc2", "hepmc3", "edm4hep", "hpe", "root", "treeroot", "treerootopal", "hpezeus", "dump", "plugin", "dot", "none", "proto", 0}; /*< Possible values for output-format. */
+const char *cmdline_parser_input_format_values[] = {"hepmc2", "auto", "hepmc3", "hpe", "hdf5", "root", "treeroot", "lhef", "plugin", "proto", 0}; /*< Possible values for input-format. */
+const char *cmdline_parser_output_format_values[] = {"hepmc2", "hepmc3", "edm4hep", "hpe", "hdf5", "root", "treeroot", "treerootopal", "hpezeus", "dump", "plugin", "dot", "none", "proto", 0}; /*< Possible values for output-format. */
 const char *cmdline_parser_compressed_output_values[] = {"z", "lzma", "bz2", "plaintext", 0}; /*< Possible values for compressed-output. */
 
 static char *
