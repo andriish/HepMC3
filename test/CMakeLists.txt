@@ -282,7 +282,7 @@ endif()
 if(HEPMC3_ENABLE_HDF5IO)
   hepmc_test( testHDF5 )
   target_include_directories(testHDF5 PRIVATE ${PROJECT_SOURCE_DIR}/hdf5IO/include)
-  target_link_libraries(testHDF5 PRIVATE HepMC3::hdf5IO HDF5::HDF5 HighFive)
+  target_link_libraries(testHDF5 PRIVATE HepMC3::hdf5IO HDF5::HDF5)
   set_tests_properties(testHDF5 PROPERTIES TIMEOUT 2000)
 endif()
 
