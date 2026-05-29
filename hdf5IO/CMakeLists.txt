@@ -16,7 +16,9 @@ target_include_directories(HepMC3hdf5IO PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/highfive>
   $<INSTALL_INTERFACE:include/HepMC3>)
 
-target_link_libraries(HepMC3hdf5IO PUBLIC HepMC3::HepMC3)
+target_link_libraries(HepMC3hdf5IO PUBLIC HepMC3::HepMC3 ${HDF5_LIBRARIES}) 
+target_compile_definitions(HepMC3hdf5IO PUBLIC ${HDF5_CXX_DEFINITIONS})
+target_include_directories(HepMC3hdf5IO PUBLIC ${HDF5_INCLUDE_DIRS})
 
 set_target_properties(HepMC3hdf5IO PROPERTIES
   SOVERSION 1
@@ -48,7 +50,9 @@ if (HEPMC3_BUILD_STATIC_LIBS)
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/highfive>
     $<INSTALL_INTERFACE:include/HepMC3>)
-  target_link_libraries(HepMC3hdf5IO_static PUBLIC HepMC3::HepMC3)
+  target_link_libraries(HepMC3hdf5IO_static PUBLIC ${HDF5_LIBRARIES}) 
+target_compile_definitions(HepMC3hdf5IO_static PUBLIC ${HDF5_CXX_DEFINITIONS})
+target_include_directories(HepMC3hdf5IO_static PUBLIC ${HDF5_INCLUDE_DIRS})
   set_target_properties(HepMC3hdf5IO_static PROPERTIES
     OUTPUT_NAME HepMC3hdf5IO-static
     ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
