@@ -13,7 +13,6 @@
 #include <HepMC3/ReaderLHEF.h>
 #include <HepMC3/ReaderPlugin.h>
 #include <HepMC3/WriterPlugin.h>
-#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <istream>
