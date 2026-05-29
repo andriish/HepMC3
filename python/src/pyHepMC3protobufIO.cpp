@@ -9,7 +9,7 @@
 
 using ModuleGetter = std::function< pybind11::module & (std::string const &) >;
 
-void bind_pyHepMC3protobufIO_0(std::function< pybind11::module &(std::string const &namespace_) > &M);
+void bind_pyHepMC3protobufIO_0(const std::function< pybind11::module &(std::string const &namespace_) > &M);
 
 
 PYBIND11_MODULE(pyHepMC3protobufIO, root_module) {

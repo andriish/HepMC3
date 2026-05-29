@@ -10,6 +10,7 @@
 #include <HepMC3/GenVertex.h>
 #include <HepMC3/Writer.h>
 #include <HepMC3/WriterAscii.h>
+#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <iterator>
