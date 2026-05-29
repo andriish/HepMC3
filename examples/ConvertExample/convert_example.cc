@@ -19,6 +19,10 @@
 #include "HepMC3/ReaderLHEF.h"
 #include "HepMC3/ReaderPlugin.h"
 #include "HepMC3/ReaderFactory.h"
+#ifdef HEPMC3_ENABLE_HDF5IO
+#include "HepMC3/ReaderHDF5.h"
+#include "HepMC3/WriterHDF5.h"
+#endif
 
 #ifdef HEPMC3_EDM4HEP
 #include "WriterEDM4HEP.h"
@@ -58,7 +62,7 @@
 
 #include "cmdline.h"
 using namespace HepMC3;
-enum formats {autodetect, hepmc2, hepmc3, EDM4hep, hpe,root, treeroot, treerootopal, hpezeus, lhef, dump, dot,  plugin, none, proto};
+enum formats {autodetect, hepmc2, hepmc3, EDM4hep, hpe, hdf5, root, treeroot, treerootopal, hpezeus, lhef, dump, dot,  plugin, none, proto};
 
 template <class T>
 std::shared_ptr<Reader> get_input_file(const char* name, const bool input_is_stdin, const bool use_compression) {
@@ -103,6 +107,7 @@ int main(int argc, char** argv)
     format_map.insert(std::pair<std::string,formats> ( "hepmc3", hepmc3 ));
     format_map.insert(std::pair<std::string,formats> ( "edm4hep", EDM4hep ));
     format_map.insert(std::pair<std::string,formats> ( "hpe", hpe  ));
+    format_map.insert(std::pair<std::string,formats> ( "hdf5", hdf5 ));
     format_map.insert(std::pair<std::string,formats> ( "root", root ));
     format_map.insert(std::pair<std::string,formats> ( "treeroot", treeroot ));
     format_map.insert(std::pair<std::string,formats> ( "treerootopal", treerootopal ));
@@ -167,6 +172,14 @@ int main(int argc, char** argv)
     case hpe:
         input_file = get_input_file<ReaderHEPEVT>(ai.inputs[0], input_is_stdin,ai.compressed_input_flag);
         break;
+    case hdf5:
+#ifdef HEPMC3_ENABLE_HDF5IO
+        input_file = std::make_shared<ReaderHDF5>(ai.inputs[0]);
+        break;
+#else
+        printf("Input format %s  is not supported\n", ai.input_format_arg);
+        exit(2);
+#endif
     case lhef:
         input_file = get_input_file<ReaderLHEF>(ai.inputs[0], input_is_stdin, ai.compressed_input_flag);
         break;
@@ -240,6 +253,14 @@ int main(int argc, char** argv)
     case root:
 #ifdef HEPMC3_ROOTIO
         output_file = std::make_shared<WriterRoot>(ai.inputs[1]);
+        break;
+#else
+        printf("Output format %s  is not supported\n", ai.output_format_arg);
+        exit(2);
+#endif
+    case hdf5:
+#ifdef HEPMC3_ENABLE_HDF5IO
+        output_file = std::make_shared<WriterHDF5>(ai.inputs[1]);
         break;
 #else
         printf("Output format %s  is not supported\n", ai.output_format_arg);
