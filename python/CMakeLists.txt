@@ -120,12 +120,14 @@ set(autoBN       ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3.cpp ${CMAKE_CURRENT_SO
 set(autoBNrootIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_1.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3rootIO_2.cpp)
 set(autoBNsearch ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_0.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3search_1.cpp)
 set(autoBNprotobufIO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3protobufIO_0.cpp )
+set(autoBNhdf5IO ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3hdf5IO_0.cpp)
 set(BN       ${autoBN}       ${CMAKE_CURRENT_SOURCE_DIR}/src/binders.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderuprootTree.cc)
 set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
 set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
+set(BNhdf5IO ${autoBNhdf5IO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
 
-set_source_files_properties(${autoBN} ${autoBNrootIO} ${autoBNsearch} ${autoBNprotobufIO} ${BN} ${BNrootIO} ${BNsearch} ${BNprotobufIO} PROPERTIES SKIP_CLANG_TIDY ON)
+set_source_files_properties(${autoBN} ${autoBNrootIO} ${autoBNsearch} ${autoBNprotobufIO} ${autoBNhdf5IO} ${BN} ${BNrootIO} ${BNsearch} ${BNprotobufIO} ${BNhdf5IO} PROPERTIES SKIP_CLANG_TIDY ON)
 
 foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   if (${_comp} STREQUAL " ")
