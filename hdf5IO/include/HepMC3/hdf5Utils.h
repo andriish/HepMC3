@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <highfive/H5File.hpp>
+#include "HepMC3/highfive/H5File.hpp"
 
 #include "HepMC3/FourVector.h"
 #include "HepMC3/Data/GenParticleData.h"

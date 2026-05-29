@@ -128,7 +128,7 @@ void writeEventToGroup(HighFive::Group &g, const GenEvent &evt) {
 
 WriterHDF5::WriterHDF5(const std::string &filename)
     : m_failed(false)
-    , m_file(filename, HighFive::File::Overwrite)
+    , m_file(std::make_unique<HighFive::File>(filename, HighFive::File::Overwrite))
 {
 }
 
@@ -139,7 +139,7 @@ void WriterHDF5::write_event(const GenEvent &evt) {
     os << "/event_" << std::setw(4) << std::setfill('0') << m_event_counter;
     std::string group_name = os.str();
     ++m_event_counter;
-    HighFive::Group g = m_file.createGroup(group_name);
+    HighFive::Group g = m_file->createGroup(group_name);
     writeEventToGroup(g, evt);
     m_failed = false;
 }

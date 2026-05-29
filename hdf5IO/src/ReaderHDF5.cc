@@ -112,8 +112,8 @@ void readEventFromGroup(const HighFive::Group &g, GenEvent &evt) {
 
 ReaderHDF5::ReaderHDF5(const std::string &filename)
     : m_failed(false)
-    , m_file(filename, HighFive::File::ReadOnly)
-    , m_object_names(m_file.listObjectNames())
+    , m_file(std::make_unique<HighFive::File>(filename, HighFive::File::ReadOnly))
+    , m_object_names(m_file->listObjectNames())
 {
     std::sort(m_object_names.begin(), m_object_names.end());
     auto it = std::remove_if(m_object_names.begin(), m_object_names.end(), [](const std::string &name){
@@ -133,7 +133,7 @@ bool ReaderHDF5::read_event(GenEvent &evt) {
     std::string group_name = m_object_names[m_next_index];
     ++m_next_index;
 
-    HighFive::Group g = m_file.getGroup(group_name);
+    HighFive::Group g = m_file->getGroup(group_name);
     readEventFromGroup(g, evt);
 
     auto run_info = std::make_shared<GenRunInfo>();

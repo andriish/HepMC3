@@ -7,9 +7,13 @@
 #define HEPMC3_READERHDF5_H
 
 #include "HepMC3/Reader.h"
-#include "HepMC3/highfive/H5File.hpp"
+#include <memory>
 #include <string>
 #include <vector>
+
+namespace HighFive {
+class File;
+}
 
 namespace HepMC3 {
 
@@ -25,7 +29,7 @@ public:
 
 private:
     bool m_failed = false;
-    HighFive::File m_file;
+    std::unique_ptr<HighFive::File> m_file;
     std::vector<std::string> m_object_names;
     std::size_t m_next_index = 0;
 };
