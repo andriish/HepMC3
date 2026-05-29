@@ -23,6 +23,7 @@ public:
 
 private:
     bool m_failed = false;
+    int m_event_counter = 0;
     HighFive::File m_file;
 };
 

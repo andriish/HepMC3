@@ -20,12 +20,6 @@ namespace {
 
 using namespace HDF5Utils;
 
-std::string make_event_group_name(int event_number) {
-    std::ostringstream os;
-    os << "/event_" << std::setw(4) << std::setfill('0') << event_number;
-    return os.str();
-}
-
 void writeRunInfoToGroup(HighFive::Group &g, const GenRunInfo &run) {
     GenRunInfoData rd;
     run.write_data(rd);
@@ -141,7 +135,10 @@ WriterHDF5::WriterHDF5(const std::string &filename)
 WriterHDF5::~WriterHDF5() = default;
 
 void WriterHDF5::write_event(const GenEvent &evt) {
-    std::string group_name = make_event_group_name(evt.event_number());
+    std::ostringstream os;
+    os << "/event_" << std::setw(4) << std::setfill('0') << m_event_counter;
+    std::string group_name = os.str();
+    ++m_event_counter;
     HighFive::Group g = m_file.createGroup(group_name);
     writeEventToGroup(g, evt);
     m_failed = false;
