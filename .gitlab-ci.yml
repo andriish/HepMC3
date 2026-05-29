@@ -399,31 +399,31 @@ Fedora44-GNU-pypy:
     - job: build_image_Fedora44
 
 Fedora41-GNU:
-  variables: { OS: Fedora, FREL: 41, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 41, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora41
 
 Fedora40-GNU:
-  variables: { OS: Fedora, FREL: 40, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 40, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora40
 
 Fedora38-GNU:
-  variables: { OS: Fedora, FREL: 38, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 38, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora38
 
 Fedora37-LLVM:
-  variables: { OS: Fedora, FREL: 37, TOOLSET: LLVM,  EXTRACMAKEFLAGS: "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF -DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 37, TOOLSET: LLVM,  EXTRACMAKEFLAGS: "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF -DHEPMC3_ENABLE_HDF5IO=ON"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora37
 
 Fedora35-GNU:
-  variables: { OS: Fedora, FREL: 35, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 35, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora35
@@ -435,19 +435,19 @@ Fedora34-GNU:
     - job: build_image_Fedora34
 
 Fedora34-LLVM:
-  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS:  "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF"}
+  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS:  -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora34
 
 Fedora33-GNU-pypy:
-  variables: { OS: Fedora, FREL: 33, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=3,pypy3 -DHEPMC3_ENABLE_PYTHON=OFF" }
+  variables: { OS: Fedora, FREL: 33, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_PYTHON_VERSIONS=3,pypy3" }
   extends: .any-cmake
   needs:
     - job: build_image_Fedora33
 
 Fedora27-GNU:
-  variables: { OS: Fedora, FREL: 27, TOOLSET: GNU, EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 27, TOOLSET: GNU, EXTRACMAKEFLAGS: "-DHEPMC3_TEST_LZMA:BOOL=OFF -DHEPMC3_TEST_BZIP2:BOOL=OFF"}
   extends: .any-oldcmake
   needs:
     - job: build_image_Fedora27
