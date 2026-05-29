@@ -22,16 +22,42 @@ static GenEvent createSampleEvent(int event_number) {
 
     auto p1 = std::make_shared<GenParticle>(FourVector{1.0, 0.0, 0.0, 1.0}, 11, 1);
     p1->set_generated_mass(0.000511);
-    auto p2 = std::make_shared<GenParticle>(FourVector{-1.0, 0.0, 0.0, 1.0}, -11, 1);
+    auto p2 = std::make_shared<GenParticle>(FourVector{-1.0, 0.5, 0.0, 1.2}, -11, 1);
     p2->set_generated_mass(0.000511);
+    auto p3 = std::make_shared<GenParticle>(FourVector{0.0, 1.0, 0.0, 1.5}, 22, 1);
+    p3->set_generated_mass(0.0);
+    auto p4 = std::make_shared<GenParticle>(FourVector{0.0, 0.0, 1.0, 2.0}, 21, 1);
+    p4->set_generated_mass(0.0);
+    auto p5 = std::make_shared<GenParticle>(FourVector{-0.5, -0.5, 0.5, 1.3}, 1, 1);
+    p5->set_generated_mass(0.938);
 
     auto v1 = std::make_shared<GenVertex>(FourVector{0.0, 0.0, 0.0, 0.0});
     v1->set_status(0);
     v1->add_particle_out(p1);
     v1->add_particle_out(p2);
+    v1->add_particle_out(p3);
+    v1->add_particle_out(p4);
+    v1->add_particle_out(p5);
     evt.add_vertex(v1);
 
     evt.weights() = {1.0, 0.5};
+
+    auto pdfinfo = std::make_shared<GenPdfInfo>();
+    pdfinfo->set(21, 21, 0.15, 0.12, 91.2, 0.03, 0.028, 90500, 90500);
+    evt.set_pdf_info(pdfinfo);
+
+    auto hi = std::make_shared<GenHeavyIon>();
+    hi->Ncoll_hard = 5;
+    hi->Npart_proj = 120;
+    hi->Npart_targ = 118;
+    hi->Ncoll = 130;
+    hi->impact_parameter = 3.2;
+    hi->centrality = 10.5;
+    evt.set_heavy_ion(hi);
+
+    auto xsec = std::make_shared<GenCrossSection>();
+    xsec->set_cross_section(std::vector<double>{12.34, 13.56}, std::vector<double>{0.45, 0.47}, 10000, 10100);
+    evt.set_cross_section(xsec);
 
     auto run = std::make_shared<GenRunInfo>();
     run->set_weight_names({"w0", "w1"});
