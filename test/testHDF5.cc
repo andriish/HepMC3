@@ -15,9 +15,9 @@
 
 using namespace HepMC3;
 
-static GenEvent createSampleEvent() {
+static GenEvent createSampleEvent(int event_number) {
     GenEvent evt(Units::MomentumUnit::GEV, Units::LengthUnit::MM);
-    evt.set_event_number(42);
+    evt.set_event_number(event_number);
     evt.shift_position_to(FourVector{0.1, 0.2, 0.3, 1.0});
 
     auto p1 = std::make_shared<GenParticle>(FourVector{1.0, 0.0, 0.0, 1.0}, 11, 1);
@@ -41,22 +41,21 @@ static GenEvent createSampleEvent() {
 }
 
 int main() {
-    try {
-        GenEvent evt = createSampleEvent();
-
-        // Write with WriterHDF5
-        WriterHDF5 output("event.h5");
+    WriterHDF5 output("event.h5");
+    for (int i = 0; i < 10; ++i) {
+        GenEvent evt = createSampleEvent(i + 1);
         output.write_event(evt);
         if (output.failed()) {
-            std::cerr << "Failed to write HDF5 event\n";
+            std::cerr << "Failed to write HDF5 event " << i << "\n";
             return 1;
         }
+    }
 
-        // Read back into a HepMC3 GenEvent via ReaderHDF5
-        ReaderHDF5 input("event.h5");
+    ReaderHDF5 input("event.h5");
+    for (int i = 0; i < 10; ++i) {
         GenEvent evt2(Units::MomentumUnit::GEV, Units::LengthUnit::MM);
         if (!input.read_event(evt2) || input.failed()) {
-            std::cerr << "Failed to read HDF5 event\n";
+            std::cerr << "Failed to read HDF5 event " << i << "\n";
             return 1;
         }
 
@@ -66,12 +65,10 @@ int main() {
         std::cout << "Weights: " << evt2.weights().size() << "\n";
         std::cout << "Attributes: " << evt2.attribute_names().size() << "\n";
         std::cout << "Run weight names: ";
-        for (const auto &name : evt2.run_info()->weight_names()) std::cout << name << " ";
+        if (evt2.run_info()) {
+            for (const auto &name : evt2.run_info()->weight_names()) std::cout << name << " ";
+        }
         std::cout << "\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Std error: " << e.what() << "\n";
-        return 1;
     }
-
     return 0;
 }

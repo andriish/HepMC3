@@ -9,6 +9,7 @@
 #include "HepMC3/Reader.h"
 #include <highfive/H5File.hpp>
 #include <string>
+#include <vector>
 
 namespace HepMC3 {
 
@@ -18,12 +19,15 @@ public:
     ~ReaderHDF5() override;
 
     bool read_event(GenEvent &evt) override;
+    bool skip(const int n) override;
     bool failed() override;
     void close() override;
 
 private:
     bool m_failed = false;
     HighFive::File m_file;
+    std::vector<std::string> m_object_names;
+    std::size_t m_next_index = 0;
 };
 
 } // namespace HepMC3
