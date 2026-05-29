@@ -7,6 +7,7 @@
 #define HEPMC3_WRITERHDF5_H
 
 #include "HepMC3/Writer.h"
+#include <highfive/H5File.hpp>
 #include <string>
 
 namespace HepMC3 {
@@ -22,7 +23,7 @@ public:
 
 private:
     bool m_failed = false;
-    std::string m_filename;
+    HighFive::File m_file;
 };
 
 } // namespace HepMC3
