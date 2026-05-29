@@ -11,7 +11,8 @@ add_library(HepMC3hdf5IO SHARED ${HepMC3hdf5IO_sources})
 target_include_directories(HepMC3hdf5IO PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3>
+  $<INSTALL_INTERFACE:include/HepMC3>)
 
 target_link_libraries(HepMC3hdf5IO PUBLIC HepMC3::HepMC3)
 
@@ -36,13 +37,18 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/HepMC3
   COMPONENT hdf5IOdevel)
 
+install(DIRECTORY
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/highfive
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/HepMC3
+  COMPONENT hdf5IOdevel)
+
 if (HEPMC3_BUILD_STATIC_LIBS)
   add_library(HepMC3hdf5IO_static STATIC ${HepMC3hdf5IO_sources})
   target_compile_definitions(HepMC3hdf5IO_static PRIVATE HEPMC3_NO_EXPORTS)
   target_include_directories(HepMC3hdf5IO_static PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:include/HepMC3>)
   target_link_libraries(HepMC3hdf5IO_static PUBLIC HepMC3::HepMC3)
   set_target_properties(HepMC3hdf5IO_static PROPERTIES
     OUTPUT_NAME HepMC3hdf5IO-static

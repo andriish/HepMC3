@@ -23,6 +23,11 @@ The third party codes are distributed under their own licenses.
 # Type: MIT
 # Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
 
+# Boost Software License 1.0
+# hdf5IO/include/HepMC3/highfive/LICENSE
+# Copyright: Blue Brain Project / EPFL and HighFive contributors
+./hdf5IO/include/HepMC3/highfive/*
+
 # Type: BSD-3 like
 # python/src/pystreambuf.h, see details in python/src/pystreambuf.h
 # cctbx Copyright (c) 2006, The Regents of the University of California

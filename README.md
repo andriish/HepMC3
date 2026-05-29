@@ -170,6 +170,13 @@ The full explanation  for the installation options is given below.
   export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:path_to_ROOT6_libraries
   ```
 
+4a. In order to build with HDF5 support put the following flags:
+  ```
+  -DHEPMC3_ENABLE_HDF5IO=ON
+  ```
+
+    HepMC3 ships a local copy of the HighFive headers under `hdf5IO/include/HepMC3/highfive`
+    and will use them automatically when the HDF5 I/O component is enabled.
 
 5. In order to build with HepMC3 example put
   ```
