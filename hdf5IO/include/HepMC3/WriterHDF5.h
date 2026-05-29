@@ -7,7 +7,7 @@
 #define HEPMC3_WRITERHDF5_H
 
 #include "HepMC3/Writer.h"
-#include <highfive/H5File.hpp>
+#include "HepMC3/highfive/H5File.hpp"
 #include <string>
 
 namespace HepMC3 {

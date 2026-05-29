@@ -7,7 +7,7 @@
 #define HEPMC3_READERHDF5_H
 
 #include "HepMC3/Reader.h"
-#include <highfive/H5File.hpp>
+#include "HepMC3/highfive/H5File.hpp"
 #include <string>
 #include <vector>
 
