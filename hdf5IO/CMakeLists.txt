@@ -4,7 +4,6 @@
 set(HepMC3hdf5IO_sources
   src/ReaderHDF5.cc
   src/WriterHDF5.cc
-  src/hdf5Utils.cc
 )
 
 add_library(HepMC3hdf5IO SHARED ${HepMC3hdf5IO_sources})
