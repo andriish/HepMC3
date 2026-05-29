@@ -324,7 +324,7 @@ endif()
 
 if(HEPMC3_ENABLE_HDF5IO)
   find_package(HighFive REQUIRED)
-  find_package(HDF5 REQUIRED COMPONENTS C CXX)
+  find_package(HDF5 REQUIRED COMPONENTS CXX)
   add_subdirectory(hdf5IO)
   list(APPEND HEPMC3_FEATURES "hdf5IO")
   if (HEPMC3_BUILD_STATIC_LIBS)
