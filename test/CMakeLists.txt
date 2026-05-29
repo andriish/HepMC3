@@ -115,7 +115,6 @@ option(HEPMC3_TEST_LZMA      "Use lzma in tests if available" ON)
 option(HEPMC3_TEST_BZIP2     "Use bzip2 in tests if available" ON)
 option(HEPMC3_TEST_ZSTD      "Use zstd in tests if available" ON)
 
-
 set(HEPMC3_TEST_PACKAGES_LIST "")
 if (HEPMC3_TEST_THREADS)
  LIST(APPEND HEPMC3_TEST_PACKAGES_LIST "Threads")
@@ -175,7 +174,7 @@ set( HepMC_tests
         testVertexAttributes
         testSherpa140Crash
          )
-
+                 
 set( HepMC_unix_tests
         testReaderFactory5
 )

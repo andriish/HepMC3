@@ -13,6 +13,7 @@
 #include <HepMC3/ReaderAsciiHepMC2.h>
 #include <HepMC3/Writer.h>
 #include <HepMC3/WriterAsciiHepMC2.h>
+#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <istream>

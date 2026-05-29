@@ -13,6 +13,7 @@
 #include <HepMC3/ReaderHEPEVT.h>
 #include <HepMC3/Writer.h>
 #include <HepMC3/WriterHEPEVT.h>
+#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <istream>

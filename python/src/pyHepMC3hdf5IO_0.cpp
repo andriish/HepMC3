@@ -19,6 +19,7 @@
 #include <HepMC3/GenRunInfo.h>
 #include <HepMC3/ReaderHDF5.h>
 #include <HepMC3/WriterHDF5.h>
+#include <src/hdf5IObinders.h>
 
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
@@ -31,16 +32,9 @@
 void bind_pyHepMC3hdf5IO_0(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// HepMC3::ReaderHDF5 file:HepMC3/ReaderHDF5.h line:
-	pybind11::class_<HepMC3::ReaderHDF5, std::shared_ptr<HepMC3::ReaderHDF5>, HepMC3::Reader>(M("HepMC3"), "ReaderHDF5")
-		.def(pybind11::init<const std::string &>(), pybind11::arg("filename"))
-		.def("read_event", (bool (HepMC3::ReaderHDF5::*)(HepMC3::GenEvent &)) &HepMC3::ReaderHDF5::read_event, pybind11::arg("evt"))
-		.def("failed", &HepMC3::ReaderHDF5::failed)
-		.def("close", &HepMC3::ReaderHDF5::close);
+	binder::ReaderHDF5_binder(M("HepMC3"));
 
 	// HepMC3::WriterHDF5 file:HepMC3/WriterHDF5.h line:
-	pybind11::class_<HepMC3::WriterHDF5, std::shared_ptr<HepMC3::WriterHDF5>, HepMC3::Writer>(M("HepMC3"), "WriterHDF5")
-		.def(pybind11::init<const std::string &>(), pybind11::arg("filename"))
-		.def("write_event", (void (HepMC3::WriterHDF5::*)(const HepMC3::GenEvent &)) &HepMC3::WriterHDF5::write_event, pybind11::arg("evt"))
-		.def("failed", &HepMC3::WriterHDF5::failed)
-		.def("close", &HepMC3::WriterHDF5::close);
+	binder::WriterHDF5_binder(M("HepMC3"));
+
 }
