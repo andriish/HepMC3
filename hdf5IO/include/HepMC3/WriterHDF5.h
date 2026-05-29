@@ -16,9 +16,12 @@ class File;
 
 namespace HepMC3 {
 
+class GenRunInfo;
+
 class WriterHDF5 : public Writer {
 public:
     WriterHDF5(const std::string &filename);
+    WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run);
     ~WriterHDF5() override;
 
     void write_event(const GenEvent &evt) override;
@@ -29,6 +32,7 @@ private:
     bool m_failed = false;
     int m_event_counter = 0;
     std::unique_ptr<HighFive::File> m_file;
+    std::shared_ptr<GenRunInfo> m_run;
 };
 
 } // namespace HepMC3

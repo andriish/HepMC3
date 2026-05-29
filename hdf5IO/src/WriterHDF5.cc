@@ -5,6 +5,7 @@
 //
 
 #include "HepMC3/WriterHDF5.h"
+#include "HepMC3/Version.h"
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenRunInfo.h"
 #include "HepMC3/Data/GenEventData.h"
@@ -15,6 +16,7 @@
 #include <sstream>
 
 namespace HepMC3 {
+HEPMC3_DECLARE_WRITER_FILE(WriterHDF5)
 
 namespace {
 
@@ -45,7 +47,7 @@ void writeRunInfoToGroup(HighFive::Group &g, const GenRunInfo &run) {
         rg.createDataSet("attribute_string", rd.attribute_string);
 }
 
-void writeEventToGroup(HighFive::Group &g, const GenEvent &evt) {
+void writeEventToGroup(HighFive::Group &g, const GenEvent &evt, const std::shared_ptr<GenRunInfo> &fallback_run_info) {
     GenEventData ev;
     evt.write_data(ev);
 
@@ -120,15 +122,24 @@ void writeEventToGroup(HighFive::Group &g, const GenEvent &evt) {
     if (!ev.attribute_string.empty())
         g.createDataSet("attribute_string", ev.attribute_string);
 
-    if (auto run_info = evt.run_info())
+    auto run_info = evt.run_info();
+    if (!run_info) run_info = fallback_run_info;
+    if (run_info)
         writeRunInfoToGroup(g, *run_info);
 }
 
 } // namespace
 
 WriterHDF5::WriterHDF5(const std::string &filename)
+    : WriterHDF5(filename, nullptr)
+{
+}
+
+WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run)
     : m_failed(false)
+    , m_event_counter(0)
     , m_file(std::make_unique<HighFive::File>(filename, HighFive::File::Overwrite))
+    , m_run(std::move(run))
 {
 }
 
@@ -140,7 +151,7 @@ void WriterHDF5::write_event(const GenEvent &evt) {
     std::string group_name = os.str();
     ++m_event_counter;
     HighFive::Group g = m_file->createGroup(group_name);
-    writeEventToGroup(g, evt);
+    writeEventToGroup(g, evt, m_run);
     m_failed = false;
 }
 
@@ -153,3 +164,4 @@ void WriterHDF5::close() {
 }
 
 } // namespace HepMC3
+

@@ -429,13 +429,13 @@ Fedora35-GNU:
     - job: build_image_Fedora35
 
 Fedora34-GNU:
-  variables: { OS: Fedora, FREL: 34, TOOLSET: GNU,  EXTRACMAKEFLAGS: "-DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 34, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
   extends: .any-cmake
   needs:
     - job: build_image_Fedora34
 
 Fedora34-LLVM:
-  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS:  "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF -DHEPMC3_ENABLE_HDF5IO=ON -DHEPMC3_ENABLE_PYTHON=OFF"}
+  variables: { OS: Fedora, FREL: 34, TOOLSET: LLVM,  EXTRACMAKEFLAGS:  "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF"}
   extends: .any-cmake
   needs:
     - job: build_image_Fedora34

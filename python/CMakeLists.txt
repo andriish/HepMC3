@@ -378,6 +378,9 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         test_Attribute
         test_HEPEVT
   )
+  if(HEPMC3_ENABLE_HDF5IO)
+    list( APPEND HepMC_python_tests test_HDF5)
+  endif()
 #Workaround for nvc++ for this particular test
   if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI")
     list(REMOVE_ITEM HepMC_python_tests  test_Print)
