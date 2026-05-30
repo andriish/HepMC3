@@ -95,14 +95,13 @@ InputInfo::InputInfo (const std::string &filename) {
  */
 void InputInfo::classify() {
 
+    if ( strncmp(m_head.at(0).c_str(), "\211HDF", 4) == 0 ) m_hdf5 = true;
     if ( strncmp(m_head.at(0).c_str(), "root", 4) == 0 ) m_root = true;
     if ( strncmp(m_head.at(0).c_str(), "hmpb", 4) == 0 ) m_protobuf = true;
     if ( strncmp(m_head.at(0).c_str(), "HepMC::Version", 14) == 0 && strncmp(m_head.at(1).c_str(), "HepMC::Asciiv3", 14) == 0 ) m_asciiv3 = true;
     if ( strncmp(m_head.at(0).c_str(), "HepMC::Version", 14) == 0 && strncmp(m_head.at(1).c_str(), "HepMC::IO_GenEvent", 18) == 0 ) m_iogenevent = true;
     if ( strncmp(m_head.at(0).c_str(), "<LesHouchesEvents", 17) == 0) m_lhef=true;
-#ifdef HEPMC3_ENABLE_HDF5IO
-    if (m_head.at(0).size() >= 7 && std::memcmp(m_head.at(0).data(), "\211HDF\r\n\032", 7) == 0) m_hdf5 = true;
-#endif
+    //if (m_head.at(0).size() >= 7 && std::memcmp(m_head.at(0).data(), "\211HDF\r\n\032", 7) == 0) m_hdf5 = true;
 
     std::stringstream st_e(m_head.at(0));
     char attr = ' ';
