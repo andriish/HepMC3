@@ -670,6 +670,14 @@ std::string ReaderAscii::unescape(const std::string& s) {
     return ret;
 }
 
+std::string ReaderAscii::unescape(const char* s) {
+    if (s == nullptr) {
+        return {};
+    }
+    return unescape(std::string{s});
+}
+
+
 bool ReaderAscii::failed() { return m_isstream ? static_cast<bool>(m_stream->rdstate()) :static_cast<bool>(m_file.rdstate()); }
 
 void ReaderAscii::close() {
