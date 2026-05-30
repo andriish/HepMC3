@@ -21,12 +21,6 @@ namespace HepMC3 {
 /// @brief HDF5 utility helper functions.
 namespace HDF5Utils {
 
-/// @brief Returns true when HDF5 functionality is available.
-bool available();
-
-/// @brief Returns a string identifying the HDF5 backend.
-std::string backend_name();
-
 struct H5FourVector {
     double x, y, z, t;
 };

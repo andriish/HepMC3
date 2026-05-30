@@ -191,7 +191,7 @@ set(PGI_CXX_FLAGS_TO_CHECK "-Wc,--pending_instantiations=0;-noswitcherror;--diag
 set(NVHPC_CXX_FLAGS_TO_CHECK "-Wc,--pending_instantiations=0;-noswitcherror;--diag_suppress=code_is_unreachable;--diag_suppress=offset_in_non_POD_nonstandard;--diag_suppress=set_but_not_used")
 set(Intel_CXX_FLAGS_TO_CHECK "-diag-disable=2196")
 set(IntelLLVM_CXX_FLAGS_TO_CHECK "-diag-disable=2196;-Wno-unused-command-line-argument")
-set(GNU_CXX_FLAGS_TO_CHECK "-Wno-alloc-size-larger-than;-Wlto-type-mismatch;-Werror=lto-type-mismatch;-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
+set(GNU_CXX_FLAGS_TO_CHECK "-g;-Wno-alloc-size-larger-than;-Wlto-type-mismatch;-Werror=lto-type-mismatch;-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
 set(Clang_CXX_FLAGS_TO_CHECK "-Wlto-type-mismatch;-Werror=lto-type-mismatch;-Wno-old-style-cast;-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
 set(AppleClang_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
 set(XL_CXX_FLAGS_TO_CHECK "-qsuppress=1500-030")
