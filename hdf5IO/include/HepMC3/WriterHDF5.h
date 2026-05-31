@@ -7,12 +7,12 @@
 #define HEPMC3_WRITERHDF5_H
 
 #include "HepMC3/Writer.h"
-#include "HepMC3/hdf5Utils.h"
 #include <memory>
 #include <string>
 
 namespace HighFive {
 class File;
+class DataSet;
 }
 
 namespace HepMC3 {
@@ -31,7 +31,7 @@ public:
 
 private:
     void initializeDatasets();
-    void writeRunInfoToRoot(const HDF5Utils::H5RunInfo &run_info);
+    void writeRunInfoToRoot(const GenRunInfo &run);
 
     bool m_failed = false;
     int m_event_counter = 0;
@@ -39,15 +39,15 @@ private:
     bool m_run_info_written = false;
     std::unique_ptr<HighFive::File> m_file;
     std::shared_ptr<GenRunInfo> m_run;
-    HighFive::DataSet m_event_index_ds;
-    HighFive::DataSet m_particles_ds;
-    HighFive::DataSet m_vertices_ds;
-    HighFive::DataSet m_weights_ds;
-    HighFive::DataSet m_links1_ds;
-    HighFive::DataSet m_links2_ds;
-    HighFive::DataSet m_attribute_id_ds;
-    HighFive::DataSet m_attribute_name_ds;
-    HighFive::DataSet m_attribute_string_ds;
+    std::unique_ptr<HighFive::DataSet> m_event_index_ds;
+    std::unique_ptr<HighFive::DataSet> m_particles_ds;
+    std::unique_ptr<HighFive::DataSet> m_vertices_ds;
+    std::unique_ptr<HighFive::DataSet> m_weights_ds;
+    std::unique_ptr<HighFive::DataSet> m_links1_ds;
+    std::unique_ptr<HighFive::DataSet> m_links2_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_id_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_string_ds;
     uint64_t m_particles_offset = 0;
     uint64_t m_vertices_offset = 0;
     uint64_t m_weights_offset = 0;

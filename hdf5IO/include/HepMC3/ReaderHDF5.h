@@ -7,7 +7,6 @@
 #define HEPMC3_READERHDF5_H
 
 #include "HepMC3/Reader.h"
-#include "HepMC3/hdf5Utils.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,6 +16,8 @@ class File;
 }
 
 namespace HepMC3 {
+
+class GenRunInfo;
 
 class ReaderHDF5 : public Reader {
 public:
@@ -33,7 +34,7 @@ private:
     std::unique_ptr<HighFive::File> m_file;
     std::size_t m_next_index = 0;
     std::size_t m_event_count = 0;
-    HDF5Utils::H5RunInfo m_run_info;
+    std::shared_ptr<GenRunInfo> m_run_info;
     bool m_has_global_run_info = false;
 };
 

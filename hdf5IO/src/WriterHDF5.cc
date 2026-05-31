@@ -54,31 +54,6 @@ void appendRaw(HighFive::DataSet &dataset, const void *data, uint64_t count, con
     dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{static_cast<size_t>(count)}).write_raw(data, dtype);
 }
 
-void writeRunInfoToRootGroup(HighFive::File &file, const HDF5Utils::H5RunInfo &run) {
-    if (file.exist("run_info")) {
-        return;
-    }
-    HighFive::Group rg = file.createGroup("run_info");
-
-    if (!run.weight_names.empty())
-        rg.createDataSet("weight_names", run.weight_names);
-
-    if (!run.tool_name.empty())
-        rg.createDataSet("tool_name", run.tool_name);
-
-    if (!run.tool_version.empty())
-        rg.createDataSet("tool_version", run.tool_version);
-
-    if (!run.tool_description.empty())
-        rg.createDataSet("tool_description", run.tool_description);
-
-    if (!run.attribute_name.empty())
-        rg.createDataSet("attribute_name", run.attribute_name);
-
-    if (!run.attribute_string.empty())
-        rg.createDataSet("attribute_string", run.attribute_string);
-}
-
 } // namespace
 
 void WriterHDF5::initializeDatasets() {
@@ -90,21 +65,49 @@ void WriterHDF5::initializeDatasets() {
     HighFive::DataSetCreateProps props;
     props.add(HighFive::Chunking(std::vector<hsize_t>{1024}));
 
-    m_event_index_ds = m_file->createDataSet("events", scalar_space, HDF5Utils::createEventIndexType(), props);
-    m_particles_ds = m_file->createDataSet("particles", scalar_space, createParticleType(), props);
-    m_vertices_ds = m_file->createDataSet("vertices", scalar_space, createVertexType(), props);
-    m_weights_ds = m_file->createDataSet<double>("weights", scalar_space, props);
-    m_links1_ds = m_file->createDataSet<int>("links1", scalar_space, props);
-    m_links2_ds = m_file->createDataSet<int>("links2", scalar_space, props);
-    m_attribute_id_ds = m_file->createDataSet<int>("attribute_id", scalar_space, props);
-    m_attribute_name_ds = m_file->createDataSet<std::string>("attribute_name", scalar_space, props);
-    m_attribute_string_ds = m_file->createDataSet<std::string>("attribute_string", scalar_space, props);
+    m_event_index_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("events", scalar_space, HDF5Utils::createEventIndexType(), props));
+    m_particles_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("particles", scalar_space, createParticleType(), props));
+    m_vertices_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("vertices", scalar_space, createVertexType(), props));
+    m_weights_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<double>("weights", scalar_space, props));
+    m_links1_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<int>("links1", scalar_space, props));
+    m_links2_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<int>("links2", scalar_space, props));
+    m_attribute_id_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<int>("attribute_id", scalar_space, props));
+    m_attribute_name_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<std::string>("attribute_name", scalar_space, props));
+    m_attribute_string_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<std::string>("attribute_string", scalar_space, props));
 
     m_initialized = true;
 }
 
-void WriterHDF5::writeRunInfoToRoot(const HDF5Utils::H5RunInfo &run_info) {
-    writeRunInfoToRootGroup(*m_file, run_info);
+void WriterHDF5::writeRunInfoToRoot(const GenRunInfo &run) {
+    if (m_file->exist("run_info")) {
+        m_run_info_written = true;
+        return;
+    }
+
+    GenRunInfoData rd;
+    run.write_data(rd);
+    HDF5Utils::H5RunInfo run_info = HDF5Utils::toH5(rd);
+
+    HighFive::Group rg = m_file->createGroup("run_info");
+
+    if (!run_info.weight_names.empty())
+        rg.createDataSet("weight_names", run_info.weight_names);
+
+    if (!run_info.tool_name.empty())
+        rg.createDataSet("tool_name", run_info.tool_name);
+
+    if (!run_info.tool_version.empty())
+        rg.createDataSet("tool_version", run_info.tool_version);
+
+    if (!run_info.tool_description.empty())
+        rg.createDataSet("tool_description", run_info.tool_description);
+
+    if (!run_info.attribute_name.empty())
+        rg.createDataSet("attribute_name", run_info.attribute_name);
+
+    if (!run_info.attribute_string.empty())
+        rg.createDataSet("attribute_string", run_info.attribute_string);
+
     m_run_info_written = true;
 }
 
@@ -129,15 +132,17 @@ void WriterHDF5::write_event(const GenEvent &evt) {
     GenEventData ev;
     evt.write_data(ev);
 
-    HDF5Utils::H5RunInfo run_info;
+    
     auto rr = evt.run_info();
     if (!rr) rr = m_run;
+
+    HDF5Utils::H5RunInfo run_info;
     if (rr) {
         GenRunInfoData rd;
         rr->write_data(rd);
         run_info = HDF5Utils::toH5(rd);
         if (!m_run_info_written) {
-            writeRunInfoToRoot(run_info);
+            writeRunInfoToRoot(*rr);
         }
     }
 
@@ -164,17 +169,17 @@ void WriterHDF5::write_event(const GenEvent &evt) {
     index.attribute_string_offset = m_attribute_string_offset;
     index.attribute_string_count = record.attribute_string.size();
 
-    appendRaw(m_event_index_ds, &index, 1, createEventIndexType());
+    appendRaw(*m_event_index_ds, &index, 1, createEventIndexType());
     auto particle_type = createParticleType();
-    appendVector(m_particles_ds, record.particles, particle_type);
+    appendVector(*m_particles_ds, record.particles, particle_type);
     auto vertex_type = createVertexType();
-    appendVector(m_vertices_ds, record.vertices, vertex_type);
-    appendVector(m_weights_ds, record.weights);
-    appendVector(m_links1_ds, record.links1);
-    appendVector(m_links2_ds, record.links2);
-    appendVector(m_attribute_id_ds, record.attribute_id);
-    appendVector(m_attribute_name_ds, record.attribute_name);
-    appendVector(m_attribute_string_ds, record.attribute_string);
+    appendVector(*m_vertices_ds, record.vertices, vertex_type);
+    appendVector(*m_weights_ds, record.weights);
+    appendVector(*m_links1_ds, record.links1);
+    appendVector(*m_links2_ds, record.links2);
+    appendVector(*m_attribute_id_ds, record.attribute_id);
+    appendVector(*m_attribute_name_ds, record.attribute_name);
+    appendVector(*m_attribute_string_ds, record.attribute_string);
 
     m_particles_offset += record.particles.size();
     m_vertices_offset += record.vertices.size();
