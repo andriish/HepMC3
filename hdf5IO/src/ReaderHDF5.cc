@@ -13,7 +13,6 @@
 #include "HepMC3/hdf5Utils.h"
 
 #include <highfive/H5File.hpp>
-#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,6 +24,47 @@ HEPMC3_DECLARE_READER_FILE(ReaderHDF5)
 namespace {
 
 using namespace HDF5Utils;
+
+
+template <typename T>
+void readVector(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<T> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read(out);
+}
+
+template <>
+void readVector<HDF5Utils::H5EventIndex>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<HDF5Utils::H5EventIndex> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createEventIndexType());
+}
+
+template <>
+void readVector<HDF5Utils::H5Particle>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<HDF5Utils::H5Particle> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createParticleType());
+}
+
+template <>
+void readVector<HDF5Utils::H5Vertex>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<HDF5Utils::H5Vertex> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createVertexType());
+}
 
 
 void readRunInfoFromGroup(const HighFive::Group &g, GenRunInfo &run) {
@@ -42,72 +82,119 @@ void readRunInfoFromGroup(const HighFive::Group &g, GenRunInfo &run) {
     run.read_data(rd);
 }
 
-void readEventFromGroup(const HighFive::Group &g, GenEvent &evt) {
-    GenEventData ev;
+void readRunInfoFromGroup(const HighFive::Group &g, H5RunInfo &run) {
+    if (!g.exist("run_info")) return;
+    HighFive::Group rg = g.getGroup("run_info");
 
-    g.getAttribute("event_number").read(ev.event_number);
+    if (rg.exist("weight_names")) rg.getDataSet("weight_names").read(run.weight_names);
+    if (rg.exist("tool_name")) rg.getDataSet("tool_name").read(run.tool_name);
+    if (rg.exist("tool_version")) rg.getDataSet("tool_version").read(run.tool_version);
+    if (rg.exist("tool_description")) rg.getDataSet("tool_description").read(run.tool_description);
+    if (rg.exist("attribute_name")) rg.getDataSet("attribute_name").read(run.attribute_name);
+    if (rg.exist("attribute_string")) rg.getDataSet("attribute_string").read(run.attribute_string);
+}
+
+void readEventFromGroup(const HighFive::Group &g, GenEvent &evt, H5RunInfo &run_info) {
+    H5EventRecord record;
+
+    g.getAttribute("event_number").read(record.event_number);
 
     int mu = 0, lu = 0;
     g.getAttribute("momentum_unit").read(mu);
     g.getAttribute("length_unit").read(lu);
-    ev.momentum_unit = static_cast<Units::MomentumUnit>(mu);
-    ev.length_unit = static_cast<Units::LengthUnit>(lu);
+    record.momentum_unit = mu;
+    record.length_unit = lu;
 
     {
-        H5FourVector pos;
         auto ds = g.getDataSet("event_pos");
-        ds.read_raw(&pos, createFourVectorType());
-        ev.event_pos = fromH5(pos);
+        ds.read_raw(&record.event_pos, createFourVectorType());
     }
 
     {
         auto ds = g.getDataSet("particles");
         const std::vector<size_t> dims = ds.getSpace().getDimensions();
-        std::vector<H5Particle> pvec;
+        record.particles.clear();
         if (!dims.empty()) {
-            pvec.resize(dims[0]);
-            ds.read_raw(pvec.data(), createParticleType());
-        }
-        ev.particles.clear();
-        ev.particles.reserve(pvec.size());
-        for (const auto &p : pvec) {
-            ev.particles.push_back(fromH5(p));
+            record.particles.resize(dims[0]);
+            ds.read_raw(record.particles.data(), createParticleType());
         }
     }
 
     {
         auto ds = g.getDataSet("vertices");
         const std::vector<size_t> dims = ds.getSpace().getDimensions();
-        std::vector<H5Vertex> vvec;
+        record.vertices.clear();
         if (!dims.empty()) {
-            vvec.resize(dims[0]);
-            ds.read_raw(vvec.data(), createVertexType());
-        }
-        ev.vertices.clear();
-        ev.vertices.reserve(vvec.size());
-        for (const auto &v : vvec) {
-            ev.vertices.push_back(fromH5(v));
+            record.vertices.resize(dims[0]);
+            ds.read_raw(record.vertices.data(), createVertexType());
         }
     }
 
     if (g.exist("weights"))
-        g.getDataSet("weights").read(ev.weights);
+        g.getDataSet("weights").read(record.weights);
 
     if (g.exist("links1"))
-        g.getDataSet("links1").read(ev.links1);
+        g.getDataSet("links1").read(record.links1);
 
     if (g.exist("links2"))
-        g.getDataSet("links2").read(ev.links2);
+        g.getDataSet("links2").read(record.links2);
 
     if (g.exist("attribute_id"))
-        g.getDataSet("attribute_id").read(ev.attribute_id);
+        g.getDataSet("attribute_id").read(record.attribute_id);
 
     if (g.exist("attribute_name"))
-        g.getDataSet("attribute_name").read(ev.attribute_name);
+        g.getDataSet("attribute_name").read(record.attribute_name);
 
     if (g.exist("attribute_string"))
-        g.getDataSet("attribute_string").read(ev.attribute_string);
+        g.getDataSet("attribute_string").read(record.attribute_string);
 
+    readRunInfoFromGroup(g, run_info);
+
+    GenEventData ev = fromH5(record);
+    evt.read_data(ev);
+}
+
+void readEventFromDatasets(const HighFive::File &file, std::size_t index, GenEvent &evt, const H5RunInfo &global_run_info, bool has_global_run_info) {
+    auto events = file.getDataSet("events");
+    std::vector<H5EventIndex> index_record(1);
+    events.select(std::vector<size_t>{index}, std::vector<size_t>{1}).read_raw(index_record.data(), createEventIndexType());
+    const H5EventIndex &record_index = index_record[0];
+
+    H5EventRecord record;
+    record.event_number = record_index.event_number;
+    record.momentum_unit = record_index.momentum_unit;
+    record.length_unit = record_index.length_unit;
+    record.event_pos = record_index.event_pos;
+
+    auto particles_ds = file.getDataSet("particles");
+    readVector(particles_ds, record_index.particles_offset, record_index.particles_count, record.particles);
+
+    auto vertices_ds = file.getDataSet("vertices");
+    readVector(vertices_ds, record_index.vertices_offset, record_index.vertices_count, record.vertices);
+
+    auto weights_ds = file.getDataSet("weights");
+    readVector(weights_ds, record_index.weights_offset, record_index.weights_count, record.weights);
+
+    auto links1_ds = file.getDataSet("links1");
+    readVector(links1_ds, record_index.links1_offset, record_index.links1_count, record.links1);
+
+    auto links2_ds = file.getDataSet("links2");
+    readVector(links2_ds, record_index.links2_offset, record_index.links2_count, record.links2);
+
+    auto attribute_id_ds = file.getDataSet("attribute_id");
+    readVector(attribute_id_ds, record_index.attribute_id_offset, record_index.attribute_id_count, record.attribute_id);
+
+    auto attribute_name_ds = file.getDataSet("attribute_name");
+    readVector(attribute_name_ds, record_index.attribute_name_offset, record_index.attribute_name_count, record.attribute_name);
+
+    auto attribute_string_ds = file.getDataSet("attribute_string");
+    readVector(attribute_string_ds, record_index.attribute_string_offset, record_index.attribute_string_count, record.attribute_string);
+
+    if (has_global_run_info) {
+        record.run_info = global_run_info;
+    }
+
+    GenEventData ev = fromH5(record);
     evt.read_data(ev);
 }
 
@@ -116,33 +203,43 @@ void readEventFromGroup(const HighFive::Group &g, GenEvent &evt) {
 ReaderHDF5::ReaderHDF5(const std::string &filename)
     : m_failed(false)
     , m_file(std::make_unique<HighFive::File>(filename, HighFive::File::ReadOnly))
-    , m_object_names(m_file->listObjectNames())
+    , m_next_index(0)
+    , m_event_count(0)
+    , m_has_global_run_info(false)
 {
-    std::sort(m_object_names.begin(), m_object_names.end());
-    auto it = std::remove_if(m_object_names.begin(), m_object_names.end(), [](const std::string &name){
-        return name.rfind("event_", 0) != 0;
-    });
-    m_object_names.erase(it, m_object_names.end());
+    if (!m_file->exist("events")) {
+        m_failed = true;
+        return;
+    }
+
+    auto ds = m_file->getDataSet("events");
+    auto dims = ds.getSpace().getDimensions();
+    if (!dims.empty()) {
+        m_event_count = dims[0];
+    }
+    if (m_file->exist("run_info")) {
+        HighFive::Group rg = m_file->getGroup("run_info");
+        readRunInfoFromGroup(rg, m_run_info);
+        m_has_global_run_info = true;
+    }
 }
 
 ReaderHDF5::~ReaderHDF5() = default;
 
 bool ReaderHDF5::read_event(GenEvent &evt) {
-    if (m_next_index >= m_object_names.size()) {
+    if (m_next_index >= m_event_count) {
         m_failed = true;
         return false;
     }
 
-    std::string group_name = m_object_names[m_next_index];
+    readEventFromDatasets(*m_file, m_next_index, evt, m_run_info, m_has_global_run_info);
+    if (m_has_global_run_info) {
+        auto run = std::make_shared<GenRunInfo>();
+        GenRunInfoData rd = fromH5(m_run_info);
+        run->read_data(rd);
+        evt.set_run_info(run);
+    }
     ++m_next_index;
-
-    HighFive::Group g = m_file->getGroup(group_name);
-    readEventFromGroup(g, evt);
-
-    auto run_info = std::make_shared<GenRunInfo>();
-    readRunInfoFromGroup(g, *run_info);
-    evt.set_run_info(run_info);
-
     m_failed = false;
     return true;
 }
@@ -151,14 +248,14 @@ bool ReaderHDF5::skip(const int n) {
     if (n < 0) {
         return false;
     }
-    if (m_next_index >= m_object_names.size()) {
+    if (m_next_index >= m_event_count) {
         m_failed = true;
         return false;
     }
 
-    std::size_t remaining = m_object_names.size() - m_next_index;
+    std::size_t remaining = m_event_count - m_next_index;
     if (static_cast<std::size_t>(n) > remaining) {
-        m_next_index = m_object_names.size();
+        m_next_index = m_event_count;
         return false;
     }
 

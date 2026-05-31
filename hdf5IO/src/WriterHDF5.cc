@@ -12,8 +12,6 @@
 #include "HepMC3/hdf5Utils.h"
 
 #include <highfive/H5File.hpp>
-#include <iomanip>
-#include <sstream>
 
 namespace HepMC3 {
 HEPMC3_DECLARE_WRITER_FILE(WriterHDF5)
@@ -22,113 +20,93 @@ namespace {
 
 using namespace HDF5Utils;
 
-void writeRunInfoToGroup(HighFive::Group &g, const GenRunInfo &run) {
-    GenRunInfoData rd;
-    run.write_data(rd);
-
-    HighFive::Group rg = g.createGroup("run_info");
-
-    if (!rd.weight_names.empty())
-        rg.createDataSet("weight_names", rd.weight_names);
-
-    if (!rd.tool_name.empty())
-        rg.createDataSet("tool_name", rd.tool_name);
-
-    if (!rd.tool_version.empty())
-        rg.createDataSet("tool_version", rd.tool_version);
-
-    if (!rd.tool_description.empty())
-        rg.createDataSet("tool_description", rd.tool_description);
-
-    if (!rd.attribute_name.empty())
-        rg.createDataSet("attribute_name", rd.attribute_name);
-
-    if (!rd.attribute_string.empty())
-        rg.createDataSet("attribute_string", rd.attribute_string);
+template <typename T>
+void appendVector(HighFive::DataSet &dataset, const std::vector<T> &data) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    std::size_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + data.size()};
+    dataset.resize(new_dims);
+    if (!data.empty()) {
+        dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{data.size()}).write(data);
+    }
 }
 
-void writeEventToGroup(HighFive::Group &g, const GenEvent &evt, const std::shared_ptr<GenRunInfo> &fallback_run_info) {
-    GenEventData ev;
-    evt.write_data(ev);
-
-    g.createAttribute("event_number", ev.event_number);
-
-    int mu = static_cast<int>(ev.momentum_unit);
-    int lu = static_cast<int>(ev.length_unit);
-    g.createAttribute("momentum_unit", mu);
-    g.createAttribute("length_unit", lu);
-
-    H5FourVector pos = toH5(ev.event_pos);
-    {
-        HighFive::DataSet ds = g.createDataSet(
-            "event_pos",
-            HighFive::DataSpace::From(pos),
-            createFourVectorType()
-        );
-        ds.write_raw(&pos, createFourVectorType());
+template <typename T>
+void appendVector(HighFive::DataSet &dataset, const std::vector<T> &data, const HighFive::DataType &dtype) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    std::size_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + data.size()};
+    dataset.resize(new_dims);
+    if (data.empty()) {
+        return;
     }
+    dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{data.size()}).write_raw(data.data(), dtype);
+}
 
-    std::vector<H5Particle> pvec;
-    pvec.reserve(ev.particles.size());
-    for (const auto &p : ev.particles) {
-        pvec.push_back(toH5(p));
+void appendRaw(HighFive::DataSet &dataset, const void *data, uint64_t count, const HighFive::DataType &dtype) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    uint64_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + count};
+    dataset.resize(new_dims);
+    if (count == 0) {
+        return;
     }
-    {
-        HighFive::DataSet ds = g.createDataSet(
-            "particles",
-            HighFive::DataSpace::From(pvec),
-            createParticleType()
-        );
-        ds.write_raw(pvec.data(), createParticleType());
+    dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{static_cast<size_t>(count)}).write_raw(data, dtype);
+}
+
+void writeRunInfoToRootGroup(HighFive::File &file, const HDF5Utils::H5RunInfo &run) {
+    if (file.exist("run_info")) {
+        return;
     }
+    HighFive::Group rg = file.createGroup("run_info");
 
-    std::vector<H5Vertex> vvec;
-    vvec.reserve(ev.vertices.size());
-    for (const auto &v : ev.vertices) {
-        vvec.push_back(toH5(v));
-    }
-    {
-        HighFive::DataSet ds = g.createDataSet(
-            "vertices",
-            HighFive::DataSpace::From(vvec),
-            createVertexType()
-        );
-        ds.write_raw(vvec.data(), createVertexType());
-    }
+    if (!run.weight_names.empty())
+        rg.createDataSet("weight_names", run.weight_names);
 
-    if (!ev.weights.empty())
-        g.createDataSet("weights", ev.weights);
-    else
-        g.createDataSet<double>("weights", HighFive::DataSpace::From(ev.weights));
+    if (!run.tool_name.empty())
+        rg.createDataSet("tool_name", run.tool_name);
 
-    if (!ev.links1.empty())
-        g.createDataSet("links1", ev.links1);
-    else
-        g.createDataSet<int>("links1", HighFive::DataSpace::From(ev.links1));
+    if (!run.tool_version.empty())
+        rg.createDataSet("tool_version", run.tool_version);
 
-    if (!ev.links2.empty())
-        g.createDataSet("links2", ev.links2);
-    else
-        g.createDataSet<int>("links2", HighFive::DataSpace::From(ev.links2));
+    if (!run.tool_description.empty())
+        rg.createDataSet("tool_description", run.tool_description);
 
-    if (!ev.attribute_id.empty())
-        g.createDataSet("attribute_id", ev.attribute_id);
-    else
-        g.createDataSet<int>("attribute_id", HighFive::DataSpace::From(ev.attribute_id));
+    if (!run.attribute_name.empty())
+        rg.createDataSet("attribute_name", run.attribute_name);
 
-    if (!ev.attribute_name.empty())
-        g.createDataSet("attribute_name", ev.attribute_name);
-
-    if (!ev.attribute_string.empty())
-        g.createDataSet("attribute_string", ev.attribute_string);
-
-    auto run_info = evt.run_info();
-    if (!run_info) run_info = fallback_run_info;
-    if (run_info)
-        writeRunInfoToGroup(g, *run_info);
+    if (!run.attribute_string.empty())
+        rg.createDataSet("attribute_string", run.attribute_string);
 }
 
 } // namespace
+
+void WriterHDF5::initializeDatasets() {
+    if (m_initialized) {
+        return;
+    }
+
+    HighFive::DataSpace scalar_space(std::vector<size_t>{0}, std::vector<size_t>{HighFive::DataSpace::UNLIMITED});
+    HighFive::DataSetCreateProps props;
+    props.add(HighFive::Chunking(std::vector<hsize_t>{1024}));
+
+    m_event_index_ds = m_file->createDataSet("events", scalar_space, HDF5Utils::createEventIndexType(), props);
+    m_particles_ds = m_file->createDataSet("particles", scalar_space, createParticleType(), props);
+    m_vertices_ds = m_file->createDataSet("vertices", scalar_space, createVertexType(), props);
+    m_weights_ds = m_file->createDataSet<double>("weights", scalar_space, props);
+    m_links1_ds = m_file->createDataSet<int>("links1", scalar_space, props);
+    m_links2_ds = m_file->createDataSet<int>("links2", scalar_space, props);
+    m_attribute_id_ds = m_file->createDataSet<int>("attribute_id", scalar_space, props);
+    m_attribute_name_ds = m_file->createDataSet<std::string>("attribute_name", scalar_space, props);
+    m_attribute_string_ds = m_file->createDataSet<std::string>("attribute_string", scalar_space, props);
+
+    m_initialized = true;
+}
+
+void WriterHDF5::writeRunInfoToRoot(const HDF5Utils::H5RunInfo &run_info) {
+    writeRunInfoToRootGroup(*m_file, run_info);
+    m_run_info_written = true;
+}
 
 WriterHDF5::WriterHDF5(const std::string &filename)
     : WriterHDF5(filename, nullptr)
@@ -146,12 +124,68 @@ WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> 
 WriterHDF5::~WriterHDF5() = default;
 
 void WriterHDF5::write_event(const GenEvent &evt) {
-    std::ostringstream os;
-    os << "/event_" << std::setw(4) << std::setfill('0') << m_event_counter;
-    std::string group_name = os.str();
+    initializeDatasets();
+
+    GenEventData ev;
+    evt.write_data(ev);
+
+    HDF5Utils::H5RunInfo run_info;
+    auto rr = evt.run_info();
+    if (!rr) rr = m_run;
+    if (rr) {
+        GenRunInfoData rd;
+        rr->write_data(rd);
+        run_info = HDF5Utils::toH5(rd);
+        if (!m_run_info_written) {
+            writeRunInfoToRoot(run_info);
+        }
+    }
+
+    HDF5Utils::H5EventRecord record = HDF5Utils::toH5(ev, run_info);
+    HepMC3::HDF5Utils::H5EventIndex index;
+    index.event_number = record.event_number;
+    index.momentum_unit = record.momentum_unit;
+    index.length_unit = record.length_unit;
+    index.event_pos = record.event_pos;
+    index.particles_offset = m_particles_offset;
+    index.particles_count = record.particles.size();
+    index.vertices_offset = m_vertices_offset;
+    index.vertices_count = record.vertices.size();
+    index.weights_offset = m_weights_offset;
+    index.weights_count = record.weights.size();
+    index.links1_offset = m_links1_offset;
+    index.links1_count = record.links1.size();
+    index.links2_offset = m_links2_offset;
+    index.links2_count = record.links2.size();
+    index.attribute_id_offset = m_attribute_id_offset;
+    index.attribute_id_count = record.attribute_id.size();
+    index.attribute_name_offset = m_attribute_name_offset;
+    index.attribute_name_count = record.attribute_name.size();
+    index.attribute_string_offset = m_attribute_string_offset;
+    index.attribute_string_count = record.attribute_string.size();
+
+    appendRaw(m_event_index_ds, &index, 1, createEventIndexType());
+    auto particle_type = createParticleType();
+    appendVector(m_particles_ds, record.particles, particle_type);
+    auto vertex_type = createVertexType();
+    appendVector(m_vertices_ds, record.vertices, vertex_type);
+    appendVector(m_weights_ds, record.weights);
+    appendVector(m_links1_ds, record.links1);
+    appendVector(m_links2_ds, record.links2);
+    appendVector(m_attribute_id_ds, record.attribute_id);
+    appendVector(m_attribute_name_ds, record.attribute_name);
+    appendVector(m_attribute_string_ds, record.attribute_string);
+
+    m_particles_offset += record.particles.size();
+    m_vertices_offset += record.vertices.size();
+    m_weights_offset += record.weights.size();
+    m_links1_offset += record.links1.size();
+    m_links2_offset += record.links2.size();
+    m_attribute_id_offset += record.attribute_id.size();
+    m_attribute_name_offset += record.attribute_name.size();
+    m_attribute_string_offset += record.attribute_string.size();
+
     ++m_event_counter;
-    HighFive::Group g = m_file->createGroup(group_name);
-    writeEventToGroup(g, evt, m_run);
     m_failed = false;
 }
 
