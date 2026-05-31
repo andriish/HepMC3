@@ -67,21 +67,6 @@ void readVector<HDF5Utils::H5Vertex>(const HighFive::DataSet &ds, uint64_t offse
 }
 
 
-void readRunInfoFromGroup(const HighFive::Group &g, GenRunInfo &run) {
-    if (!g.exist("run_info")) return;
-    HighFive::Group rg = g.getGroup("run_info");
-    GenRunInfoData rd;
-
-    if (rg.exist("weight_names")) rg.getDataSet("weight_names").read(rd.weight_names);
-    if (rg.exist("tool_name")) rg.getDataSet("tool_name").read(rd.tool_name);
-    if (rg.exist("tool_version")) rg.getDataSet("tool_version").read(rd.tool_version);
-    if (rg.exist("tool_description")) rg.getDataSet("tool_description").read(rd.tool_description);
-    if (rg.exist("attribute_name")) rg.getDataSet("attribute_name").read(rd.attribute_name);
-    if (rg.exist("attribute_string")) rg.getDataSet("attribute_string").read(rd.attribute_string);
-
-    run.read_data(rd);
-}
-
 void readRunInfoFromGroup(const HighFive::Group &g, H5RunInfo &run) {
     if (!g.exist("run_info")) return;
     HighFive::Group rg = g.getGroup("run_info");
@@ -92,6 +77,17 @@ void readRunInfoFromGroup(const HighFive::Group &g, H5RunInfo &run) {
     if (rg.exist("tool_description")) rg.getDataSet("tool_description").read(run.tool_description);
     if (rg.exist("attribute_name")) rg.getDataSet("attribute_name").read(run.attribute_name);
     if (rg.exist("attribute_string")) rg.getDataSet("attribute_string").read(run.attribute_string);
+}
+
+void readRunInfoFromGroup(const HighFive::Group &g, GenRunInfo &run) {
+    if (!g.exist("run_info")) return;
+    HighFive::Group rg = g.getGroup("run_info");
+
+    H5RunInfo h5run;
+    readRunInfoFromGroup(rg, h5run);
+
+    GenRunInfoData rd = fromH5(h5run);
+    run.read_data(rd);
 }
 
 void readEventFromGroup(const HighFive::Group &g, GenEvent &evt, H5RunInfo &run_info) {
@@ -154,7 +150,7 @@ void readEventFromGroup(const HighFive::Group &g, GenEvent &evt, H5RunInfo &run_
     evt.read_data(ev);
 }
 
-void readEventFromDatasets(const HighFive::File &file, std::size_t index, GenEvent &evt, const H5RunInfo &global_run_info, bool has_global_run_info) {
+void readEventFromDatasets(const HighFive::File &file, std::size_t index, GenEvent &evt, const std::shared_ptr<GenRunInfo> &global_run_info, bool has_global_run_info) {
     auto events = file.getDataSet("events");
     std::vector<H5EventIndex> index_record(1);
     events.select(std::vector<size_t>{index}, std::vector<size_t>{1}).read_raw(index_record.data(), createEventIndexType());
@@ -190,8 +186,10 @@ void readEventFromDatasets(const HighFive::File &file, std::size_t index, GenEve
     auto attribute_string_ds = file.getDataSet("attribute_string");
     readVector(attribute_string_ds, record_index.attribute_string_offset, record_index.attribute_string_count, record.attribute_string);
 
-    if (has_global_run_info) {
-        record.run_info = global_run_info;
+    if (has_global_run_info && global_run_info) {
+        GenRunInfoData rd;
+        global_run_info->write_data(rd);
+        record.run_info = toH5(rd);
     }
 
     GenEventData ev = fromH5(record);
@@ -218,8 +216,9 @@ ReaderHDF5::ReaderHDF5(const std::string &filename)
         m_event_count = dims[0];
     }
     if (m_file->exist("run_info")) {
+        m_run_info = std::make_shared<GenRunInfo>();
         HighFive::Group rg = m_file->getGroup("run_info");
-        readRunInfoFromGroup(rg, m_run_info);
+        readRunInfoFromGroup(rg, *m_run_info);
         m_has_global_run_info = true;
     }
 }
@@ -233,11 +232,8 @@ bool ReaderHDF5::read_event(GenEvent &evt) {
     }
 
     readEventFromDatasets(*m_file, m_next_index, evt, m_run_info, m_has_global_run_info);
-    if (m_has_global_run_info) {
-        auto run = std::make_shared<GenRunInfo>();
-        GenRunInfoData rd = fromH5(m_run_info);
-        run->read_data(rd);
-        evt.set_run_info(run);
+    if (m_has_global_run_info && m_run_info) {
+        evt.set_run_info(m_run_info);
     }
     ++m_next_index;
     m_failed = false;
