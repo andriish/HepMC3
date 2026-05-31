@@ -12,6 +12,7 @@
 #include "HepMC3/highfive/H5File.hpp"
 
 #include "HepMC3/FourVector.h"
+#include "HepMC3/Data/GenEventData.h"
 #include "HepMC3/Data/GenParticleData.h"
 #include "HepMC3/Data/GenVertexData.h"
 #include "HepMC3/Data/GenRunInfoData.h"
@@ -38,6 +39,61 @@ struct H5Vertex {
     H5FourVector position;
 };
 
+struct H5RunInfo {
+    std::vector<std::string> weight_names;
+    std::vector<std::string> tool_name;
+    std::vector<std::string> tool_version;
+    std::vector<std::string> tool_description;
+    std::vector<std::string> attribute_name;
+    std::vector<std::string> attribute_string;
+};
+
+struct H5EventIndex {
+    int event_number;
+    int momentum_unit;
+    int length_unit;
+    H5FourVector event_pos;
+
+    uint64_t particles_offset;
+    uint64_t particles_count;
+    uint64_t vertices_offset;
+    uint64_t vertices_count;
+
+    uint64_t weights_offset;
+    uint64_t weights_count;
+    uint64_t links1_offset;
+    uint64_t links1_count;
+    uint64_t links2_offset;
+    uint64_t links2_count;
+
+    uint64_t attribute_id_offset;
+    uint64_t attribute_id_count;
+    uint64_t attribute_name_offset;
+    uint64_t attribute_name_count;
+    uint64_t attribute_string_offset;
+    uint64_t attribute_string_count;
+};
+
+struct H5EventRecord {
+    int event_number;
+    int momentum_unit;
+    int length_unit;
+    H5FourVector event_pos;
+
+    std::vector<H5Particle> particles;
+    std::vector<H5Vertex> vertices;
+
+    std::vector<double> weights;
+    std::vector<int> links1;
+    std::vector<int> links2;
+
+    std::vector<int> attribute_id;
+    std::vector<std::string> attribute_name;
+    std::vector<std::string> attribute_string;
+
+    H5RunInfo run_info;
+};
+
 inline HighFive::CompoundType createFourVectorType() {
     return HighFive::CompoundType{
         {"x", HighFive::AtomicType<double>{}},
@@ -61,6 +117,31 @@ inline HighFive::CompoundType createVertexType() {
     return HighFive::CompoundType{
         {"status",   HighFive::AtomicType<int>{}},
         {"position", createFourVectorType()}
+    };
+}
+
+inline HighFive::CompoundType createEventIndexType() {
+    return HighFive::CompoundType{
+        {"event_number",           HighFive::AtomicType<int>{}},
+        {"momentum_unit",          HighFive::AtomicType<int>{}},
+        {"length_unit",            HighFive::AtomicType<int>{}},
+        {"event_pos",              createFourVectorType()},
+        {"particles_offset",       HighFive::AtomicType<uint64_t>{}},
+        {"particles_count",        HighFive::AtomicType<uint64_t>{}},
+        {"vertices_offset",        HighFive::AtomicType<uint64_t>{}},
+        {"vertices_count",         HighFive::AtomicType<uint64_t>{}},
+        {"weights_offset",         HighFive::AtomicType<uint64_t>{}},
+        {"weights_count",          HighFive::AtomicType<uint64_t>{}},
+        {"links1_offset",          HighFive::AtomicType<uint64_t>{}},
+        {"links1_count",           HighFive::AtomicType<uint64_t>{}},
+        {"links2_offset",          HighFive::AtomicType<uint64_t>{}},
+        {"links2_count",           HighFive::AtomicType<uint64_t>{}},
+        {"attribute_id_offset",    HighFive::AtomicType<uint64_t>{}},
+        {"attribute_id_count",     HighFive::AtomicType<uint64_t>{}},
+        {"attribute_name_offset",  HighFive::AtomicType<uint64_t>{}},
+        {"attribute_name_count",   HighFive::AtomicType<uint64_t>{}},
+        {"attribute_string_offset",HighFive::AtomicType<uint64_t>{}},
+        {"attribute_string_count", HighFive::AtomicType<uint64_t>{}}
     };
 }
 
@@ -104,6 +185,83 @@ inline GenVertexData fromH5(const H5Vertex& v) {
         v.status,
         fromH5(v.position)
     };
+}
+
+inline H5RunInfo toH5(const GenRunInfoData& rd) {
+    return H5RunInfo{
+        rd.weight_names,
+        rd.tool_name,
+        rd.tool_version,
+        rd.tool_description,
+        rd.attribute_name,
+        rd.attribute_string
+    };
+}
+
+inline GenRunInfoData fromH5(const H5RunInfo& rd) {
+    return GenRunInfoData{
+        rd.weight_names,
+        rd.tool_name,
+        rd.tool_version,
+        rd.tool_description,
+        rd.attribute_name,
+        rd.attribute_string
+    };
+}
+
+inline H5EventRecord toH5(const GenEventData& ev, const H5RunInfo& run_info) {
+    H5EventRecord record;
+    record.event_number = ev.event_number;
+    record.momentum_unit = static_cast<int>(ev.momentum_unit);
+    record.length_unit = static_cast<int>(ev.length_unit);
+    record.event_pos = toH5(ev.event_pos);
+
+    record.particles.reserve(ev.particles.size());
+    for (const auto& p : ev.particles) {
+        record.particles.push_back(toH5(p));
+    }
+
+    record.vertices.reserve(ev.vertices.size());
+    for (const auto& v : ev.vertices) {
+        record.vertices.push_back(toH5(v));
+    }
+
+    record.weights = ev.weights;
+    record.links1 = ev.links1;
+    record.links2 = ev.links2;
+    record.attribute_id = ev.attribute_id;
+    record.attribute_name = ev.attribute_name;
+    record.attribute_string = ev.attribute_string;
+    record.run_info = run_info;
+
+    return record;
+}
+
+inline GenEventData fromH5(const H5EventRecord& record) {
+    GenEventData ev;
+    ev.event_number = record.event_number;
+    ev.momentum_unit = static_cast<Units::MomentumUnit>(record.momentum_unit);
+    ev.length_unit = static_cast<Units::LengthUnit>(record.length_unit);
+    ev.event_pos = fromH5(record.event_pos);
+
+    ev.particles.reserve(record.particles.size());
+    for (const auto& p : record.particles) {
+        ev.particles.push_back(fromH5(p));
+    }
+
+    ev.vertices.reserve(record.vertices.size());
+    for (const auto& v : record.vertices) {
+        ev.vertices.push_back(fromH5(v));
+    }
+
+    ev.weights = record.weights;
+    ev.links1 = record.links1;
+    ev.links2 = record.links2;
+    ev.attribute_id = record.attribute_id;
+    ev.attribute_name = record.attribute_name;
+    ev.attribute_string = record.attribute_string;
+
+    return ev;
 }
 
 } // namespace HDF5Utils
