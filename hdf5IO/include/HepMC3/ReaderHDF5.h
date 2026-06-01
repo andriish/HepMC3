@@ -13,6 +13,7 @@
 
 namespace HighFive {
 class File;
+class DataSet;
 }
 
 namespace HepMC3 {
@@ -30,8 +31,26 @@ public:
     void close() override;
 
 private:
+    GenRunInfo readRunInfoFromDatasets(uint64_t index);
+
     bool m_failed = false;
     std::unique_ptr<HighFive::File> m_file;
+    std::unique_ptr<HighFive::DataSet> m_events_ds;
+    std::unique_ptr<HighFive::DataSet> m_particles_ds;
+    std::unique_ptr<HighFive::DataSet> m_vertices_ds;
+    std::unique_ptr<HighFive::DataSet> m_weights_ds;
+    std::unique_ptr<HighFive::DataSet> m_links1_ds;
+    std::unique_ptr<HighFive::DataSet> m_links2_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_id_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_attribute_string_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_index_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_weight_names_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_version_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_description_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_attribute_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_attribute_string_ds;
     std::size_t m_next_index = 0;
     std::size_t m_event_count = 0;
 };
