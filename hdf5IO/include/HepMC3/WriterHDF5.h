@@ -31,14 +31,14 @@ public:
 
 private:
     void initializeDatasets();
-    void writeRunInfoToRoot(const GenRunInfo &run);
+    uint64_t writeRunInfo(const GenRunInfo &run);
 
     bool m_failed = false;
     int m_event_counter = 0;
     bool m_initialized = false;
-    bool m_run_info_written = false;
     std::unique_ptr<HighFive::File> m_file;
     std::shared_ptr<GenRunInfo> m_run;
+    uint64_t m_run_info_count = 0;
     std::unique_ptr<HighFive::DataSet> m_event_index_ds;
     std::unique_ptr<HighFive::DataSet> m_particles_ds;
     std::unique_ptr<HighFive::DataSet> m_vertices_ds;
@@ -48,14 +48,22 @@ private:
     std::unique_ptr<HighFive::DataSet> m_attribute_id_ds;
     std::unique_ptr<HighFive::DataSet> m_attribute_name_ds;
     std::unique_ptr<HighFive::DataSet> m_attribute_string_ds;
+
+    std::unique_ptr<HighFive::DataSet> m_run_info_index_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_weight_names_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_version_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_tool_description_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_attribute_name_ds;
+    std::unique_ptr<HighFive::DataSet> m_run_info_attribute_string_ds;
     uint64_t m_particles_offset = 0;
     uint64_t m_vertices_offset = 0;
     uint64_t m_weights_offset = 0;
-    uint64_t m_links1_offset = 0;
-    uint64_t m_links2_offset = 0;
-    uint64_t m_attribute_id_offset = 0;
-    uint64_t m_attribute_name_offset = 0;
-    uint64_t m_attribute_string_offset = 0;
+    uint64_t m_links_offset = 0;
+    uint64_t m_attribute_offset = 0;
+    uint64_t m_run_info_weight_names_offset = 0;
+    uint64_t m_run_info_tool_offset = 0;
+    uint64_t m_run_info_attribute_offset = 0;
 };
 
 } // namespace HepMC3

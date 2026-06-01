@@ -48,6 +48,15 @@ struct H5RunInfo {
     std::vector<std::string> attribute_string;
 };
 
+struct H5RunInfoIndex {
+    uint64_t weight_names_offset;
+    uint64_t weight_names_count;
+    uint64_t tool_offset;
+    uint64_t tool_count;
+    uint64_t attribute_offset;
+    uint64_t attribute_count;
+};
+
 struct H5EventIndex {
     int event_number;
     int momentum_unit;
@@ -61,17 +70,12 @@ struct H5EventIndex {
 
     uint64_t weights_offset;
     uint64_t weights_count;
-    uint64_t links1_offset;
-    uint64_t links1_count;
-    uint64_t links2_offset;
-    uint64_t links2_count;
+    uint64_t links_offset;
+    uint64_t links_count;
 
-    uint64_t attribute_id_offset;
-    uint64_t attribute_id_count;
-    uint64_t attribute_name_offset;
-    uint64_t attribute_name_count;
-    uint64_t attribute_string_offset;
-    uint64_t attribute_string_count;
+    uint64_t attribute_offset;
+    uint64_t attribute_count;
+    uint64_t run_info_index;
 };
 
 struct H5EventRecord {
@@ -132,16 +136,21 @@ inline HighFive::CompoundType createEventIndexType() {
         {"vertices_count",         HighFive::AtomicType<uint64_t>{}},
         {"weights_offset",         HighFive::AtomicType<uint64_t>{}},
         {"weights_count",          HighFive::AtomicType<uint64_t>{}},
-        {"links1_offset",          HighFive::AtomicType<uint64_t>{}},
-        {"links1_count",           HighFive::AtomicType<uint64_t>{}},
-        {"links2_offset",          HighFive::AtomicType<uint64_t>{}},
-        {"links2_count",           HighFive::AtomicType<uint64_t>{}},
-        {"attribute_id_offset",    HighFive::AtomicType<uint64_t>{}},
-        {"attribute_id_count",     HighFive::AtomicType<uint64_t>{}},
-        {"attribute_name_offset",  HighFive::AtomicType<uint64_t>{}},
-        {"attribute_name_count",   HighFive::AtomicType<uint64_t>{}},
-        {"attribute_string_offset",HighFive::AtomicType<uint64_t>{}},
-        {"attribute_string_count", HighFive::AtomicType<uint64_t>{}}
+        {"links_offset",           HighFive::AtomicType<uint64_t>{}},
+        {"links_count",            HighFive::AtomicType<uint64_t>{}},
+        {"attribute_offset",       HighFive::AtomicType<uint64_t>{}},
+        {"attribute_count",        HighFive::AtomicType<uint64_t>{}}
+    };
+}
+
+inline HighFive::CompoundType createRunInfoIndexType() {
+    return HighFive::CompoundType{
+        {"weight_names_offset",      HighFive::AtomicType<uint64_t>{}},
+        {"weight_names_count",       HighFive::AtomicType<uint64_t>{}},
+        {"tool_offset",              HighFive::AtomicType<uint64_t>{}},
+        {"tool_count",               HighFive::AtomicType<uint64_t>{}},
+        {"attribute_offset",         HighFive::AtomicType<uint64_t>{}},
+        {"attribute_count",          HighFive::AtomicType<uint64_t>{}}
     };
 }
 
@@ -209,7 +218,7 @@ inline GenRunInfoData fromH5(const H5RunInfo& rd) {
     };
 }
 
-inline H5EventRecord toH5(const GenEventData& ev, const H5RunInfo& run_info) {
+inline H5EventRecord toH5(const GenEventData& ev) {
     H5EventRecord record;
     record.event_number = ev.event_number;
     record.momentum_unit = static_cast<int>(ev.momentum_unit);
@@ -232,7 +241,7 @@ inline H5EventRecord toH5(const GenEventData& ev, const H5RunInfo& run_info) {
     record.attribute_id = ev.attribute_id;
     record.attribute_name = ev.attribute_name;
     record.attribute_string = ev.attribute_string;
-    record.run_info = run_info;
+
 
     return record;
 }
