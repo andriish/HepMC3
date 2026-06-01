@@ -1698,23 +1698,26 @@ public:
 
       if ( tag.name.empty() ) junk += tag.contents;
 
-      if ( tag.name == "initrwgt" ) {
-        for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
-          if ( tag.tags[j]->name == "weightgroup" )
-            weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
-                                              weightinfo));
-          if ( tag.tags[j]->name == "weight" )
-            weightinfo.push_back(WeightInfo(*tag.tags[j]));
+      // 
+      readWeightInformation(tag);
 
-        }
-      }
-      if ( tag.name == "weightinfo" ) {
-        weightinfo.push_back(WeightInfo(tag));
-      }
-      if ( tag.name == "weightgroup" ) {
-        weightgroup.push_back(WeightGroup(tag, weightgroup.size(),
-                                          weightinfo));
-      }
+      // if ( tag.name == "initrwgt" ) {
+      //   for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
+      //     if ( tag.tags[j]->name == "weightgroup" )
+      //       weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
+      //                                         weightinfo));
+      //     if ( tag.tags[j]->name == "weight" )
+      //       weightinfo.push_back(WeightInfo(*tag.tags[j]));
+
+      //   }
+      // }
+      // if ( tag.name == "weightinfo" ) {
+      //   weightinfo.push_back(WeightInfo(tag));
+      // }
+      // if ( tag.name == "weightgroup" ) {
+      //   weightgroup.push_back(WeightGroup(tag, weightgroup.size(),
+      //                                     weightinfo));
+      // }
       if ( tag.name == "eventfiles" ) {
         for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
           XMLTag & eftag = *tag.tags[j];
@@ -1758,6 +1761,28 @@ public:
     for ( int i = 0, N = weightinfo.size(); i < N; ++i )
       weightmap[weightinfo[i].name] = i + 1;
 
+  }
+
+  /**
+   * Helper function to read in weight information if present.
+   */
+  void readWeightInformation(const XMLTag & tag) {
+    if ( tag.name == "initrwgt" ) {
+      for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
+        if ( tag.tags[j]->name == "weightgroup" )
+          weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
+                                            weightinfo));
+        if ( tag.tags[j]->name == "weight" )
+          weightinfo.push_back(WeightInfo(*tag.tags[j]));   
+      }
+    }
+    if ( tag.name == "weightinfo" ) {
+      weightinfo.push_back(WeightInfo(tag));
+    }
+    if ( tag.name == "weightgroup" ) {
+      weightgroup.push_back(WeightGroup(tag, weightgroup.size(),
+                                        weightinfo));
+    }
   }
 
   /// @}
@@ -2872,6 +2897,19 @@ private:
         break;
       }
     XMLTag::deleteAll(tags);
+
+    // Special treatment of files where weights are declared in <header> rather than <init>
+    if ( heprup.weightinfo.empty() ) {
+      tags = XMLTag::findXMLTags(headerBlock);
+      for ( int i = 0, N = tags.size(); i < N; ++i )
+        if ( tags[i]->name == "init" ) {
+          for ( int j = 0, M = tags[i]->tags.size(); j < M; ++j )
+            heprup.readWeightInformation(*tags[i]->tags[j]);
+          break;
+        } else
+          heprup.readWeightInformation(*tags[i]);
+      XMLTag::deleteAll(tags);
+    }
 
     if ( !heprup.eventfiles.empty() ) openeventfile(0);
 
