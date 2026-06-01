@@ -34,8 +34,6 @@ private:
     std::unique_ptr<HighFive::File> m_file;
     std::size_t m_next_index = 0;
     std::size_t m_event_count = 0;
-    std::shared_ptr<GenRunInfo> m_run_info;
-    bool m_has_global_run_info = false;
 };
 
 } // namespace HepMC3
