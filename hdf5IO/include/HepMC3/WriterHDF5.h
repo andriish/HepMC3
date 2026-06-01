@@ -30,12 +30,10 @@ public:
     void close() override;
 
 private:
-    void initializeDatasets();
     uint64_t writeRunInfo(const GenRunInfo &run);
 
     bool m_failed = false;
     int m_event_counter = 0;
-    bool m_initialized = false;
     std::unique_ptr<HighFive::File> m_file;
     std::shared_ptr<GenRunInfo> m_run;
     uint64_t m_run_info_count = 0;

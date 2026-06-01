@@ -20,7 +20,7 @@
 namespace HepMC3 {
 
 /// @brief HDF5 utility helper functions.
-namespace HDF5Utils {
+namespace Hdf5Utils {
 
 struct H5FourVector {
     double x, y, z, t;
@@ -272,8 +272,82 @@ inline GenEventData fromH5(const H5EventRecord& record) {
 
     return ev;
 }
+template <typename T>
+inline void readVector(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<T> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read(out);
+}
 
-} // namespace HDF5Utils
+template <>
+inline void readVector<H5EventIndex>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<H5EventIndex> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createEventIndexType());
+}
+
+template <>
+inline void readVector<H5Particle>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<H5Particle> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createParticleType());
+}
+
+template <>
+inline void readVector<H5Vertex>(const HighFive::DataSet &ds, uint64_t offset, uint64_t count, std::vector<H5Vertex> &out) {
+    out.clear();
+    if (count == 0) {
+        return;
+    }
+    out.resize(count);
+    ds.select(std::vector<size_t>{static_cast<size_t>(offset)}, std::vector<size_t>{static_cast<size_t>(count)}).read_raw(out.data(), createVertexType());
+}
+
+template <typename T>
+inline void appendVector(HighFive::DataSet &dataset, const std::vector<T> &data) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    std::size_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + data.size()};
+    dataset.resize(new_dims);
+    if (!data.empty()) {
+        dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{data.size()}).write(data);
+    }
+}
+
+template <typename T>
+inline void appendVector(HighFive::DataSet &dataset, const std::vector<T> &data, const HighFive::DataType &dtype) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    std::size_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + data.size()};
+    dataset.resize(new_dims);
+    if (data.empty()) {
+        return;
+    }
+    dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{data.size()}).write_raw(data.data(), dtype);
+}
+
+inline void appendRaw(HighFive::DataSet &dataset, const void *data, uint64_t count, const HighFive::DataType &dtype) {
+    std::vector<size_t> current_dims = dataset.getDimensions();
+    uint64_t offset = current_dims.empty() ? 0 : current_dims[0];
+    std::vector<size_t> new_dims{offset + count};
+    dataset.resize(new_dims);
+    if (count == 0) {
+        return;
+    }
+    dataset.select(std::vector<size_t>{offset}, std::vector<size_t>{static_cast<size_t>(count)}).write_raw(data, dtype);
+}
+
+
+} // namespace Hdf5Utils
 
 } // namespace HepMC3
 
