@@ -66,6 +66,8 @@ void WriterHDF5::initializeDatasets() {
     props.add(HighFive::Chunking(std::vector<hsize_t>{1024}));
 
     m_event_index_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("events", scalar_space, HDF5Utils::createEventIndexType(), props));
+    
+    
     m_particles_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("particles", scalar_space, createParticleType(), props));
     m_vertices_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("vertices", scalar_space, createVertexType(), props));
     m_weights_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet<double>("weights", scalar_space, props));
