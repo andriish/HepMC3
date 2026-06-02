@@ -7,7 +7,6 @@
 #include <string>
 #include <sys/stat.h>
 #include <string>
-#include <cstring>
 
 #include "HepMC3/ReaderAscii.h"
 #include "HepMC3/ReaderAsciiHepMC2.h"
