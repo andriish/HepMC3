@@ -33,7 +33,7 @@
 	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>)
 #endif
 
-void bind_pyHepMC3protobufIO_0(const std::function< pybind11::module &(std::string const &namespace_) > &M)
+void bind_pyHepMC3protobufIO_0(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// HepMC3::Readerprotobuf file:HepMC3/Readerprotobuf.h line:
 	binder::Readerprotobuf_binder(M("HepMC3"));

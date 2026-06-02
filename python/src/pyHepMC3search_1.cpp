@@ -22,7 +22,7 @@
 	PYBIND11_MAKE_OPAQUE(std::shared_ptr<void>)
 #endif
 
-void bind_pyHepMC3search_1(const std::function< pybind11::module &(std::string const &namespace_) > &M)
+void bind_pyHepMC3search_1(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// HepMC3::abs(const class HepMC3::Selector &) file:HepMC3/Selector.h line:161
 	M("HepMC3").def("abs", (class std::shared_ptr<const class HepMC3::Selector> (*)(const class HepMC3::Selector &)) &HepMC3::abs, "ConstSelectorPtr abs\n\nC++: HepMC3::abs(const class HepMC3::Selector &) --> class std::shared_ptr<const class HepMC3::Selector>", pybind11::arg("input"));
