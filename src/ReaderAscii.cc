@@ -578,13 +578,13 @@ bool ReaderAscii::parse_attribute(const char *buf) {
     if ( !(cursor  = find_next_token(cursor)) ) return false;
 
     if ( !(cursor2 = std::strchr(cursor, ' ')) ) return false;
-    snprintf(name.data(), name.size(), "%.*s", static_cast<int>(cursor2-cursor), cursor);
+    snprintf(name.data(), name.size(), "%.*s", static_cast<int>(cursor2 - cursor), cursor);
 
     cursor = find_next_token(cursor2);
 
     m_data.attribute_id.push_back(id);
     m_data.attribute_name.emplace_back(name.data());
-    m_data.attribute_string.push_back(unescape(cursor));
+    m_data.attribute_string.push_back(cursor ? unescape(cursor): "");//guards against empty attributes
 
     return true;
 }
@@ -597,19 +597,11 @@ bool ReaderAscii::parse_run_attribute(const char *buf) {
     if ( !(cursor = find_next_token(cursor)) ) return false;
 
     if ( !(cursor2 = std::strchr(cursor, ' ')) ) return false;
-    snprintf(name.data(), name.size(), "%.*s", static_cast<int>(cursor2-cursor), cursor);
+    snprintf(name.data(), name.size(), "%.*s", static_cast<int>(cursor2 - cursor), cursor);
 
     cursor = find_next_token(cursor2);
 
-    if(!cursor){ //guards against empty attributes
-      run_info()->add_attribute(std::string(name.data()), 
-        std::make_shared<StringAttribute>(StringAttribute("")));
-
-      return true;
-    }
-
-    std::shared_ptr<StringAttribute> att =
-        std::make_shared<StringAttribute>(StringAttribute(unescape(cursor)));
+    auto att = std::make_shared<StringAttribute>(StringAttribute(cursor ? unescape(cursor) : ""));//guards against empty attributes
 
     run_info()->add_attribute(std::string(name.data()), att);
 
