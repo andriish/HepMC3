@@ -8,13 +8,18 @@
  *  @brief Basic example of use of HepMC3 search library: profiling the search of relatives of particles
  *
  */
-#include <chrono> 
+#include <chrono>
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/Print.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
 #include "HepMC3/Relatives.h"
 
+/** @brief Generate a test GenEvent tree for search profiling.
+ *  @param[in] n Number of particles to create per vertex.
+ *  @param[in] iterations Number of iterations to grow the event tree.
+ *  @return Pointer to the newly created GenEvent.
+ */
 HepMC3::GenEvent* generate_event(const size_t  n,const  size_t  iterations)
 {
     auto* e=new HepMC3::GenEvent();
@@ -49,6 +54,7 @@ HepMC3::GenEvent* generate_event(const size_t  n,const  size_t  iterations)
     return e;
 }
 
+/** @brief Entry point for the search example benchmark application. */
 int main()
 {
     std::cout<<"search_example: start"<<std::endl;
