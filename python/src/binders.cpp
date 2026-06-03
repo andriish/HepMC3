@@ -43,6 +43,8 @@ void custom_deduce_reader(pybind11::module&  M){
     "This function creates a Writer ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
 
 
+#ifndef PYPY_VERSION
+
     M.def("ReaderuprootTree", [](const std::string & filename) -> std::shared_ptr<class HepMC3::Reader>{ 
       return std::make_shared<HepMC3::ReaderuprootTree>(filename); }, 
     "This function creates a reader using uproot ", pybind11::arg("filename"));
