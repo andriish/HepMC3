@@ -147,6 +147,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     for (auto* ahepeup: input)
     {
         GenEvent evt;
+        evt.set_run_info(run_info());
         evt.set_event_number(first_group_event);
         evt.add_attribute("AlphaQCD", std::make_shared<DoubleAttribute>(ahepeup->AQCDUP));
         evt.add_attribute("AlphaEM", std::make_shared<DoubleAttribute>(ahepeup->AQEDUP));
