@@ -91,7 +91,7 @@ void ReaderLHEF::init()
     // the GenRunInfo object.
 
     std::vector<std::string> weightnames;
-    size_t N = m_hepr->heprup.weightinfo.size();
+    const size_t N = m_hepr->heprup.weightinfo.size();
     weightnames.reserve(N);
     for ( size_t i = 0; i < N; ++i ) weightnames.emplace_back(m_hepr->heprup.weightNameHepMC(i));
     if (nweights == 0) {
@@ -126,7 +126,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         m_storage.pop_front();
         return true;
     }
-    bool read_result = m_reader->readEvent();
+    const bool read_result = m_reader->readEvent();
     if (!read_result) {
         return false;
     }
@@ -159,16 +159,16 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         std::map< std::pair<int, int>, GenVertexPtr> vertices;
         for ( int i = 0; i < ahepeup->NUP; ++i )
         {
-            FourVector mom((ahepeup->PUP)[i][0], (ahepeup->PUP)[i][1], (ahepeup->PUP)[i][2], (ahepeup->PUP)[i][3]);
+            const FourVector mom((ahepeup->PUP)[i][0], (ahepeup->PUP)[i][1], (ahepeup->PUP)[i][2], (ahepeup->PUP)[i][3]);
             particles.emplace_back(std::make_shared<GenParticle>(mom, ahepeup->IDUP[i], ahepeup->ISTUP[i]));
             if ( i < 2 ) continue;
-            std::pair<int, int> vertex_index(ahepeup->MOTHUP[i].first, ahepeup->MOTHUP[i].second);
+            const std::pair<int, int> vertex_index(ahepeup->MOTHUP[i].first, ahepeup->MOTHUP[i].second);
             if (vertices.count(vertex_index) == 0) vertices[vertex_index] = std::make_shared<GenVertex>();
             vertices[vertex_index]->add_particle_out(particles.back());
         }
         for ( auto& v: vertices )
         {
-            std::pair<int, int> vertex_index = v.first;
+            const std::pair<int, int> vertex_index = v.first;
             GenVertexPtr          vertex = v.second;
             for (int i = vertex_index.first-1; i < vertex_index.second; ++i) {
                 if ( i >= 0 && i < static_cast<int>(particles.size())) {
@@ -176,7 +176,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
                 }
             }
         }
-        std::pair<int, int> vertex_index(0, 0);
+        const std::pair<int, int> vertex_index(0, 0);
         if (vertices.count(vertex_index) == 0) vertices[vertex_index] = std::make_shared<GenVertex>();
         for (size_t i = 0; i < particles.size(); ++i) {
             if (!particles[i]->end_vertex() && !particles[i]->production_vertex())
@@ -206,7 +206,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         // First beam (positive z-direction)
         if (m_hepr->heprup.IDBMUP.first != 0) {
             // Create beam particle with momentum (0, 0, +E, E) where E = beam energy
-            FourVector beam_mom(0, 0, m_hepr->heprup.EBMUP.first, m_hepr->heprup.EBMUP.first);
+            const FourVector beam_mom(0, 0, m_hepr->heprup.EBMUP.first, m_hepr->heprup.EBMUP.first);
             GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.first, 4);
             evt.add_beam_particle(beam);
             // Validate that we have enough particles and the first one is incoming (status -1)
@@ -230,7 +230,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
         // Second beam (negative z-direction)
         if (m_hepr->heprup.IDBMUP.second != 0) {
             // Create beam particle with momentum (0, 0, -E, E) where E = beam energy
-            FourVector beam_mom(0, 0, -m_hepr->heprup.EBMUP.second, m_hepr->heprup.EBMUP.second);
+            const FourVector beam_mom(0, 0, -m_hepr->heprup.EBMUP.second, m_hepr->heprup.EBMUP.second);
             GenParticlePtr beam = std::make_shared<GenParticle>(beam_mom, m_hepr->heprup.IDBMUP.second, 4);
             evt.add_beam_particle(beam);
             // Validate that we have enough particles and the next one is incoming (status -1)
@@ -254,7 +254,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
 
         // And we also want to add the weights.
         std::vector<double> wts;
-        size_t N = ahepeup->weights.size();
+        const size_t N = ahepeup->weights.size();
         wts.reserve(N);
         for ( size_t i = 0; i < N; ++i )
         {
