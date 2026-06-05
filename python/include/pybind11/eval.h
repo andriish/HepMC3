@@ -133,7 +133,12 @@ object eval_file(str fname, object global = globals(), object local = object()) 
 
     int closeFile = 1;
     std::string fname_str = (std::string) fname;
+#if PY_VERSION_HEX >= 0x030e0000
+    // _Py_fopen_obj was deprecated in Python 3.14 in favor of Py_fopen
+    FILE *f = Py_fopen(fname.ptr(), "r");
+#else
     FILE *f = _Py_fopen_obj(fname.ptr(), "r");
+#endif
     if (!f) {
         PyErr_Clear();
         pybind11_fail("File \"" + fname_str + "\" could not be opened!");
