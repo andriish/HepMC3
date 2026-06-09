@@ -66,7 +66,7 @@ enum formats {autodetect, hepmc2, hepmc3, EDM4hep, hpe, hdf5, root, treeroot, tr
 
 template <class T>
 std::shared_ptr<Reader> get_input_file(const char* name, const bool input_is_stdin, const bool use_compression) {
-    std::string n(name);
+    const std::string n(name);
 #if  HEPMC3_USE_COMPRESSION
     if (use_compression) {
         return (input_is_stdin?std::make_shared<ReaderGZ<T> >(std::cin):std::make_shared<ReaderGZ<T> >(n));
@@ -76,7 +76,7 @@ std::shared_ptr<Reader> get_input_file(const char* name, const bool input_is_std
 }
 template <class T>
 std::shared_ptr<Writer> get_output_file(const char* name, const char* use_compression) {
-    std::string n(name);
+    const std::string n(name);
 #if HEPMC3_USE_COMPRESSION
     if (std::string(use_compression) == "z" )  return std::make_shared< WriterGZ<T,Compression::z> >(n);
     if (std::string(use_compression) == "lzma" )  return std::make_shared< WriterGZ<T,Compression::lzma> >(n);
@@ -121,17 +121,17 @@ int main(int argc, char** argv)
     std::map<std::string, std::string> options;
     for (size_t i=0; i<ai.extensions_given; i++)
     {
-        std::string optarg(ai.extensions_arg[i]);
-        size_t pos = optarg.find_first_of('=');
+        const std::string optarg(ai.extensions_arg[i]);
+        const size_t pos = optarg.find_first_of('=');
         if ( pos < optarg.length() ) {
             options[std::string(optarg,0,pos)] = std::string(optarg, pos+1, optarg.length());
         }
     }
     long int  events_parsed = 0;
-    long int  events_limit = ai.events_limit_arg;
-    long int  first_event_number = ai.first_event_number_arg;
-    long int  last_event_number = ai.last_event_number_arg;
-    long int  print_each_events_parsed = ai.print_every_events_parsed_arg;
+    const long int  events_limit = ai.events_limit_arg;
+    const long int  first_event_number = ai.first_event_number_arg;
+    const long int  last_event_number = ai.last_event_number_arg;
+    const long int  print_each_events_parsed = ai.print_every_events_parsed_arg;
     std::string InputPluginLibrary;
     std::string InputPluginName;
 
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     std::string OutputPluginName;
 
     std::shared_ptr<Reader>      input_file;
-    bool input_is_stdin = (std::string(ai.inputs[0]) == std::string("-"));
+    const bool input_is_stdin = (std::string(ai.inputs[0]) == std::string("-"));
     if (input_is_stdin) std::ios_base::sync_with_stdio(false);
 #ifdef _LIBCPP_VERSION
     if (input_is_stdin) {
@@ -344,7 +344,7 @@ int main(int argc, char** argv)
     while( !input_file->failed() )
     {
         GenEvent evt(Units::GEV, Units::MM);
-        bool res_read = input_file->read_event(evt);
+        const bool res_read = input_file->read_event(evt);
 
         if( input_file->failed() )  {
             printf("End of file reached. Exit.\n");

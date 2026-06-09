@@ -61,8 +61,8 @@ bool ReaderRoot::read_event(GenEvent& evt) {
         const char *cl = key->GetClassName();
 
         if ( !cl ) continue;
-        size_t geneventdata30 = strncmp(cl, "HepMC::GenEventData", 19);
-        size_t geneventdata31 = strncmp(cl, "HepMC3::GenEventData", 20);
+        const size_t geneventdata30 = strncmp(cl, "HepMC::GenEventData", 19);
+        const size_t geneventdata31 = strncmp(cl, "HepMC3::GenEventData", 20);
         if ( geneventdata31 == 0 || geneventdata30 == 0 ) {
             if (geneventdata30 == 0) {
                 HEPMC3_WARNING_LEVEL(900,"ReaderRoot::read_event: The object was written with HepMC3 version 3.0")
