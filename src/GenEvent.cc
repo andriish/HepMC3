@@ -138,7 +138,7 @@ void GenEvent::remove_particle(GenParticlePtr p) {
 
     HEPMC3_DEBUG(30, "GenEvent::remove_particle - erasing particle: " << p->id())
 
-    int idx = p->id();
+    const int idx = p->id();
     auto it = m_particles.erase(m_particles.begin() + idx-1);
 
     // Remove attributes of this particle
@@ -207,7 +207,7 @@ void GenEvent::remove_vertex(GenVertexPtr v) {
     // Erase this vertex from vertices list
     HEPMC3_DEBUG(30, "GenEvent::remove_vertex   - erasing vertex: " << v->id())
 
-    int idx = -v->id();
+    const int idx = -v->id();
     auto it = m_vertices.erase(m_vertices.begin() + idx-1);
     // Remove attributes of this vertex
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
@@ -449,12 +449,12 @@ void GenEvent::shift_position_by(const FourVector & delta) {
 
 bool GenEvent::rotate(const FourVector&  delta)
 {
-    long double cosa = std::cos(delta.x());
-    long double sina = std::sin(delta.x());
-    long double cosb = std::cos(delta.y());
-    long double sinb = std::sin(delta.y());
-    long double cosg = std::cos(delta.z());
-    long double sing = std::sin(delta.z());
+    const long double cosa = std::cos(delta.x());
+    const long double sina = std::sin(delta.x());
+    const long double cosb = std::cos(delta.y());
+    const long double sinb = std::sin(delta.y());
+    const long double cosg = std::cos(delta.z());
+    const long double sing = std::sin(delta.z());
 
     for ( auto& p: m_particles)
     {
@@ -478,7 +478,7 @@ bool GenEvent::rotate(const FourVector&  delta)
         tempX = tempX_;
         tempY = tempY_;
 
-        FourVector temp(tempX, tempY, tempZ, mom.e());
+        const FourVector temp(tempX, tempY, tempZ, mom.e());
         p->set_momentum(temp);
     }
     for (auto& v: m_vertices)
@@ -505,7 +505,7 @@ bool GenEvent::rotate(const FourVector&  delta)
         tempX = tempX_;
         tempY = tempY_;
 
-        FourVector temp(tempX, tempY, tempZ, pos.t());
+        const FourVector temp(tempX, tempY, tempZ, pos.t());
         v->set_position(temp);
     }
 
@@ -547,7 +547,7 @@ bool GenEvent::reflect(const int axis)
 
 bool GenEvent::boost(const FourVector&  delta)
 {
-    double deltalength2 = delta.length2();
+    const double deltalength2 = delta.length2();
     if (deltalength2 > 1.0)
     {
         HEPMC3_WARNING_LEVEL(400,"GenEvent::boost: wrong large boost vector. Will leave event as is.")
@@ -563,11 +563,11 @@ bool GenEvent::boost(const FourVector&  delta)
         HEPMC3_WARNING_LEVEL(400,"GenEvent::boost: wrong small boost vector. Will leave event as is.")
         return true;
     }
-    long double deltaX = delta.x();
-    long double deltaY = delta.y();
-    long double deltaZ = delta.z();
-    long double deltalength = std::sqrt(deltalength2);
-    long double gamma = 1.0/std::sqrt(1.0-deltalength2);
+    const long double deltaX = delta.x();
+    const long double deltaY = delta.y();
+    const long double deltaZ = delta.z();
+    const long double deltalength = std::sqrt(deltalength2);
+    const long double gamma = 1.0/std::sqrt(1.0-deltalength2);
 
     for ( auto& p: m_particles)
     {
@@ -577,13 +577,13 @@ bool GenEvent::boost(const FourVector&  delta)
         long double tempY = mom.y();
         long double tempZ = mom.z();
         long double tempE = mom.e();
-        long double nr = (deltaX*tempX+deltaY*tempY+deltaZ*tempZ)/deltalength;
-        long double gfac = (gamma-1)*nr/deltalength-tempE*gamma;
+        const long double nr = (deltaX*tempX+deltaY*tempY+deltaZ*tempZ)/deltalength;
+        const long double gfac = (gamma-1)*nr/deltalength-tempE*gamma;
         tempX+=(deltaX*gfac);
         tempY+=(deltaY*gfac);
         tempZ+=(deltaZ*gfac);
         tempE = gamma*(tempE-deltalength*nr);
-        FourVector temp(tempX, tempY, tempZ, tempE);
+        const FourVector temp(tempX, tempY, tempZ, tempE);
         p->set_momentum(temp);
     }
 
@@ -648,7 +648,7 @@ void GenEvent::write_data(GenEventData& data) const {
 
     for (const ConstGenVertexPtr& v: this->vertices()) {
         data.vertices.emplace_back(v->data());
-        int v_id = v->id();
+        const int v_id = v->id();
 
         for (const ConstGenParticlePtr& p: v->particles_in()) {
             data.links1.emplace_back(p->id());
@@ -665,7 +665,7 @@ void GenEvent::write_data(GenEventData& data) const {
         for (const att_val_t& vt2: vt1.second) {
             std::string st;
 
-            bool status = vt2.second->to_string(st);
+            const bool status = vt2.second->to_string(st);
 
             if ( !status ) {
                 HEPMC3_WARNING_LEVEL(300,"GenEvent::write_data: problem serializing attribute: " << vt1.first)
@@ -813,7 +813,7 @@ void GenEvent::add_attribute(const std::string &name, const std::shared_ptr<Attr
 
 
 void GenEvent::add_attributes(const std::vector<std::string> &names, const std::vector<std::shared_ptr<Attribute> > &atts, const std::vector<int>& ids) {
-    size_t N = names.size();
+    const size_t N = names.size();
     if ( N == 0 ) return;
     if (N != atts.size()) return;
     if (N != ids.size()) return;
@@ -846,7 +846,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
 
 void GenEvent::add_attributes(const std::string& name, const std::vector<std::shared_ptr<Attribute> > &atts, const std::vector<int>& ids) {
     if (name.length() == 0) return;
-    size_t N = ids.size();
+    const size_t N = ids.size();
     if(!N) return;
     if ( N != atts.size()) return;
 
