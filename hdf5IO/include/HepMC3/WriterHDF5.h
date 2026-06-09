@@ -7,6 +7,7 @@
 #define HEPMC3_WRITERHDF5_H
 
 #include "HepMC3/Writer.h"
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -62,6 +63,8 @@ private:
     uint64_t m_run_info_weight_names_offset = 0;
     uint64_t m_run_info_tool_offset = 0;
     uint64_t m_run_info_attribute_offset = 0;
+    uint32_t m_scheme_version = 1;
+    uint64_t m_chunking_size = 1024;
 };
 
 } // namespace HepMC3

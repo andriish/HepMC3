@@ -50,6 +50,13 @@ ReaderHDF5::ReaderHDF5(const std::string &filename)
     , m_next_index(0)
     , m_event_count(0)
 {
+    if (!m_file->exist("HepMC3HDF5SchemeVersion")) {
+        m_failed = true;
+        return;
+    }
+    auto scheme_version_ds = m_file->getDataSet("HepMC3HDF5SchemeVersion");
+    scheme_version_ds.read(m_scheme_version);
+
     if (!m_file->exist("events")) {
         m_failed = true;
         return;

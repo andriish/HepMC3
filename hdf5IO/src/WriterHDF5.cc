@@ -52,15 +52,19 @@ WriterHDF5::WriterHDF5(const std::string &filename)
 {
 }
 
-WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run)
+WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run, uint64_t chunking_size)
     : m_failed(false)
     , m_event_counter(0)
     , m_file(std::make_unique<HighFive::File>(filename, HighFive::File::Overwrite))
     , m_run(std::move(run))
+    , m_chunking_size(chunking_size)
 {
     HighFive::DataSpace scalar_space(std::vector<size_t>{0}, std::vector<size_t>{HighFive::DataSpace::UNLIMITED});
     HighFive::DataSetCreateProps props;
-    props.add(HighFive::Chunking(std::vector<hsize_t>{1024}));
+    props.add(HighFive::Chunking(std::vector<hsize_t>{static_cast<hsize_t>(m_chunking_size)}));
+
+    auto scheme_version_ds = m_file->createDataSet<uint32_t>("HepMC3HDF5SchemeVersion", HighFive::DataSpace::Scalar());
+    scheme_version_ds.write(m_scheme_version);
 
     m_event_index_ds = std::make_unique<HighFive::DataSet>(m_file->createDataSet("events", scalar_space, Hdf5Utils::createEventIndexType(), props));
 
