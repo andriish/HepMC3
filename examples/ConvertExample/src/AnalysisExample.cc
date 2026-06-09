@@ -60,8 +60,8 @@ void AnalysisExample::close() {
     auto* ofs = dynamic_cast<std::ofstream*>(m_stream);
     for (size_t i = 1; i < m_vals["rapidity"].size()-1; i++)
     {
-        const double val=m_vals["rapidity"][i]/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
-        const double err=sqrt(m_errs["rapidity"][i])/m_sum_of_weights/(m_bins["rapidity"][i+1]-m_bins["rapidity"][i]);
+        const double val = m_vals["rapidity"][i] / m_sum_of_weights / (m_bins["rapidity"][i + 1] - m_bins["rapidity"][i]);
+        const double err = sqrt(m_errs["rapidity"][i]) / m_sum_of_weights / (m_bins["rapidity"][i + 1] - m_bins["rapidity"][i]);
         (*ofs)<< std::fixed  << std::setprecision( 6 )<<m_bins["rapidity"][i]<<" "<<m_bins["rapidity"][i+1]<<" "<<val<<" "<<err<<std::endl;
     }
     if (ofs && !ofs->is_open()) return;

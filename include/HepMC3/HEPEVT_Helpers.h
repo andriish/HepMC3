@@ -140,7 +140,22 @@ bool HEPEVT_to_GenEvent_nonstatic(GenEvent* evt, T* A)
     /* In this way we trust mother information. The "Trust daughters" is not implemented.*/
     for (std::map<GenParticlePtr, int >::iterator it1 = hepevt_particles.begin(); it1 != hepevt_particles.end(); ++it1)
         for (std::map<GenParticlePtr, int >::iterator it2 = hepevt_particles.begin(); it2 != hepevt_particles.end(); ++it2) {
-            if   (A->first_parent(it2->second) <= it1->second && it1->second <= A->last_parent(it2->second)) hepevt_vertices[it2->first->production_vertex()].first.insert(it1->second);
+            int first_parent = A->first_parent(it2->second);
+            int last_parent = A->last_parent(it2->second);
+            if (first_parent > last_parent) {
+                last_parent, first_parent = first_parent, last_parent; // Swap if in wrong order
+            }
+            // Be paranoid with malformed HEPEVT blocks
+            if (first_parent < 0) {
+                std::cerr << "HEPEVT_to_GenEvent_nonstatic - HEPEVT record (" << it2->second << ") contains negative parent index (" << first_parent << "," << last_parent << "). This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl;
+                return false;
+            }
+            // Some HEPEVT producers encode a single parent as (0,m) (or (m,0), but already sorted).
+            else if (first_parent == 0 && last_parent != 0) {
+                first_parent = last_parent;
+            }
+
+            if   (first_parent <= it1->second && it1->second <= last_parent) hepevt_vertices[it2->first->production_vertex()].first.insert(it1->second);
         }
     /* Now all incoming sets are correct for all vertices. But we have duplicates.*/
 
@@ -170,9 +185,11 @@ bool HEPEVT_to_GenEvent_nonstatic(GenEvent* evt, T* A)
         if (in.size() !=0 ) for (std::set<int>::iterator el = out.begin(); el != out.end(); ++el) v->add_particle_out(particles_index[*el]);
     }
     for (std::set<int>::iterator el = used.begin(); el != used.end(); ++el) final_particles.push_back(particles_index[*el]);
-    /* One can put here a check on the number of particles/vertices*/
 
     evt->add_tree(final_particles);
+
+    /* Check the number of particles*/
+    if (evt->particles().size() != ne) { std::cerr << "HEPEVT_to_GenEvent_nonstatic - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
 
     return true;
 }
@@ -288,7 +305,22 @@ bool HEPEVT_to_GenEvent_static(GenEvent* evt)
     /* In this way we trust mother information. The "Trust daughters" is not implemented.*/
     for (std::map<GenParticlePtr, int >::iterator it1 = hepevt_particles.begin(); it1 != hepevt_particles.end(); ++it1)
         for (std::map<GenParticlePtr, int >::iterator it2 = hepevt_particles.begin(); it2 != hepevt_particles.end(); ++it2) {
-            if   (T::first_parent(it2->second) <= it1->second && it1->second <= T::last_parent(it2->second)) hepevt_vertices[it2->first->production_vertex()].first.insert(it1->second);
+            int first_parent = T::first_parent(it2->second);
+            int last_parent = T::last_parent(it2->second);
+            if (first_parent > last_parent) {
+                last_parent, first_parent = first_parent, last_parent; // Swap if in wrong order
+            }
+            // Be paranoid with malformed HEPEVT blocks
+            if (first_parent < 0) {
+                std::cerr << "HEPEVT_to_GenEvent_static - HEPEVT record (" << it2->second << ") contains negative parent index (" << first_parent << "," << last_parent << "). This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl;
+                return false;
+            } 
+            // Some HEPEVT producers encode a single parent as (0,m) (or (m,0), but already sorted).
+            else if (first_parent == 0 && last_parent != 0) {
+                first_parent = last_parent;
+            }
+
+            if   (first_parent <= it1->second && it1->second <= last_parent) hepevt_vertices[it2->first->production_vertex()].first.insert(it1->second);
         }
     /* Now all incoming sets are correct for all vertices. But we have duplicates.*/
 
@@ -318,9 +350,11 @@ bool HEPEVT_to_GenEvent_static(GenEvent* evt)
         if (in.size() !=0 ) for (const auto&  el: out) v->add_particle_out(particles_index[el]);
     }
     for (const auto&  el: used) final_particles.emplace_back(particles_index[el]);
-    /* One can put here a check on the number of particles/vertices*/
 
     evt->add_tree(final_particles);
+
+    /* Check the number of particles*/
+    if (evt->particles().size() != ne) { std::cerr << "HEPEVT_to_GenEvent_static - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
 
     return true;
 }

@@ -35,7 +35,7 @@ extern "C" struct HEPEVT_Templated_Simple<10000,double> hepevt_;                
 /** @brief Add single particle to HEPEVT event */
 void add_particle(int id, int status, double px, double py, double pz, double e, double m,
                   int mother1, int mother2, int daughter1, int daughter2) {
-    const int idx = HEPEVT_Wrapper::number_entries()+1;
+    const int idx = HEPEVT_Wrapper::number_entries() + 1;
     HEPEVT_Wrapper::set_number_entries(idx);
 
     HEPEVT_Wrapper::set_status(idx, status);
