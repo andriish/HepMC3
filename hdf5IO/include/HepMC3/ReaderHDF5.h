@@ -7,6 +7,7 @@
 #define HEPMC3_READERHDF5_H
 
 #include "HepMC3/Reader.h"
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -53,6 +54,7 @@ private:
     std::unique_ptr<HighFive::DataSet> m_run_info_attribute_string_ds;
     std::size_t m_next_index = 0;
     std::size_t m_event_count = 0;
+    uint32_t m_scheme_version = 0;
 };
 
 } // namespace HepMC3
