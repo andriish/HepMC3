@@ -52,7 +52,7 @@ void ReaderLHEF::init()
     // non-standard, but we can save them as well.
     m_hepr->tags = LHEF::XMLTag::findXMLTags(m_reader->headerBlock + m_reader->initComments);
     // This code is ugly and should be replaced.
-    size_t nweights = 0;
+    size_t nweights = 1;
     for (auto* t1: m_hepr->tags) {
         if (t1->name != "header") continue;
         for (auto* t2: t1->tags) {
