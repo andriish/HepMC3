@@ -51,22 +51,6 @@ void ReaderLHEF::init()
     // There may be some XML tags in the LHE file which are
     // non-standard, but we can save them as well.
     m_hepr->tags = LHEF::XMLTag::findXMLTags(m_reader->headerBlock + m_reader->initComments);
-    // This code is ugly and should be replaced.
-    size_t nweights = 1;
-    for (auto* t1: m_hepr->tags) {
-        if (t1->name != "header") continue;
-        for (auto* t2: t1->tags) {
-            if (t2->name != "initrwgt") continue;
-            for (auto* t3: t2->tags) {
-                if (t3->name != "weightgroup") continue;
-                for (auto* t4: t3->tags) if (t4->name == "weight") nweights++;
-                //We can have multiple weight groups
-            }
-            break;
-        }
-        break;
-    }
-    //
     // Now we want to create a GenRunInfo object for the HepMC file, and
     // we add the LHEF attribute to that.
     set_run_info(std::make_shared<GenRunInfo>());
@@ -91,11 +75,11 @@ void ReaderLHEF::init()
     // the GenRunInfo object.
 
     std::vector<std::string> weightnames;
-    const size_t N = m_hepr->heprup.weightinfo.size() + 1;
-    weightnames.reserve(N);
+    const size_t N = m_hepr->heprup.weightinfo.size();
+    weightnames.reserve(N + 1);
     weightnames.emplace_back("Default");
     for ( size_t i = 0; i < N; ++i ) weightnames.emplace_back(m_hepr->heprup.weightNameHepMC(i));
-    if (nweights == 1) {
+    if (N == 0) {
         HEPMC3_WARNING_LEVEL(600,"ReaderLHEF::init: no initrwgt weights in the LHEF file.")
     }
     run_info()->set_weight_names(weightnames);
