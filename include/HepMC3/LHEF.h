@@ -1157,6 +1157,7 @@ struct WeightGroup : public TagBase {
    */
   WeightGroup(const XMLTag & tag, int groupIndex, std::vector<WeightInfo> & wiv)
     : TagBase(tag.attr) {
+    getattr("name", name);
     getattr("type", type);
     getattr("combine", combine);
     for ( int i = 0, N = tag.tags.size(); i < N; ++i ) {
@@ -1170,7 +1171,13 @@ struct WeightGroup : public TagBase {
   }
 
   /**
+   * The name.
+   */
+  std::string name;
+
+  /**
    * The type.
+   * Deprecated legacy MadGraph 2 naming for weight groups.
    */
   std::string type;
 
@@ -1772,7 +1779,7 @@ public:
     std::string name;
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
     if ( weightinfo[i].inGroup >= 0 )
-      name = weightgroup[weightinfo[i].inGroup].type + "/"
+      name = weightgroup[weightinfo[i].inGroup].name + "/"
         +  weightgroup[weightinfo[i].inGroup].combine + "/";
     name += weightinfo[i].name;
     return name;
