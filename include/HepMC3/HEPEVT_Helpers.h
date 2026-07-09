@@ -308,7 +308,7 @@ bool HEPEVT_to_GenEvent_static(GenEvent* evt)
             int first_parent = T::first_parent(it2->second);
             int last_parent = T::last_parent(it2->second);
             if (first_parent > last_parent) {
-                last_parent, first_parent = first_parent, last_parent; // Swap if in wrong order
+                std::swap(first_parent, last_parent); // Swap if in wrong order
             }
             // Be paranoid with malformed HEPEVT blocks
             if (first_parent < 0) {
