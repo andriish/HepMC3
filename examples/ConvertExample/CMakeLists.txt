@@ -64,7 +64,7 @@ if(HEPMC3_ENABLE_EDM4HEP)
   # adding the preprocessor flag for *.cc
   add_definitions(-DHEPMC3_EDM4HEP)
   # adding the packages
-  find_package(podio REQUIRED)
+  find_package(podio 1.0 REQUIRED)
   find_package(EDM4HEP REQUIRED)
   find_package(HepPDT REQUIRED)
   find_package(ROOT REQUIRED COMPONENTS Core Tree Hist)
@@ -90,7 +90,7 @@ target_include_directories(convert_example.exe  PRIVATE ${CMAKE_CURRENT_SOURCE_D
 target_link_libraries(convert_example.exe PRIVATE ${basic_libraries} )
 if(HEPMC3_ENABLE_EDM4HEP)
   message(STATUS "HepMC3 ConvertExample: EDM4HEP IS ENABLED")
-  target_link_libraries(convert_example.exe PRIVATE EDM4HEP::edm4hep podio::podioRootIO HepPDT::HepPDT HepPDT::HepPID)
+  target_link_libraries(convert_example.exe PRIVATE EDM4HEP::edm4hep podio::podioIO HepPDT::HepPDT HepPDT::HepPID)
 endif()
 target_compile_definitions(convert_example.exe PRIVATE ${basic_defines} )
 if (basic_dependencies)
