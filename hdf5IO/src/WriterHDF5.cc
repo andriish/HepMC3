@@ -52,6 +52,11 @@ WriterHDF5::WriterHDF5(const std::string &filename)
 {
 }
 
+WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run)
+    : WriterHDF5(filename, std::move(run), 1024)
+{
+}
+
 WriterHDF5::WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run, uint64_t chunking_size)
     : m_failed(false)
     , m_event_counter(0)
