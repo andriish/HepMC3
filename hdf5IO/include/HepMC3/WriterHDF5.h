@@ -24,6 +24,7 @@ class WriterHDF5 : public Writer {
 public:
     WriterHDF5(const std::string &filename);
     WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run);
+    WriterHDF5(const std::string &filename, std::shared_ptr<GenRunInfo> run, uint64_t chunking_size);
     ~WriterHDF5() override;
 
     void write_event(const GenEvent &evt) override;
