@@ -9,10 +9,10 @@ from pyHepMC3 import HepMC3 as hm
 
 def test_IO81(ext, form):
     inputA = hm.ReaderAsciiHepMC2("inputIO8.hepmc")
-    if inputA.failed():
+    if inputA is None or inputA.failed():
         sys.exit(1)
     outputA = hm.WriterGZ("WriterAscii", python_label() + "frominputIO8.hepmc" + ext, form)
-    if outputA.failed():
+    if outputA is None or outputA.failed():
         sys.exit(12)
     while not inputA.failed():
         evt = hm.GenEvent()
@@ -28,10 +28,10 @@ def test_IO81(ext, form):
 
 def test_IO82(ext, form):
     inputB = hm.ReaderGZ("ReaderAscii", python_label() + "frominputIO8.hepmc" + ext, form)
-    if inputB.failed():
+    if inputB is None or inputB.failed():
         sys.exit(3)
     outputB = hm.WriterAsciiHepMC2(python_label() + "fromfrominputIO8" + ext + ".hepmc")
-    if outputB.failed():
+    if outputB is None or outputB.failed():
         sys.exit(4)
     while not inputB.failed():
         evt = hm.GenEvent()
