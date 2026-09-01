@@ -365,7 +365,6 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         test_IO1
         test_IO3
         test_IO4
-        test_IO8
         test_Boost
         test_Print
         test_Polarization
@@ -377,6 +376,9 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         test_Attribute
         test_HEPEVT
   )
+  if (NOT "${IMPL}" STREQUAL "PyPy")
+    list(APPEND HepMC_python_tests test_IO8)
+  endif()
 #Workaround for nvc++ for this particular test
   if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI")
     list(REMOVE_ITEM HepMC_python_tests  test_Print)
