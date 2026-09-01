@@ -2,6 +2,7 @@
 #include <array>
 #include <HepMC3/Print.h>
 #include <HepMC3/ReaderFactory_fwd.h>
+#include <HepMC3/ReaderMT.h>
 #ifndef PYPY_VERSION
 #include "ReaderuprootTree.h"
 #include <pybind11/embed.h>
@@ -15,6 +16,27 @@ void custom_deduce_reader(pybind11::module&  M){
       return std::make_shared<HepMC3::ReaderuprootTree>(filename); }, 
     "This function creates a reader using uproot ", pybind11::arg("filename"));
 #endif
+    M.def("ReaderMT", [](pybind11::object reader_cls, const std::string& filename, size_t nthreads) -> std::shared_ptr<HepMC3::Reader> {
+            if (!pybind11::isinstance<pybind11::type>(reader_cls)) throw std::runtime_error("reader_cls must be a Reader subclass");
+
+            auto builtins = pybind11::module_::import("builtins");
+            auto issubclass = builtins.attr("issubclass");
+            auto base_reader = pybind11::module_::import("pyHepMC3").attr("HepMC3").attr("Reader");
+            if (!pybind11::cast<bool>(issubclass(reader_cls, base_reader))) throw std::runtime_error("reader_cls must inherit from HepMC3.Reader");
+
+            std::vector<std::shared_ptr<HepMC3::Reader>> readers;
+            readers.reserve(nthreads);
+            for (size_t i = 0; i < nthreads; ++i) {
+                pybind11::object obj = reader_cls(filename.c_str());
+                readers.push_back(obj.cast<std::shared_ptr<HepMC3::Reader>>());
+            }
+
+            return std::make_shared<HepMC3::ReaderMT<HepMC3::Reader, 0>>(std::move(readers));
+        },
+        pybind11::arg("reader_cls"),
+        pybind11::arg("filename"),
+        pybind11::arg("nthreads"));
+
     M.def("deduce_reader", [](const std::string & filename) -> std::shared_ptr<class HepMC3::Reader>{ 
     HepMC3::InputInfo input(filename);
     if (input.m_init && !input.m_error && input.m_reader) return input.m_reader;
@@ -79,6 +101,7 @@ void custom_deduce_reader(pybind11::module&  M){
 #endif
     return input.native_reader(f);
 } , "This function deduces the type of input file based on the name/URL\n and its content, and will return an appropriate Reader object.\n\n \n\nC++: HepMC3::deduce_reader(const std::string &) --> class std::shared_ptr<class HepMC3::Reader>", pybind11::arg("filename"));
+
 }
 
 void custom_HEPEVT_Wrapper_Runtime_binder(pybind11::class_<HepMC3::HEPEVT_Wrapper_Runtime, std::shared_ptr<HepMC3::HEPEVT_Wrapper_Runtime>> cl)
