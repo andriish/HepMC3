@@ -78,8 +78,24 @@ def available_formats():
 def test_IO8():
     result = 0
     for ext, form in available_formats():
-        test_IO81(ext, form)
-        result += test_IO82(ext, form)
+        try:
+            test_IO81(ext, form)
+            code = test_IO82(ext, form)
+        except SystemExit as e:
+            print(f"test_IO8: failure for extension {ext} (format={form}), exit code={e.code}")
+            result += 1
+            continue
+        except Exception as e:
+            print(f"test_IO8: failure for extension {ext} (format={form}), exception={e}")
+            result += 1
+            continue
+
+        if code != 0:
+            print(f"test_IO8: nonzero result for extension {ext} (format={form}): {code}")
+            result += code
+
+    if result != 0:
+        print(f"test_IO8: completed with {result} failed format(s)")
     return result
 
 
@@ -87,6 +103,7 @@ if __name__ == '__main__':
     result = 1
     try:
         result = test_IO8()
-    except:
+    except Exception as e:
+        print(f"test_IO8: unexpected exception: {e}")
         result = 1
     sys.exit(result)
