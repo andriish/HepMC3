@@ -8,11 +8,14 @@ from pyHepMC3 import HepMC3 as hm
 
 
 def test_IO81(ext, form):
-    inputA = hm.ReaderAsciiHepMC2("inputIO8.hepmc")
+    input_path = "inputIO8.hepmc"
+    output_path = python_label() + "frominputIO8.hepmc" + ext
+    print(f"test_IO81: reading {input_path}, writing {output_path} using format={form}")
+    inputA = hm.ReaderAsciiHepMC2(input_path)
     if inputA is None or inputA.failed():
         print(f"test_IO81: failed to open input reader for extension {ext} (format={form})")
         sys.exit(1)
-    outputA = hm.WriterGZ("WriterAscii", python_label() + "frominputIO8.hepmc" + ext, form)
+    outputA = hm.WriterGZ("WriterAscii", output_path, form)
     if outputA is None or outputA.failed():
         print(f"test_IO81: failed to create output writer for extension {ext} (format={form})")
         sys.exit(12)
@@ -29,11 +32,14 @@ def test_IO81(ext, form):
 
 
 def test_IO82(ext, form):
-    inputB = hm.ReaderGZ("ReaderAscii", python_label() + "frominputIO8.hepmc" + ext, form)
+    input_path = python_label() + "frominputIO8.hepmc" + ext
+    output_path = python_label() + "fromfrominputIO8" + ext + ".hepmc"
+    print(f"test_IO82: reading {input_path}, writing {output_path} using format={form}")
+    inputB = hm.ReaderGZ("ReaderAscii", input_path, form)
     if inputB is None or inputB.failed():
         print(f"test_IO82: failed to create input reader for extension {ext} (format={form})")
         sys.exit(3)
-    outputB = hm.WriterAsciiHepMC2(python_label() + "fromfrominputIO8" + ext + ".hepmc")
+    outputB = hm.WriterAsciiHepMC2(output_path)
     if outputB is None or outputB.failed():
         print(f"test_IO82: failed to create output writer for extension {ext} (format={form})")
         sys.exit(4)
@@ -64,6 +70,15 @@ def available_formats():
     try:
         import lzma  # noqa: F401
         formats.append(('.lzma', 'lzma'))
+    except ImportError:
+        pass
+
+# 
+    try:
+        import zstandard  # noqa: F401
+        # zstandard is a third-party module; only add support if it exposes open()
+        if hasattr(zstandard, 'open'):
+            formats.append(('.z', 'zstandard'))
     except ImportError:
         pass
 

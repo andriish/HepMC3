@@ -71,8 +71,12 @@ void custom_deduce_reader(pybind11::module&  M){
     HepMC3::Compression det  = HepMC3::detect_compression_type(buf.data(), buf.data() + 5);    
     switch (det) {
      case HepMC3::Compression::zstd: {
-          pybind11::print("zstandard decompression via Python is not supported yet.");
-          return nullptr;
+          try {
+          auto mzstd = pybind11::module::import("zstandard");
+          if (!pybind11::hasattr(mzstd, "open")) { pybind11::print("zstandard module has no open function");  return nullptr;}
+          auto zstdfile = mzstd.attr("open")(f.c_str(), "rb");
+          return HepMC3::deduce_reader(std::shared_ptr< std::istream >(new pystream::istream(zstdfile)));
+          } catch (pybind11::import_error &e) { pybind11::print("Cannot import zstandard module");  return nullptr;}
        }
      case HepMC3::Compression::bz2: {
           try {
