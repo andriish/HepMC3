@@ -187,6 +187,6 @@ int main()
         Nxin2++;
     }
     xin2.close();
-    int ret = 10*std::abs(Nxin1-1)+std::abs(Nxin2-1);
+    const int ret = 10 * std::abs(Nxin1 - 1) + std::abs(Nxin2 - 1);
     return ret;
 }

@@ -426,7 +426,7 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
     if ( !(cursor = find_next_token(cursor+1)) ) return false;
 
     while (true) {
-        int  particle_in = std::strtol(cursor, &after_parse, 10);
+        const int  particle_in = std::strtol(cursor, &after_parse, 10);
         if(cursor == after_parse) return false;
         cursor = after_parse;
         cursor2 = cursor;
