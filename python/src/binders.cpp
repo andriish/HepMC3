@@ -9,11 +9,13 @@
 #ifndef PYPY_VERSION
 #include "ReaderuprootTree.h"
 #include <pybind11/embed.h>
-#endif
 #include "pystreambuf.h"
+#endif
+
 
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
+#ifndef PYPY_VERSION    
     M.def("ReaderGZ", [](const std::string & classname,const std::string & filename, const std::string & format) -> std::shared_ptr<class HepMC3::Reader>{
       try{
         auto mzstd = pybind11::module::import(format.c_str());
@@ -41,9 +43,6 @@ void custom_deduce_reader(pybind11::module&  M){
       } catch (pybind11::import_error &e) { pybind11::print("Cannot import " + format + " module");  return nullptr;}
     }, 
     "This function creates a Writer ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
-
-
-#ifndef PYPY_VERSION
 
     M.def("ReaderuprootTree", [](const std::string & filename) -> std::shared_ptr<class HepMC3::Reader>{ 
       return std::make_shared<HepMC3::ReaderuprootTree>(filename); }, 
