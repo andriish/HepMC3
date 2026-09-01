@@ -10,9 +10,11 @@ from pyHepMC3 import HepMC3 as hm
 def test_IO81(ext, form):
     inputA = hm.ReaderAsciiHepMC2("inputIO8.hepmc")
     if inputA is None or inputA.failed():
+        print(f"test_IO81: failed to open input reader for extension {ext} (format={form})")
         sys.exit(1)
     outputA = hm.WriterGZ("WriterAscii", python_label() + "frominputIO8.hepmc" + ext, form)
     if outputA is None or outputA.failed():
+        print(f"test_IO81: failed to create output writer for extension {ext} (format={form})")
         sys.exit(12)
     while not inputA.failed():
         evt = hm.GenEvent()
@@ -29,9 +31,11 @@ def test_IO81(ext, form):
 def test_IO82(ext, form):
     inputB = hm.ReaderGZ("ReaderAscii", python_label() + "frominputIO8.hepmc" + ext, form)
     if inputB is None or inputB.failed():
+        print(f"test_IO82: failed to create input reader for extension {ext} (format={form})")
         sys.exit(3)
     outputB = hm.WriterAsciiHepMC2(python_label() + "fromfrominputIO8" + ext + ".hepmc")
     if outputB is None or outputB.failed():
+        print(f"test_IO82: failed to create output writer for extension {ext} (format={form})")
         sys.exit(4)
     while not inputB.failed():
         evt = hm.GenEvent()
@@ -60,15 +64,6 @@ def available_formats():
     try:
         import lzma  # noqa: F401
         formats.append(('.lzma', 'lzma'))
-    except ImportError:
-        pass
-
-# 
-    try:
-        import zstandard  # noqa: F401
-        # zstandard is a third-party module; only add support if it exposes open()
-        if hasattr(zstandard, 'open'):
-            formats.append(('.z', 'zstandard'))
     except ImportError:
         pass
 
