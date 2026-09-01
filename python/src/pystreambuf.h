@@ -298,10 +298,26 @@ class streambuf : public std::basic_streambuf<char>
         off_type delta = pptr() - farthest_pptr;
         int_type status = overflow();
         if (traits_type::eq_int_type(status, traits_type::eof())) result = -1;
-        if (!py_seek.is_none()) py_seek(delta, 1);
+        if (!py_seek.is_none()) {
+          try {
+            py_seek(delta, 1);
+          }
+          catch (py::error_already_set &err) {
+            err.restore();
+            PyErr_Clear();
+          }
+        }
       }
       else if (gptr() && gptr() < egptr()) {
-        if (!py_seek.is_none()) py_seek(gptr() - egptr(), 1);
+        if (!py_seek.is_none()) {
+          try {
+            py_seek(gptr() - egptr(), 1);
+          }
+          catch (py::error_already_set &err) {
+            err.restore();
+            PyErr_Clear();
+          }
+        }
       }
       return result;
     }

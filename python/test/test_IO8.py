@@ -57,15 +57,16 @@ def available_formats():
     except ImportError:
         pass
 
-    if sys.version_info >= (3, 3):
-        try:
-            import lzma  # noqa: F401
-            formats.append(('.lzma', 'lzma'))
-        except ImportError:
-            pass
+    try:
+        import lzma  # noqa: F401
+        formats.append(('.lzma', 'lzma'))
+    except ImportError:
+        pass
 
+# 
     try:
         import zstandard  # noqa: F401
+        # zstandard is a third-party module; only add support if it exposes open()
         if hasattr(zstandard, 'open'):
             formats.append(('.z', 'zstandard'))
     except ImportError:
@@ -75,11 +76,6 @@ def available_formats():
 
 
 def test_IO8():
-    if sys.version_info[0] < 3:
-        return 0
-    if sys.implementation.name != 'cpython':
-        return 0
-
     result = 0
     for ext, form in available_formats():
         test_IO81(ext, form)
