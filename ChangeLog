@@ -1,5 +1,7 @@
 --------------------------  HepMC3.3.2 --------------------------
-2025-10-02 Alexander Puck Neuwirth
+2026-09-02 Andrii Verbytskyi
+  * Fix standalone rootIO dictionary generation for newer ROOT by propagating the HepMC3 include path to the ROOT dictionary build and using the ROOT_GENERATE_DICTIONARY MODULE form.
+\2025-10-02 Alexander Puck Neuwirth
   * Fixes for ReaderLHEF to properly report beams from LHE init block instead of first particles in event record.
     Further an error is raised now if there are fewer particles than beams in the event.
 2025-07-11 Andrii Verbytskyi
