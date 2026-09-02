@@ -3,6 +3,8 @@
   * Add Python compressed I/O helpers `ReaderGZ` and `WriterGZ` for binding compressed input/output streams through Python compression modules.
   * Increase default `pystreambuf` buffer size to improve performance for Python-based compressed stream I/O.
   * Add `python/test/test_IO8.py` and `python/test/inputIO8.hepmc` to validate gzip round-trip support and install the new test.
+2026-09-02 Andrii Verbytskyi
+  * Add a GitLab CI rule to require a ChangeLog entry before a merge request is considered ready.
 2025-10-02 Alexander Puck Neuwirth
   * Fixes for ReaderLHEF to properly report beams from LHE init block instead of first particles in event record.
     Further an error is raised now if there are fewer particles than beams in the event.
