@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-#project(pyHepMC3 CXX)
-#Should be fixed
-=======
 #project(HepMC3rootIO CXX)
->>>>>>> 7c86cb9ce548a24b243d310c2e3ef42fe78e7a44
 cmake_minimum_required(VERSION 3.10.0...4.0.3)
 if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
   SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
