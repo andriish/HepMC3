@@ -110,6 +110,9 @@ set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
 
 add_library(HepMC3rootIO SHARED ${EXTRA_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/Streamers.cc)
 target_compile_definitions(HepMC3rootIO PUBLIC HEPMC3_ROOTIO)
+if (USE_INSTALLED_HEPMC3)
+target_include_directories(HepMC3rootIO PUBLIC ${HEPMC3_INCLUDE_DIR})
+endif()
 set_property(TARGET HepMC3rootIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 target_link_libraries(HepMC3rootIO PUBLIC ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3)
 target_include_directories(HepMC3rootIO PUBLIC
