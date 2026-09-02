@@ -135,7 +135,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
     if ( !pos.is_zero() ) {
         os << " (X,cT): " << pos.x() << " " << pos.y() << " " << pos.z() << " " << pos.t();
     }
-    else os << " (X,cT): 0";
+    else {os << " (X,cT): 0";}
 
     os << std::endl;
 
@@ -147,7 +147,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
             os << " I: ";
             printed_header = true;
         }
-        else os << "    ";
+        else {os << "    ";}
 
         Print::listing(os, p);
     }
@@ -160,7 +160,7 @@ void Print::listing(std::ostream& os, ConstGenVertexPtr v) {
             os << " O: ";
             printed_header = true;
         }
-        else os << "    ";
+        else {os << "    ";}
 
         Print::listing(os, p);
     }
@@ -187,7 +187,7 @@ void Print::listing(std::ostream& os, ConstGenParticlePtr p) {
     os << momentum.pz() << ",";
     os.width(9);
     os << momentum.e() << " ";
-    os.setf(std::ios::fmtflags(0), std::ios::floatfield);
+    os.unsetf(std::ios_base::floatfield);
     os.unsetf(std::ios_base::showpos);
     os.width(3);
     os << p->status();

@@ -16,13 +16,7 @@
 #include "HepMC3/ReaderFactory_fwd.h"
 
 namespace HepMC3 {
-/**
- *  @brief Class to hold generic information on the input
- *
- *  Class to hold generic information on the input.
- */
-
-/** @brief Constructor with filename*/
+// Implementation of InputInfo::InputInfo.
 InputInfo::InputInfo (const std::string &filename) {
 
     if (filename.find("http://") != std::string::npos)    m_remote = true;
@@ -88,10 +82,7 @@ InputInfo::InputInfo (const std::string &filename) {
     m_init = true;
 }
 
-/** @fn void InputInfo::classify()
- *  @brief The actual classification routine
- *  @memberof InputInfo
- */
+// Implementation of InputInfo::classify().
 void InputInfo::classify() {
 
     if ( strncmp(m_head.at(0).c_str(), "root", 4) == 0 ) m_root = true;
@@ -141,7 +132,7 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
         const char c = raw_header[i];
         if (c == '\0') break;
         if (c == '\n') {
-            if (head.back().length() != 0) {
+            if (!head.back().empty()) {
                 head.emplace_back("");
             }
         } else {
@@ -191,7 +182,7 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream)
         const char c = raw_header[i];
         if (c == '\0') break;
         if (c == '\n') {
-            if (head.back().length() != 0) {
+            if (!head.back().empty()) {
                 head.emplace_back("");
             }
         } else {

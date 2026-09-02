@@ -298,7 +298,7 @@ char const * find_next_token(char const *buf){
   }
   return ((*buf) == '\0') ? nullptr : buf;
 }
-}
+} // namespace
 
 std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
     static const std::pair<int, int>  err(-1, -1);

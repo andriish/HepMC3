@@ -20,11 +20,12 @@ std::vector<HepMC3::ConstGenParticlePtr> get_parts_with(HepMC3::GenEvent const &
   for (auto const &p : ev.particles()) {
     bool sel = !status || (p->status() == status);
     sel &= !pid || (p->pid() == pid);
-    if (sel)
+    if (sel) {
       out_parts.push_back(p);
+    }
   }
 
-  if (!out_parts.size()) {
+  if (out_parts.empty()) {
     std::stringstream ss;
     ss << "failed to find any parts with status = " << status
        << ", and pid = " << pid << " in event.";
@@ -43,9 +44,9 @@ int main() {
   HepMC3::Setup::set_debug_level(999);
 
   auto rdr = HepMC3::deduce_reader("inputIO30.hepmc");
-  if (!rdr)
+  if (!rdr) {
     return 1;
-
+  }
   HepMC3::GenEvent ev;
 
   /* Event with normal whitespace */

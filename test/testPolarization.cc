@@ -120,10 +120,10 @@ int main()
     GenVertexPtr v4 = std::make_shared<GenVertex>(FourVector(0.12, -0.3, 0.05,  0.004));
     evt.add_vertex( v4 );
     v4->add_particle_in( p5 );
-    GenParticlePtr p7(new GenParticle( FourVector(-2.445, 28.816, 6.082, 29.552), 1,1 ));
+    GenParticlePtr p7(new GenParticle( FourVector(-2.445, 28.816, 6.082, 29.552), 1, 1 ));
     evt.add_particle( p7 );
     v4->add_particle_out( p7 );
-    GenParticlePtr p8(new GenParticle( FourVector(3.962, -49.498, -26.687, 56.373), -2,1 ));
+    GenParticlePtr p8(new GenParticle( FourVector(3.962, -49.498, -26.687, 56.373), -2, 1 ));
     evt.add_particle( p8 );
     v4->add_particle_out( p8 );
     //
@@ -133,10 +133,10 @@ int main()
     // the event is complete, we now print it out
     Print::content(evt);
     //we now print it out in old format
-    Print::listing(evt,8);
+    Print::listing(evt, 8);
     // print each particle so we can see the polarization
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
 
     // write event

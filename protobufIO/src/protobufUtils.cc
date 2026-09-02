@@ -1,6 +1,6 @@
 /**
  *  @file protobufUtils.cc
- *  @brief Implementationof utility functions for protobufIO
+ *  @brief Implementation of utility functions for protobufIO
  *
  */
 #include "HepMC3/protobufUtils.h"
@@ -424,7 +424,7 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     for (unsigned int i = 0; i < static_cast<unsigned int>(data.attribute_id_size()); ++i) {
         /// Disallow empty strings
         const std::string& name = data.attribute_name(i);
-        if (name.length() == 0) {continue;}
+        if (name.empty()) {continue;}
         const int id = data.attribute_id(i);
         if (m_attributes.count(name) == 0) { m_attributes[name] = std::map<int, std::shared_ptr<Attribute>>(); }
         auto att = std::make_shared<StringAttribute>(data.attribute_string(i));
@@ -439,10 +439,6 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     }
 }
 
-/** @fn GenVertex::GenVertex(const HepMC3_pb::GenEventData_GenVertexData &data)
- *  @brief Constructor from protobuf vertex data
- *  @memberof GenVertex
- */
 GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.status = data.status();
@@ -451,10 +447,6 @@ GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
                            data.position().m_v3(), data.position().m_v4()};
 }
 
-/** @fn GenParticle::GenParticle(const HepMC3_pb::GenEventData_GenParticleData &data)
- *  @brief Constructor from protobuf particle data
- *  @memberof GenParticle
- */
 GenParticle::GenParticle(HepMC3_pb::GenEventData_GenParticleData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.pid = data.pid();

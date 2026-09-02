@@ -117,7 +117,7 @@ int main() {
         cs->set_cross_section(-1.0,0.0);
         Print::line(cs);
     }
-    else std::cout << "Problem accessing attribute!" <<std::endl;
+    else {std::cout << "Problem accessing attribute!" <<std::endl;}
 
     // remove attribute
     evt.remove_attribute("GenCrossSection");
@@ -188,13 +188,13 @@ int main() {
 
     Print::content(evt);
 
-   std::cout <<std::endl << "Now: removing particle with id 6 and printing again:" <<std::endl <<std::endl;
+    std::cout <<std::endl << "Now: removing particle with id 6 and printing again:" <<std::endl <<std::endl;
     evt.remove_particle(p6);
 
     Print::listing(evt);
     Print::content(evt);
 
-   std::cout <<std::endl << "Now: removing beam particles, leaving an empty event" <<std::endl <<std::endl;
+    std::cout <<std::endl << "Now: removing beam particles, leaving an empty event" <<std::endl <<std::endl;
     evt.remove_particles( evt.beams() );
 
     Print::listing(evt);

@@ -124,8 +124,8 @@ int main()
     //we now print it out in old format
     Print::listing(evt,8);
     // print each particle so we can see the polarization
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
     WriterAscii xout1("testBoost1.out");
     xout1.set_precision(6);
@@ -135,12 +135,12 @@ int main()
     const FourVector b(0.1,0.3,-0.2,0);
     const FourVector bp(-0.1,-0.3,0.2,0);
     evt.boost(b);
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
     evt.boost(bp);
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
     WriterAscii xout2("testBoost2.out");
     xout2.set_precision(6);

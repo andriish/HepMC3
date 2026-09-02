@@ -127,9 +127,9 @@ public :
         fChain->SetBranchStatus("particles.momentum.m_v2",1);
 
     }
-    SomeAnalysis(const std::string& file)
+    explicit SomeAnalysis(const std::string& file)
     {
-        TChain* TempChain= new TChain("hepmc3_tree");
+        auto* TempChain = new TChain("hepmc3_tree");
         TempChain->Add(file.c_str());
         Init(TempChain);
     }
@@ -139,20 +139,20 @@ public :
 int main()
 {
 //Plain tree
-    TH1D H1("H1","Pt of pions;Events/100MeV;P_{T},GeV",1000,0,100);
-    SomeAnalysis* A= new SomeAnalysis("inputIO4.root");
+    TH1D H1("H1","Pt of pions;Events/100MeV;P_{T},GeV", 1000, 0, 100);
+    auto* A= new SomeAnalysis("inputIO4.root");
     if (!A->fChain->GetEntries()) return 10001;
-    for (int entry=0; entry<A->fChain->GetEntries(); entry++)
+    for (int entry = 0; entry < A->fChain->GetEntries(); entry++)
     {
         A->fChain->GetEntry(entry);
-        for (int i=0; i<A->particles_; i++) {
-            if (A->particles_status[i]==1&&(std::abs(A->particles_pid[i])==211||std::abs(A->particles_pid[i])==11))
-            {   H1.Fill(std::sqrt(A->particles_momentum_m_v1[i]*A->particles_momentum_m_v1[i]+A->particles_momentum_m_v2[i]*A->particles_momentum_m_v2[i]) );}
+        for (int i = 0; i < A->particles_; i++) {
+            if (A->particles_status[i] == 1 && (std::abs(A->particles_pid[i]) == 211 || std::abs(A->particles_pid[i]) == 11))
+            {   H1.Fill(std::sqrt(A->particles_momentum_m_v1[i] * A->particles_momentum_m_v1[i] + A->particles_momentum_m_v2[i] * A->particles_momentum_m_v2[i]) );}
         }
     }
     delete A;
 //GenEvent
-    TH1D H2("H2","Pt of pions;Events/100MeV;P_{T},GeV",1000,0,100);
+    TH1D H2("H2","Pt of pions;Events/100MeV;P_{T},GeV", 1000, 0, 100);
     ReaderRootTree inputA("inputIO4.root");
     if(inputA.failed()) return 10002;
     while( !inputA.failed() )
@@ -163,8 +163,8 @@ int main()
             printf("End of file reached. Exit.\n");
             break;
         }
-        for (ConstGenParticlePtr p: evt.particles()) {
-            if ( std::abs(p->status()) == 1 && (std::abs(p->pdg_id()) == 211||std::abs(p->pdg_id()) == 11) )
+        for (const auto& p: evt.particles()) {
+            if ( std::abs(p->status()) == 1 && (std::abs(p->pdg_id()) == 211 || std::abs(p->pdg_id()) == 11) )
             {   H2.Fill( p->momentum().perp());
             }
         }
@@ -172,12 +172,12 @@ int main()
     }
     inputA.close();
 //Comparison
-    int diff=0;
-    for (int i=0; i<H1.GetNbinsX(); i++)
+    int diff = 0;
+    for (int i = 0; i < H1.GetNbinsX(); i++)
     {
-        double eps=std::abs(H1.GetBinContent(i)-H2.GetBinContent(i));
-        if (eps<1e-5) continue;
-        std::cout<<"Bin: "<<i<<" "<<H1.GetBinContent(i)<<" "<<H2.GetBinContent(i)<<std::endl;
+        double eps = std::abs(H1.GetBinContent(i) - H2.GetBinContent(i));
+        if (eps < 1e-5) continue;
+        std::cout << "Bin: " << i << " " << H1.GetBinContent(i) << " " << H2.GetBinContent(i) << std::endl;
         diff++;
     }
     H1.Print("All");
