@@ -14,7 +14,7 @@ if (USE_INSTALLED_HEPMC3)
   option(HEPMC3_ENABLE_TEST "Enable tests" ON)
   find_package(HepMC3 ${${PROJECT_NAME}_VERSION} REQUIRED COMPONENTS " ")
   message(STATUS "HepMC3 rootIO: HEPMC3_LIB=${HEPMC3_LIB}")
-  message(STATUS "HepMC3 rootIO: HEPMC3_INCLUDE_DIR=${HEPMC3_INCLUDE_DIR})
+  message(STATUS "HepMC3 rootIO: HEPMC3_INCLUDE_DIR=${HEPMC3_INCLUDE_DIR}")
 
   include(CheckCXXCompilerFlag)
   include(GNUInstallDirs)
