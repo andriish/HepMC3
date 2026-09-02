@@ -192,13 +192,13 @@ GenEvent generate4() {
             v->add_particle_out(p1);
             v->add_particle_out(p2);
             evt.add_vertex(v);
-            attsb.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (v->id(), std::make_shared<HepMC3::IntAttribute>(-20)));
-            attst.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p1->id(),  std::make_shared<HepMC3::DoubleAttribute>(0.1)));
-            attsp.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p1->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1)));
-            attsb.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p1->id(),std::make_shared<HepMC3::IntAttribute>(10)));
-            attst.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p2->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1)));
-            attsp.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p2->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1)));
-            attsb.emplace_back(std::pair<int,std::shared_ptr<Attribute> >  (p2->id(),std::make_shared<HepMC3::IntAttribute>(10)));
+            attsb.emplace_back(v->id(), std::make_shared<HepMC3::IntAttribute>(-20));
+            attst.emplace_back(p1->id(),  std::make_shared<HepMC3::DoubleAttribute>(0.1));
+            attsp.emplace_back(p1->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1));
+            attsb.emplace_back(p1->id(),std::make_shared<HepMC3::IntAttribute>(10));
+            attst.emplace_back(p2->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1));
+            attsp.emplace_back(p2->id(),std::make_shared<HepMC3::DoubleAttribute>(0.1));
+            attsb.emplace_back(p2->id(),std::make_shared<HepMC3::IntAttribute>(10));
         }
     }
     evt.add_attributes("barcode", attsb);

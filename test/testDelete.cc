@@ -29,21 +29,21 @@ int main()
     }
     inputA.close();
 //No alien particles should be detached from vertices or removed from events
-    int i=0;
-    int j=0;
-    while(i==j)
+    int i = 0;
+    int j = 0;
+    while (i == j)
     {
-        i=rand()% evts.size();
-        j=rand()% evts.size();
+        i = rand()% evts.size();
+        j = rand()% evts.size();
     }
     evts[i].remove_particles(evts[j].particles());
 
-    for (GenParticlePtr p: evts.at(i).particles()) {
+    for (auto& p: evts.at(i).particles()) {
         evts[j].remove_particle(p);
     }
 
-    for (GenParticlePtr p: evts.at(i).particles()) {
-        for (GenVertexPtr v: evts.at(j).vertices()) {
+    for (auto& p: evts.at(i).particles()) {
+        for (auto& v: evts.at(j).vertices()) {
             (v)->remove_particle_in(p);
             (v)->remove_particle_out(p);
         }

@@ -68,7 +68,7 @@ int main(int /*argc*/, char ** /*argv*/) {
         // information outside the LHEF <event> tags, which we may want to
         // add.
         std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
-        if ( reader.outsideBlock.length() ){
+        if ( !reader.outsideBlock.empty() ){
             hepe->tags = LHEF:: XMLTag::findXMLTags(reader.outsideBlock);
 		}
         hepe->hepeup = reader.hepeup;
@@ -92,17 +92,17 @@ int main(int /*argc*/, char ** /*argv*/) {
         std::map< std::pair<int,int>, GenVertexPtr> vertices;
         for ( int i = 0; i < hepe->hepeup.NUP; ++i )
         {
-            particles.push_back(std::make_shared<GenParticle>(hepe->momentum(i),hepe->hepeup.IDUP[i],hepe->hepeup.ISTUP[i]));
-            if (i<2) continue;
-            std::pair<int,int> vertex_index(hepe->hepeup.MOTHUP[i].first,hepe->hepeup.MOTHUP[i].second);
-            if (vertices.find(vertex_index)==vertices.end()) {vertices[vertex_index]=std::make_shared<GenVertex>();}
+            particles.push_back(std::make_shared<GenParticle>(hepe->momentum(i), hepe->hepeup.IDUP[i], hepe->hepeup.ISTUP[i]));
+            if (i < 2) continue;
+            std::pair<int,int> vertex_index(hepe->hepeup.MOTHUP[i].first, hepe->hepeup.MOTHUP[i].second);
+            if (vertices.find(vertex_index) == vertices.end()) {vertices[vertex_index] = std::make_shared<GenVertex>();}
             vertices[vertex_index]->add_particle_out(particles.back());
         }
         for ( auto& v: vertices )
         {
-            std::pair<int,int> vertex_index=v.first;
-            GenVertexPtr          vertex=v.second;
-            for (int i=vertex_index.first-1; i<vertex_index.second; i++) {if (i >= 0 && i < static_cast<int>(particles.size())) vertex->add_particle_in(particles[i]);}
+            std::pair<int,int> vertex_index = v.first;
+            GenVertexPtr vertex = v.second;
+            for (int i = vertex_index.first - 1; i < vertex_index.second; i++) {if (i >= 0 && i < static_cast<int>(particles.size())) vertex->add_particle_in(particles[i]);}
         }
         for ( auto& v: vertices ) {ev.add_vertex(v.second);}
 

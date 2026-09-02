@@ -50,7 +50,7 @@ if (HEPMC3_ENABLE_CLANG_TIDY)
   set(ct_11 "-clang-analyzer-core.CallAndMessage,-bugprone-implicit-widening-of-multiplication-result,-cert-msc30-c,-cert-msc50-cpp,-modernize-use-transparent-functors")
   set(ct_12 "-bugprone-assignment-in-if-condition,-misc-include-cleaner,-performance-avoid-endl,-abseil-string-find-str-contains,-android-cloexec-fopen")
   set(ct_13 "-readability-duplicate-include,-modernize-make-unique,-android-cloexec-open,-bugprone-exception-escape,-misc-const-correctness")
-  set(ct_14 "-readability-math-missing-parentheses,-modernize-use-scoped-lock,-misc-use-internal-linkage,-boost-use-ranges,-misc-non-private-member-variables-in-classes")
+  set(ct_14 "-readability-math-missing-parentheses,-modernize-use-scoped-lock,-misc-use-internal-linkage,-boost-use-ranges,-misc-non-private-member-variables-in-classes,-readability-avoid-return-with-void-value,-google-default-arguments")
   set(CMAKE_CXX_CLANG_TIDY "clang-tidy;--checks=*,${ct_1},${ct_2},${ct_3},${ct_4},${ct_5},${ct_6},${ct_7},${ct_8},${ct_9},${ct_10},${ct_11},${ct_12},${ct_13},${ct_14}")
 endif()
 

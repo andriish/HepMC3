@@ -13,15 +13,15 @@
 #include <random>
 #include <iterator>
 using namespace HepMC3;
-const size_t NinputCopies=4;
+const size_t NinputCopies = 4;
 std::shared_ptr<GenEvent> generate(const int Z) {
-    std::shared_ptr<GenEvent> evt = std::make_shared<GenEvent>();
-    std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
+    auto evt = std::make_shared<GenEvent>();
+    auto run = std::make_shared<GenRunInfo>();
     evt->set_run_info(run);
-    GenParticlePtr b2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
-    GenParticlePtr b1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
-    GenParticlePtr b3 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  -32.238),   1,  3 );
-    GenVertexPtr v1 = std::make_shared<GenVertex>();
+    auto b2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
+    auto b1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
+    auto b3 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  -32.238),   1,  3 );
+    auto v1 = std::make_shared<GenVertex>();
     v1->add_particle_in (b1);
     v1->add_particle_in(b2);
     v1->add_particle_out(b3);
@@ -30,9 +30,9 @@ std::shared_ptr<GenEvent> generate(const int Z) {
         auto particles = evt->particles();
         for (auto p: particles) {
             if (p->end_vertex()) continue;
-            GenParticlePtr p2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0+0.01*evt->particles().size(),  7000.0  ),2212,  3 );
-            GenParticlePtr p1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191+0.01*evt->particles().size(),  32.238),   1,  3 );
-            GenVertexPtr v = std::make_shared<GenVertex>();
+            auto p2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0 + 0.01 * evt->particles().size(),  7000.0  ),2212,  3 );
+            auto p1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191 + 0.01 * evt->particles().size(),  32.238),   1,  3 );
+            auto v = std::make_shared<GenVertex>();
             v->add_particle_in (p);
             v->add_particle_out(p1);
             v->add_particle_out(p2);
@@ -53,23 +53,24 @@ void attribute_function1(const std::vector<std::shared_ptr<GenEvent>>& evts, std
 int main()
 {
     std::vector<std::shared_ptr<GenEvent> > evts;
-    for (int i=0; i < 20; i++) {
-        evts.push_back(generate(5+i/3));
+    for (int i = 0; i < 20; i++) {
+        evts.push_back(generate(5 + i/3));
         evts.back()->set_event_number(i);
     }
     std::random_device rd;
     std::mt19937 g(rd());
     std::vector<std::vector<std::shared_ptr<GenEvent>>> thr_evts;
-    for (size_t i=0; i<NinputCopies; i++) {
+    thr_evts.reserve(NinputCopies);
+    for (size_t i = 0; i < NinputCopies; i++) {
         thr_evts.emplace_back(evts);
         std::shuffle(thr_evts[i].begin(), thr_evts[i].end(), g);
     }
     std::vector<std::map<int,int>> res(NinputCopies);
     std::vector<std::thread> threads;
-
+    threads.reserve(NinputCopies);
 
     for (size_t i = 0; i < NinputCopies; i++) {
-        threads.emplace_back(std::thread(attribute_function1,std::cref(thr_evts[i]), std::ref(res[i])));
+        threads.emplace_back(attribute_function1, std::cref(thr_evts[i]), std::ref(res[i]));
     }
     for (auto& th : threads) {th.join();}
     threads.clear();

@@ -164,12 +164,12 @@ int main()
     FourVector rz(0.0,0.0,-0.9,0);
     FourVector rzinv(0.0,0.0,0.9,0);
     evt.rotate(rz);
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
     evt.rotate(rzinv);
-    for ( GenParticlePtr ip: evt.particles()) {
-        Print::line(ip,true);
+    for ( const auto& ip: evt.particles()) {
+        Print::line(ip, true);
     }
     WriterAscii xout3("testBoost3.out");
     xout3.set_precision(6);
