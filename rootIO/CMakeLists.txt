@@ -101,17 +101,16 @@ if (MSVC)
 else()
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR})
 endif()
-#if (ROOT_VERSION VERSION_LESS "6.16")  # ROOT_GENERATE_DICTIONARY only supports the MODULE keyword from around ROOT 6.16 onward.
-#  set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
-#else()
-#  set(EXTRA_SOURCES)
-#endif()
-set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
+if (ROOT_VERSION VERSION_LESS "6.16")  # ROOT_GENERATE_DICTIONARY only supports the MODULE keyword from around ROOT 6.16 onward.
+  set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
+else()
+  set(EXTRA_SOURCES)
+endif()
 
 add_library(HepMC3rootIO SHARED ${EXTRA_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/Streamers.cc)
 target_compile_definitions(HepMC3rootIO PUBLIC HEPMC3_ROOTIO)
 if (USE_INSTALLED_HEPMC3)
-target_include_directories(HepMC3rootIO PUBLIC ${HEPMC3_INCLUDE_DIR})
+   target_include_directories(HepMC3rootIO PUBLIC ${HEPMC3_INCLUDE_DIR})
 endif()
 set_property(TARGET HepMC3rootIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 target_link_libraries(HepMC3rootIO PUBLIC ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3)
@@ -121,8 +120,11 @@ target_include_directories(HepMC3rootIO PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
   $<INSTALL_INTERFACE:include>
   ${ROOT_INCLUDE_DIRS})
-#ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh MODULE HepMC3rootIO LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
-ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh  LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+if (ROOT_VERSION VERSION_LESS "6.16")
+  ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh  LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+else()
+  ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh MODULE HepMC3rootIO LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+endif()
 
 set_source_files_properties(G__HepMC3rootIO.cxx PROPERTIES SKIP_LINTING ON)
 
