@@ -12,12 +12,12 @@ stages:
 
 changelog_check:
   stage: changelog
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_IID'
-  only:
-    variables:
-      - $CI_SERVER_HOST=="gitlab.cern.ch"
   image: gitlab-registry.cern.ch/sft/docker/alma9-core:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - if: '$CI_MERGE_REQUEST_IID'
+      when: always
   script:
     - |
       if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]; then
