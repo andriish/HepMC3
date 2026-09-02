@@ -210,8 +210,8 @@ GenEvent generate4() {
 using Clock =  std::chrono::high_resolution_clock;
 int main()
 {
-    int N = 10;
-    auto rawstart1= Clock::now();
+    const int N = 10;
+    auto rawstart1 = Clock::now();
     for (int i = 0; i < N; i++) generate1();
     auto now1 = Clock::now();
 

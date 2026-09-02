@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 #project(pyHepMC3 CXX)
 #Should be fixed
+=======
+#project(HepMC3rootIO CXX)
+>>>>>>> 7c86cb9ce548a24b243d310c2e3ef42fe78e7a44
 cmake_minimum_required(VERSION 3.10.0...4.0.3)
 if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
   SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
@@ -58,6 +62,12 @@ if (USE_INSTALLED_HEPMC3)
           if ("${fl}" MATCHES   ".*\\+\\+26$" OR "${fl}" MATCHES   ".*\\+\\+2c$" )
             set(HEPMC3_CXX_STANDARD 26)
           endif()
+<<<<<<< HEAD
+=======
+          if ("${fl}" MATCHES   ".*\\+\\+29$" OR "${fl}" MATCHES   ".*\\+\\+2d$" )
+            set(HEPMC3_CXX_STANDARD 29)
+          endif()
+>>>>>>> 7c86cb9ce548a24b243d310c2e3ef42fe78e7a44
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
         endforeach(fl ${ROOT_CXX_FLAGS_LIST})
       endif()

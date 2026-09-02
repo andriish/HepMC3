@@ -132,8 +132,8 @@ int main()
     xout1.write_event(evt);
     xout1.close();
 
-    FourVector b(0.1,0.3,-0.2,0);
-    FourVector bp(-0.1,-0.3,0.2,0);
+    const FourVector b(0.1,0.3,-0.2,0);
+    const FourVector bp(-0.1,-0.3,0.2,0);
     evt.boost(b);
     for ( GenParticlePtr ip: evt.particles()) {
         Print::line(ip,true);
@@ -149,15 +149,15 @@ int main()
     /// Test the boost * invboost give the same event.
     if (COMPARE_ASCII_FILES("testBoost1.out","testBoost2.out")!=0) return 1;
 
-    FourVector bwrong1(-1.1,-0.3,0.2,0);
+    const FourVector bwrong1(-1.1,-0.3,0.2,0);
     ///Test that wrong boost will not work
     if (evt.boost(bwrong1)) return 2;
 
-    FourVector bwrong2(-1.0,-0.0,0.0,0);
+    const FourVector bwrong2(-1.0,-0.0,0.0,0);
     ///Test that boost with v=c will not work
     if (evt.boost(bwrong2)) return 3;
 
-    FourVector bwrong3(std::numeric_limits<double>::epsilon()*0.9,0.0,0.0,0);
+    const FourVector bwrong3(std::numeric_limits<double>::epsilon()*0.9,0.0,0.0,0);
     ///Test that boost with v=0 will be OK
     if (!evt.boost(bwrong3)) return 4;
 

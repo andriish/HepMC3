@@ -19,12 +19,14 @@ namespace HepMC3 {
 
 namespace Serialize {
 
+/** @brief Convert a protobuf object to its string representation. */
 template <typename T> std::string PBObjToString(T const &o) {
     std::string ostr;
     o.SerializeToString(&ostr);
     return ostr;
 }
 
+/** @brief Serialize a GenRunInfo object into a protobuf string. */
 std::string GenRunInfo(HepMC3::GenRunInfo const &run_info) {
     GenRunInfoData data;
     run_info.write_data(data);
@@ -55,6 +57,7 @@ std::string GenRunInfo(HepMC3::GenRunInfo const &run_info) {
     return PBObjToString(gri_pb);
 }
 
+/** @brief Serialize a GenEvent object into a protobuf string. */
 std::string GenEvent(HepMC3::GenEvent const &evt) {
     GenEventData data;
     evt.write_data(data);
@@ -147,6 +150,7 @@ std::string GenEvent(HepMC3::GenEvent const &evt) {
 
 namespace Deserialize {
 
+/** @brief Populate a GenRunInfo object from protobuf data. */
 void FillGenRunInfo(HepMC3_pb::GenRunInfoData const &gri_pb,
                     std::shared_ptr<HepMC3::GenRunInfo> run_info) {
 
@@ -187,6 +191,7 @@ void FillGenRunInfo(HepMC3_pb::GenRunInfoData const &gri_pb,
     run_info->read_data(gridata);
 }
 
+/** @brief Parse a protobuf GenRunInfo message from a string. */
 bool GenRunInfo(std::string const &msg,
                 std::shared_ptr<HepMC3::GenRunInfo> run_info) {
     if (!run_info) { // elide work because we have nowhere to put it
@@ -203,6 +208,7 @@ bool GenRunInfo(std::string const &msg,
     return true;
 }
 
+/** @brief Populate a GenEvent object from protobuf data. */
 void FillGenEvent(HepMC3_pb::GenEventData const &ged_pb,
                   HepMC3::GenEvent &evt) {
 
@@ -319,6 +325,7 @@ void FillGenEvent(HepMC3_pb::GenEventData const &ged_pb,
     evt.read_data(evtdata);
 }
 
+/** @brief Parse a protobuf GenEvent message from a string. */
 bool GenEvent(std::string const &msg, HepMC3::GenEvent &evt) {
 
     HepMC3_pb::GenEventData ged_pb;
@@ -432,6 +439,10 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     }
 }
 
+/** @fn GenVertex::GenVertex(const HepMC3_pb::GenEventData_GenVertexData &data)
+ *  @brief Constructor from protobuf vertex data
+ *  @memberof GenVertex
+ */
 GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.status = data.status();
@@ -440,6 +451,10 @@ GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
                            data.position().m_v3(), data.position().m_v4()};
 }
 
+/** @fn GenParticle::GenParticle(const HepMC3_pb::GenEventData_GenParticleData &data)
+ *  @brief Constructor from protobuf particle data
+ *  @memberof GenParticle
+ */
 GenParticle::GenParticle(HepMC3_pb::GenEventData_GenParticleData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.pid = data.pid();

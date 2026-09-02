@@ -10,12 +10,10 @@
 /// @file WriterEDM4HEP.cc
 /// @brief Implementation of \b class WriterEDM4HEP
 ///
-#include <cstring>
 
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
-#include "HepMC3/Units.h"
 #include "HepMC3/Version.h"
 
 #include "edm4hep/EDM4hepVersion.h"
@@ -37,20 +35,14 @@ namespace HepMC3 {
 HEPMC3_DECLARE_WRITER_FILE(WriterEDM4HEP)
 
 WriterEDM4HEP::WriterEDM4HEP(const std::string& filename, std::shared_ptr<GenRunInfo> run)
-    : m_particle_counter(0), m_edm4hepWriterClosed(false),
-      m_edm4hepWriter(filename) {
+    : m_particle_counter(0),
+      m_edm4hepWriter(podio::makeWriter(filename)) {
     set_run_info(run);
     if (!run_info())
         set_run_info(std::make_shared<GenRunInfo>());
-    if (m_edm4hepWriterClosed) {
-        HEPMC3_ERROR_LEVEL(100, "WriterEDM4HEP: could not open output file: " << filename)
-    }
 }
 
-WriterEDM4HEP::~WriterEDM4HEP() {
-    if (!m_edm4hepWriterClosed)
-        close();
-}
+void WriterEDM4HEP::close() {}
 
 void WriterEDM4HEP::write_event(const GenEvent& evt) {
 
@@ -296,9 +288,5 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
 }
 
 bool WriterEDM4HEP::failed() { return false; }
-void WriterEDM4HEP::close() {
-    m_edm4hepWriter.finish();
-    m_edm4hepWriterClosed = true;
-}
 } // namespace HepMC3
 #endif

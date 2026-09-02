@@ -17,12 +17,11 @@
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenRunInfo.h"
 #include "HepMC3/Writer.h"
-#include <fstream>
 #include <string>
 
 #include "edm4hep/MCParticleCollection.h"
 #include "edm4hep/MutableGeneratorEventParameters.h"
-#include "podio/ROOTWriter.h"
+#include "podio/Writer.h"
 
 namespace HepMC3 {
 
@@ -37,9 +36,6 @@ public:
     /// @brief Constructor from temp ostream
     //  WriterEDM4HEP(std::shared_ptr<std::ostream> s_stream,
     //                std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
-
-    /// @brief Destructor
-    ~WriterEDM4HEP();
 
     /// @brief Write event to file
     ///
@@ -71,13 +67,10 @@ private:
     /// retrieve the attribute of type int
     double retrieveIntAttribute(const GenEvent& evt, std::string name);
 
-    /// @}
-
 private:
     unsigned long m_particle_counter;              //!< Used to set bar codes
 
-    bool m_edm4hepWriterClosed;
-    podio::ROOTWriter m_edm4hepWriter;
+    podio::Writer m_edm4hepWriter;                  //!< Underlying podio writer used for output
 };
 
 } // namespace HepMC3

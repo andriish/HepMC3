@@ -15,6 +15,7 @@ RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -eq  
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  30 ]; then yum -y  install liburing  liburing-devel; fi && yum -y clean all
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  32 ]; then yum -y  install python3-zstandard; fi && yum -y clean all
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  33 ]; then yum -y  install pypy3 pypy3-libs pypy3-devel; fi && yum -y clean all
+RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  33 ]; then yum -y  install hdf5 hdf5-devel highfive-devel; fi && yum -y clean all
 
 # Uproot5
 RUN                   if [ $(cat /etc/fedora-release  | grep -Eo '[0-9]+') -gt  39 ]; then yum -y  install xxhash xxhash-devel python3-xxhash python3-cramjam python3-fsspec python3-packaging; fi && yum -y clean all

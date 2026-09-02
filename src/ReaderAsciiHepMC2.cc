@@ -428,12 +428,12 @@ bool ReaderAsciiHepMC2::parse_units(GenEvent &evt, const char *buf) {
     // momentum
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     ++cursor;
-    Units::MomentumUnit momentum_unit = Units::momentum_unit(cursor);
+    const Units::MomentumUnit momentum_unit = Units::momentum_unit(cursor);
 
     // length
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     ++cursor;
-    Units::LengthUnit length_unit = Units::length_unit(cursor);
+    const Units::LengthUnit length_unit = Units::length_unit(cursor);
 
     evt.set_units(momentum_unit, length_unit);
 
@@ -460,19 +460,19 @@ int ReaderAsciiHepMC2::parse_vertex_information(const char *buf) {
 
     // x
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double X(atof(cursor));
+    const double X(atof(cursor));
 
     // y
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Y(atof(cursor));
+    const double Y(atof(cursor));
 
     // z
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Z(atof(cursor));
+    const double Z(atof(cursor));
 
     // t
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double T(atof(cursor));
+    const double T(atof(cursor));
     data->set_position(FourVector(X,Y,Z,T));
 
     // SKIPPED: num_orphans_in
@@ -525,19 +525,19 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     // px
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Px(atof(cursor));
+    const double Px(atof(cursor));
 
     // py
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Py(atof(cursor));
+    const double Py(atof(cursor));
 
     // pz
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double Pz(atof(cursor));
+    const double Pz(atof(cursor));
 
     // pe
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double E(atof(cursor));
+    const double E(atof(cursor));
     data->set_momentum(FourVector(Px,Py,Pz,E));
 
     // m
@@ -550,12 +550,12 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     //theta
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double theta_v = atof(cursor);
+    const double theta_v = atof(cursor);
     if (theta_v != 0.0) data_ghost->add_attribute("theta", std::make_shared<DoubleAttribute>(theta_v));
 
     //phi
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    double phi_v = atof(cursor);
+    const double phi_v = atof(cursor);
     if (phi_v != 0.0) data_ghost->add_attribute("phi", std::make_shared<DoubleAttribute>(phi_v));
 
     // end_vtx_code
@@ -564,15 +564,15 @@ int ReaderAsciiHepMC2::parse_particle_information(const char *buf) {
 
     //flow
     if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-    int flowsize = atoi(cursor);
+    const int flowsize = atoi(cursor);
 
     std::map<int, int> flows;
     for (int i = 0; i < flowsize; i++)
     {
         if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-        int  flowindex = atoi(cursor);
+        const int flowindex = atoi(cursor);
         if ( !(cursor = strchr(cursor+1, ' ')) ) return -1;
-        int flowvalue = atoi(cursor);
+        const int flowvalue = atoi(cursor);
         flows[flowindex] = flowvalue;
     }
     if (flowsize)

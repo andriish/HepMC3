@@ -26,6 +26,7 @@
 #include <cmath>
 #include <limits>
 #ifndef M_PI
+/** @brief Pi constant used when not defined by the system math headers. */
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
@@ -1156,6 +1157,7 @@ struct WeightGroup : public TagBase {
    */
   WeightGroup(const XMLTag & tag, int groupIndex, std::vector<WeightInfo> & wiv)
     : TagBase(tag.attr) {
+    getattr("name", name);
     getattr("type", type);
     getattr("combine", combine);
     for ( int i = 0, N = tag.tags.size(); i < N; ++i ) {
@@ -1169,7 +1171,13 @@ struct WeightGroup : public TagBase {
   }
 
   /**
+   * The name.
+   */
+  std::string name;
+
+  /**
    * The type.
+   * Deprecated legacy MadGraph 2 naming for weight groups.
    */
   std::string type;
 
@@ -1771,7 +1779,7 @@ public:
     std::string name;
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
     if ( weightinfo[i].inGroup >= 0 )
-      name = weightgroup[weightinfo[i].inGroup].type + "/"
+      name = weightgroup[weightinfo[i].inGroup].name + "/"
         +  weightgroup[weightinfo[i].inGroup].combine + "/";
     name += weightinfo[i].name;
     return name;
@@ -3384,7 +3392,7 @@ private:
 
 }
 
-/** \example LHEFCat.cc This is a main function which simply reads a
+/** This is an example main function which simply reads a
     Les Houches Event File from the standard input and writes it again
     to the standard output.
     This file can be downloaded from
@@ -3394,7 +3402,7 @@ private:
     to try it on.
 */
 
-/**\mainpage Les Houches Event File
+/** \page LHEF_page Les Houches Event File
 
 Here are some example classes for reading and writing Les Houches
 Event Files according to the

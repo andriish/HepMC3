@@ -26,11 +26,11 @@ int GenCrossSection::windx(const std::string& wName) const {
 }
 
 void GenCrossSection::set_cross_section(const double& xs, const double& xs_err, const long& n_acc, const long& n_att) {
-    double cross_section       = xs;
-    double cross_section_error = xs_err;
+    const double cross_section       = xs;
+    const double cross_section_error = xs_err;
     accepted_events     = n_acc;
     attempted_events    = n_att;
-    size_t N = std::max( event() ? event()->weights().size() : 0, size_t{1});
+    const size_t N = std::max( event() ? event()->weights().size() : 0, size_t{1});
     cross_sections = std::vector<double>(N, cross_section);
     cross_section_errors = std::vector<double>(N, cross_section_error);
 }
@@ -50,11 +50,11 @@ bool GenCrossSection::from_string(const std::string &att) {
     cross_section_errors.clear();
 
 
-    double cross_section = atof(cursor);
+    const double cross_section = atof(cursor);
     cross_sections.emplace_back(cross_section);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) {return false;}
-    double cross_section_error = atof(cursor);
+    const double cross_section_error = atof(cursor);
     cross_section_errors.emplace_back(cross_section_error);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) {
@@ -77,7 +77,7 @@ bool GenCrossSection::from_string(const std::string &att) {
                              << cross_sections.size() << " vs  "  << cross_section_errors.size() << "). Ill-formed input:" << att)
     }
     // Use the default values to fill the vector to the size of N.
-    size_t oldxsecsize = cross_sections.size();
+    const size_t oldxsecsize = cross_sections.size();
     if (oldxsecsize > 1 && oldxsecsize != nweights) {
         HEPMC3_WARNING_LEVEL(800,"GenCrossSection::from_string: the number of cross-sections (N = " << cross_sections.size() << ") does not match the number of weights (Nw = " << event()->weights().size() << ")")
     }
