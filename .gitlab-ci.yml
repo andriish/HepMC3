@@ -3,11 +3,32 @@ variables:
   STANDARDFLAGS: -DHEPMC3_TEST_VALGRIND=ON  -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=ON -DHEPMC3_ENABLE_ROOTIO:BOOL=ON -DHEPMC3_BUILD_EXAMPLES:BOOL=ON -DHEPMC3_ENABLE_TEST:BOOL=ON -DHEPMC3_TEST_VALGRIND:BOOL=ON -DHEPMC3_ENABLE_PYTHON:BOOL=ON -DHEPMC3_INSTALL_INTERFACES:BOOL=ON -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DHEPMC3_BUILD_DOCS:BOOL=ON  -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON 
   #-DCMAKE_CXX_FLAGS="-Wpedantic -Wall -Wextra"
 stages:
+  - changelog
   - check_if_dockerfile_updated
   - build_docker_image
   - build
   - LCG
 ########################################################################
+
+changelog_check:
+  stage: changelog
+  only:
+    variables:
+      - $CI_SERVER_HOST=="gitlab.cern.ch"
+  image: gitlab-registry.cern.ch/sft/docker/alma9-core:latest
+  script:
+    - |
+      if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]; then
+        git fetch --no-tags origin "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" --depth=1
+        if git diff --name-only "origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"...HEAD -- ChangeLog | grep -q .; then
+          echo "Changelog entry present."
+        else
+          echo "ERROR: Merge requests must include a ChangeLog entry before they are Ready."
+          exit 1
+        fi
+      else
+        echo "Not a merge request pipeline; skipping changelog enforcement."
+      fi
 
 LCG_x86_64-alma9:
   only:
