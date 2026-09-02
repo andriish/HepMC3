@@ -98,16 +98,26 @@ if (MSVC)
 else()
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR})
 endif()
-add_library(HepMC3rootIO SHARED G__HepMC3rootIO.cxx ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/Streamers.cc)
+#if (ROOT_VERSION VERSION_LESS "6.16")  # ROOT_GENERATE_DICTIONARY only supports the MODULE keyword from around ROOT 6.16 onward.
+#  set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
+#else()
+#  set(EXTRA_SOURCES)
+#endif()
+set(EXTRA_SOURCES G__HepMC3rootIO.cxx)
+
+add_library(HepMC3rootIO SHARED ${EXTRA_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRoot.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/ReaderRootTree.cc ${CMAKE_CURRENT_SOURCE_DIR}/src/Streamers.cc)
 target_compile_definitions(HepMC3rootIO PUBLIC HEPMC3_ROOTIO)
 set_property(TARGET HepMC3rootIO PROPERTY POSITION_INDEPENDENT_CODE 1)
 target_link_libraries(HepMC3rootIO PUBLIC ROOT::Tree ROOT::RIO ROOT::Core HepMC3::HepMC3)
 target_include_directories(HepMC3rootIO PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>  
   $<INSTALL_INTERFACE:include>
   ${ROOT_INCLUDE_DIRS})
-ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh MODULE HepMC3rootIO LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+#ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh MODULE HepMC3rootIO LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh  LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
+
 set_source_files_properties(G__HepMC3rootIO.cxx PROPERTIES SKIP_LINTING ON)
 
 set_target_properties(HepMC3rootIO PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
