@@ -186,7 +186,6 @@ EDM4HEP-CVMFS:
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - make -j 4
     - cd $TTOP
-
 .oldstandalonepython: &oldstandalonepython
     - export TTOP=$(pwd)
     - cd python
