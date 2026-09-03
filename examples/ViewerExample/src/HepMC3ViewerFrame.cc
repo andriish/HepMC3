@@ -46,7 +46,7 @@ static std::unique_ptr<char[]> create_image_from_dot(char* m_buffer)
         return nullptr;
     }
 
-    auto image_data = std::make_unique<char[]>(length);
+    auto image_data = std::unique_ptr<char[]>(new char[length]);
     std::memcpy(image_data.get(), rendered_data, length);
     gvFreeRenderData(rendered_data);
     gvFreeLayout(gvc, g);
@@ -159,7 +159,7 @@ static size_t  write_event_to_dot(char* used_cursor, const HepMC3::GenEvent &evt
 
 void HepMC3ViewerFrame::DrawEvent()
 {
-    auto m_buffer = std::make_unique<char[]>(m_char_buffer_size);
+    auto m_buffer = std::unique_ptr<char[]>(new char[m_char_buffer_size]);
     write_event_to_dot(m_buffer.get(), *(fCurrentEvent));
     auto buf = create_image_from_dot(m_buffer.get());
     if (!buf) return;
