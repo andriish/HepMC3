@@ -28,20 +28,20 @@ public :
     Int_t           momentum_unit{0};
     Int_t           length_unit{0};
     Int_t           particles_{0};
-    Int_t           particles_pid[kMaxparticles];   //[particles_]
-    Int_t           particles_status[kMaxparticles];   //[particles_]
-    Bool_t          particles_is_mass_set[kMaxparticles];   //[particles_]
-    Double_t        particles_mass[kMaxparticles];   //[particles_]
-    Double_t        particles_momentum_m_v1[kMaxparticles];   //[particles_]
-    Double_t        particles_momentum_m_v2[kMaxparticles];   //[particles_]
-    Double_t        particles_momentum_m_v3[kMaxparticles];   //[particles_]
-    Double_t        particles_momentum_m_v4[kMaxparticles];   //[particles_]
+    Int_t           particles_pid[kMaxparticles]{};   //[particles_]
+    Int_t           particles_status[kMaxparticles]{};   //[particles_]
+    Bool_t          particles_is_mass_set[kMaxparticles]{};   //[particles_]
+    Double_t        particles_mass[kMaxparticles]{};   //[particles_]
+    Double_t        particles_momentum_m_v1[kMaxparticles]{};   //[particles_]
+    Double_t        particles_momentum_m_v2[kMaxparticles]{};   //[particles_]
+    Double_t        particles_momentum_m_v3[kMaxparticles]{};   //[particles_]
+    Double_t        particles_momentum_m_v4[kMaxparticles]{};   //[particles_]
     Int_t           vertices_{0};
-    Int_t           vertices_status[kMaxvertices];   //[vertices_]
-    Double_t        vertices_position_m_v1[kMaxvertices];   //[vertices_]
-    Double_t        vertices_position_m_v2[kMaxvertices];   //[vertices_]
-    Double_t        vertices_position_m_v3[kMaxvertices];   //[vertices_]
-    Double_t        vertices_position_m_v4[kMaxvertices];   //[vertices_]
+    Int_t           vertices_status[kMaxvertices]{};   //[vertices_]
+    Double_t        vertices_position_m_v1[kMaxvertices]{};   //[vertices_]
+    Double_t        vertices_position_m_v2[kMaxvertices]{};   //[vertices_]
+    Double_t        vertices_position_m_v3[kMaxvertices]{};   //[vertices_]
+    Double_t        vertices_position_m_v4[kMaxvertices]{};   //[vertices_]
     vector<double>  weights;
     Double_t        event_pos_m_v1{0.0};
     Double_t        event_pos_m_v2{0.0};

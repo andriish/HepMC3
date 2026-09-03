@@ -429,10 +429,10 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
         if (m_attributes.count(name) == 0) { m_attributes[name] = std::map<int, std::shared_ptr<Attribute>>(); }
         auto att = std::make_shared<StringAttribute>(data.attribute_string(i));
         att->m_event = this;
-        if (id > 0 && id <= int(m_particles.size())) {
+        if (id > 0 && id <= static_cast<int>(m_particles.size())) {
             att->m_particle = m_particles[id - 1];
         }
-        if (id < 0 && -id <= int(m_vertices.size())) {
+        if (id < 0 && -id <= static_cast<int>(m_vertices.size())) {
             att->m_vertex = m_vertices[-id - 1];
         }
         m_attributes[name][id] = att;

@@ -42,7 +42,7 @@ WriterPlugin::WriterPlugin(std::shared_ptr<std::ostream> stream, const std::stri
     dll_handle = dlopen(libname.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     if (!dll_handle) { printf("Error  while loading library %s: %s\n", libname.c_str(), dlerror()); m_writer=nullptr; return;  }
     using f_funci =  Writer* (*)(std::shared_ptr<std::ostream> stream, std::shared_ptr<GenRunInfo>);
-    auto newWriter = (f_funci)dlsym(dll_handle, newwriter.c_str());
+    auto newWriter = reinterpret_cast<f_funci>(dlsym(dll_handle, newwriter.c_str()));
     if (!newWriter) { printf("Error  while loading function %s from  library %s: %s\n", newwriter.c_str(), libname.c_str(), dlerror()); m_writer = nullptr; return;   }
     m_writer = newWriter(stream, run);
 #endif
@@ -62,7 +62,7 @@ WriterPlugin::WriterPlugin(std::ostream & stream, const std::string &libname, co
     dll_handle = dlopen(libname.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     if (!dll_handle) { printf("Error  while loading library %s: %s\n", libname.c_str(), dlerror()); m_writer=nullptr; return;  }
     using f_funci =  Writer* (*)(std::ostream & stream, std::shared_ptr<GenRunInfo>);
-    auto newWriter = (f_funci)dlsym(dll_handle, newwriter.c_str());
+    auto newWriter = reinterpret_cast<f_funci>(dlsym(dll_handle, newwriter.c_str()));
     if (!newWriter) { printf("Error  while loading function %s from  library %s: %s\n", newwriter.c_str(), libname.c_str(), dlerror()); m_writer = nullptr; return;   }
     m_writer = newWriter(stream, run);
 #endif
@@ -82,7 +82,7 @@ WriterPlugin::WriterPlugin(const std::string& filename, const std::string &libna
     dll_handle = dlopen(libname.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     if (!dll_handle) { printf("Error while loading library %s: %s\n", libname.c_str(), dlerror()); m_writer = nullptr; return;  }
     using f_funci =  Writer* (*)(const std::string&, std::shared_ptr<GenRunInfo>);
-    auto newWriter = (f_funci)dlsym(dll_handle, newwriter.c_str());
+    auto newWriter = reinterpret_cast<f_funci>(dlsym(dll_handle, newwriter.c_str()));
     if (!newWriter) { printf("Error while loading function %s from  library %s: %s\n", newwriter.c_str(), libname.c_str(), dlerror()); m_writer = nullptr; return;   }
     m_writer = newWriter(filename, run);
 #endif

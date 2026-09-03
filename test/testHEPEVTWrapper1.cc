@@ -4,6 +4,7 @@
 // Copyright (C) 2014-2023 The HepMC collaboration (see AUTHORS for details)
 //
 ///We set some non-default value
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define HEPMC3_HEPEVT_NMXHEP  4000
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenVertex.h"

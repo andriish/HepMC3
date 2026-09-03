@@ -163,7 +163,7 @@ int main(int /*argc*/, char ** /*argv*/) {
             // This is just a test that we can access other attributes
             // included in the GenRunInfo.
             hepr->heprup.NPRUP =
-                int(input.run_info()->attribute<FloatAttribute>("NPRUP")->value());
+                static_cast<int>(input.run_info()->attribute<FloatAttribute>("NPRUP")->value());
 
             // Then we write out the HEPRUP object.
             writer.heprup = hepr->heprup;
