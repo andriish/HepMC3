@@ -335,6 +335,13 @@ private:
     mutable std::vector<hasId*> m_checkedObjects; ///< Checked objects
 };
 
+#ifndef _MSC_VER
+extern template class RelativesInterface<_parents>;
+extern template class RelativesInterface<_children>;
+extern template class RelativesInterface<Recursive<_parents> >;
+extern template class RelativesInterface<Recursive<_children> >;
+#endif
+
 }
 #endif
 

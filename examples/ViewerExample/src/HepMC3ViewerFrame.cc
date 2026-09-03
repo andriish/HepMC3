@@ -5,39 +5,54 @@
 #include "HepMC3/GenVertex.h"
 #include "HepMC3ViewerFrame.h"
 
+#include <cstring>
+#include <memory>
+
 /* Older graphviz versions can have conflictiong declarations  of memcmp/strcmp function
  * This can break compilation with -pedantic. Uncomenting line below can fix it.
  */
 // #define _PACKAGE_ast 1
 
 #include <graphviz/gvc.h>
-#define CONSERVATION_TOLERANCE 1e-5
+constexpr double CONSERVATION_TOLERANCE = 1e-5;
 
-static  char*  create_image_from_dot(char* m_buffer)
+static std::unique_ptr<char[]> create_image_from_dot(char* m_buffer)
 {
     GVC_t *gvc = gvContext();
-    Agraph_t *g = agmemread(m_buffer);
-    gvLayout(gvc, g, "dot");
+    if (!gvc) return nullptr;
 
-    int err = 0;
-    char *data = nullptr;
+    Agraph_t *g = agmemread(m_buffer);
+    if (!g) {
+        gvFreeContext(gvc);
+        return nullptr;
+    }
+
+    if (gvLayout(gvc, g, "dot") != 0) {
+        agclose(g);
+        gvFreeContext(gvc);
+        return nullptr;
+    }
+
+    char *rendered_data = nullptr;
 #if defined(GRAPHVIZ_VERSION_CODE) && (GRAPHVIZ_VERSION_CODE >= 130000)
     size_t length = 0;
 #else
     unsigned int length = 0;
 #endif
-    if (!g) {
+    if (gvRenderData(gvc, g, "png", &rendered_data, &length) != 0) {
+        gvFreeLayout(gvc, g);
+        agclose(g);
+        gvFreeContext(gvc);
         return nullptr;
-	}
-    err = gvRenderData(gvc, g, "png", &data, &length);
-    if (err) {
-        return nullptr;
-	}
-    data =  static_cast<char*>(realloc(data, length + 1));
+    }
+
+    auto image_data = std::make_unique<char[]>(length);
+    std::memcpy(image_data.get(), rendered_data, length);
+    gvFreeRenderData(rendered_data);
     gvFreeLayout(gvc, g);
     agclose(g);
     gvFreeContext(gvc);
-    return data;
+    return image_data;
 }
 
 static bool show_as_parton(HepMC3::ConstGenParticlePtr p)
@@ -58,8 +73,9 @@ static bool show_as_parton(HepMC3::ConstGenParticlePtr p)
     return false;
 }
 
-static char*  write_event_to_dot(char* used_cursor, const HepMC3::GenEvent &evt, int used_style = 1)
+static size_t  write_event_to_dot(char* used_cursor, const HepMC3::GenEvent &evt, int used_style = 1)
 {
+	char* input = used_cursor;
     used_cursor += sprintf(used_cursor, "digraph graphname%d {\n", evt.event_number());
     used_cursor += sprintf(used_cursor, "v0[label=\"Machine\"];\n");
     for(const auto& v: evt.vertices() )
@@ -74,7 +90,7 @@ static char*  write_event_to_dot(char* used_cursor, const HepMC3::GenEvent &evt,
         }
         HepMC3::FourVector in(0, 0, 0, 0);
         HepMC3::FourVector out(0, 0, 0, 0);
-        double energy=0;
+        double energy = 0;
         for(const auto& p1: v->particles_in()  ) {
             in+=p1->momentum();
             energy += std::abs(p1->momentum().e());
@@ -137,19 +153,19 @@ static char*  write_event_to_dot(char* used_cursor, const HepMC3::GenEvent &evt,
     used_cursor += sprintf(used_cursor, "labelloc=\"t\";\nlabel=\"Event %d; Vertices %lu; Particles %lu;\";\n", evt.event_number(), evt.vertices().size(), evt.particles().size());
     used_cursor += sprintf(used_cursor,"}\n\n");
 
-    return used_cursor;
+    return used_cursor - input;
 }
 
 
 void HepMC3ViewerFrame::DrawEvent()
 {
-    char* m_buffer = new char[m_char_buffer_size]();
-    char* m_cursor = m_buffer;
-    m_cursor = write_event_to_dot(m_cursor, *(fCurrentEvent));
-    char *buf = create_image_from_dot(m_buffer);
+    auto m_buffer = std::make_unique<char[]>(m_char_buffer_size);
+    write_event_to_dot(m_buffer.get(), *(fCurrentEvent));
+    auto buf = create_image_from_dot(m_buffer.get());
+    if (!buf) return;
     fEmbEventImageCanvas->MapSubwindows();
 
-    if(!fEventImageCanvas)  fEventImageCanvas=new TCanvas("fEmbEventImageCanvas","fEmbEventImageCanvas", 1024, 768);
+    if(!fEventImageCanvas)  fEventImageCanvas = new TCanvas("fEmbEventImageCanvas","fEmbEventImageCanvas", 1024, 768);
 
     fEventImageCanvas->cd();
     fEventImageCanvas->Clear();
@@ -157,16 +173,17 @@ void HepMC3ViewerFrame::DrawEvent()
 
     fGraphImage = TImage::Create();
     fGraphImage->SetName("Event");
-    fGraphImage->SetImageBuffer(&buf, TImage::kPng);
+    char *image_data = buf.get();
+    if (!fGraphImage->SetImageBuffer(&image_data, TImage::kPng)) return;
+    buf.release();
 
     fGraphImage->SetConstRatio(kFALSE);
 
-    TPad *p1 = new TPad("i1", "i1", 0.05, 0.05, 0.05 + d * fGraphImage->GetWidth() / fGraphImage->GetHeight(), 0.95);
+    auto *p1 = new TPad("i1", "i1", 0.05, 0.05, 0.05 + d * fGraphImage->GetWidth() / fGraphImage->GetHeight(), 0.95);
     p1->Draw();
     p1->cd();
 
     fGraphImage->Draw("xxx");
-    delete [] m_buffer;
     gPad->Update();
     DoAnalysis();
 }
@@ -180,7 +197,7 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH.clear();
 
     /*   */
-    TH1S* particles1 = new TH1S();
+    auto* particles1 = new TH1S();
     fAnalysisH["particles1"] = particles1;
     particles1->SetTitle("Flavour: all particles; PDG ID; Number of particles");
     particles1->SetFillColor(kBlue);
@@ -189,7 +206,7 @@ void HepMC3ViewerFrame::DoAnalysis()
 	}
     particles1->LabelsOption(">","X");
     /*   */
-    TH1S* particles2 = new TH1S();
+    auto* particles2 = new TH1S();
     fAnalysisH["particles2"] = particles2;
     particles2->SetTitle("Flavour: particles with status 1; PDG ID; Number of particles");
     particles2->SetFillColor(kBlue);
@@ -202,24 +219,24 @@ void HepMC3ViewerFrame::DoAnalysis()
     for(const auto& p: fCurrentEvent->particles() ){
         if(show_as_parton(p)) masses.push_back(p->momentum().m());
     }    
-    TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
+    auto* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);
     for(const auto& m: masses) {particles3->Fill(m);}
 
 
     fAnalysisCanvas->cd();
-    TPad *p1 = new TPad("i1", "i1", 0.00, 0.75, 1.0, 1.0);
+    auto *p1 = new TPad("i1", "i1", 0.00, 0.75, 1.0, 1.0);
     p1->Draw();
     p1->cd();
     particles1->Draw();
     fAnalysisCanvas->cd();
-    TPad *p2 = new TPad("i2", "i2", 0.00, 0.50, 1.0, 0.75);
+    auto *p2 = new TPad("i2", "i2", 0.00, 0.50, 1.0, 0.75);
     p2->Draw();
     p2->cd();
     particles2->Draw();
     fAnalysisCanvas->cd();
-    TPad *p3 = new TPad("i3", "i3", 0.00, 0.25, 1.0, 0.50);
+    auto *p3 = new TPad("i3", "i3", 0.00, 0.25, 1.0, 0.50);
     p3->Draw();
     p3->cd();
     particles3->Draw();
@@ -271,7 +288,7 @@ void HepMC3ViewerFrame::NextEvent()
 }
 void HepMC3ViewerFrame::ChooseInput()
 {
-    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", 0, 0 };
+    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", nullptr, nullptr };
     static TString dir("./");
     TGFileInfo fi;
     fi.fFileTypes = FileType;
@@ -291,8 +308,8 @@ HepMC3ViewerFrame::HepMC3ViewerFrame(const TGWindow *p, UInt_t w, UInt_t h) :
 
     fEmbAnalysisCanvas = new TRootEmbeddedCanvas("EmbAnalysisCanvaslegend", fMainFrame, 350, 500);
 
-    fMainFrame->AddFrame(fEmbEventImageCanvas, new TGLayoutHints(kLHintsTop | kLHintsExpandX| kLHintsExpandY, 1, 1, 2, 2));
-    fMainFrame->AddFrame(fEmbAnalysisCanvas, new TGLayoutHints(kLHintsTop | kFixedWidth| kLHintsExpandY, 1, 1, 2, 2));
+    fMainFrame->AddFrame(fEmbEventImageCanvas, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandX) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
+    fMainFrame->AddFrame(fEmbAnalysisCanvas, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
     fMainFrame->AddFrame(fButtonFrame, new TGLayoutHints(kLHintsTop, 1, 1, 2, 2));
 
     fChooseInput = new TGTextButton(fButtonFrame, "&Choose input");
@@ -319,7 +336,7 @@ HepMC3ViewerFrame::HepMC3ViewerFrame(const TGWindow *p, UInt_t w, UInt_t h) :
     fExit->SetToolTipText("Click to exit");
     fButtonFrame->AddFrame(fExit, new TGLayoutHints( kLHintsExpandX|kLHintsLeft,1,1,2,2));
 
-    AddFrame(fMainFrame, new TGLayoutHints(kLHintsTop |kLHintsExpandX| kLHintsExpandY, 1, 1, 2, 2));
+    AddFrame(fMainFrame, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandX) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
 
     SetWindowName("Event viewer");
     MapSubwindows();

@@ -111,7 +111,7 @@ int main()
     size_t  np4 = 0;
     for (int i = 0; i < 10000; ++i)
     {
-        HepMC3::GenEvent* evt=generate_event(3,4);
+        HepMC3::GenEvent* evt = generate_event(3,4);
         for (const auto& p: evt->particles()) np4 += (HepMC3::Relatives::ANCESTORS(p)).size();
         delete evt;
     }
@@ -124,8 +124,8 @@ int main()
     size_t  np1o = 0;
     for (int i = 0; i < 10000; ++i)
     {
-        HepMC3::GenEvent* evt=generate_event(3,4);
-        for (const auto& p: evt->particles()) np1o+=HepMC3::descendant_vertices(p).size();
+        HepMC3::GenEvent* evt=generate_event(3, 4);
+        for (const auto& p: evt->particles()) np1o += HepMC3::descendant_vertices(p).size();
         delete evt;
     }
     auto end1o = std::chrono::system_clock::now();

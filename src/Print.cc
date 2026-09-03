@@ -187,7 +187,7 @@ void Print::listing(std::ostream& os, ConstGenParticlePtr p) {
     os << momentum.pz() << ",";
     os.width(9);
     os << momentum.e() << " ";
-    os.setf(std::ios::fmtflags(0), std::ios::floatfield);
+    os.unsetf(std::ios::floatfield);
     os.unsetf(std::ios_base::showpos);
     os.width(3);
     os << p->status();

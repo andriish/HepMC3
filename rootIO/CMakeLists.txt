@@ -6,6 +6,8 @@ if (MSVC)
 else()
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR})
 endif()
+# To silence the ABI mismatch
+set(ENV{CLING_DISABLE_ABI_CHECK} 1)
 ROOT_GENERATE_DICTIONARY(G__HepMC3rootIO include/rootIO_Classes.hh LINKDEF include/LinkDef.hh NOINSTALL OPTIONS -inlineInputHeader)
 set_source_files_properties(G__HepMC3rootIO.cxx PROPERTIES SKIP_LINTING ON)
 add_library(HepMC3rootIO SHARED ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRoot.cc ${PROJECT_SOURCE_DIR}/rootIO/src/WriterRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/ReaderRootTree.cc ${PROJECT_SOURCE_DIR}/rootIO/src/Streamers.cc G__HepMC3rootIO.cxx)

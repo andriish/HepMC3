@@ -81,14 +81,14 @@ void reader_function(int *result) {
 int main() {
     std::vector<int> results{0, 0};
     writer_function(&(results[1]));
-    reader_function(&(results[0]));
+    reader_function(results.data());
     if (results[0] != 0 || results[1] != 0) {
         printf("Something went wrong during reading/writing %i %i\n", results[0],
                results[1]);
         return 10;
     }
 
-    return COMPARE_ASCII_FILES("fromfrominputReaderFactory4.hepmc","inputReaderFactory1.hepmc");
+    return COMPARE_ASCII_FILES("fromfrominputReaderFactory4.hepmc", "inputReaderFactory1.hepmc");
 }
 #else
 int main() { return 0; }

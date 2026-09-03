@@ -33,7 +33,7 @@ void  writer_function(int* result)
     }
     while( !inputA.failed() )
     {
-        GenEvent evt(Units::GEV,Units::MM);
+        GenEvent evt(Units::GEV, Units::MM);
         inputA.read_event(evt);
         if( inputA.failed() )  {
             printf("End of file reached. Exit.\n");
@@ -63,7 +63,7 @@ void  reader_function(int * result)
     }
     while( !inputB->failed() )
     {
-        GenEvent evt(Units::GEV,Units::MM);
+        GenEvent evt(Units::GEV, Units::MM);
         inputB->read_event(evt);
         if( inputB->failed() )  {
             printf("End of file reached. Exit.\n");
@@ -91,7 +91,7 @@ int main()
     std::vector<std::thread> threads;
     threads.reserve(2);
     std::vector<int> results{0,0};
-    std::thread readt(reader_function, &(results[0]));
+    std::thread readt(reader_function, results.data());
     std::thread writet(writer_function, &(results[1]));
     readt.join();
     writet.join();
