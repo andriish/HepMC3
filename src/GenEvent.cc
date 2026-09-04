@@ -423,7 +423,7 @@ const FourVector& GenEvent::event_pos() const {
 std::vector<ConstGenParticlePtr> GenEvent::beams(const int status) const {
     if (!status) return std::const_pointer_cast<const GenVertex>(m_rootvertex)->particles_out();
     std::vector<ConstGenParticlePtr> ret;
-    for (auto& p: m_rootvertex->particles_out()) if (p->status() == status) ret.emplace_back(p);
+    for (const auto& p: m_rootvertex->particles_out()) if (p->status() == status) ret.emplace_back(p);
     return ret;
 }
 
@@ -731,7 +731,7 @@ void GenEvent::read_data(const GenEventData &data) {
     for (unsigned int i = 0; i < data.attribute_id.size(); ++i) {
         ///Disallow empty strings
         const std::string name = data.attribute_name[i];
-        if (name.length() == 0) continue;
+        if (name.empty()) continue;
         const int id = data.attribute_id[i];
         if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
         auto att = std::make_shared<StringAttribute>(data.attribute_string[i]);
@@ -797,7 +797,7 @@ std::string GenEvent::attribute_as_string(const std::string &name, const int& id
 
 void GenEvent::add_attribute(const std::string &name, const std::shared_ptr<Attribute> &att, const int& id ) {
     ///Disallow empty strings
-    if (name.length() == 0) return;
+    if (name.empty()) return;
     if (!att)  return;
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();
@@ -830,7 +830,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
     const int vertices_size = static_cast<int>(m_vertices.size());
     for (size_t i = 0; i < N; i++) {
         ///Disallow empty strings
-        if (names.at(i).length() == 0) continue;
+        if (names.at(i).empty()) continue;
         if (!atts[i])  continue;
         m_attributes[names.at(i)][ids.at(i)] = atts[i];
         atts[i]->m_event = this;
@@ -845,7 +845,7 @@ void GenEvent::add_attributes(const std::vector<std::string> &names, const std::
 }
 
 void GenEvent::add_attributes(const std::string& name, const std::vector<std::shared_ptr<Attribute> > &atts, const std::vector<int>& ids) {
-    if (name.length() == 0) return;
+    if (name.empty()) return;
     const size_t N = ids.size();
     if(!N) return;
     if ( N != atts.size()) return;
@@ -870,7 +870,7 @@ void GenEvent::add_attributes(const std::string& name, const std::vector<std::sh
     }
 }
 void GenEvent::add_attributes(const std::string& name, const std::vector<std::pair<int, std::shared_ptr<Attribute> > > &atts) {
-    if (name.length() == 0) return;
+    if (name.empty()) return;
     if (atts.empty()) return;
     std::lock_guard<std::recursive_mutex> lock(m_lock_attributes);
     if (m_attributes.count(name) == 0) m_attributes[name] = std::map<int, std::shared_ptr<Attribute> >();

@@ -97,7 +97,7 @@ bool GenCrossSection::to_string(std::string &att) const {
        << (cross_section_errors.empty()?0.0:cross_section_errors.at(0)) << " "
        << accepted_events << " "
        << attempted_events;
-    if (event() && event()->weights().size() > 0 &&
+    if (event() && !event()->weights().empty() &&
             cross_sections.size() > 1 &&
             event()->weights().size() != cross_sections.size() ) {
         HEPMC3_WARNING_LEVEL(800,"GenCrossSection::to_string: the number of cross-sections (N = "<< cross_sections.size() << ") does not match the number of weights (Nw = "<< event()->weights().size() << ")")

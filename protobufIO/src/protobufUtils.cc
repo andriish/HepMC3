@@ -424,15 +424,15 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     for (unsigned int i = 0; i < static_cast<unsigned int>(data.attribute_id_size()); ++i) {
         /// Disallow empty strings
         const std::string& name = data.attribute_name(i);
-        if (name.length() == 0) {continue;}
+        if (name.empty()) {continue;}
         const int id = data.attribute_id(i);
         if (m_attributes.count(name) == 0) { m_attributes[name] = std::map<int, std::shared_ptr<Attribute>>(); }
         auto att = std::make_shared<StringAttribute>(data.attribute_string(i));
         att->m_event = this;
-        if (id > 0 && id <= int(m_particles.size())) {
+        if (id > 0 && id <= static_cast<int>(m_particles.size())) {
             att->m_particle = m_particles[id - 1];
         }
-        if (id < 0 && -id <= int(m_vertices.size())) {
+        if (id < 0 && -id <= static_cast<int>(m_vertices.size())) {
             att->m_vertex = m_vertices[-id - 1];
         }
         m_attributes[name][id] = att;
