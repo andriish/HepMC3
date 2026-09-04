@@ -96,22 +96,23 @@ int main(int argc, char** argv)
         printf("In case the output format is \"none\" or \"dump\" exactly one argument should be given: the name of input file.\n");
         exit(1);
     }
-    std::map<std::string,formats> format_map;
-    format_map.insert(std::pair<std::string,formats> ( "auto", formats::autodetect ));
-    format_map.insert(std::pair<std::string,formats> ( "hepmc2", formats::hepmc2 ));
-    format_map.insert(std::pair<std::string,formats> ( "hepmc3", formats::hepmc3 ));
-    format_map.insert(std::pair<std::string,formats> ( "edm4hep", formats::EDM4hep ));
-    format_map.insert(std::pair<std::string,formats> ( "hpe", formats::hpe  ));
-    format_map.insert(std::pair<std::string,formats> ( "root", formats::root ));
-    format_map.insert(std::pair<std::string,formats> ( "treeroot", formats::treeroot ));
-    format_map.insert(std::pair<std::string,formats> ( "treerootopal", formats::treerootopal ));
-    format_map.insert(std::pair<std::string,formats> ( "hpezeus", formats::hpezeus ));
-    format_map.insert(std::pair<std::string,formats> ( "lhef", formats::lhef ));
-    format_map.insert(std::pair<std::string,formats> ( "dump", formats::dump ));
-    format_map.insert(std::pair<std::string,formats> ( "dot", formats::dot ));
-    format_map.insert(std::pair<std::string,formats> ( "plugin", formats::plugin ));
-    format_map.insert(std::pair<std::string,formats> ( "none", formats::none ));
-    format_map.insert(std::pair<std::string,formats> ( "proto", formats::proto ));
+    const std::map<std::string, formats> format_map = {
+        { "auto", formats::autodetect },
+        { "hepmc2", formats::hepmc2 },
+        { "hepmc3", formats::hepmc3 },
+        { "edm4hep", formats::EDM4hep },
+        { "hpe", formats::hpe },
+        { "root", formats::root },
+        { "treeroot", formats::treeroot },
+        { "treerootopal", formats::treerootopal },
+        { "hpezeus", formats::hpezeus },
+        { "lhef", formats::lhef },
+        { "dump", formats::dump },
+        { "dot", formats::dot },
+        { "plugin", formats::plugin },
+        { "none", formats::none },
+        { "proto", formats::proto }
+    };
     std::map<std::string, std::string> options;
     for (size_t i=0; i<ai.extensions_given; i++)
     {
