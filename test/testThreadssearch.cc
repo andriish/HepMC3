@@ -15,13 +15,13 @@
 using namespace HepMC3;
 const size_t NinputCopies = 4;
 std::shared_ptr<GenEvent> generate(const int Z) {
-    auto evt = std::make_shared<GenEvent>();
-    auto run = std::make_shared<GenRunInfo>();
+    std::shared_ptr<GenEvent> evt = std::make_shared<GenEvent>();
+    std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
     evt->set_run_info(run);
-    auto b2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
-    auto b1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
-    auto b3 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  -32.238),   1,  3 );
-    auto v1 = std::make_shared<GenVertex>();
+    GenParticlePtr b2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
+    GenParticlePtr b1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
+    GenParticlePtr b3 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191,  -32.238),   1,  3 );
+    GenVertexPtr v1 = std::make_shared<GenVertex>();
     v1->add_particle_in (b1);
     v1->add_particle_in(b2);
     v1->add_particle_out(b3);
@@ -30,9 +30,9 @@ std::shared_ptr<GenEvent> generate(const int Z) {
         auto particles = evt->particles();
         for (auto& p: particles) {
             if (p->end_vertex()) continue;
-            auto p2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0 + 0.01 * evt->particles().size(),  7000.0  ),2212,  3 );
-            auto p1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191 + 0.01 * evt->particles().size(),  32.238),   1,  3 );
-            auto v = std::make_shared<GenVertex>();
+            GenParticlePtr p2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0 + 0.01 * evt->particles().size(),  7000.0  ),2212,  3 );
+            GenParticlePtr p1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191 + 0.01 * evt->particles().size(),  32.238),   1,  3 );
+            GenVertexPtr v = std::make_shared<GenVertex>();
             v->add_particle_in (p);
             v->add_particle_out(p1);
             v->add_particle_out(p2);

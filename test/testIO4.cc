@@ -129,7 +129,7 @@ public :
     }
     explicit SomeAnalysis(const std::string& file)
     {
-        auto* TempChain = new TChain("hepmc3_tree");
+        TChain* TempChain= new TChain("hepmc3_tree");
         TempChain->Add(file.c_str());
         Init(TempChain);
     }
@@ -140,7 +140,7 @@ int main()
 {
 //Plain tree
     TH1D H1("H1","Pt of pions;Events/100MeV;P_{T},GeV", 1000, 0, 100);
-    auto* A= new SomeAnalysis("inputIO4.root");
+    SomeAnalysis* A= new SomeAnalysis("inputIO4.root");
     if (!A->fChain->GetEntries()) return 10001;
     for (int entry = 0; entry < A->fChain->GetEntries(); entry++)
     {
