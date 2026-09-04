@@ -4,6 +4,7 @@
 // Copyright (C) 2014-2023 The HepMC collaboration (see AUTHORS for details)
 //
 ///We set some non-default value
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define HEPMC3_HEPEVT_NMXHEP  4000
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenVertex.h"
@@ -30,7 +31,7 @@ GenEvent generate1() {
     evt.add_vertex(v1);
     for (size_t z= 0; z < 5; z++) {
         auto particles = evt.particles();
-        for (auto p: particles) {
+        for (auto& p: particles) {
             if (p->end_vertex()) continue;
             GenParticlePtr p2 = std::make_shared<GenParticle>( FourVector( 0.0,    0.0,   7000.0+0.01*evt.particles().size(),  7000.0  ),2212,  3 );
             GenParticlePtr p1 = std::make_shared<GenParticle>( FourVector( 0.750, -1.569,   32.191+0.01*evt.particles().size(),  32.238),   1,  3 );
@@ -49,7 +50,7 @@ GenEvent generate1() {
 int main()
 {
     bool ret = true;
-    struct HEPEVT_Templated<HEPMC3_HEPEVT_NMXHEP,double>  X;
+    struct HEPEVT_Templated<HEPMC3_HEPEVT_NMXHEP,double>  X{};
     GenEvent evt1 = generate1();
     HEPEVT_Wrapper_Runtime  test1;
     test1.set_max_number_entries(HEPMC3_HEPEVT_NMXHEP);

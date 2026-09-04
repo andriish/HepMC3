@@ -42,6 +42,7 @@ int main()
 
     // new functionality
     std::vector<std::string> names;
+    names.reserve(evt.weights().size());
     for( size_t i = 0; i < evt.weights().size() - 1; ++i ) names.push_back(std::to_string(static_cast<unsigned long long>(i)));
     const std::string nm = "tau";
     names.push_back(nm);
