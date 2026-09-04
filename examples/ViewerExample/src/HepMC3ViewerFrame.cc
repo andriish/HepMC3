@@ -179,7 +179,7 @@ void HepMC3ViewerFrame::DrawEvent()
 
     fGraphImage->SetConstRatio(kFALSE);
 
-    auto *p1 = new TPad("i1", "i1", 0.05, 0.05, 0.05 + d * fGraphImage->GetWidth() / fGraphImage->GetHeight(), 0.95);
+    TPad *p1 = new TPad("i1", "i1", 0.05, 0.05, 0.05 + d * fGraphImage->GetWidth() / fGraphImage->GetHeight(), 0.95);
     p1->Draw();
     p1->cd();
 
@@ -197,7 +197,7 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH.clear();
 
     /*   */
-    auto* particles1 = new TH1S();
+    TH1S* particles1 = new TH1S();
     fAnalysisH["particles1"] = particles1;
     particles1->SetTitle("Flavour: all particles; PDG ID; Number of particles");
     particles1->SetFillColor(kBlue);
@@ -206,7 +206,7 @@ void HepMC3ViewerFrame::DoAnalysis()
 	}
     particles1->LabelsOption(">","X");
     /*   */
-    auto* particles2 = new TH1S();
+    TH1S* particles2 = new TH1S();
     fAnalysisH["particles2"] = particles2;
     particles2->SetTitle("Flavour: particles with status 1; PDG ID; Number of particles");
     particles2->SetFillColor(kBlue);
@@ -218,25 +218,25 @@ void HepMC3ViewerFrame::DoAnalysis()
     std::vector<double> masses;
     for(const auto& p: fCurrentEvent->particles() ){
         if(show_as_parton(p)) masses.push_back(p->momentum().m());
-    }    
-    auto* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
+    }
+    TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);
     for(const auto& m: masses) {particles3->Fill(m);}
 
 
     fAnalysisCanvas->cd();
-    auto *p1 = new TPad("i1", "i1", 0.00, 0.75, 1.0, 1.0);
+    TPad *p1 = new TPad("i1", "i1", 0.00, 0.75, 1.0, 1.0);
     p1->Draw();
     p1->cd();
     particles1->Draw();
     fAnalysisCanvas->cd();
-    auto *p2 = new TPad("i2", "i2", 0.00, 0.50, 1.0, 0.75);
+    TPad *p2 = new TPad("i2", "i2", 0.00, 0.50, 1.0, 0.75);
     p2->Draw();
     p2->cd();
     particles2->Draw();
     fAnalysisCanvas->cd();
-    auto *p3 = new TPad("i3", "i3", 0.00, 0.25, 1.0, 0.50);
+    TPad *p3 = new TPad("i3", "i3", 0.00, 0.25, 1.0, 0.50);
     p3->Draw();
     p3->cd();
     particles3->Draw();
@@ -268,7 +268,7 @@ void HepMC3ViewerFrame::NextEvent()
 {
     if (fCurrentEvent == nullptr || fEventsCache.back() == fCurrentEvent)
     {
-        auto* evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
+        HepMC3::GenEvent* evt1 = new HepMC3::GenEvent(HepMC3::Units::GEV, HepMC3::Units::MM);
         bool ok = fReader->read_event(*(evt1));
         ok = (ok && !fReader->failed());
         if (ok)
