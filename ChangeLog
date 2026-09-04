@@ -1,6 +1,7 @@
 --------------------------  HepMC3.3.2 --------------------------
 2026-09-03 Andrii Verbytskyi
   * Implement suggestions from clang-tidy for tests.
+  * Follow suggestions of clang-tidy in the core library.
 2026-09-04 Andrii Verbytskyi
   * Fixes to doxygen setup.
 2026-09-02 Andrii Verbytskyi
