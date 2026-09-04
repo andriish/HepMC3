@@ -298,7 +298,7 @@ char const * find_next_token(char const *buf){
   }
   return ((*buf) == '\0') ? nullptr : buf;
 }
-}
+} // namespace
 
 std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
     static const std::pair<int, int>  err(-1, -1);
@@ -357,7 +357,6 @@ std::pair<int, int> ReaderAscii::parse_event_information(const char *buf) {
         if ( !(cursor = find_next_token(cursor)) ) return err;
         position.setT(std::strtod(cursor, &after_parse));
         if(cursor == after_parse) return err;
-        cursor = after_parse;
     }
 
     HEPMC3_DEBUG(10, "ReaderAscii: E: " << m_data.event_number << " (" <<ret.first << "V, " << ret.second << "P)")
@@ -404,7 +403,7 @@ bool ReaderAscii::parse_units(const char *buf) {
 bool ReaderAscii::parse_vertex_information(const char *buf) {
     GenVertexPtr  data = std::make_shared<GenVertex>();
     const char   *cursor   = buf + 1;
-    const char   *cursor2   = buf + 1;
+    const char   *cursor2   = nullptr;
     char * after_parse = nullptr;
     int           id              = 0;
 
@@ -471,7 +470,6 @@ bool ReaderAscii::parse_vertex_information(const char *buf) {
         if ( !(cursor = find_next_token(cursor)) ) return false;
         position.setT(std::strtod(cursor, &after_parse));
         if(cursor == after_parse) return false;
-        cursor = after_parse;
     }
 
     return true;
@@ -557,15 +555,13 @@ bool ReaderAscii::parse_particle_information(const char *buf) {
     // status
     if ( !(cursor = find_next_token(cursor)) ) return false;
     m_data.particles[id-1].status = std::strtol(cursor, &after_parse, 10);
-    if(cursor == after_parse) return false;
-
-    return true;
+    return cursor != after_parse;
 }
 
 
 bool ReaderAscii::parse_attribute(const char *buf) {
     const char     *cursor  = buf + 1;
-    const char     *cursor2 = buf + 1;
+    const char     *cursor2 = nullptr;
     char * after_parse = nullptr;
     std::array<char, 512> name{};
     int             id = 0;
@@ -591,7 +587,7 @@ bool ReaderAscii::parse_attribute(const char *buf) {
 
 bool ReaderAscii::parse_run_attribute(const char *buf) {
     const char     *cursor  = buf + 1;
-    const char     *cursor2 = buf + 1;
+    const char     *cursor2 = nullptr;
     std::array<char, 512> name{};
 
     if ( !(cursor = find_next_token(cursor)) ) return false;
