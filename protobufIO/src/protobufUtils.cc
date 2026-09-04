@@ -439,10 +439,6 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     }
 }
 
-/** @fn GenVertex::GenVertex(const HepMC3_pb::GenEventData_GenVertexData &data)
- *  @brief Constructor from protobuf vertex data
- *  @memberof GenVertex
- */
 GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.status = data.status();
@@ -451,10 +447,6 @@ GenVertex::GenVertex(HepMC3_pb::GenEventData_GenVertexData const &data)
                            data.position().m_v3(), data.position().m_v4()};
 }
 
-/** @fn GenParticle::GenParticle(const HepMC3_pb::GenEventData_GenParticleData &data)
- *  @brief Constructor from protobuf particle data
- *  @memberof GenParticle
- */
 GenParticle::GenParticle(HepMC3_pb::GenEventData_GenParticleData const &data)
     : m_event(nullptr), m_id(0) {
     m_data.pid = data.pid();
