@@ -283,6 +283,16 @@ if(HEPMC3_ENABLE_HDF5IO)
   target_include_directories(testHDF5 PRIVATE ${PROJECT_SOURCE_DIR}/hdf5IO/include)
   target_link_libraries(testHDF5 PRIVATE HepMC3::hdf5IO HDF5::HDF5)
   set_tests_properties(testHDF5 PROPERTIES TIMEOUT 2000)
+
+  hepmc_test( testReaderLHEFHDF5 )
+  target_include_directories(testReaderLHEFHDF5 PRIVATE ${PROJECT_SOURCE_DIR}/hdf5IO/include)
+  target_link_libraries(testReaderLHEFHDF5 PRIVATE HepMC3::hdf5IO HDF5::HDF5)
+  set_tests_properties(testReaderLHEFHDF5 PROPERTIES TIMEOUT 2000)
+
+  hepmc_test( testLHEFHDF5 )
+  target_include_directories(testLHEFHDF5 PRIVATE ${PROJECT_SOURCE_DIR}/hdf5IO/include)
+  target_link_libraries(testLHEFHDF5 PRIVATE HepMC3::hdf5IO HDF5::HDF5)
+  set_tests_properties(testLHEFHDF5 PROPERTIES TIMEOUT 2000)
 endif()
 
 

@@ -3,6 +3,7 @@
 
 set(HepMC3hdf5IO_sources
   src/ReaderHDF5.cc
+  src/ReaderLHEFHDF5.cc
   src/WriterHDF5.cc
 )
 
@@ -36,7 +37,9 @@ add_library(HepMC3::hdf5IO ALIAS HepMC3hdf5IO)
 
 install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/ReaderHDF5.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/ReaderLHEFHDF5.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/WriterHDF5.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HepMC3/LHEFHDF5.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/HepMC3
   COMPONENT hdf5IOdevel)
 
