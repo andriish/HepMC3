@@ -35,6 +35,7 @@ PYBIND11_MODULE(pyHepMC3hdf5IO, root_module) {
 
 	std::vector< std::pair<std::string, std::string> > sub_modules {
 		{"", "HepMC3"},
+		{"", "LHEFHDF5"},
 	};
 	for(auto &p : sub_modules ) modules[ p.first.empty() ? p.second :  p.first+"::"+p.second ] = modules[p.first].def_submodule( mangle_namespace_name(p.second).c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() );
 

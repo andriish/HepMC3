@@ -19,6 +19,30 @@ Further documentation that might be useful for the users of HepMC3 can be found 
    - [J. Butterworth et al., THE TOOLS AND MONTE CARLO WORKING GROUP Summary Report from the Les Houches 2009 Workshop on TeV Colliders](http://arxiv.org/abs/1003.1643) 
    - [J. R. Andersen et al., Les Houches 2013: Physics at TeV Colliders: Standard Model Working Group Report](http://arxiv.org/abs/1405.1067)
 
+## LHEF-HDF5 I/O
+
+When built with `HEPMC3_ENABLE_HDF5IO=ON`, HepMC3 provides readers and
+writers for Les Houches Event data stored in HDF5 files. The
+`HepMC3/LHEFHDF5.h` header defines `LHEFHDF5::Reader` and
+`LHEFHDF5::Writer`, which expose the familiar `LHEF::HEPRUP` and
+`LHEF::HEPEUP` run and event objects. `HepMC3/ReaderLHEFHDF5.h` provides
+`HepMC3::ReaderLHEFHDF5` to convert LHEF-HDF5 input directly to
+`HepMC3::GenEvent` objects.
+
+Several LHEF-HDF5 layouts are in use. SHERPA-MC HDF5 event output and
+Pythia8 `LHAHDF5v2` use the flat dataset layout implemented by
+`LHEFHDF5` and are compatible with its reader and writer. Older Pythia8
+`LHAHDF5` formats, including version 1.0.0, use grouped column datasets and
+are not compatible with the flat layout. Users must select the reader and
+writer appropriate to the HDF5 format produced by their generator.
+
+The HDF5-based LHEH5 format is described in [A. Puck Neuwirth, M. Feickert,
+L. Heinrich, and E. Rodrigues, *pylhe: A Lightweight Python interface to Les
+Houches Event files*](https://arxiv.org/abs/2607.29352). The PEPPER-MC
+implementation and its scalable HDF5 event I/O are described in
+[E. Bothmann et al., *Efficient precision simulation of processes with
+many-jet final states at the LHC*, Phys. Rev. D 109 (2024) 014013](https://doi.org/10.1103/PhysRevD.109.014013).
+
 ## Project documentation, code and contacts
 
 Project documentation, code and contacts

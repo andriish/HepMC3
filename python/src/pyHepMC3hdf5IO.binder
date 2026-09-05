@@ -8,6 +8,7 @@
 
 +include <HepMC3/ReaderHDF5.h>
 +include <HepMC3/WriterHDF5.h>
++include <HepMC3/LHEFHDF5.h>
 +include <src/hdf5IObinders.h>
 
 

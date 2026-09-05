@@ -1,5 +1,6 @@
 #include <HepMC3/ReaderHDF5.h>
 #include <HepMC3/WriterHDF5.h>
+#include <HepMC3/LHEFHDF5.h>
 #include <functional>
 #include <iterator>
 #include <map>
@@ -36,5 +37,8 @@ void bind_pyHepMC3hdf5IO_0(std::function< pybind11::module &(std::string const &
 
 	// HepMC3::WriterHDF5 file:HepMC3/WriterHDF5.h line:
 	binder::WriterHDF5_binder(M("HepMC3"));
+
+	// LHEFHDF5 I/O classes.
+	binder::LHEFHDF5_binder(M("LHEFHDF5"));
 
 }
