@@ -64,6 +64,7 @@ public:
     bool m_error = false; ///< Whether input inspection encountered an error.
     bool m_init = false; ///< Whether input inspection completed.
     bool m_root = false; ///< Whether the input is a ROOT file.
+    bool m_hdf5 = false; ///< Whether the input is an HDF5 file.
     bool m_protobuf = false; ///< Whether the input is a protobuf file.
     bool m_asciiv3 = false; ///< Whether the input uses HepMC3 ASCII format.
     bool m_iogenevent = false; ///< Whether the input uses HepMC2 IO_GenEvent format.
