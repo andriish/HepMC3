@@ -34,7 +34,8 @@ const std::string libHepMC3protobufIO = "HepMC3protobufIO.dll";
 const std::string libHepMC3rootIO = "HepMC3rootIO.dll";
 const std::string libHepMC3HDF5IO = "HepMC3hdf5IO.dll";
 #endif
-/** Information about input.
+/** @class HepMC3::InputInfo
+ * @brief Information about an input file or stream.
 
     This class deduces information about the input file from the
     filename, such as

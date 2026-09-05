@@ -102,32 +102,32 @@ public:
     bool readEvent() {
         if (m_failed || m_next_index >= m_event_count) { m_failed = true; return false; }
         std::vector<std::vector<double>> erows;
-        m_events_ds->select({m_next_index, 0}, {1, 9 + m_nweights}).read(erows);
+        m_events_ds->select(std::vector<size_t>{m_next_index, 0}, std::vector<size_t>{1, 9 + m_nweights}).read(erows);
         if (erows.empty() || erows[0].size() < 9) { m_failed = true; return false; }
         const auto &erow = erows[0];
         m_hepeup.heprup = &m_heprup; m_hepeup.IDPRUP = static_cast<long>(erow[0]);
-        hepeup.NUP = static_cast<int>(erow[1]); uint64_t start = static_cast<uint64_t>(erow[2]);
-        hepeup.ntries = static_cast<int>(erow[3]); hepeup.SCALUP = erow[4];
-        hepeup.AQEDUP = erow[7]; hepeup.AQCDUP = erow[8];
-        hepeup.XWGTUP = erow.size() > 9 ? erow[9] : 1.0;
-        hepeup.resize();
-        if (hepeup.NUP > 0) {
+        m_hepeup.NUP = static_cast<int>(erow[1]); uint64_t start = static_cast<uint64_t>(erow[2]);
+        m_hepeup.ntries = static_cast<int>(erow[3]); m_hepeup.SCALUP = erow[4];
+        m_hepeup.AQEDUP = erow[7]; m_hepeup.AQCDUP = erow[8];
+        m_hepeup.XWGTUP = erow.size() > 9 ? erow[9] : 1.0;
+        m_hepeup.resize();
+        if (m_hepeup.NUP > 0) {
             std::vector<std::vector<double>> prows;
-            m_particles_ds->select({static_cast<size_t>(start), 0}, {static_cast<size_t>(hepeup.NUP), 13}).read(prows);
-            for (int i = 0; i < hepeup.NUP; ++i) {
+            m_particles_ds->select(std::vector<size_t>{static_cast<size_t>(start), 0}, std::vector<size_t>{static_cast<size_t>(m_hepeup.NUP), 13}).read(prows);
+            for (int i = 0; i < m_hepeup.NUP; ++i) {
                 const auto &p = prows[i];
-                hepeup.IDUP[i] = static_cast<long>(p[0]); hepeup.ISTUP[i] = static_cast<int>(p[1]);
-                hepeup.MOTHUP[i] = {static_cast<int>(p[2]), static_cast<int>(p[3])};
-                hepeup.ICOLUP[i] = {static_cast<int>(p[4]), static_cast<int>(p[5])};
-                hepeup.PUP[i] = {p[6], p[7], p[8], p[9], p[10]};
-                hepeup.VTIMUP[i] = p[11]; hepeup.SPINUP[i] = p[12];
+                m_hepeup.IDUP[i] = static_cast<long>(p[0]); m_hepeup.ISTUP[i] = static_cast<int>(p[1]);
+                m_hepeup.MOTHUP[i] = {static_cast<int>(p[2]), static_cast<int>(p[3])};
+                m_hepeup.ICOLUP[i] = {static_cast<int>(p[4]), static_cast<int>(p[5])};
+                m_hepeup.PUP[i] = {p[6], p[7], p[8], p[9], p[10]};
+                m_hepeup.VTIMUP[i] = p[11]; m_hepeup.SPINUP[i] = p[12];
             }
         }
-        hepeup.weights.clear();
+        m_hepeup.weights.clear();
         for (std::size_t w = 0; w < m_nweights; ++w) {
             if (9 + w < erow.size()) {
-                const LHEF::WeightInfo *wi = w < heprup.weightinfo.size() ? &heprup.weightinfo[w] : nullptr;
-                hepeup.weights.push_back({erow[9 + w], wi});
+                const LHEF::WeightInfo *wi = w < m_heprup.weightinfo.size() ? &m_heprup.weightinfo[w] : nullptr;
+                m_hepeup.weights.push_back({erow[9 + w], wi});
             }
         }
         ++m_next_index; m_failed = false;
@@ -156,24 +156,40 @@ public:
     void close() { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
 
 private:
+    /** @brief Reader failure state. */
     bool m_failed = false;
+    /** @brief Open HDF5 input file. */
     std::unique_ptr<HighFive::File> m_file;
+    /** @brief Event records dataset. */
     std::unique_ptr<HighFive::DataSet> m_events_ds;
+    /** @brief Particle records dataset. */
     std::unique_ptr<HighFive::DataSet> m_particles_ds;
 
+    /** @brief Index of the next event to read. */
     std::size_t m_next_index = 0;
+    /** @brief Total number of input events. */
     std::size_t m_event_count = 0;
+    /** @brief Number of weights in each event row. */
     std::size_t m_nweights = 0;
+    /** @brief Names of the event weights. */
     std::vector<std::string> m_weight_names;
 
+    /** @brief Process information stored in the procInfo dataset. */
     struct ProcData {
+        /** @brief Process identifier. */
         int procId;
+        /** @brief Number of leading-order partons. */
         int npLO;
+        /** @brief Number of next-to-leading-order partons. */
         int npNLO;
+        /** @brief Process cross section. */
         double xSection;
+        /** @brief Cross-section uncertainty. */
         double error;
+        /** @brief Unit event weight. */
         double unitWeight;
     };
+    /** @brief Process information read from the file. */
     std::vector<ProcData> m_proc_info;
 };
 
@@ -186,16 +202,24 @@ private:
  */
 class Writer {
 public:
+    /** @brief Run-level LHEF information to write. */
     LHEF::HEPRUP m_heprup;
+    /** @brief Event to write. */
     LHEF::HEPEUP m_hepeup;
 
+    /** @brief Create a writer for an LHEF-HDF5 file. */
     Writer(const std::string &filename): m_filename(filename) {}
+    /** @brief Create a writer with run-level LHEF information. */
     Writer(const std::string &filename, const LHEF::HEPRUP &heprup_in): m_heprup(heprup_in), m_filename(filename) {}
+    /** @brief Close the writer. */
     ~Writer() = default;
 
+    /** @brief Create output datasets. */
     void init() { initFile(); }
+    /** @brief Alias for init. */
     void writeinit() { init(); }
 
+    /** @brief Write the current event. */
     void writeEvent() {
         if (!m_initialized) initFile();
         if (m_failed) return;
@@ -216,13 +240,18 @@ public:
         ++m_event_offset;
         if (!prows.empty()) { m_particles_ds->resize({m_particles_offset + prows.size(), 13}); m_particles_ds->select({static_cast<size_t>(m_particles_offset), 0}, {prows.size(), 13}).write(prows); m_particles_offset += prows.size(); }
     }
+    /** @brief Write a supplied event. */
     void writeEvent(const LHEF::HEPEUP &hepe) { m_hepeup = hepe; writeEvent(); }
+    /** @brief Alias for writeEvent. */
     void write_event(const LHEF::HEPEUP &hepe) { writeEvent(hepe); }
 
+    /** @brief Return writer failure state. */
     bool failed() const { return m_failed; }
+    /** @brief Release output resources. */
     void close() { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
 
 private:
+    /** @brief Create and initialize all output datasets. */
     void initFile() {
         if (m_initialized) return;
         m_file.reset(new HighFive::File(m_filename, HighFive::File::Overwrite));
@@ -251,22 +280,38 @@ private:
         m_initialized = true;
     }
 
+    /** @brief Writer failure state. */
     bool m_failed = false;
+    /** @brief Whether output datasets have been created. */
     bool m_initialized = false;
+    /** @brief Output file name. */
     std::string m_filename;
+    /** @brief Open HDF5 output file. */
     std::unique_ptr<HighFive::File> m_file;
+    /** @brief Event records dataset. */
     std::unique_ptr<HighFive::DataSet> m_events_ds;
+    /** @brief Particle records dataset. */
     std::unique_ptr<HighFive::DataSet> m_particles_ds;
+    /** @brief Offset of the next event record. */
     uint64_t m_event_offset = 0;
+    /** @brief Offset of the next particle record. */
     uint64_t m_particles_offset = 0;
+    /** @brief Number of weights in each event row. */
     std::size_t m_nweights = 1;
 
+    /** @brief Process information written to the procInfo dataset. */
     struct ProcData {
+        /** @brief Process identifier. */
         int procId;
+        /** @brief Number of leading-order partons. */
         int npLO;
+        /** @brief Number of next-to-leading-order partons. */
         int npNLO;
+        /** @brief Process cross section. */
         double xSection;
+        /** @brief Cross-section uncertainty. */
         double error;
+        /** @brief Unit event weight. */
         double unitWeight;
     };
 };
