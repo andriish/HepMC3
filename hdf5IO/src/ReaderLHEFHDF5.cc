@@ -99,7 +99,7 @@ bool ReaderLHEFHDF5::read_event(GenEvent &event) {
     for (std::map<std::pair<int, int>, GenVertexPtr>::iterator iterator = vertices.begin(); iterator != vertices.end(); ++iterator)
         if (!iterator->second->particles_in().empty() && !iterator->second->particles_out().empty()) event.add_vertex(iterator->second);
 
-    const int beam_ids[] = {heprup.IDBMUP.first, heprup.IDBMUP.second};
+    const long beam_ids[] = {heprup.IDBMUP.first, heprup.IDBMUP.second};
     const double beam_energies[] = {heprup.EBMUP.first, heprup.EBMUP.second};
     std::size_t incoming_index = 0;
     for (int beam_index = 0; beam_index < 2; ++beam_index) {
