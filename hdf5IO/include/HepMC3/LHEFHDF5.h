@@ -27,9 +27,9 @@ namespace LHEFHDF5 {
 class Reader {
 public:
     /** @brief Run-level LHEF information. */
-    LHEF::HEPRUP heprup;
+    LHEF::HEPRUP m_heprup;
     /** @brief Most recently read LHEF event. */
-    LHEF::HEPEUP hepeup;
+    LHEF::HEPEUP m_hepeup;
 
     /** @brief Open an LHEF-HDF5 input file. */
     Reader(const std::string &filename)
@@ -79,21 +79,21 @@ public:
                 }
             }
         }
-        heprup.IDBMUP = {beamA, beamB}; heprup.EBMUP = {energyA, energyB};
-        heprup.PDFGUP = {pdfG1, pdfG2}; heprup.PDFSUP = {pdfS1, pdfS2};
-        heprup.IDWTUP = weight_strat; heprup.NPRUP = static_cast<int>(m_proc_info.size());
-        heprup.resize();
+        m_heprup.IDBMUP = {beamA, beamB}; m_heprup.EBMUP = {energyA, energyB};
+        m_heprup.PDFGUP = {pdfG1, pdfG2}; m_heprup.PDFSUP = {pdfS1, pdfS2};
+        m_heprup.IDWTUP = weight_strat; m_heprup.NPRUP = static_cast<int>(m_proc_info.size());
+        m_heprup.resize();
         for (std::size_t i = 0; i < m_proc_info.size(); ++i) {
-            heprup.LPRUP[i] = m_proc_info[i].procId; heprup.XSECUP[i] = m_proc_info[i].xSection;
-            heprup.XERRUP[i] = m_proc_info[i].error; heprup.XMAXUP[i] = m_proc_info[i].unitWeight;
+            m_heprup.LPRUP[i] = m_proc_info[i].procId; m_heprup.XSECUP[i] = m_proc_info[i].xSection;
+            m_heprup.XERRUP[i] = m_proc_info[i].error; m_heprup.XMAXUP[i] = m_proc_info[i].unitWeight;
         }
-        heprup.weightinfo.clear();
+        m_heprup.weightinfo.clear();
         for (const auto &wname : m_weight_names) {
             LHEF::WeightInfo wi;
             wi.name = wname;
-            heprup.weightinfo.push_back(wi);
+            m_heprup.weightinfo.push_back(wi);
         }
-        hepeup.heprup = &heprup;
+        m_hepeup.heprup = &m_heprup;
     }
     /** @brief Close the reader. */
     ~Reader() = default;
@@ -105,7 +105,7 @@ public:
         m_events_ds->select({m_next_index, 0}, {1, 9 + m_nweights}).read(erows);
         if (erows.empty() || erows[0].size() < 9) { m_failed = true; return false; }
         const auto &erow = erows[0];
-        hepeup.heprup = &heprup; hepeup.IDPRUP = static_cast<long>(erow[0]);
+        m_hepeup.heprup = &m_heprup; m_hepeup.IDPRUP = static_cast<long>(erow[0]);
         hepeup.NUP = static_cast<int>(erow[1]); uint64_t start = static_cast<uint64_t>(erow[2]);
         hepeup.ntries = static_cast<int>(erow[3]); hepeup.SCALUP = erow[4];
         hepeup.AQEDUP = erow[7]; hepeup.AQCDUP = erow[8];
@@ -134,12 +134,12 @@ public:
         return true;
     }
     /** @brief Read the next event into a caller-supplied object. */
-    bool readEvent(LHEF::HEPEUP &hepe) { if (!readEvent()) return false; hepe = hepeup; return true; }
+    bool readEvent(LHEF::HEPEUP &hepe) { if (!readEvent()) return false; hepe = m_hepeup; return true; }
     /** @brief Alias for readEvent. */
     bool read_event(LHEF::HEPEUP &hepe) { return readEvent(hepe); }
 
     /** @brief Return run-level LHEF information. */
-    const LHEF::HEPRUP &get_heprup() const { return heprup; }
+    const LHEF::HEPRUP &get_heprup() const { return m_heprup; }
 
     /** @brief Skip input events. */
     bool skip(const int n) {
@@ -186,11 +186,11 @@ private:
  */
 class Writer {
 public:
-    LHEF::HEPRUP heprup;
-    LHEF::HEPEUP hepeup;
+    LHEF::HEPRUP m_heprup;
+    LHEF::HEPEUP m_hepeup;
 
     Writer(const std::string &filename): m_filename(filename) {}
-    Writer(const std::string &filename, const LHEF::HEPRUP &heprup_in): heprup(heprup_in), m_filename(filename) {}
+    Writer(const std::string &filename, const LHEF::HEPRUP &heprup_in): m_heprup(heprup_in), m_filename(filename) {}
     ~Writer() = default;
 
     void init() { initFile(); }
@@ -200,23 +200,23 @@ public:
         if (!m_initialized) initFile();
         if (m_failed) return;
         std::vector<std::vector<double> > prows;
-        prows.reserve(hepeup.NUP);
-        for (int i = 0; i < hepeup.NUP; ++i) {
-            const std::vector<double> &p = hepeup.PUP[i];
-            prows.push_back({static_cast<double>(hepeup.IDUP[i]), static_cast<double>(hepeup.ISTUP[i]), static_cast<double>(hepeup.MOTHUP[i].first), static_cast<double>(hepeup.MOTHUP[i].second), static_cast<double>(hepeup.ICOLUP[i].first), static_cast<double>(hepeup.ICOLUP[i].second), p.size() > 0 ? p[0] : 0.0, p.size() > 1 ? p[1] : 0.0, p.size() > 2 ? p[2] : 0.0, p.size() > 3 ? p[3] : 0.0, p.size() > 4 ? p[4] : 0.0, static_cast<size_t>(i) < hepeup.VTIMUP.size() ? hepeup.VTIMUP[i] : 0.0, static_cast<size_t>(i) < hepeup.SPINUP.size() ? hepeup.SPINUP[i] : 0.0});
+        prows.reserve(m_hepeup.NUP);
+        for (int i = 0; i < m_hepeup.NUP; ++i) {
+            const std::vector<double> &p = m_hepeup.PUP[i];
+            prows.push_back({static_cast<double>(m_hepeup.IDUP[i]), static_cast<double>(m_hepeup.ISTUP[i]), static_cast<double>(m_hepeup.MOTHUP[i].first), static_cast<double>(m_hepeup.MOTHUP[i].second), static_cast<double>(m_hepeup.ICOLUP[i].first), static_cast<double>(m_hepeup.ICOLUP[i].second), p.size() > 0 ? p[0] : 0.0, p.size() > 1 ? p[1] : 0.0, p.size() > 2 ? p[2] : 0.0, p.size() > 3 ? p[3] : 0.0, p.size() > 4 ? p[4] : 0.0, static_cast<size_t>(i) < m_hepeup.VTIMUP.size() ? m_hepeup.VTIMUP[i] : 0.0, static_cast<size_t>(i) < m_hepeup.SPINUP.size() ? m_hepeup.SPINUP[i] : 0.0});
         }
         std::vector<double> weights;
-        if (!hepeup.weights.empty()) for (const auto &weight : hepeup.weights) weights.push_back(weight.first);
-        else weights.push_back(hepeup.XWGTUP);
+        if (!m_hepeup.weights.empty()) for (const auto &weight : m_hepeup.weights) weights.push_back(weight.first);
+        else weights.push_back(m_hepeup.XWGTUP);
         weights.resize(m_nweights, 0.0);
-        std::vector<double> erow = {static_cast<double>(hepeup.IDPRUP), static_cast<double>(hepeup.NUP), static_cast<double>(m_particles_offset), static_cast<double>(hepeup.ntries), hepeup.SCALUP, hepeup.SCALUP, hepeup.SCALUP, hepeup.AQEDUP, hepeup.AQCDUP};
+        std::vector<double> erow = {static_cast<double>(m_hepeup.IDPRUP), static_cast<double>(m_hepeup.NUP), static_cast<double>(m_particles_offset), static_cast<double>(m_hepeup.ntries), m_hepeup.SCALUP, m_hepeup.SCALUP, m_hepeup.SCALUP, m_hepeup.AQEDUP, m_hepeup.AQCDUP};
         erow.insert(erow.end(), weights.begin(), weights.end());
         m_events_ds->resize({m_event_offset + 1, 9 + m_nweights});
         m_events_ds->select({static_cast<size_t>(m_event_offset), 0}, {1, 9 + m_nweights}).write(std::vector<std::vector<double> >{erow});
         ++m_event_offset;
         if (!prows.empty()) { m_particles_ds->resize({m_particles_offset + prows.size(), 13}); m_particles_ds->select({static_cast<size_t>(m_particles_offset), 0}, {prows.size(), 13}).write(prows); m_particles_offset += prows.size(); }
     }
-    void writeEvent(const LHEF::HEPEUP &hepe) { hepeup = hepe; writeEvent(); }
+    void writeEvent(const LHEF::HEPEUP &hepe) { m_hepeup = hepe; writeEvent(); }
     void write_event(const LHEF::HEPEUP &hepe) { writeEvent(hepe); }
 
     bool failed() const { return m_failed; }
@@ -229,13 +229,13 @@ private:
         std::vector<int> version_no = {2, 0, 1};
         m_file->createDataSet<int>("version", HighFive::DataSpace::From(version_no)).write(version_no);
         std::vector<ProcData> procs;
-        for (int i = 0; i < heprup.NPRUP; ++i) procs.push_back({i < static_cast<int>(heprup.LPRUP.size()) ? heprup.LPRUP[i] : i + 1, -1, -1, i < static_cast<int>(heprup.XSECUP.size()) ? heprup.XSECUP[i] : 0.0, i < static_cast<int>(heprup.XERRUP.size()) ? heprup.XERRUP[i] : 0.0, i < static_cast<int>(heprup.XMAXUP.size()) ? heprup.XMAXUP[i] : 1.0});
+        for (int i = 0; i < m_heprup.NPRUP; ++i) procs.push_back({i < static_cast<int>(m_heprup.LPRUP.size()) ? m_heprup.LPRUP[i] : i + 1, -1, -1, i < static_cast<int>(m_heprup.XSECUP.size()) ? m_heprup.XSECUP[i] : 0.0, i < static_cast<int>(m_heprup.XERRUP.size()) ? m_heprup.XERRUP[i] : 0.0, i < static_cast<int>(m_heprup.XMAXUP.size()) ? m_heprup.XMAXUP[i] : 1.0});
         if (procs.empty()) procs.push_back({1, -1, -1, 0.0, 0.0, 1.0});
         std::vector<std::string> weight_names;
-        for (std::size_t i = 0; i < heprup.weightinfo.size(); ++i) { std::string name = heprup.weightNameHepMC(i); weight_names.push_back(name.empty() ? heprup.weightinfo[i].name : name); }
+        for (std::size_t i = 0; i < m_heprup.weightinfo.size(); ++i) { std::string name = m_heprup.weightNameHepMC(i); weight_names.push_back(name.empty() ? m_heprup.weightinfo[i].name : name); }
         if (weight_names.empty()) weight_names.push_back("NOMINAL");
         m_nweights = weight_names.size();
-        std::vector<double> idata = {static_cast<double>(heprup.IDBMUP.first), static_cast<double>(heprup.IDBMUP.second), heprup.EBMUP.first, heprup.EBMUP.second, static_cast<double>(heprup.PDFGUP.first), static_cast<double>(heprup.PDFGUP.second), static_cast<double>(heprup.PDFSUP.first), static_cast<double>(heprup.PDFSUP.second), static_cast<double>(heprup.IDWTUP), static_cast<double>(procs.size())};
+        std::vector<double> idata = {static_cast<double>(m_heprup.IDBMUP.first), static_cast<double>(m_heprup.IDBMUP.second), m_heprup.EBMUP.first, m_heprup.EBMUP.second, static_cast<double>(m_heprup.PDFGUP.first), static_cast<double>(m_heprup.PDFGUP.second), static_cast<double>(m_heprup.PDFSUP.first), static_cast<double>(m_heprup.PDFSUP.second), static_cast<double>(m_heprup.IDWTUP), static_cast<double>(procs.size())};
         HighFive::DataSet init_ds = m_file->createDataSet<double>("init", HighFive::DataSpace::From(idata)); init_ds.write(idata);
         std::vector<std::string> inames = {"beamA", "beamB", "energyA", "energyB", "PDFgroupA", "PDFgroupB", "PDFsetA", "PDFsetB", "weightingStrategy", "numProcesses"}; init_ds.createAttribute<std::string>("properties", HighFive::DataSpace::From(inames)).write(inames);
         std::vector<std::vector<double> > pdata;

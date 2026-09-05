@@ -33,7 +33,7 @@ ReaderLHEFHDF5::~ReaderLHEFHDF5() {
 
 void ReaderLHEFHDF5::init() {
     std::shared_ptr<HEPRUPAttribute> hepr(new HEPRUPAttribute());
-    hepr->heprup = m_reader->heprup;
+    hepr->heprup = m_reader->m_heprup;
 
     set_run_info(std::make_shared<GenRunInfo>());
     run_info()->add_attribute("HEPRUP", hepr);
@@ -60,8 +60,8 @@ void ReaderLHEFHDF5::init() {
 bool ReaderLHEFHDF5::read_event(GenEvent &event) {
     if (!m_reader->readEvent()) return false;
 
-    const LHEF::HEPEUP &hepeup = m_reader->hepeup;
-    const LHEF::HEPRUP &heprup = m_reader->heprup;
+    const LHEF::HEPEUP &hepeup = m_reader->m_hepeup;
+    const LHEF::HEPRUP &heprup = m_reader->m_heprup;
     event.clear();
     event.set_run_info(run_info());
     event.set_event_number(m_neve++);

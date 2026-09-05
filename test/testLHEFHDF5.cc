@@ -7,8 +7,6 @@
 #include "HepMC3/LHEF.h"
 #include "HepMC3/LHEFHDF5.h"
 
-using namespace HepMC3;
-
 static LHEF::HEPRUP createSampleHEPRUP() {
     LHEF::HEPRUP heprup;
     heprup.IDBMUP = {2212, 2212};
@@ -69,7 +67,7 @@ int main() {
     writer.init();
 
     for (int i = 0; i < 5; ++i) {
-        writer.hepeup = createSampleLHEEvent(heprup, i + 1);
+        writer.m_hepeup = createSampleLHEEvent(heprup, i + 1);
         writer.writeEvent();
         if (writer.failed()) {
             std::cerr << "Failed to write LHE HDF5 event " << i << "\n";
@@ -84,19 +82,19 @@ int main() {
         return 1;
     }
 
-    std::cout << "HEPRUP NPRUP = " << reader.heprup.NPRUP << "\n";
-    std::cout << "HEPRUP EBMUP = " << reader.heprup.EBMUP.first << ", " << reader.heprup.EBMUP.second << "\n";
+    std::cout << "HEPRUP NPRUP = " << reader.m_heprup.NPRUP << "\n";
+    std::cout << "HEPRUP EBMUP = " << reader.m_heprup.EBMUP.first << ", " << reader.m_heprup.EBMUP.second << "\n";
 
     int count = 0;
     while (reader.readEvent()) {
-        std::cout << "Read event IDPRUP = " << reader.hepeup.IDPRUP
-                  << ", NUP = " << reader.hepeup.NUP
-                  << ", XWGTUP = " << reader.hepeup.XWGTUP << "\n";
-        for (int p = 0; p < reader.hepeup.NUP; ++p) {
-            std::cout << "  Particle " << p << ": ID=" << reader.hepeup.IDUP[p]
-                      << " ST=" << reader.hepeup.ISTUP[p]
-                      << " P=(" << reader.hepeup.PUP[p][0] << ", " << reader.hepeup.PUP[p][1]
-                      << ", " << reader.hepeup.PUP[p][2] << ", " << reader.hepeup.PUP[p][3] << ")\n";
+        std::cout << "Read event IDPRUP = " << reader.m_hepeup.IDPRUP
+                  << ", NUP = " << reader.m_hepeup.NUP
+                  << ", XWGTUP = " << reader.m_hepeup.XWGTUP << "\n";
+        for (int p = 0; p < reader.m_hepeup.NUP; ++p) {
+            std::cout << "  Particle " << p << ": ID=" << reader.m_hepeup.IDUP[p]
+                      << " ST=" << reader.m_hepeup.ISTUP[p]
+                      << " P=(" << reader.m_hepeup.PUP[p][0] << ", " << reader.m_hepeup.PUP[p][1]
+                      << ", " << reader.m_hepeup.PUP[p][2] << ", " << reader.m_hepeup.PUP[p][3] << ")\n";
         }
         count++;
     }
