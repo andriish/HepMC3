@@ -47,7 +47,7 @@ def create_lhe_event(event_number):
 
 def test_LHEFHDF5():
     heprup, _ = create_lhe_event(0)
-    writer = LHEFHDF5.Writer(python_label() + "lhehdf5.h5")
+    writer = LHEFHDF5.WriterHDF5(python_label() + "lhehdf5.h5")
     writer.heprup = heprup
     writer.init()
     for event_number in range(3):
@@ -58,7 +58,7 @@ def test_LHEFHDF5():
         return 1
     writer.close()
 
-    reader = LHEFHDF5.Reader(python_label() + "lhehdf5.h5")
+    reader = LHEFHDF5.ReaderHDF5(python_label() + "lhehdf5.h5")
     for event_number in range(3):
         if not reader.readEvent():
             return 1

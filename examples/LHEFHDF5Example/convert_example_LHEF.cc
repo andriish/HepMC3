@@ -14,25 +14,16 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 
-enum Format { LHEF, LHEFGZ, LHEFLZMA, LHEFBZ2, LHEFZSTD, LHEFHDF5 };
+enum class Format { LHEF, LHEFGZ, LHEFLZMA, LHEFBZ2, LHEFZSTD, LHEFHDF5 };
 
 static void print_usage(const char *program) {
     std::cerr << "Usage: " << program << " -i lhef|lhefgz|lheflzma|lhefbz2|lhefzstd|lhefhdf5 -o lhef|lhefgz|lheflzma|lhefbz2|lhefzstd|lhefhdf5 input output\n";
 }
 
-template <class Reader> static int write_hdf5(Reader &input, const std::string &output_name) {
-    LHEFHDF5::Writer output(output_name, input.heprup);
-    output.init();
-    while (input.readEvent()) output.writeEvent(input.hepeup);
-    const bool failed = output.failed();
-    output.close();
-    return failed ? 1 : 0;
-}
-
-template <class Reader, class Writer> static int write_lhef(Reader &input, const std::string &output_name) {
-    Writer output(output_name);
+static int copy_events(LHEF::ReaderBase &input, LHEF::WriterBase &output) {
     output.heprup = input.heprup;
     output.init();
     while (input.readEvent()) {
@@ -40,26 +31,59 @@ template <class Reader, class Writer> static int write_lhef(Reader &input, const
         output.hepeup.heprup = &output.heprup;
         output.writeEvent();
     }
+    const bool failed = output.failed();
     output.close();
-    return 0;
-}
-
-#if HEPMC3_USE_COMPRESSION
-template <HepMC3::Compression C> static int write_compressed_lhef(LHEFHDF5::Reader &input, const std::string &output_name) {
-    return write_lhef<LHEFHDF5::Reader, LHEFGZ::Writer<C> >(input, output_name);
-}
-
-static int read_compressed_lhef(const std::string &input_name, const std::string &output_name) {
-    LHEFGZ::Reader<> input(input_name);
-    if (input.failed()) {
-        std::cerr << "Failed to read " << input_name << "\n";
-        return 1;
-    }
-    const int result = write_hdf5(input, output_name);
     input.close();
-    return result;
+    return failed ? 1 : 0;
 }
+
+static std::unique_ptr<LHEF::ReaderBase> create_reader(Format format, const std::string &filename) {
+    if (format == Format::LHEF) {
+        return std::unique_ptr<LHEF::ReaderBase>(new LHEF::Reader(filename));
+    }
+    if (format == Format::LHEFHDF5) {
+        return std::unique_ptr<LHEF::ReaderBase>(new LHEF::ReaderHDF5(filename));
+    }
+#if HEPMC3_USE_COMPRESSION
+    if (format == Format::LHEFGZ || format == Format::LHEFLZMA ||
+        format == Format::LHEFBZ2 || format == Format::LHEFZSTD) {
+        return std::unique_ptr<LHEF::ReaderBase>(new LHEF::ReaderGZ<>(filename));
+    }
 #endif
+    return nullptr;
+}
+
+static std::unique_ptr<LHEF::WriterBase> create_writer(Format format, const std::string &filename) {
+    if (format == Format::LHEF) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::Writer(filename));
+    }
+    if (format == Format::LHEFHDF5) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::WriterHDF5(filename));
+    }
+#if HEPMC3_USE_COMPRESSION
+#if HEPMC3_Z_SUPPORT
+    if (format == Format::LHEFGZ) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::z>(filename));
+    }
+#endif
+#if HEPMC3_LZMA_SUPPORT
+    if (format == Format::LHEFLZMA) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::lzma>(filename));
+    }
+#endif
+#if HEPMC3_BZ2_SUPPORT
+    if (format == Format::LHEFBZ2) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::bz2>(filename));
+    }
+#endif
+#if HEPMC3_ZSTD_SUPPORT
+    if (format == Format::LHEFZSTD) {
+        return std::unique_ptr<LHEF::WriterBase>(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::zstd>(filename));
+    }
+#endif
+#endif
+    return nullptr;
+}
 
 int main(int argc, char **argv) {
     if (argc != 7 || std::string(argv[1]) != "-i" || std::string(argv[3]) != "-o") {
@@ -68,12 +92,12 @@ int main(int argc, char **argv) {
     }
 
     const std::map<std::string, Format> formats = {
-        {"lhef", LHEF},
-        {"lhefgz", LHEFGZ},
-        {"lheflzma", LHEFLZMA},
-        {"lhefbz2", LHEFBZ2},
-        {"lhefzstd", LHEFZSTD},
-        {"lhefhdf5", LHEFHDF5}
+        {"lhef", Format::LHEF},
+        {"lhefgz", Format::LHEFGZ},
+        {"lheflzma", Format::LHEFLZMA},
+        {"lhefbz2", Format::LHEFBZ2},
+        {"lhefzstd", Format::LHEFZSTD},
+        {"lhefhdf5", Format::LHEFHDF5}
     };
     const std::map<std::string, Format>::const_iterator input_format = formats.find(argv[2]);
     const std::map<std::string, Format>::const_iterator output_format = formats.find(argv[4]);
@@ -88,75 +112,18 @@ int main(int argc, char **argv) {
 
     const std::string input_name = argv[5];
     const std::string output_name = argv[6];
-    if (input_format->second == LHEF && output_format->second == LHEFHDF5) {
-        LHEF::Reader input(input_name);
-        return write_hdf5(input, output_name);
-    }
 
-    if (input_format->second == LHEFHDF5 && output_format->second == LHEF) {
-        LHEFHDF5::Reader input(input_name);
-        if (input.failed()) {
-            std::cerr << "Failed to read " << input_name << "\n";
-            return 1;
-        }
-        const int result = write_lhef<LHEFHDF5::Reader, LHEF::Writer>(input, output_name);
-        input.close();
-        return result;
-    }
-
-#if HEPMC3_USE_COMPRESSION
-    if ((input_format->second == LHEFGZ || input_format->second == LHEFLZMA ||
-         input_format->second == LHEFBZ2 || input_format->second == LHEFZSTD) &&
-        output_format->second == LHEFHDF5) {
-        return read_compressed_lhef(input_name, output_name);
-    }
-
-#if HEPMC3_Z_SUPPORT
-    if (input_format->second == LHEFHDF5 && output_format->second == LHEFGZ) {
-        LHEFHDF5::Reader input(input_name);
-        if (input.failed()) {
-            std::cerr << "Failed to read " << input_name << "\n";
-            return 1;
-        }
-        const int result = write_compressed_lhef<HepMC3::Compression::z>(input, output_name);
-        input.close();
-        return result;
-    }
-#endif
-#if HEPMC3_LZMA_SUPPORT
-    if (input_format->second == LHEFHDF5 && output_format->second == LHEFLZMA) {
-        LHEFHDF5::Reader input(input_name);
-        if (input.failed()) return 1;
-        const int result = write_compressed_lhef<HepMC3::Compression::lzma>(input, output_name);
-        input.close();
-        return result;
-    }
-#endif
-#if HEPMC3_BZ2_SUPPORT
-    if (input_format->second == LHEFHDF5 && output_format->second == LHEFBZ2) {
-        LHEFHDF5::Reader input(input_name);
-        if (input.failed()) return 1;
-        const int result = write_compressed_lhef<HepMC3::Compression::bz2>(input, output_name);
-        input.close();
-        return result;
-    }
-#endif
-#if HEPMC3_ZSTD_SUPPORT
-    if (input_format->second == LHEFHDF5 && output_format->second == LHEFZSTD) {
-        LHEFHDF5::Reader input(input_name);
-        if (input.failed()) return 1;
-        const int result = write_compressed_lhef<HepMC3::Compression::zstd>(input, output_name);
-        input.close();
-        return result;
-    }
-#endif
-#else
-    if (input_format->second == LHEFGZ || input_format->second == LHEFLZMA || input_format->second == LHEFBZ2 || input_format->second == LHEFZSTD || output_format->second == LHEFGZ || output_format->second == LHEFLZMA || output_format->second == LHEFBZ2 || output_format->second == LHEFZSTD) {
-        std::cerr << "Compressed LHEF support requires a configured compression library\n";
+    std::unique_ptr<LHEF::ReaderBase> input = create_reader(input_format->second, input_name);
+    if (!input || input->failed()) {
+        std::cerr << "Failed to read input file " << input_name << "\n";
         return 1;
     }
-#endif
 
-    std::cerr << "The selected format conversion is not supported\n";
-    return 1;
+    std::unique_ptr<LHEF::WriterBase> output = create_writer(output_format->second, output_name);
+    if (!output) {
+        std::cerr << "The selected output format is not supported or not enabled\n";
+        return 1;
+    }
+
+    return copy_events(*input, *output);
 }

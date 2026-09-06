@@ -18,21 +18,17 @@
 #include <utility>
 #include <vector>
 
-namespace LHEFHDF5 {
+namespace LHEF {
 
 /**
- *  @class LHEFHDF5::Reader
+ *  @class LHEF::ReaderHDF5
  *  @brief Reads LHE events from HDF5 format files created by SHERPA Output_HDF5
  */
-class Reader {
+class ReaderHDF5 : public ReaderBase {
 public:
-    /** @brief Run-level LHEF information. */
-    LHEF::HEPRUP heprup;
-    /** @brief Most recently read LHEF event. */
-    LHEF::HEPEUP hepeup;
 
     /** @brief Open an LHEF-HDF5 input file. */
-    Reader(const std::string &filename)
+    ReaderHDF5(const std::string &filename)
         : m_failed(false), m_next_index(0), m_event_count(0), m_nweights(0) {
         m_file.reset(new HighFive::File(filename, HighFive::File::ReadOnly));
         if (!m_file->exist("events") || !m_file->exist("particles")) {
@@ -96,10 +92,10 @@ public:
         hepeup.heprup = &heprup;
     }
     /** @brief Close the reader. */
-    ~Reader() = default;
+    ~ReaderHDF5() override = default;
 
     /** @brief Read the next LHEF event. */
-    bool readEvent() {
+    bool readEvent() override {
         if (m_failed || m_next_index >= m_event_count) { m_failed = true; return false; }
         std::vector<std::vector<double>> erows;
         m_events_ds->select(std::vector<size_t>{m_next_index, 0}, std::vector<size_t>{1, 9 + m_nweights}).read(erows);
@@ -134,7 +130,7 @@ public:
         return true;
     }
     /** @brief Read the next event into a caller-supplied object. */
-    bool readEvent(LHEF::HEPEUP &hepe) { if (!readEvent()) return false; hepe = hepeup; return true; }
+    bool readEvent(LHEF::HEPEUP &hepe) override { if (!readEvent()) return false; hepe = hepeup; return true; }
     /** @brief Alias for readEvent. */
     bool read_event(LHEF::HEPEUP &hepe) { return readEvent(hepe); }
 
@@ -142,7 +138,7 @@ public:
     const LHEF::HEPRUP &get_heprup() const { return heprup; }
 
     /** @brief Skip input events. */
-    bool skip(const int n) {
+    bool skip(const int n) override {
         if (n < 0 || m_failed) return false;
         if (m_next_index >= m_event_count) { m_failed = true; return false; }
         std::size_t remaining = m_event_count - m_next_index;
@@ -151,9 +147,9 @@ public:
         return true;
     }
     /** @brief Return reader failure state. */
-    bool failed() const { return m_failed; }
+    bool failed() const override { return m_failed; }
     /** @brief Release HDF5 resources. */
-    void close() { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
+    void close() override { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
 
 private:
     /** @brief Reader failure state. */
@@ -197,30 +193,23 @@ private:
 
 
 /**
- *  @class LHEFHDF5::Writer
+ *  @class LHEF::WriterHDF5
  *  @brief Writes LHE events into HDF5 format files compatible with SHERPA Output_HDF5
  */
-class Writer {
+class WriterHDF5 : public WriterBase {
 public:
-    /** @brief Run-level LHEF information to write. */
-    LHEF::HEPRUP heprup;
-    /** @brief Event to write. */
-    LHEF::HEPEUP hepeup;
-
     /** @brief Create a writer for an LHEF-HDF5 file. */
-    Writer(const std::string &filename): m_filename(filename) {}
+    WriterHDF5(const std::string &filename): m_filename(filename) {}
     /** @brief Create a writer with run-level LHEF information. */
-    Writer(const std::string &filename, const LHEF::HEPRUP &heprup_in): heprup(heprup_in), m_filename(filename) {}
+    WriterHDF5(const std::string &filename, const HEPRUP &heprup_in): m_filename(filename) { heprup = heprup_in; }
     /** @brief Close the writer. */
-    ~Writer() = default;
+    ~WriterHDF5() override = default;
 
     /** @brief Create output datasets. */
-    void init() { initFile(); }
-    /** @brief Alias for init. */
-    void writeinit() { init(); }
+    void init() override { initFile(); }
 
     /** @brief Write the current event. */
-    void writeEvent() {
+    void writeEvent() override {
         if (!m_initialized) initFile();
         if (m_failed) return;
         std::vector<std::vector<double> > prows;
@@ -241,14 +230,12 @@ public:
         if (!prows.empty()) { m_particles_ds->resize({m_particles_offset + prows.size(), 13}); m_particles_ds->select({static_cast<size_t>(m_particles_offset), 0}, {prows.size(), 13}).write(prows); m_particles_offset += prows.size(); }
     }
     /** @brief Write a supplied event. */
-    void writeEvent(const LHEF::HEPEUP &hepe) { hepeup = hepe; writeEvent(); }
-    /** @brief Alias for writeEvent. */
-    void write_event(const LHEF::HEPEUP &hepe) { writeEvent(hepe); }
+    void writeEvent(const LHEF::HEPEUP &hepe) override { hepeup = hepe; writeEvent(); }
 
     /** @brief Return writer failure state. */
-    bool failed() const { return m_failed; }
+    bool failed() const override { return m_failed; }
     /** @brief Release output resources. */
-    void close() { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
+    void close() override { m_events_ds.reset(); m_particles_ds.reset(); m_file.reset(); }
 
 private:
     /** @brief Create and initialize all output datasets. */
@@ -317,6 +304,6 @@ private:
 };
 
 
-} // namespace LHEFHDF5
+} // namespace LHEF
 
 #endif

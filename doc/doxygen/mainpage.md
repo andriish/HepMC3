@@ -23,8 +23,8 @@ Further documentation that might be useful for the users of HepMC3 can be found 
 
 When built with `HEPMC3_ENABLE_HDF5IO=ON`, HepMC3 provides readers and
 writers for Les Houches Event data stored in HDF5 files. The
-`HepMC3/LHEFHDF5.h` header defines `LHEFHDF5::Reader` and
-`LHEFHDF5::Writer`, which expose the familiar `LHEF::HEPRUP` and
+`HepMC3/LHEFHDF5.h` header defines `LHEF::ReaderHDF5` and
+`LHEF::WriterHDF5`, which expose the familiar `LHEF::HEPRUP` and
 `LHEF::HEPEUP` run and event objects. `HepMC3/ReaderLHEFHDF5.h` provides
 `HepMC3::ReaderLHEFHDF5` to convert LHEF-HDF5 input directly to
 `HepMC3::GenEvent` objects.

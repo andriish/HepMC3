@@ -5,27 +5,27 @@ namespace binder {
 
        void LHEFHDF5_binder(pybind11::module &M)
        {
-              pybind11::class_<LHEFHDF5::Reader, std::shared_ptr<LHEFHDF5::Reader>> reader(M, "Reader", "Read LHEF-HDF5 event files.");
+              pybind11::class_<LHEF::ReaderHDF5, std::shared_ptr<LHEF::ReaderHDF5>> reader(M, "ReaderHDF5", "Read LHEF-HDF5 event files.");
               reader.def(pybind11::init<const std::string &>(), pybind11::arg("filename"));
-              reader.def_readwrite("heprup", &LHEFHDF5::Reader::heprup);
-              reader.def_readwrite("hepeup", &LHEFHDF5::Reader::hepeup);
-              reader.def("readEvent", (bool (LHEFHDF5::Reader::*)()) &LHEFHDF5::Reader::readEvent, "Read the next LHE event.");
-              reader.def("read_event", (bool (LHEFHDF5::Reader::*)(LHEF::HEPEUP &)) &LHEFHDF5::Reader::read_event, pybind11::arg("event"), "Read the next LHE event into event.");
-              reader.def("skip", &LHEFHDF5::Reader::skip, pybind11::arg("count"));
-              reader.def("failed", &LHEFHDF5::Reader::failed);
-              reader.def("close", &LHEFHDF5::Reader::close);
+              reader.def_readwrite("heprup", &LHEF::ReaderHDF5::heprup);
+              reader.def_readwrite("hepeup", &LHEF::ReaderHDF5::hepeup);
+              reader.def("readEvent", (bool (LHEF::ReaderHDF5::*)()) &LHEF::ReaderHDF5::readEvent, "Read the next LHE event.");
+              reader.def("read_event", (bool (LHEF::ReaderHDF5::*)(LHEF::HEPEUP &)) &LHEF::ReaderHDF5::read_event, pybind11::arg("event"), "Read the next LHE event into event.");
+              reader.def("skip", &LHEF::ReaderHDF5::skip, pybind11::arg("count"));
+              reader.def("failed", &LHEF::ReaderHDF5::failed);
+              reader.def("close", &LHEF::ReaderHDF5::close);
 
-              pybind11::class_<LHEFHDF5::Writer, std::shared_ptr<LHEFHDF5::Writer>> writer(M, "Writer", "Write LHEF-HDF5 event files.");
+              pybind11::class_<LHEF::WriterHDF5, std::shared_ptr<LHEF::WriterHDF5>> writer(M, "WriterHDF5", "Write LHEF-HDF5 event files.");
               writer.def(pybind11::init<const std::string &>(), pybind11::arg("filename"));
               writer.def(pybind11::init<const std::string &, const LHEF::HEPRUP &>(), pybind11::arg("filename"), pybind11::arg("heprup"));
-              writer.def_readwrite("heprup", &LHEFHDF5::Writer::heprup);
-              writer.def_readwrite("hepeup", &LHEFHDF5::Writer::hepeup);
-              writer.def("init", &LHEFHDF5::Writer::init);
-              writer.def("writeinit", &LHEFHDF5::Writer::writeinit);
-              writer.def("writeEvent", (void (LHEFHDF5::Writer::*)()) &LHEFHDF5::Writer::writeEvent);
-              writer.def("write_event", (void (LHEFHDF5::Writer::*)(const LHEF::HEPEUP &)) &LHEFHDF5::Writer::write_event, pybind11::arg("event"));
-              writer.def("failed", &LHEFHDF5::Writer::failed);
-              writer.def("close", &LHEFHDF5::Writer::close);
+              writer.def_readwrite("heprup", &LHEF::WriterHDF5::heprup);
+              writer.def_readwrite("hepeup", &LHEF::WriterHDF5::hepeup);
+              writer.def("init", &LHEF::WriterHDF5::init);
+              writer.def("writeinit", &LHEF::WriterHDF5::writeinit);
+              writer.def("writeEvent", (void (LHEF::WriterHDF5::*)()) &LHEF::WriterHDF5::writeEvent);
+              writer.def("write_event", (void (LHEF::WriterHDF5::*)(const LHEF::HEPEUP &)) &LHEF::WriterHDF5::write_event, pybind11::arg("event"));
+              writer.def("failed", &LHEF::WriterHDF5::failed);
+              writer.def("close", &LHEF::WriterHDF5::close);
        }
 
     void WriterHDF5_binder(pybind11::module &M)

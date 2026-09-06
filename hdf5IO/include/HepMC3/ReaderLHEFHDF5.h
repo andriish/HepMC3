@@ -38,7 +38,7 @@ private:
     void init();
 
     /** @brief Underlying LHEF-HDF5 reader. */
-    std::unique_ptr<LHEFHDF5::Reader> m_reader;
+    std::unique_ptr<LHEF::ReaderHDF5> m_reader;
     /** @brief Number assigned to the next output event. */
     int m_neve = 0;
 };

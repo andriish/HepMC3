@@ -63,7 +63,7 @@ static LHEF::HEPEUP createSampleLHEEvent(const LHEF::HEPRUP &heprup, int event_n
 int main() {
     LHEF::HEPRUP heprup = createSampleHEPRUP();
 
-    LHEFHDF5::Writer writer("lhe_event.h5", heprup);
+    LHEF::WriterHDF5 writer("lhe_event.h5", heprup);
     writer.init();
 
     for (int i = 0; i < 5; ++i) {
@@ -76,7 +76,7 @@ int main() {
     }
     writer.close();
 
-    LHEFHDF5::Reader reader("lhe_event.h5");
+    LHEF::ReaderHDF5 reader("lhe_event.h5");
     if (reader.failed()) {
         std::cerr << "Failed to open LHE HDF5 file for reading\n";
         return 1;

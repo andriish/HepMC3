@@ -23,7 +23,7 @@
 namespace HepMC3 {
 
 ReaderLHEFHDF5::ReaderLHEFHDF5(const std::string &filename)
-    : m_reader(new LHEFHDF5::Reader(filename)) {
+    : m_reader(new LHEF::ReaderHDF5(filename)) {
     init();
 }
 
