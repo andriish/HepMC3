@@ -7,13 +7,11 @@
 #include "HepMC3/LHEFGZ.h"
 #include "HepMC3TestUtils.h"
 
-using namespace HepMC3;
-
 int main()
 {
 #if HEPMC3_USE_COMPRESSION
     const std::string input_lhe = "inputIOLHEFGZ.lhe";
-    auto supported = HepMC3::supported_compression_types;
+    auto supported = LHEF::supported_compression_types;
 
     // 1. Test uncompressed round-trip using LHEF::Reader and LHEF::Writer
     {
@@ -39,30 +37,30 @@ int main()
 
     // 2. Test writing compressed LHE files with LHEF::WriterGZ
     for (auto c : supported) {
-        std::string filename = "frominputIOLHEFGZ.lhe." + HepMC3::to_string(c);
+        std::string filename = "frominputIOLHEFGZ.lhe." + LHEF::to_string(c);
         LHEF::Reader reader_in(input_lhe);
         if (reader_in.failed()) return 4;
 
         std::unique_ptr<LHEF::WriterBase> writer;
         switch (c) {
 #if HEPMC3_Z_SUPPORT
-        case Compression::z:
-            writer.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::z>(filename));
+        case LHEF::Compression::z:
+            writer.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::z>(filename));
             break;
 #endif
 #if HEPMC3_LZMA_SUPPORT
-        case Compression::lzma:
-            writer.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::lzma>(filename));
+        case LHEF::Compression::lzma:
+            writer.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::lzma>(filename));
             break;
 #endif
 #if HEPMC3_BZ2_SUPPORT
-        case Compression::bz2:
-            writer.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::bz2>(filename));
+        case LHEF::Compression::bz2:
+            writer.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::bz2>(filename));
             break;
 #endif
 #if HEPMC3_ZSTD_SUPPORT
-        case Compression::zstd:
-            writer.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::zstd>(filename));
+        case LHEF::Compression::zstd:
+            writer.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::zstd>(filename));
             break;
 #endif
         default:
@@ -84,8 +82,8 @@ int main()
 
     // 3. Test reading back compressed LHE files using LHEF::ReaderGZ and writing uncompressed LHE with LHEF::Writer
     for (auto c : supported) {
-        std::string filename = "frominputIOLHEFGZ.lhe." + HepMC3::to_string(c);
-        std::string output_lhe = "fromfrominputIOLHEFGZ_" + HepMC3::to_string(c) + ".lhe";
+        std::string filename = "frominputIOLHEFGZ.lhe." + LHEF::to_string(c);
+        std::string output_lhe = "fromfrominputIOLHEFGZ_" + LHEF::to_string(c) + ".lhe";
 
         LHEF::ReaderGZ<> reader_gz(filename);
         if (reader_gz.failed()) return 7;
@@ -108,9 +106,9 @@ int main()
 
     // 4. Test reading compressed LHE files with LHEF::ReaderGZ and writing compressed LHE with LHEF::WriterGZ (compressed-to-compressed)
     for (auto c : supported) {
-        std::string filename_in = "frominputIOLHEFGZ.lhe." + HepMC3::to_string(c);
-        std::string filename_out = "fromcompressed_IOLHEFGZ.lhe." + HepMC3::to_string(c);
-        std::string output_lhe_decompressed = "fromfromcompressed_IOLHEFGZ_" + HepMC3::to_string(c) + ".lhe";
+        std::string filename_in = "frominputIOLHEFGZ.lhe." + LHEF::to_string(c);
+        std::string filename_out = "fromcompressed_IOLHEFGZ.lhe." + LHEF::to_string(c);
+        std::string output_lhe_decompressed = "fromfromcompressed_IOLHEFGZ_" + LHEF::to_string(c) + ".lhe";
 
         LHEF::ReaderGZ<> reader_gz(filename_in);
         if (reader_gz.failed()) return 10;
@@ -118,23 +116,23 @@ int main()
         std::unique_ptr<LHEF::WriterBase> writer_gz;
         switch (c) {
 #if HEPMC3_Z_SUPPORT
-        case Compression::z:
-            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::z>(filename_out));
+        case LHEF::Compression::z:
+            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::z>(filename_out));
             break;
 #endif
 #if HEPMC3_LZMA_SUPPORT
-        case Compression::lzma:
-            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::lzma>(filename_out));
+        case LHEF::Compression::lzma:
+            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::lzma>(filename_out));
             break;
 #endif
 #if HEPMC3_BZ2_SUPPORT
-        case Compression::bz2:
-            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::bz2>(filename_out));
+        case LHEF::Compression::bz2:
+            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::bz2>(filename_out));
             break;
 #endif
 #if HEPMC3_ZSTD_SUPPORT
-        case Compression::zstd:
-            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, Compression::zstd>(filename_out));
+        case LHEF::Compression::zstd:
+            writer_gz.reset(new LHEF::WriterGZ<LHEF::Writer, LHEF::Compression::zstd>(filename_out));
             break;
 #endif
         default:

@@ -20,6 +20,9 @@ using HepMC3::ifstream;
 using HepMC3::ofstream;
 using HepMC3::istream;
 using HepMC3::ostream;
+using HepMC3::to_string;
+using HepMC3::supported_compression_types;
+using HepMC3::supported_compression_types;
 
 /** @brief Reads compressed ASCII LHEF files. */
 template <class T = Reader, Compression C = Compression::z> class ReaderGZ : public ReaderBase {
