@@ -21,6 +21,7 @@ int main()
 
         LHEF::Writer writer_plain(uncompressed_out);
         writer_plain.heprup = reader_plain.heprup;
+        writer_plain.headerBlock(reader_plain.headerBlock);
         writer_plain.init();
 
         while (reader_plain.readEvent()) {
@@ -68,6 +69,7 @@ int main()
         }
 
         writer->heprup = reader_in.heprup;
+        writer->headerBlock(reader_in.headerBlock);
         writer->init();
 
         while (reader_in.readEvent()) {
@@ -90,6 +92,7 @@ int main()
 
         LHEF::Writer writer_out(output_lhe);
         writer_out.heprup = reader_gz.heprup;
+        writer_out.headerBlock(reader_gz.headerBlock);
         writer_out.init();
 
         while (reader_gz.readEvent()) {
@@ -140,6 +143,7 @@ int main()
         }
 
         writer_gz->heprup = reader_gz.heprup;
+        writer_gz->headerBlock(reader_gz.headerBlock);
         writer_gz->init();
 
         while (reader_gz.readEvent()) {
@@ -157,6 +161,7 @@ int main()
 
         LHEF::Writer writer_check(output_lhe_decompressed);
         writer_check.heprup = reader_check.heprup;
+        writer_check.headerBlock(reader_check.headerBlock);
         writer_check.init();
 
         while (reader_check.readEvent()) {
