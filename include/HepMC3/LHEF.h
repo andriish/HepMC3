@@ -2766,7 +2766,76 @@ inline EventGroup & EventGroup::operator=(const EventGroup & x) {
  *
  *
  */
-class Reader {
+class ReaderBase {
+public:
+  /**
+   * Run-level LHEF information.
+   */
+  HEPRUP heprup;
+
+  /**
+   * Most recently read LHEF event.
+   */
+  HEPEUP hepeup;
+
+  /**
+   * Virtual destructor.
+   */
+  virtual ~ReaderBase() = default;
+
+  /**
+   * Read an event from the file and store it in the hepeup object.
+   * @return true if the read was successful.
+   */
+  virtual bool readEvent() = 0;
+
+  /**
+   * Read an event into a caller-supplied HEPEUP object.
+   * @return true if the read was successful.
+   */
+  virtual bool readEvent(HEPEUP &event) {
+    if (!readEvent()) return false;
+    event = hepeup;
+    return true;
+  }
+
+  /**
+   * Alias for readEvent(HEPEUP &).
+   */
+  bool read_event(HEPEUP &event) {
+    return readEvent(event);
+  }
+
+  /**
+   * Return run-level LHEF information.
+   */
+  const HEPRUP &get_heprup() const {
+    return heprup;
+  }
+
+  /**
+   * Skip input events.
+   */
+  virtual bool skip(const int count) {
+    if (count < 0) return false;
+    for (int i = 0; i < count; ++i) {
+      if (!readEvent()) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Return reader failure state.
+   */
+  virtual bool failed() const = 0;
+
+  /**
+   * Release input resources.
+   */
+  virtual void close() {}
+};
+
+class Reader : public ReaderBase {
 
 public:
 
@@ -2892,7 +2961,7 @@ public:
    * member variable.
    * @return true if the read sas successful.
    */
-  bool readEvent() {
+  bool readEvent() override {
 
     // Check if the initialization was successful. Otherwise we will
     // not read any events.
@@ -3034,6 +3103,21 @@ public:
   }
 
   /**
+   * Return reader failure state.
+   */
+  bool failed() const override {
+    return file_rdstate() != std::ifstream::goodbit;
+  }
+
+  /**
+   * Release input resources.
+   */
+  void close() override {
+    if (intstream.is_open()) intstream.close();
+    if (efile.is_open()) efile.close();
+  }
+
+  /**
    * XML file version
    */
   int version;
@@ -3050,19 +3134,9 @@ public:
   std::string headerBlock;
 
   /**
-   * The standard init information.
-   */
-  HEPRUP heprup;
-
-  /**
    * Additional comments found in the init block.
    */
   std::string initComments;
-
-  /**
-   * The standard information about the last read event.
-   */
-  HEPEUP hepeup;
 
   /**
    * Additional comments found with the last read event.
@@ -3130,7 +3204,70 @@ private:
  * variable (directly or with the addEventComment() function).
  *
  */
-class Writer {
+class WriterBase {
+public:
+  /**
+   * The standard init information.
+   */
+  HEPRUP heprup;
+
+  /**
+   * The standard information about the event we will write next.
+   */
+  HEPEUP hepeup;
+
+  /**
+   * Virtual destructor.
+   */
+  virtual ~WriterBase() = default;
+
+  /**
+   * Initialize the writer.
+   */
+  virtual void init() = 0;
+
+  /**
+   * Write out an optional header block followed by the standard init
+   * block information together with any comment lines.
+   */
+  virtual void writeinit() {
+    init();
+  }
+
+  /**
+   * Write the current HEPEUP object to the stream.
+   */
+  virtual void writeEvent() = 0;
+
+  /**
+   * Write a supplied HEPEUP object.
+   */
+  virtual void writeEvent(const HEPEUP &event) {
+    hepeup = event;
+    writeEvent();
+  }
+
+  /**
+   * Alias for writeEvent.
+   */
+  void write_event(const HEPEUP &event) {
+    writeEvent(event);
+  }
+
+  /**
+   * Return writer failure state.
+   */
+  virtual bool failed() const {
+    return false;
+  }
+
+  /**
+   * Release output resources.
+   */
+  virtual void close() {}
+};
+
+class Writer : public WriterBase {
 
 public:
 
@@ -3212,7 +3349,7 @@ public:
   /**
    * Initialize the writer.
    */
-  void init() {
+  void init() override {
     if ( heprup.eventfiles.empty() ) writeinit();
     lastevent = 0;
     curreventfile = currfileevent = -1;
@@ -3251,7 +3388,7 @@ public:
    * Write out an optional header block followed by the standard init
    * block information together with any comment lines.
    */
-  void writeinit() {
+  void writeinit() override {
 
     // Write out the standard XML tag for the event file.
     if ( heprup.version == 3 )
@@ -3282,7 +3419,7 @@ public:
   /**
    * Write the current HEPEUP object to the stream;
    */
-  void writeEvent() {
+  void writeEvent() override {
 
     if ( !heprup.eventfiles.empty() ) {
       if ( currfileevent == heprup.eventfiles[curreventfile].neve &&
@@ -3295,6 +3432,18 @@ public:
     ++lastevent;
     ++currfileevent;
   }
+
+  /**
+   * Return writer failure state.
+   */
+  bool failed() const override {
+    return file ? file->fail() : false;
+  }
+
+  /**
+   * Release output resources.
+   */
+  void close() override {}
 
 protected:
 
@@ -3340,20 +3489,6 @@ protected:
    * The directory from where we are reading files.
    */
   std::string dirpath;
-
-public:
-  /**
-   * The standard init information.
-   */
-  HEPRUP heprup;
-
-
-  /**
-   * The standard information about the event we will write next.
-   */
-  HEPEUP hepeup;
-
-
 
 private:
 
