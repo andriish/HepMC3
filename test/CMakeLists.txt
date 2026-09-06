@@ -223,7 +223,7 @@ else()
   message(STATUS "HepMC3 test: No threads library found or disabled for compiller with ID ${CMAKE_CXX_COMPILER_ID}. Thread safety tests are disabled")
 endif()
 
-set(compress_tests testIO9)
+set(compress_tests testIO9 testIOLHEFGZ)
 if(HEPMC3_ENABLE_PROTOBUFIO AND NOT WIN32)
   LIST(APPEND compress_tests testReaderFactory4)
 endif()
