@@ -117,8 +117,8 @@ else()
   message(STATUS "HepMC3 examples: Fortran compiler not found, Pythia6 example disabled")
 endif()
 
-
 add_subdirectory(ConvertExample)
+add_subdirectory(ConvertExampleLHEF)
 add_subdirectory(Pythia8Example)
 if (HEPMC3_ENABLE_SEARCH)
   add_subdirectory(SearchExample)
