@@ -33,6 +33,10 @@ public:
         m_reader = std::make_shared<T>(*(m_zstr.get()));
         heprup = m_reader->heprup;
         hepeup = m_reader->hepeup;
+        headerBlock = m_reader->headerBlock;
+        initComments = m_reader->initComments;
+        eventComments = m_reader->eventComments;
+        outsideBlock = m_reader->outsideBlock;
     }
 
     /** @brief Constructor from istream. */
@@ -41,6 +45,10 @@ public:
         m_reader = std::make_shared<T>(*(m_zstr.get()));
         heprup = m_reader->heprup;
         hepeup = m_reader->hepeup;
+        headerBlock = m_reader->headerBlock;
+        initComments = m_reader->initComments;
+        eventComments = m_reader->eventComments;
+        outsideBlock = m_reader->outsideBlock;
     }
 
     /** @brief Constructor from shared pointer to stream. */
@@ -49,6 +57,10 @@ public:
         m_reader = std::make_shared<T>(*(m_zstr.get()));
         heprup = m_reader->heprup;
         hepeup = m_reader->hepeup;
+        headerBlock = m_reader->headerBlock;
+        initComments = m_reader->initComments;
+        eventComments = m_reader->eventComments;
+        outsideBlock = m_reader->outsideBlock;
     }
 
     /** @brief Close the input file. */
@@ -59,6 +71,7 @@ public:
         if (!m_reader || !m_reader->readEvent()) return false;
         hepeup = m_reader->hepeup;
         hepeup.heprup = &heprup;
+        eventComments = m_reader->eventComments;
         return true;
     }
 
@@ -73,9 +86,15 @@ public:
 
     /** @brief Release input resources. */
     void close() override {
-        if (m_reader) m_reader->close();
-        if (std::dynamic_pointer_cast<ifstream>(m_zstr)) {
-            std::dynamic_pointer_cast<ifstream>(m_zstr)->close();
+        if (m_reader) {
+            m_reader->close();
+            m_reader.reset();
+        }
+        if (m_zstr) {
+            if (std::dynamic_pointer_cast<LHEF::ifstream>(m_zstr)) {
+                std::dynamic_pointer_cast<LHEF::ifstream>(m_zstr)->close();
+            }
+            m_zstr.reset();
         }
     }
 
@@ -119,6 +138,21 @@ public:
         m_initialized = true;
     }
 
+    /** @brief Add header lines to the writer. */
+    void headerBlock(const std::string &a) override {
+        if (m_writer) m_writer->headerBlock(a);
+    }
+
+    /** @brief Add init comments to the writer. */
+    void initComments(const std::string &a) override {
+        if (m_writer) m_writer->initComments(a);
+    }
+
+    /** @brief Add event comments to the writer. */
+    void eventComments(const std::string &a) override {
+        if (m_writer) m_writer->eventComments(a);
+    }
+
     /** @brief Write the current LHEF event. */
     void writeEvent() override {
         if (!m_writer) return;
@@ -133,12 +167,16 @@ public:
 
     /** @brief Finalize and close the output file. */
     void close() override {
-        if (m_writer) m_writer->close();
+        if (m_writer) {
+            m_writer->close();
+            m_writer.reset();
+        }
         if (m_zstr) {
             m_zstr->flush();
-            if (std::dynamic_pointer_cast<ofstream>(m_zstr)) {
-                std::dynamic_pointer_cast<ofstream>(m_zstr)->close();
+            if (std::dynamic_pointer_cast<LHEF::ofstream>(m_zstr)) {
+                std::dynamic_pointer_cast<LHEF::ofstream>(m_zstr)->close();
             }
+            m_zstr.reset();
         }
     }
 

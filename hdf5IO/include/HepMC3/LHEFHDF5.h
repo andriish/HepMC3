@@ -219,8 +219,15 @@ public:
             prows.push_back({static_cast<double>(hepeup.IDUP[i]), static_cast<double>(hepeup.ISTUP[i]), static_cast<double>(hepeup.MOTHUP[i].first), static_cast<double>(hepeup.MOTHUP[i].second), static_cast<double>(hepeup.ICOLUP[i].first), static_cast<double>(hepeup.ICOLUP[i].second), p.size() > 0 ? p[0] : 0.0, p.size() > 1 ? p[1] : 0.0, p.size() > 2 ? p[2] : 0.0, p.size() > 3 ? p[3] : 0.0, p.size() > 4 ? p[4] : 0.0, static_cast<size_t>(i) < hepeup.VTIMUP.size() ? hepeup.VTIMUP[i] : 0.0, static_cast<size_t>(i) < hepeup.SPINUP.size() ? hepeup.SPINUP[i] : 0.0});
         }
         std::vector<double> weights;
-        if (!hepeup.weights.empty()) for (const auto &weight : hepeup.weights) weights.push_back(weight.first);
-        else weights.push_back(hepeup.XWGTUP);
+        if (hepeup.weights.size() > 1) {
+            for (std::size_t i = 1; i < hepeup.weights.size(); ++i) {
+                weights.push_back(hepeup.weights[i].first);
+            }
+        } else if (!hepeup.weights.empty()) {
+            weights.push_back(hepeup.weights[0].first);
+        } else {
+            weights.push_back(hepeup.XWGTUP);
+        }
         weights.resize(m_nweights, 0.0);
         std::vector<double> erow = {static_cast<double>(hepeup.IDPRUP), static_cast<double>(hepeup.NUP), static_cast<double>(m_particles_offset), static_cast<double>(hepeup.ntries), hepeup.SCALUP, hepeup.SCALUP, hepeup.SCALUP, hepeup.AQEDUP, hepeup.AQCDUP};
         erow.insert(erow.end(), weights.begin(), weights.end());

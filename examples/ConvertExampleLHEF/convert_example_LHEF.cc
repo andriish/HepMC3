@@ -25,6 +25,7 @@ static void print_usage(const char *program) {
 
 static int copy_events(LHEF::ReaderBase &input, LHEF::WriterBase &output) {
     output.heprup = input.heprup;
+    output.headerBlock(input.headerBlock);
     output.init();
     while (input.readEvent()) {
         output.hepeup = input.hepeup;

@@ -24,7 +24,6 @@
 #define BXZSTR_ZSTD_SUPPORT 1
 #endif
 #endif
-#include <cstdint>
 #include "HepMC3/bxzstr/bxzstr.hpp"
 
 #include <array>

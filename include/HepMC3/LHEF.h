@@ -2296,6 +2296,7 @@ public:
             weights[iii].first = w;
           else
             weights.push_back(std::make_pair(w, nullptr));
+        weights.resize(iii + 1);
       }
       if ( tag.name == "weight" ) {
         namedweights.push_back(Weight(tag));
@@ -2389,7 +2390,7 @@ public:
            << " " << std::setw(1) << VTIMUP[i]
            << " " << std::setw(1) << SPINUP[i] << std::endl;
 
-    if ( weights.size() > 0 ) {
+    if ( weights.size() > 1 ) {
       file << "<weights>";
       for ( int i = 1, N = weights.size(); i < N; ++i )
         file << " " << weights[i].first;
@@ -2779,6 +2780,27 @@ public:
   HEPEUP hepeup;
 
   /**
+   * All lines (since the last readEvent()) outside the header, init
+   * and event tags.
+   */
+  std::string outsideBlock;
+
+  /**
+   * All lines from the header block.
+   */
+  std::string headerBlock;
+
+  /**
+   * Additional comments found in the init block.
+   */
+  std::string initComments;
+
+  /**
+   * Additional comments found with the last read event.
+   */
+  std::string eventComments;
+
+  /**
    * Virtual destructor.
    */
   virtual ~ReaderBase() = default;
@@ -3123,27 +3145,6 @@ public:
   int version;
 
   /**
-   * All lines (since the last readEvent()) outside the header, init
-   * and event tags.
-   */
-  std::string outsideBlock;
-
-  /**
-   * All lines from the header block.
-   */
-  std::string headerBlock;
-
-  /**
-   * Additional comments found in the init block.
-   */
-  std::string initComments;
-
-  /**
-   * Additional comments found with the last read event.
-   */
-  std::string eventComments;
-
-  /**
    * The number of the current event (starting from 1).
    */
   int currevent;
@@ -3255,6 +3256,21 @@ public:
   }
 
   /**
+   * Add header lines consisting of XML code.
+   */
+  virtual void headerBlock(const std::string& /*a*/) {}
+
+  /**
+   * Add comment lines to the init block.
+   */
+  virtual void initComments(const std::string& /*a*/) {}
+
+  /**
+   * Add comment lines to the next event to be written out.
+   */
+  virtual void eventComments(const std::string& /*a*/) {}
+
+  /**
    * Return writer failure state.
    */
   virtual bool failed() const {
@@ -3277,7 +3293,7 @@ public:
    */
   Writer(std::ostream & os)
     : file(&os), initfile(&os), lastevent(-1), curreventfile(-1),
-      currfileevent(-1), dirpath("") {}
+      currfileevent(-1), dirpath(""), m_closed(false) {}
 
   /**
    * Create a Writer object giving a filename to write to.
@@ -3285,7 +3301,7 @@ public:
    */
   Writer(std::string filename)
     : intstream(filename.c_str()), file(&intstream), initfile(&intstream),
-      lastevent(-1), curreventfile(-1), currfileevent(-1), dirpath("") {
+      lastevent(-1), curreventfile(-1), currfileevent(-1), dirpath(""), m_closed(false) {
     size_t slash = filename.find_last_of('/');
     if ( slash != std::string::npos ) dirpath = filename.substr(0, slash + 1);
   }
@@ -3293,16 +3309,8 @@ public:
   /**
    * The destructor writes out the final XML end-tag.
    */
-  ~Writer() {
-    file = initfile;
-    if ( !heprup.eventfiles.empty() ) {
-      if ( curreventfile >= 0 &&
-           curreventfile < int(heprup.eventfiles.size()) &&
-           heprup.eventfiles[curreventfile].neve < 0 )
-        heprup.eventfiles[curreventfile].neve = currfileevent;
-      writeinit();
-    }
-    *file << "</LesHouchesEvents>" << std::endl;
+  ~Writer() override {
+    close();
   }
 
   /**
@@ -3328,21 +3336,21 @@ public:
   /**
    * Add header lines consisting of XML code with this stream.
    */
-  void  headerBlock(const std::string& a) {
-    headerStream<<a;;
+  void headerBlock(const std::string& a) override {
+    headerStream<<a;
   }
 
   /**
    * Add comment lines to the init block with this stream.
    */
-  void initComments(const std::string& a) {
+  void initComments(const std::string& a) override {
     initStream<<a;
   }
 
   /**
    * Add comment lines to the next event to be written out with this stream.
    */
-  void eventComments(const std::string& a) {
+  void eventComments(const std::string& a) override {
     eventStream<<a;
   }
 
@@ -3443,7 +3451,22 @@ public:
   /**
    * Release output resources.
    */
-  void close() override {}
+  void close() override {
+    if ( m_closed ) return;
+    file = initfile;
+    if ( file && *file ) {
+      if ( !heprup.eventfiles.empty() ) {
+        if ( curreventfile >= 0 &&
+             curreventfile < int(heprup.eventfiles.size()) &&
+             heprup.eventfiles[curreventfile].neve < 0 )
+          heprup.eventfiles[curreventfile].neve = currfileevent;
+        writeinit();
+      }
+      *file << "</LesHouchesEvents>" << std::endl;
+    }
+    if ( intstream.is_open() ) intstream.close();
+    m_closed = true;
+  }
 
 protected:
 
@@ -3489,6 +3512,11 @@ protected:
    * The directory from where we are reading files.
    */
   std::string dirpath;
+
+  /**
+   * Whether close() has been executed.
+   */
+  bool m_closed;
 
 private:
 
