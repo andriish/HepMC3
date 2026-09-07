@@ -14,10 +14,9 @@ changelog_check:
   stage: changelog
   image: gitlab-registry.cern.ch/sft/docker/alma9-core:latest
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
       when: always
-    - if: '$CI_MERGE_REQUEST_IID'
-      when: always
+    - when: never
   script:
     - |
       if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" ]; then
