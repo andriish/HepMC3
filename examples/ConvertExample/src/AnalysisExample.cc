@@ -40,7 +40,7 @@ AnalysisExample::AnalysisExample(std::ostream &stream, std::shared_ptr<GenRunInf
 
 void AnalysisExample::write_event(const GenEvent &evt)
 {
-    const double w = (evt.weights().size() ? evt.weight() : 1.);
+    const double w = (evt.weights().empty() ? 1.0 : evt.weight());
     m_sum_of_weights += w;
     m_sum_of_weights2 += w*w;
     for(const auto& p: evt.particles() )
@@ -48,7 +48,7 @@ void AnalysisExample::write_event(const GenEvent &evt)
         if (p->status() != 1) continue;
         const double eta = p->momentum().eta();
         int bin = std::distance(m_bins["rapidity"].begin(), lower_bound(m_bins["rapidity"].begin(),m_bins["rapidity"].end(),eta))-1;
-        if (bin < 0) bin = 0;
+        bin = std::max(bin, 0);
         m_vals["rapidity"][bin] += w;
         m_errs["rapidity"][bin] += w*w;
     }
