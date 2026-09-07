@@ -13,7 +13,7 @@ std::shared_ptr<HepMC3::GenEvent> generate_event(const size_t n, const size_t it
     {
         if (it>iterations)
         {
-            for (auto v: e->vertices())
+            for (const auto& v: e->vertices())
             {
                 if (!v->particles_out().empty()) continue;
                 for (size_t i = 0; i < n; i++) v->add_particle_out(std::make_shared<HepMC3::GenParticle>());
@@ -21,11 +21,11 @@ std::shared_ptr<HepMC3::GenEvent> generate_event(const size_t n, const size_t it
             break;
         }
         auto vertices = e->vertices();
-        for (auto v: vertices)
+        for (const auto& v: vertices)
         {
             if (!v->particles_out().empty()) continue;
             for (size_t i = 0; i < n; i++) v->add_particle_out(std::make_shared<HepMC3::GenParticle>());
-            for (auto p: v->particles_out())
+            for (const auto& p: v->particles_out())
             {
                 HepMC3::GenVertexPtr vx=std::make_shared<HepMC3::GenVertex>();
                 vx->add_particle_in(p);
@@ -40,6 +40,6 @@ std::shared_ptr<HepMC3::GenEvent> generate_event(const size_t n, const size_t it
 int main() {
     auto evt = generate_event(3,4);
     size_t np = 0;
-    for (auto p: evt->particles()) np += (HepMC3::Relatives::ANCESTORS(p)).size();
-    return 0;
+    for (const auto& p: evt->particles()) np += (HepMC3::Relatives::ANCESTORS(p)).size();
+    return np == 0 ? 1 : 0;
 }
