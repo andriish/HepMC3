@@ -1,6 +1,8 @@
 --------------------------  HepMC3.3.2 --------------------------
 2026-09-04 Andrii Verbytskyi
    * Implement compressed I/O for LHEF and create base I/O classes for LHEF.
+2026-09-07 Andrii Verbytskyi
+  * Avoid potentially empty  tag in Reader in LHEF.h
 2026-09-03 Andrii Verbytskyi
   * Implement suggestions from clang-tidy for tests.
 2026-09-03 Andrii Verbytskyi
