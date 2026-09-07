@@ -15,8 +15,6 @@ if ( NOT HepMC3_FIND_COMPONENTS)
   set(HepMC3_FIND_COMPONENTS ${HEPMC3_COMPONENTS})
 endif()
 list(REMOVE_ITEM HepMC3_FIND_COMPONENTS " ")
-
-
 if(EXISTS @PACKAGE_INTERFACES_INSTALL_DIR@)
   set(HEPMC3_INTERFACES_DIR @PACKAGE_INTERFACES_INSTALL_DIR@)
 endif()
@@ -38,6 +36,7 @@ if(EXISTS ${HEPMC3_PROTOBUFIO_LIB})
 endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/HepMC3Targets.cmake)
+
 message(STATUS "HepMC3_FIND_COMPONENTS=${HepMC3_FIND_COMPONENTS}")
 if (TARGET HepMC3All)
   message(STATUS "WARNING: Please note that multiple calls to find_package(HepMC3) are not recommended!")

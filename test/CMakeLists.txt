@@ -30,7 +30,6 @@ macro(hepmc_set_test_environment testname path_prefix)
   endif()
 endmacro()
 
-
 macro( hepmc_test testname )
   message( STATUS "HepMC3 test: building ${testname} for ${testname}" )
   find_file( ${testname}_source ${testname}.cc ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )

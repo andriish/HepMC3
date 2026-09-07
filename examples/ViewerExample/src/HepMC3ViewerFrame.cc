@@ -11,7 +11,7 @@
 // #define _PACKAGE_ast 1
 
 #include <graphviz/gvc.h>
-#define CONSERVATION_TOLERANCE 1e-5
+constexpr double CONSERVATION_TOLERANCE = 1e-5;
 
 static  char*  create_image_from_dot(char* m_buffer)
 {
@@ -41,8 +41,7 @@ static  char*  create_image_from_dot(char* m_buffer)
 static bool show_as_parton(HepMC3::ConstGenParticlePtr p)
 {
     const int pd = std::abs(p->pid());
-    bool parton = false;
-    if (pd == 81 || pd == 82 || pd < 25) parton = true;
+    if (pd == 81 || pd == 82 || pd < 25) return true;
     if ( (pd / 1000 == 1 || pd / 1000 == 2 || pd / 1000 == 3 ||
             pd / 1000 == 4 || pd / 1000 == 5) &&
             ((pd % 1000) / 100 == 1 || (pd % 1000) / 100 == 2 ||
@@ -50,36 +49,35 @@ static bool show_as_parton(HepMC3::ConstGenParticlePtr p)
             (pd % 100 == 1 || pd % 100 == 3)
        )
     {
-        parton = true;
+       return true;
     }
 
-    parton = true;
-    if (p->status() == 4)  parton=true;
-    return parton;
+    if (p->status() == 4)  return true;
+    return false;
 }
 
 static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,int used_style = 1)
 {
     used_cursor += sprintf(used_cursor, "digraph graphname%d {\n", evt.event_number());
     used_cursor += sprintf(used_cursor, "v0[label=\"Machine\"];\n");
-    for(auto v: evt.vertices() )
+    for(const auto& v: evt.vertices() )
     {
         if (used_style != 0)
         {
             if (used_style == 1) //paint decay and fragmentation vertices in green
             {
-                if (v->status() == 2) used_cursor += sprintf(used_cursor, "node [color=\"green\"];\n");
-                else  used_cursor += sprintf(used_cursor, "node [color=\"black\"];\n");
+                if (v->status() == 2) {used_cursor += sprintf(used_cursor, "node [color=\"green\"];\n");}
+                else  {used_cursor += sprintf(used_cursor, "node [color=\"black\"];\n");}
             }
         }
         HepMC3::FourVector in(0, 0, 0, 0);
         HepMC3::FourVector out(0, 0, 0, 0);
         double energy=0;
-        for(auto p1: v->particles_in()  ) {
+        for(const auto& p1: v->particles_in()  ) {
             in+=p1->momentum();
             energy += std::abs(p1->momentum().e());
         }
-        for(auto p2: v->particles_out() ) {
+        for(const auto& p2: v->particles_out() ) {
             out += p2->momentum();
             energy += std::abs(p2->momentum().e());
         }
@@ -103,25 +101,25 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
 
         used_cursor += sprintf(used_cursor, "node [shape=ellipse];\n");
     }
-    for(auto p: evt.beams() )
+    for(const auto& p: evt.beams() )
     {
         if (!p->end_vertex()) continue;
         used_cursor += sprintf(used_cursor, "node [shape=point];\n");
         used_cursor += sprintf(used_cursor, "v0 -> v%d [label=\"%d(%d)\"];\n", -p->end_vertex()->id(), p->id(), p->pid());
     }
 
-    for(auto v: evt.vertices() )
+    for(const auto& v: evt.vertices() )
     {
 
-        for(auto p: v->particles_out() )
+        for(const auto& p: v->particles_out() )
         {
             {
                 if (used_style != 0)
                 {
                     if (used_style == 1) //paint suspected partons and 81/82 in red
                     {
-                        if (show_as_parton(p) && p->status() != 1) used_cursor += sprintf(used_cursor, "edge [color=\"red\"];\n");
-                        else        used_cursor += sprintf(used_cursor, "edge [color=\"black\"];\n");
+                        if (show_as_parton(p) && p->status() != 1) {used_cursor += sprintf(used_cursor, "edge [color=\"red\"];\n");}
+                        else       { used_cursor += sprintf(used_cursor, "edge [color=\"black\"];\n");}
                     }
                 }
                 if (!p->end_vertex())
@@ -130,7 +128,6 @@ static char*  write_event_to_dot(char* used_cursor,const HepMC3::GenEvent &evt,i
                     used_cursor += sprintf(used_cursor, "v%d -> o%d [label=\"%d(%d)\"];\n", -v->id(), p->id(), p->id(), p->pid());
                     continue;
                 }
-                else
                     used_cursor += sprintf(used_cursor, "v%d -> v%d [label=\"%d(%d)\"];\n", -v->id(), -p->end_vertex()->id(), p->id(), p->pid());
             }
         }
@@ -185,25 +182,28 @@ void HepMC3ViewerFrame::DoAnalysis()
     fAnalysisH["particles1"] = particles1;
     particles1->SetTitle("Flavour: all particles; PDG ID; Number of particles");
     particles1->SetFillColor(kBlue);
-    for(auto p: fCurrentEvent->particles() )
+    for(const auto& p: fCurrentEvent->particles() ) {
         particles1->Fill((std::to_string(p->pid())).c_str(), 1.0);
+	}
     particles1->LabelsOption(">","X");
     /*   */
     TH1S* particles2 = new TH1S();
     fAnalysisH["particles2"] = particles2;
     particles2->SetTitle("Flavour: particles with status 1; PDG ID; Number of particles");
     particles2->SetFillColor(kBlue);
-    for(auto p: fCurrentEvent->particles() )
+    for(const auto& p: fCurrentEvent->particles() ) {
         if(p->status() == 1) particles2->Fill((std::to_string(p->pid())).c_str(), 1.0);
+    }    
     particles2->LabelsOption(">","X");
     /*   */
     std::vector<double> masses;
-    for(auto p: fCurrentEvent->particles() )
+    for(const auto& p: fCurrentEvent->particles() ){
         if(show_as_parton(p)) masses.push_back(p->momentum().m());
+    }
     TH1D* particles3 = new TH1D("particles3","Mass:  parton particles; Mass, GeV; Number of particles", masses.size(), 0, *std::max_element(masses.begin(), masses.end()));
     fAnalysisH["particles3"] = particles3;
     particles3->SetFillColor(kBlue);
-    for(auto m: masses) particles3->Fill(m);
+    for(const auto& m: masses) {particles3->Fill(m);}
 
 
     fAnalysisCanvas->cd();
@@ -257,7 +257,7 @@ void HepMC3ViewerFrame::NextEvent()
             fEventsCache.push_back(evt1);
             fCurrentEvent = evt1;
         }
-        else return;
+        else {return;}
     }
     else
     {
@@ -269,7 +269,7 @@ void HepMC3ViewerFrame::NextEvent()
 }
 void HepMC3ViewerFrame::ChooseInput()
 {
-    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", 0, 0 };
+    static const char *FileType[] = {"All", "*.*","HepMC", "*.hepmc*","LHEF", "*.lhe*","ROOT", "*.root", nullptr, nullptr };
     static TString dir("./");
     TGFileInfo fi;
     fi.fFileTypes = FileType;
@@ -289,8 +289,8 @@ HepMC3ViewerFrame::HepMC3ViewerFrame(const TGWindow *p, UInt_t w, UInt_t h) :
 
     fEmbAnalysisCanvas = new TRootEmbeddedCanvas("EmbAnalysisCanvaslegend", fMainFrame, 350, 500);
 
-    fMainFrame->AddFrame(fEmbEventImageCanvas, new TGLayoutHints(kLHintsTop | kLHintsExpandX| kLHintsExpandY, 1, 1, 2, 2));
-    fMainFrame->AddFrame(fEmbAnalysisCanvas, new TGLayoutHints(kLHintsTop | kFixedWidth| kLHintsExpandY, 1, 1, 2, 2));
+    fMainFrame->AddFrame(fEmbEventImageCanvas, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandX) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
+    fMainFrame->AddFrame(fEmbAnalysisCanvas, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
     fMainFrame->AddFrame(fButtonFrame, new TGLayoutHints(kLHintsTop, 1, 1, 2, 2));
 
     fChooseInput = new TGTextButton(fButtonFrame, "&Choose input");
@@ -317,7 +317,7 @@ HepMC3ViewerFrame::HepMC3ViewerFrame(const TGWindow *p, UInt_t w, UInt_t h) :
     fExit->SetToolTipText("Click to exit");
     fButtonFrame->AddFrame(fExit, new TGLayoutHints( kLHintsExpandX|kLHintsLeft,1,1,2,2));
 
-    AddFrame(fMainFrame, new TGLayoutHints(kLHintsTop |kLHintsExpandX| kLHintsExpandY, 1, 1, 2, 2));
+    AddFrame(fMainFrame, new TGLayoutHints(static_cast<ULong_t>(kLHintsTop) | static_cast<ULong_t>(kLHintsExpandX) | static_cast<ULong_t>(kLHintsExpandY), 1, 1, 2, 2));
 
     SetWindowName("Event viewer");
     MapSubwindows();

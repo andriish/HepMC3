@@ -2389,7 +2389,7 @@ public:
            << " " << std::setw(1) << VTIMUP[i]
            << " " << std::setw(1) << SPINUP[i] << std::endl;
 
-    if ( weights.size() > 0 ) {
+    if ( weights.size() > 1 ) {
       file << "<weights>";
       for ( int i = 1, N = weights.size(); i < N; ++i )
         file << " " << weights[i].first;

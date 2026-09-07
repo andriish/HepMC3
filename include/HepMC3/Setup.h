@@ -40,7 +40,7 @@ public:
     /// Get error messages printing level
     static int errors_level();
     /// set error messages printing level
-    static void set_errors_level(const int flag);
+    static void set_errors_level(const int level);
 
 
     /// Get warning messages printing flag
@@ -51,7 +51,7 @@ public:
     /// Get warning messages printing level
     static int warnings_level();
     /// Set warning messages printing level
-    static void set_warnings_level(const int flag);
+    static void set_warnings_level(const int level);
 
 
     /// Get debug level
