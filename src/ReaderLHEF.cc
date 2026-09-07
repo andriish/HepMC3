@@ -115,7 +115,7 @@ bool ReaderLHEF::read_event(GenEvent& ev)
     // information outside the LHEF <event> tags, which we may want to
     // add.
     std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
-    if ( m_reader->outsideBlock.length() ) {
+    if ( !m_reader->outsideBlock.empty() ) {
         hepe->tags =  LHEF::XMLTag::findXMLTags(m_reader->outsideBlock);
     }
     hepe->hepeup = m_reader->hepeup;
