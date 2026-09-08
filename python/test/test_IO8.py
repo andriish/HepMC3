@@ -1,4 +1,5 @@
 from pyHepMC3TestUtils import update_path, python_label
+#Round-trip conversion: ASCII files --> compressed ASCII --> ASCII files for multiple compression algorithms.
 import sys
 
 sys.path = update_path()
