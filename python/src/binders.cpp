@@ -9,7 +9,6 @@
 #include "pystreambuf.h"
 #endif
 
-
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
 #ifndef PYPY_VERSION    
