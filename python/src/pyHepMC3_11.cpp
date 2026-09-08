@@ -144,8 +144,6 @@ void bind_pyHepMC3_11(std::function< pybind11::module &(std::string const &names
 		pybind11::class_<HepMC3::WriterAscii, std::shared_ptr<HepMC3::WriterAscii>, PyCallBack_HepMC3_WriterAscii, HepMC3::Writer> cl(M("HepMC3"), "WriterAscii", "");
 		cl.def( pybind11::init( [](const std::string & a0){ return new HepMC3::WriterAscii(a0); }, [](const std::string & a0){ return new PyCallBack_HepMC3_WriterAscii(a0); } ), "doc");
 		cl.def( pybind11::init<const std::string &, class std::shared_ptr<class HepMC3::GenRunInfo>>(), pybind11::arg("filename"), pybind11::arg("run") );
-                cl.def(pybind11::init([](pybind11::object file) { auto stream = std::make_shared<pystream::ostream>(file, 512 * 512); return std::make_shared<HepMC3::WriterAscii>(stream); }));
-
 
 		cl.def("write_event", (void (HepMC3::WriterAscii::*)(const class HepMC3::GenEvent &)) &HepMC3::WriterAscii::write_event, "Write event to file\n\n \n Event to be serialized\n\nC++: HepMC3::WriterAscii::write_event(const class HepMC3::GenEvent &) --> void", pybind11::arg("evt"));
 		cl.def("write_run_info", (void (HepMC3::WriterAscii::*)()) &HepMC3::WriterAscii::write_run_info, "Write the GenRunInfo object to file.\n\nC++: HepMC3::WriterAscii::write_run_info() --> void");
@@ -153,5 +151,7 @@ void bind_pyHepMC3_11(std::function< pybind11::module &(std::string const &names
 		cl.def("close", (void (HepMC3::WriterAscii::*)()) &HepMC3::WriterAscii::close, "Close file stream\n\nC++: HepMC3::WriterAscii::close() --> void");
 		cl.def("set_precision", (void (HepMC3::WriterAscii::*)(const int &)) &HepMC3::WriterAscii::set_precision, "Set output precision\n\n So far available range is [2,24]. Default is 16.\n\nC++: HepMC3::WriterAscii::set_precision(const int &) --> void", pybind11::arg("prec"));
 		cl.def("precision", (int (HepMC3::WriterAscii::*)() const) &HepMC3::WriterAscii::precision, "Return output precision\n\nC++: HepMC3::WriterAscii::precision() const --> int");
+
+		binder::custom_stream_writer<HepMC3::WriterAscii>(cl);
 	}
 }

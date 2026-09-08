@@ -15,10 +15,6 @@ def test_IO81(ext, form):
     if inputA is None or inputA.failed():
         print(f"test_IO81: failed to open input reader for extension {ext} (format={form})")
         sys.exit(1)
-    print(hm.WriterAscii, output_path, form)
-    print(hm.WriterGZ)
-    print(hm.WriterGZ.__doc__)
-    #print("->>>>>",hm.__file__)
     outputA = hm.WriterGZ(hm.WriterAscii, output_path, form)
     if outputA is None or outputA.failed():
         print(f"test_IO81: failed to create output writer for extension {ext} (format={form})")

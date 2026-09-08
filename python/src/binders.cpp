@@ -13,32 +13,43 @@
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
 #ifndef PYPY_VERSION    
-    M.def("ReaderGZ", [](py::object reader_class, const std::string & filename, const std::string & format) -> pybind11::object{
+    M.def("ReaderGZ", [](pybind11::object reader_class, const std::string & filename, const std::string & format) -> pybind11::object{
       try{
         auto mzstd = pybind11::module::import(format.c_str());
         if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  
-        return py::none();
+        return pybind11::none();
         }
         auto file = mzstd.attr("open")(filename.c_str(), "rb");
+       // Check open()
+        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
+        {
+            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
+        }   
         return reader_class(file);
 
       } catch (pybind11::import_error &e) {
          pybind11::print("Cannot import " + format + "  module");  
-        return py::none();
+        return pybind11::none();
         }
     }, 
     "This function creates a reader ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
-    M.def("WriterGZ", [](py::object writer_class, const std::string & filename, const std::string & format) -> pybind11::object{
+
+    M.def("WriterGZ", [](pybind11::object writer_class, const std::string & filename, const std::string & format) -> pybind11::object{
     try{ 
         auto mzstd = pybind11::module::import(format.c_str());
         if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function"); 
-             return py::none();
+             return pybind11::none();
             }
+       // Check open()
+        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
+        {
+            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
+        }            
         auto file = mzstd.attr("open")(filename.c_str(), "wb");
         return writer_class(file);
         
       } catch (pybind11::import_error &e) {
-         pybind11::print("Cannot import " + format + " module");  return py::none();}
+         pybind11::print("Cannot import " + format + " module");  return pybind11::none();}
     }, 
     "This function creates a Writer ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
 
