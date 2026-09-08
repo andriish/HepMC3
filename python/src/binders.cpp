@@ -1,10 +1,6 @@
 #include "binders.h"
 #include <array>
 #include <HepMC3/Print.h>
-#include <HepMC3/Writer.h>
-#include <HepMC3/WriterHEPEVT.h>
-#include <HepMC3/WriterAscii.h>
-#include <HepMC3/WriterAsciiHepMC2.h>
 #include <HepMC3/ReaderFactory_fwd.h>
 #include <HepMC3/ReaderMT.h>
 #ifndef PYPY_VERSION
@@ -17,31 +13,43 @@
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
 #ifndef PYPY_VERSION    
-    M.def("ReaderGZ", [](const std::string & classname,const std::string & filename, const std::string & format) -> std::shared_ptr<class HepMC3::Reader>{
+    M.def("ReaderGZ", [](pybind11::object reader_class, const std::string & filename, const std::string & format) -> pybind11::object{
       try{
         auto mzstd = pybind11::module::import(format.c_str());
-        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  return nullptr;}
-        auto zstdfile = mzstd.attr("open")(filename.c_str(), "rb");
-        auto input_stream = new pystream::istream(zstdfile, 512*512);
-        if (classname == "ReaderAscii" ) return std::make_shared<HepMC3::ReaderAscii>(*input_stream);
-        if (classname == "ReaderAsciiHepMC2" ) return std::make_shared<HepMC3::ReaderAsciiHepMC2>(*input_stream);
-        if (classname == "ReaderHEPEVT" ) return std::make_shared<HepMC3::ReaderHEPEVT>(*input_stream);
-        return nullptr;
-      } catch (pybind11::import_error &e) { pybind11::print("Cannot import " + format + "  module");  return nullptr;}
+        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  
+        return pybind11::none();
+        }
+        auto file = mzstd.attr("open")(filename.c_str(), "rb");
+       // Check open()
+        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
+        {
+            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
+        }   
+        return reader_class(file);
+
+      } catch (pybind11::import_error &e) {
+         pybind11::print("Cannot import " + format + "  module");  
+        return pybind11::none();
+        }
     }, 
     "This function creates a reader ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
 
-    M.def("WriterGZ", [](const std::string & classname, const std::string & filename, const std::string & format) -> std::shared_ptr<class HepMC3::Writer>{
-      try{ 
+    M.def("WriterGZ", [](pybind11::object writer_class, const std::string & filename, const std::string & format) -> pybind11::object{
+    try{ 
         auto mzstd = pybind11::module::import(format.c_str());
-        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  return nullptr;}
-        auto zstdfile = mzstd.attr("open")(filename.c_str(), "wb");
-        auto output_stream = new pystream::ostream(zstdfile);
-        if (classname == "WriterAscii" ) return std::make_shared<HepMC3::WriterAscii>(std::shared_ptr< std::ostream >(output_stream));
-        if (classname == "WriterAsciiHepMC2" ) return std::make_shared<HepMC3::WriterAsciiHepMC2>(std::shared_ptr< std::ostream >(output_stream));
-        if (classname == "WriterHEPEVT" ) return std::make_shared<HepMC3::WriterHEPEVT>(std::shared_ptr< std::ostream >(output_stream));
-        return nullptr;
-      } catch (pybind11::import_error &e) { pybind11::print("Cannot import " + format + " module");  return nullptr;}
+        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function"); 
+             return pybind11::none();
+            }
+       // Check open()
+        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
+        {
+            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
+        }            
+        auto file = mzstd.attr("open")(filename.c_str(), "wb");
+        return writer_class(file);
+        
+      } catch (pybind11::import_error &e) {
+         pybind11::print("Cannot import " + format + " module");  return pybind11::none();}
     }, 
     "This function creates a Writer ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
 
