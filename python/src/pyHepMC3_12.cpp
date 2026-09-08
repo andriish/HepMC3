@@ -13,7 +13,6 @@
 #include <HepMC3/ReaderAsciiHepMC2.h>
 #include <HepMC3/Writer.h>
 #include <HepMC3/WriterAsciiHepMC2.h>
-#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <istream>
@@ -370,19 +369,7 @@ void bind_pyHepMC3_12(std::function< pybind11::module &(std::string const &names
 	{ // HepMC3::ReaderAscii file:HepMC3/ReaderAscii.h line:
 		pybind11::class_<HepMC3::ReaderAscii, std::shared_ptr<HepMC3::ReaderAscii>, PyCallBack_HepMC3_ReaderAscii, HepMC3::Reader> cl(M("HepMC3"), "ReaderAscii", "");
 		cl.def( pybind11::init<const std::string &>(), pybind11::arg("filename") );
-		cl.def(
-    py::init([](py::object file) {
-        auto stream =
-            std::make_shared<pystream::istream>(
-                file, 512 * 512
-            );
-
-        return std::make_shared<HepMC3::ReaderAscii>(
-            stream
-        );
-    }),
-    py::arg("file")
-);
+		cl.def( pybind11::init([](pybind11::object file) {auto stream = std::make_shared<pystream::istream>(file, 512 * 512); return std::make_shared<HepMC3::ReaderAscii>(stream);}));
 
 		
 
