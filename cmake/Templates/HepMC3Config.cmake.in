@@ -1,3 +1,4 @@
+#cmake/Templates/HepMC3Config.cmake.in
 @PACKAGE_INIT@
 
 SET(HEPMC3_VERSION @HEPMC3_VERSION@)
@@ -19,21 +20,6 @@ if(EXISTS @PACKAGE_INTERFACES_INSTALL_DIR@)
   set(HEPMC3_INTERFACES_DIR @PACKAGE_INTERFACES_INSTALL_DIR@)
 endif()
 
-find_library(HEPMC3_LIB NAMES HepMC3 HINTS @PACKAGE_CMAKE_INSTALL_LIBDIR@)
-find_library(HEPMC3_SEARCH_LIB NAMES HepMC3search HINTS @PACKAGE_CMAKE_INSTALL_LIBDIR@)
-find_library(HEPMC3_ROOTIO_LIB NAMES HepMC3rootIO HINTS @PACKAGE_HEPMC3_ROOTIO_INSTALL_LIBDIR@)
-find_library(HEPMC3_PROTOBUFIO_LIB NAMES HepMC3protobufIO HINTS @PACKAGE_CMAKE_INSTALL_LIBDIR@)
-
-set(HEPMC3_LIBRARIES ${HEPMC3_LIB})
-if(EXISTS ${HEPMC3_SEARCH_LIB})
-  list( APPEND  HEPMC3_LIBRARIES ${HEPMC3_SEARCH_LIB})
-endif()
-if(EXISTS ${HEPMC3_ROOTIO_LIB})
-  list( APPEND  HEPMC3_LIBRARIES ${HEPMC3_ROOTIO_LIB})
-endif()
-if(EXISTS ${HEPMC3_PROTOBUFIO_LIB})
-  list( APPEND  HEPMC3_LIBRARIES ${HEPMC3_PROTOBUFIO_LIB})
-endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/HepMC3Targets.cmake)
 
@@ -50,12 +36,26 @@ if(TARGET HepMC3::HepMC3_static)
 endif()
 
 foreach(_comp ${HepMC3_FIND_COMPONENTS})
+  # Component shipped with HepMC3
   if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/HepMC3${_comp}Targets.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/HepMC3${_comp}Targets.cmake)
+  endif()
+  # Component provided externally
+  if(NOT TARGET HepMC3::${_comp})
+    if(HepMC3_${_comp}_FIND_REQUIRED)
+      find_package(HepMC3${_comp} CONFIG REQUIRED)
+    else()
+      find_package(HepMC3${_comp} CONFIG QUIET)
+    endif()
+  endif()
+  if(TARGET HepMC3::${_comp})
     target_link_libraries(HepMC3All INTERFACE HepMC3::${_comp})
     if(TARGET HepMC3::${_comp}_static)
       target_link_libraries(HepMC3All_static INTERFACE HepMC3::${_comp}_static)
     endif()
+    set(HepMC3_${_comp}_FOUND TRUE)
+  else()
+    set(HepMC3_${_comp}_FOUND FALSE)
   endif()
 endforeach()
 
@@ -79,6 +79,35 @@ foreach(_comp ${HepMC3_FIND_COMPONENTS})
     endif()
   endif()
 endforeach()
+endif()
+
+# Now we rely on the targets and the _LIB variables are just compatibility
+set(HEPMC3_LIBRARIES)
+
+get_target_property(HEPMC3_LIB HepMC3::HepMC3 IMPORTED_LOCATION)
+if(HEPMC3_LIB)
+  list(APPEND HEPMC3_LIBRARIES ${HEPMC3_LIB})
+endif()
+
+if(TARGET HepMC3::HepMC3search)
+  get_target_property(HEPMC3_SEARCH_LIB HepMC3::HepMC3search IMPORTED_LOCATION)
+  if(HEPMC3_SEARCH_LIB)
+    list(APPEND HEPMC3_LIBRARIES ${HEPMC3_SEARCH_LIB})
+  endif()
+endif()
+
+if(TARGET HepMC3::rootIO)
+  get_target_property(HEPMC3_ROOTIO_LIB HepMC3::rootIO IMPORTED_LOCATION)
+  if(HEPMC3_ROOTIO_LIB)
+    list(APPEND HEPMC3_LIBRARIES ${HEPMC3_ROOTIO_LIB})
+  endif()
+endif()
+
+if(TARGET HepMC3::protobufIO)
+  get_target_property(HEPMC3_PROTOBUFIO_LIB HepMC3::protobufIO IMPORTED_LOCATION)
+  if(HEPMC3_PROTOBUFIO_LIB)
+    list(APPEND HEPMC3_LIBRARIES ${HEPMC3_PROTOBUFIO_LIB})
+  endif()
 endif()
 
 check_required_components(HepMC3)

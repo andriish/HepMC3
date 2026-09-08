@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(HepMC3 ${PROJECT_VERSION})
+include("${CMAKE_CURRENT_LIST_DIR}/HepMC3rootIOTargets.cmake")
