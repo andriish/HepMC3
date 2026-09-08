@@ -4,8 +4,10 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-
 #include <pybind11/pybind11.h>
+#ifndef PYPY_VERSION
+#include "pystreambuf.h"
+#endif
 
 using ModuleGetter = std::function< pybind11::module & (std::string const &) >;
 

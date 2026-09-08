@@ -19,9 +19,9 @@
 -class std::_Ios_Seekdir
 
 
--function HepMC3::WriterAsciiHepMC2::WriterAsciiHepMC2(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
--function HepMC3::WriterAscii::WriterAscii(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
--function HepMC3::WriterHEPEVT::WriterHEPEVT(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
+#function HepMC3::WriterAsciiHepMC2::WriterAsciiHepMC2(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
+#function HepMC3::WriterAscii::WriterAscii(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
+#function HepMC3::WriterHEPEVT::WriterHEPEVT(std::ostream&,std::shared_ptr<HepMC3::GenRunInfo>)
 
 -function HepMC3::ReaderAsciiHepMC2::ReaderAsciiHepMC2(std::istream&)
 -function HepMC3::ReaderAscii::ReaderAscii(std::istream&)

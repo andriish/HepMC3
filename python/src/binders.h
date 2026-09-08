@@ -10,6 +10,9 @@
 #include <HepMC3/LHEF.h>
 #include <HepMC3/HEPEVT_Wrapper_Runtime.h>
 #include <pybind11/pybind11.h>
+#ifndef PYPY_VERSION
+#include "pystreambuf.h"
+#endif
 namespace binder {
 void custom_HEPEVT_Wrapper_Runtime_binder(pybind11::class_<HepMC3::HEPEVT_Wrapper_Runtime, std::shared_ptr<HepMC3::HEPEVT_Wrapper_Runtime>> cl);
 void custom_GenEvent_binder(pybind11::class_<HepMC3::GenEvent, std::shared_ptr<HepMC3::GenEvent>> cl);

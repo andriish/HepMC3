@@ -10,6 +10,7 @@
 #include <HepMC3/GenVertex.h>
 #include <HepMC3/Writer.h>
 #include <HepMC3/WriterAscii.h>
+#include <bits/ostream.h>
 #include <functional>
 #include <ios>
 #include <iterator>
@@ -144,6 +145,9 @@ void bind_pyHepMC3_11(std::function< pybind11::module &(std::string const &names
 		pybind11::class_<HepMC3::WriterAscii, std::shared_ptr<HepMC3::WriterAscii>, PyCallBack_HepMC3_WriterAscii, HepMC3::Writer> cl(M("HepMC3"), "WriterAscii", "");
 		cl.def( pybind11::init( [](const std::string & a0){ return new HepMC3::WriterAscii(a0); }, [](const std::string & a0){ return new PyCallBack_HepMC3_WriterAscii(a0); } ), "doc");
 		cl.def( pybind11::init<const std::string &, class std::shared_ptr<class HepMC3::GenRunInfo>>(), pybind11::arg("filename"), pybind11::arg("run") );
+
+        cl.def(pybind11::init([](pybind11::object file) { auto stream = std::make_shared<pystream::ostream>(file, 512 * 512); return std::make_shared<HepMC3::WriterAscii>(stream); }));
+
 
 		cl.def("write_event", (void (HepMC3::WriterAscii::*)(const class HepMC3::GenEvent &)) &HepMC3::WriterAscii::write_event, "Write event to file\n\n \n Event to be serialized\n\nC++: HepMC3::WriterAscii::write_event(const class HepMC3::GenEvent &) --> void", pybind11::arg("evt"));
 		cl.def("write_run_info", (void (HepMC3::WriterAscii::*)()) &HepMC3::WriterAscii::write_run_info, "Write the GenRunInfo object to file.\n\nC++: HepMC3::WriterAscii::write_run_info() --> void");

@@ -17,31 +17,67 @@
 namespace binder {
 void custom_deduce_reader(pybind11::module&  M){
 #ifndef PYPY_VERSION    
-    M.def("ReaderGZ", [](const std::string & classname,const std::string & filename, const std::string & format) -> std::shared_ptr<class HepMC3::Reader>{
+/*
+M.def("ReaderGZ", [](const std::string & classname,const std::string & filename, const std::string & format) 
+    -> std::shared_ptr<class HepMC3::Reader>{
+*/
+    M.def("ReaderGZ", [](
+        py::object reader_class,
+        const std::string & filename, const std::string & format) 
+    -> pybind11::object{
+
+        
       try{
         auto mzstd = pybind11::module::import(format.c_str());
-        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  return nullptr;}
-        auto zstdfile = mzstd.attr("open")(filename.c_str(), "rb");
-        auto input_stream = new pystream::istream(zstdfile, 512*512);
+        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  
+        //    return nullptr;
+        return py::none();
+        }
+        auto file = mzstd.attr("open")(filename.c_str(), "rb");
+                return reader_class(file);//.cast<std::shared_ptr<HepMC3::Reader>>();
+/*
         if (classname == "ReaderAscii" ) return std::make_shared<HepMC3::ReaderAscii>(*input_stream);
         if (classname == "ReaderAsciiHepMC2" ) return std::make_shared<HepMC3::ReaderAsciiHepMC2>(*input_stream);
         if (classname == "ReaderHEPEVT" ) return std::make_shared<HepMC3::ReaderHEPEVT>(*input_stream);
         return nullptr;
-      } catch (pybind11::import_error &e) { pybind11::print("Cannot import " + format + "  module");  return nullptr;}
+        */  
+        //    return reader_class(input_stream);
+
+      } catch (pybind11::import_error &e) {
+         pybind11::print("Cannot import " + format + "  module");  
+        // return nullptr;
+        return py::none();
+        }
     }, 
     "This function creates a reader ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
-
+/*
     M.def("WriterGZ", [](const std::string & classname, const std::string & filename, const std::string & format) -> std::shared_ptr<class HepMC3::Writer>{
-      try{ 
+*/ 
+
+
+    M.def("WriterGZ", [](py::object writer_class, const std::string & filename, 
+        const std::string & format) -> pybind11::object{
+
+
+try{ 
         auto mzstd = pybind11::module::import(format.c_str());
-        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function");  return nullptr;}
-        auto zstdfile = mzstd.attr("open")(filename.c_str(), "wb");
-        auto output_stream = new pystream::ostream(zstdfile);
+        if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function"); 
+             return py::none();
+            }
+        //auto zstdfile = mzstd.attr("open")(filename.c_str(), "wb");
+       // auto output_stream = new pystream::ostream(zstdfile);
+        /*
         if (classname == "WriterAscii" ) return std::make_shared<HepMC3::WriterAscii>(std::shared_ptr< std::ostream >(output_stream));
         if (classname == "WriterAsciiHepMC2" ) return std::make_shared<HepMC3::WriterAsciiHepMC2>(std::shared_ptr< std::ostream >(output_stream));
         if (classname == "WriterHEPEVT" ) return std::make_shared<HepMC3::WriterHEPEVT>(std::shared_ptr< std::ostream >(output_stream));
-        return nullptr;
-      } catch (pybind11::import_error &e) { pybind11::print("Cannot import " + format + " module");  return nullptr;}
+        */
+        //return writer_class(zstdfile);
+        
+        auto file = mzstd.attr("open")(filename.c_str(), "wb");
+        return writer_class(file);//.cast<std::shared_ptr<HepMC3::Writer>>();
+        
+      } catch (pybind11::import_error &e) {
+         pybind11::print("Cannot import " + format + " module");  return py::none();}
     }, 
     "This function creates a Writer ", pybind11::arg("classname"), pybind11::arg("filename"), pybind11::arg("format"));
 
