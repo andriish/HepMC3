@@ -20,11 +20,6 @@ void custom_deduce_reader(pybind11::module&  M){
         return pybind11::none();
         }
         auto file = mzstd.attr("open")(filename.c_str(), "rb");
-       // Check open()
-        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
-        {
-            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
-        }   
         return reader_class(file);
 
       } catch (pybind11::import_error &e) {
@@ -40,11 +35,6 @@ void custom_deduce_reader(pybind11::module&  M){
         if (!pybind11::hasattr(mzstd, "open")) { pybind11::print(format + " module has no open function"); 
              return pybind11::none();
             }
-       // Check open()
-        if (!pybind11::hasattr(m, "open") || !pybind11::callable(m.attr("open")))
-        {
-            throw pybind11::type_error(("Module '" + format + "' has no callable open()").c_str() );
-        }            
         auto file = mzstd.attr("open")(filename.c_str(), "wb");
         return writer_class(file);
         
