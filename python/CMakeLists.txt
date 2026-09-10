@@ -136,7 +136,7 @@ foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   else()
     set(_dotcomp ".${_comp}")   
   endif()
-  configure_file("pyHepMC3${_dotcomp}.egg-info.in" "pyHepMC3${_dotcomp}.egg-info" IMMEDIATE @ONLY)
+  configure_file("pyHepMC3${_dotcomp}.egg-info.in" "pyHepMC3${_dotcomp}.metadata" IMMEDIATE @ONLY)
 endforeach()
 if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
@@ -359,9 +359,9 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py
       DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.egg-info
-      DESTINATION  ${HEPMC3_Python_SITEARCH}
-      RENAME pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.metadata
+      DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}.dist-info
+      RENAME METADATA
       COMPONENT python${_comp})
   endforeach()
   set( HepMC_python_tests
