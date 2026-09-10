@@ -1,4 +1,6 @@
 --------------------------  HepMC3.3.2 --------------------------
+2026-09-10 Andrii Verbytskyi
+  * Update installation of Python metadata
 2026-09-07 Andrii Verbytskyi
   * Avoid potentially empty  tag in Reader in LHEF.h
 2026-09-03 Andrii Verbytskyi
