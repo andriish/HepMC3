@@ -1,4 +1,25 @@
 --------------------------  HepMC3.3.2 --------------------------
+2026-09-01 Andrii Verbytskyi
+  * Add Python compressed I/O helpers `ReaderGZ` and `WriterGZ` for binding compressed input/output streams through Python compression modules.
+  * Increase default `pystreambuf` buffer size to improve performance for Python-based compressed stream I/O.
+  * Add `python/test/test_IO8.py` and `python/test/inputIO8.hepmc` to validate gzip round-trip support and install the new test.
+2026-09-10 Leif Lonnblad
+  * Fix LHEF header init weight confusion
+2026-09-07 Andrii Verbytskyi
+  * Avoid potentially empty  tag in Reader in LHEF.h
+2026-09-03 Andrii Verbytskyi
+  * Implement suggestions from clang-tidy for tests.
+2026-09-03 Andrii Verbytskyi
+  * Follow suggestions of clang-tidy in examples.
+2026-09-03 Andrii Verbytskyi
+  * Follow suggestions of clang-tidy in the core library.
+2026-09-04 Andrii Verbytskyi
+  * Fixes to doxygen setup.
+2026-09-02 Andrii Verbytskyi
+  * CMake fixes: Fix the way ENVORONMENT is set in tests, use canonical name for components in CMake config, checks for c++29
+2026-09-02 Andrii Verbytskyi
+  * Add Python bindings for ReaderMT and its multithreaded event-reading support.
+  * Add a GitLab CI rule to require a ChangeLog entry before a merge request is considered ready.
 2025-10-02 Alexander Puck Neuwirth
   * Fixes for ReaderLHEF to properly report beams from LHE init block instead of first particles in event record.
     Further an error is raised now if there are fewer particles than beams in the event.

@@ -68,7 +68,7 @@ int main(int /*argc*/, char ** /*argv*/) {
         // information outside the LHEF <event> tags, which we may want to
         // add.
         std::shared_ptr<HEPEUPAttribute> hepe = std::make_shared<HEPEUPAttribute>();
-        if ( reader.outsideBlock.length() ){
+        if ( !reader.outsideBlock.empty() ){
             hepe->tags = LHEF:: XMLTag::findXMLTags(reader.outsideBlock);
 		}
         hepe->hepeup = reader.hepeup;
@@ -163,7 +163,7 @@ int main(int /*argc*/, char ** /*argv*/) {
             // This is just a test that we can access other attributes
             // included in the GenRunInfo.
             hepr->heprup.NPRUP =
-                int(input.run_info()->attribute<FloatAttribute>("NPRUP")->value());
+                static_cast<int>(input.run_info()->attribute<FloatAttribute>("NPRUP")->value());
 
             // Then we write out the HEPRUP object.
             writer.heprup = hepr->heprup;

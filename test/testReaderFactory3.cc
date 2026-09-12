@@ -91,7 +91,7 @@ int main()
     std::vector<std::thread> threads;
     threads.reserve(2);
     std::vector<int> results{0,0};
-    std::thread readt(reader_function, &(results[0]));
+    std::thread readt(reader_function, results.data());
     std::thread writet(writer_function, &(results[1]));
     readt.join();
     writet.join();

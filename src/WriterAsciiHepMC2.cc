@@ -361,7 +361,7 @@ void WriterAsciiHepMC2::write_run_info() {}
 void WriterAsciiHepMC2::write_particle(const ConstGenParticlePtr& p, int /*second_field*/)
 {
     flush();
-    m_cursor += sprintf(m_cursor, "P %i", int(10001+m_particle_counter));
+    m_cursor += sprintf(m_cursor, "P %i", static_cast<int>(10001 + m_particle_counter));
     m_particle_counter++;
     m_cursor += sprintf(m_cursor, " %i", p->pid() );
     m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), p->momentum().px() );

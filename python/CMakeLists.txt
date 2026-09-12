@@ -61,6 +61,9 @@ if (USE_INSTALLED_HEPMC3)
           if ("${fl}" MATCHES   ".*\\+\\+26$" OR "${fl}" MATCHES   ".*\\+\\+2c$" )
             set(HEPMC3_CXX_STANDARD 26)
           endif()
+          if ("${fl}" MATCHES   ".*\\+\\+29$" OR "${fl}" MATCHES   ".*\\+\\+2d$" )
+            set(HEPMC3_CXX_STANDARD 29)
+          endif()          
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
         endforeach(fl ${ROOT_CXX_FLAGS_LIST})
       endif()
@@ -375,7 +378,11 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         test_Units
         test_Attribute
         test_HEPEVT
+        test_IO10
   )
+  if (NOT "${IMPL}" STREQUAL "PyPy")
+    list(APPEND HepMC_python_tests test_IO8)
+  endif()
 #Workaround for nvc++ for this particular test
   if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI")
     list(REMOVE_ITEM HepMC_python_tests  test_Print)
