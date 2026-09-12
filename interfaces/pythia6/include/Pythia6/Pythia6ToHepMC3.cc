@@ -8,6 +8,9 @@
  *  @brief A simple C-like interface to HepMC3 aimed to be used with Pythia6
  *
  */
+/** @def PYTHIA6_PYTHIA6TOHEPMC3_CC
+ *  @brief Include guard used to avoid multiple inclusion of the Pythia6 interface implementation.
+ */
 #ifndef PYTHIA6_PYTHIA6TOHEPMC3_CC
 #define PYTHIA6_PYTHIA6TOHEPMC3_CC
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
@@ -26,60 +29,74 @@
 #define  hepmc3_set_weight_by_index_ HEPMC3_SET_WEIGHT_BY_INDEX
 #define  hepmc3_set_weight_by_name_ HEPMC3_SET_WEIGHT_BY_NAME
 #endif
+
 #ifdef  DUMMYPYTHIA6TOHEPMC3
 extern "C" {
 
+    /** @brief Stub: delete the writer at the given position. */
     int hepmc3_delete_writer_(const int & position)
     {
         return -1;
     }
+    /** @brief Stub: convert the HEPEVT record to a HepMC event. */
     int hepmc3_convert_event_(const int & position)
     {
         return -1;
     }
+    /** @brief Stub: write the current HepMC event. */
     int hepmc3_write_event_(const int & position)
     {
         return -1;
     }
+    /** @brief Stub: clear the current HepMC event state. */
     int hepmc3_clear_event_(const int & position)
     {
         return -1;
     }
+    /** @brief Stub: set cross section metadata for the current event. */
     int hepmc3_set_cross_section_(const int & position, const double& x, const double& xe, const int& n1, const int& n2)
     {
         return -1;
     }
 
+    /** @brief Stub: set PDF information for the current event. */
     int hepmc3_set_pdf_info_(const int & position, const int& parton_id1, const int& parton_id2, const double& x1, const double& x2,
                              const double& scale_in, const double& xf1, const double& xf2,
                              const int& pdf_id1, const int& pdf_id2)
     {
         return -1;
     }
+    /** @brief Stub: set the HEPEVT block memory address. */
     int hepmc3_set_hepevt_address_(int* a)
     {
         return -1;
     }
+    /** @brief Stub: add an integer attribute to the current event. */
     int hepmc3_set_attribute_int_(const int & position, const int & attval, const char* attname, size_t)
     {
         return -1;
     }
+    /** @brief Stub: add a double attribute to the current event. */
     int hepmc3_set_attribute_double_(const int & position, const double & attval, const char* attname, size_t)
     {
         return -1;
     }
+    /** @brief Stub: create a new HepMC writer. */
     int hepmc3_new_writer_(const int & position, const int & mode, const char* ffilename, size_t)
     {
         return  -1;
     }
+    /** @brief Stub: add a new weight name to the current event. */
     int hepmc3_new_weight_(const int & position, const char* name, size_t)
     {
         return -1;
     }
+    /** @brief Stub: set the current event weight by index. */
     int hepmc3_set_weight_by_index_(const int & position, const double& val, const int & pos, size_t)
     {
         return -1;
     }
+    /** @brief Stub: set the current event weight by name. */
     int hepmc3_set_weight_by_name_(const int & position, const double& val, const char* name, size_t)
     {
         return -1;
@@ -99,6 +116,9 @@ extern "C" {
 #include "HepMC3/Attribute.h"
 #include "HepMC3/GenRunInfo.h"
 using namespace HepMC3;
+/** @def PYTHIA6HEPEVTSIZE
+ *  @brief Default HEPEVT array size used by the Pythia6 interface.
+ */
 #ifndef PYTHIA6HEPEVTSIZE
 #define PYTHIA6HEPEVTSIZE 10000
 #endif
@@ -120,6 +140,7 @@ GenEvent* hepmc3_gWriters_get_event(const int & position)
 /** Interfaces for C/Fortran */
 extern "C" {
 
+    /** @brief Delete the writer at the specified position and free its resources. */
     int hepmc3_delete_writer_(const int & position)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -131,6 +152,7 @@ extern "C" {
         return 0;
 
     }
+    /** @brief Convert the current HEPEVT record into a HepMC event. */
     int hepmc3_convert_event_(const int & position)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -154,6 +176,7 @@ extern "C" {
         hepmc3_gWriters[position].second->weights() = std::vector<double>(hepmc3_gGenRunInfos[position]->weight_names().size(), 1.0);
         return 0;
     }
+    /** @brief Write the current HepMC event to the output writer. */
     int hepmc3_write_event_(const int & position)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -163,6 +186,7 @@ extern "C" {
         hepmc3_gWriters[position].first->write_event(*(hepmc3_gWriters[position].second));
         return 0;
     }
+    /** @brief Clear the current event associated with the writer. */
     int hepmc3_clear_event_(const int & position)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -172,6 +196,7 @@ extern "C" {
         hepmc3_gWriters[position].second->clear();
         return 0;
     }
+    /** @brief Set the event cross section. */
     int hepmc3_set_cross_section_(const int & position, const double& x, const double& xe, const int& n1, const int& n2)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -184,6 +209,7 @@ extern "C" {
         return 0;
     }
 
+    /** @brief Set the PDF information for the current event. */
     int hepmc3_set_pdf_info_(const int & position, const int& parton_id1, const int& parton_id2, const double& x1, const double& x2,
                              const double& scale_in, const double& xf1, const double& xf2,
                              const int& pdf_id1, const int& pdf_id2)
@@ -197,12 +223,14 @@ extern "C" {
         hepmc3_gWriters[position].second->set_pdf_info(pdf);
         return 0;
     }
+    /** @brief Set the address of the external HEPEVT common block. */
     int hepmc3_set_hepevt_address_(int* a)
     {
         printf("Info in %s: setting /hepevt/ block adress\n", __FUNCTION__);
-        hepmc3_gInterface.set_hepevt_address((char*)a);
+        hepmc3_gInterface.set_hepevt_address(reinterpret_cast<char*>(a));
         return 0;
     }
+    /** @brief Attach an integer attribute to the current event. */
     int hepmc3_set_attribute_int_(const int & position, const int & attval, const char* attname, size_t)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -212,6 +240,7 @@ extern "C" {
         hepmc3_gWriters[position].second->add_attribute(attname, std::make_shared<IntAttribute>(attval));
         return 0;
     }
+    /** @brief Attach a double attribute to the current event. */
     int hepmc3_set_attribute_double_(const int & position, const double & attval, const char* attname, size_t)
     {
         if (hepmc3_gWriters.count(position) == 0) {
@@ -222,6 +251,7 @@ extern "C" {
         return 0;
     }
 
+    /** @brief Create a new writer instance for the requested output mode. */
     int hepmc3_new_writer_(const int & position, const int & mode, const char* ffilename, size_t)
     {
         std::string libHepMC3rootIO="libHepMC3rootIO.so";
@@ -274,6 +304,7 @@ extern "C" {
         }
         return  r_position;
     }
+    /** @brief Register a new weight name for the current run info. */
     int hepmc3_new_weight_(const int & position, const char* name, size_t)
     {
         if (hepmc3_gGenRunInfos.count(position) == 0) {
@@ -287,19 +318,21 @@ extern "C" {
         hepmc3_gGenRunInfos[position]->set_weight_names(weight_names);
         return 0;
     }
+    /** @brief Set the event weight by index. */
     int hepmc3_set_weight_by_index_(const int & position, const double& val, const int & index)
     {
         if (hepmc3_gWriters.count(position) == 0) {
             printf("Warning in %s: Writer at position %i does not exist\n", __FUNCTION__, position);
             return 1;
         }
-        if (hepmc3_gWriters[position].second->weights().size() < (unsigned long int)index) {
+        if (hepmc3_gWriters[position].second->weights().size() < static_cast<unsigned long>(index)) {
             printf("Warning in %s: Event has no weight with index %i\n", __FUNCTION__, index);
             return 2;
         }
         hepmc3_gWriters[position].second->weights()[index] = val;
         return 0;
     }
+    /** @brief Set the event weight by name, creating it if necessary. */
     int hepmc3_set_weight_by_name_(const int & position, const double& val, const char* name, size_t)
     {
         if (hepmc3_gWriters.count(position) == 0) {

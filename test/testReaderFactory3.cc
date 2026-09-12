@@ -80,7 +80,7 @@ void  reader_function(int * result)
 int main()
 {
     unlink("frominputReaderFactory3.hepmc");
-    int  returnValuemkfifo = mkfifo("frominputReaderFactory3.hepmc", 0666);
+    const int  returnValuemkfifo = mkfifo("frominputReaderFactory3.hepmc", 0666);
     if ( returnValuemkfifo == 0 ) {
         printf("FIFO created.\n");
     } else {
@@ -101,7 +101,7 @@ int main()
 
     }
 
-    int returnValueunlink = unlink("frominputReaderFactory3.hepmc");
+    const int returnValueunlink = unlink("frominputReaderFactory3.hepmc");
     if (returnValueunlink == 0) {
         printf("FIFO deleted.\n");
     } else {

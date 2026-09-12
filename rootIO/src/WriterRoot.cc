@@ -50,7 +50,7 @@ void WriterRoot::write_event(const GenEvent &evt) {
     std::array<char,16> buf{};
     snprintf(buf.data(), buf.size(), "%15i", ++m_events_count);
 
-    int nbytes = m_file->WriteObject(&data, buf.data());
+    const int nbytes = m_file->WriteObject(&data, buf.data());
 
     if ( nbytes == 0 ) {
         HEPMC3_ERROR_LEVEL(100,"WriterRoot: error writing event")
@@ -64,7 +64,7 @@ void WriterRoot::write_run_info() {
     GenRunInfoData data;
     run_info()->write_data(data);
 
-    int nbytes = m_file->WriteObject(&data, "GenRunInfoData");
+    const int nbytes = m_file->WriteObject(&data, "GenRunInfoData");
 
     if ( nbytes == 0 ) {
         HEPMC3_ERROR_LEVEL(100,"WriterRoot: error writing GenRunInfo")

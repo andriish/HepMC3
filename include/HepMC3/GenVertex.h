@@ -14,7 +14,7 @@
 #include "HepMC3/Data/GenVertexData.h"
 #include "HepMC3/FourVector.h"
 
-#ifdef HEPMC3_PROTOBUFIO
+#if defined(HEPMC3_PROTOBUFIO) || defined(DOXYGEN)
 namespace HepMC3_pb {
 class GenEventData_GenVertexData;
 }
@@ -41,7 +41,7 @@ public:
     /// Constructor based on vertex data
     GenVertex( const GenVertexData& data );
 
-#ifdef HEPMC3_PROTOBUFIO
+#if defined(HEPMC3_PROTOBUFIO) || defined(DOXYGEN)
     /// Constructor based on protobuf messages
     GenVertex( HepMC3_pb::GenEventData_GenVertexData const &data );
 #endif

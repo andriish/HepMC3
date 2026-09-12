@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     run->set_weight_names(names);
     WriterAscii file(argv[2],run);
 
-    int nEvent = pythia.mode("Main:numberOfEvents");
+    const int nEvent = pythia.mode("Main:numberOfEvents");
 
     for( int i = 0; i < nEvent; ++i ) {
         if( !pythia.next() ) continue;

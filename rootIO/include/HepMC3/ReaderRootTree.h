@@ -57,6 +57,7 @@ public:
      */
     bool read_event(GenEvent &evt)   override;
 
+    /** @brief Read the event at the specified index from the ROOT tree. */
     bool read_event_at_index(GenEvent &evt, const Long64_t index);
 
     /** @brief Close file */

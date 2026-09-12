@@ -48,34 +48,40 @@ GenEvent generate1() {
 
 int main()
 {
+    bool ret = true;
     struct HEPEVT_Templated<HEPMC3_HEPEVT_NMXHEP,double>  X;
     GenEvent evt1 = generate1();
     HEPEVT_Wrapper_Runtime  test1;
     test1.set_max_number_entries(HEPMC3_HEPEVT_NMXHEP);
     test1.set_hepevt_address(reinterpret_cast<char*> (&X));
-    test1.GenEvent_to_HEPEVT(&evt1);
+    ret = test1.GenEvent_to_HEPEVT(&evt1);
+    if (!ret) { std::cerr << "test1.GenEvent_to_HEPEVT failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
     HEPEVT_Wrapper_Template<HEPMC3_HEPEVT_NMXHEP,double>  test2;
     GenEvent evt2;
     test2.set_hepevt_address(reinterpret_cast<char*> (&X));
-    test2.HEPEVT_to_GenEvent(&evt2);
+    ret = test2.HEPEVT_to_GenEvent(&evt2);
+    if (!ret) { std::cerr << "test2.HEPEVT_to_GenEvent failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
     HEPEVT_Wrapper_Template<20000,double>  test3;
     GenEvent evt3;
     test3.allocate_internal_storage();
     test3.copy_to_internal_storage(reinterpret_cast<char*> (&X), HEPMC3_HEPEVT_NMXHEP);
-    test3.HEPEVT_to_GenEvent(&evt3);
+    ret = test3.HEPEVT_to_GenEvent(&evt3);
+    if (!ret) { std::cerr << "test3.HEPEVT_to_GenEvent with internal storage failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
     GenEvent evt4;
     HEPEVT_Wrapper_Runtime_Static::set_max_number_entries(HEPMC3_HEPEVT_NMXHEP);
     HEPEVT_Wrapper_Runtime_Static::set_hepevt_address(reinterpret_cast<char*> (&X));
     HEPEVT_Wrapper_Runtime_Static::print_hepevt();
-    HEPEVT_Wrapper_Runtime_Static::HEPEVT_to_GenEvent(&evt4);
+    ret = HEPEVT_Wrapper_Runtime_Static::HEPEVT_to_GenEvent(&evt4);
+    if (!ret) { std::cerr << "HEPEVT_Wrapper_Runtime_Static::HEPEVT_to_GenEvent static failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
 
     GenEvent evt5;
     HEPEVT_Wrapper::set_hepevt_address(reinterpret_cast<char*> (&X));
-    HEPEVT_Wrapper::HEPEVT_to_GenEvent(&evt5);
+    ret = HEPEVT_Wrapper::HEPEVT_to_GenEvent(&evt5);
+    if (!ret) { std::cerr << "HEPEVT_Wrapper::HEPEVT_to_GenEvent wrapper failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
 
     GenEvent evt6;
@@ -83,7 +89,8 @@ int main()
     test6.set_max_number_entries(20000);
     test6.allocate_internal_storage();
     test6.copy_to_internal_storage(reinterpret_cast<char*> (&X),HEPMC3_HEPEVT_NMXHEP);
-    test6.HEPEVT_to_GenEvent(&evt6);
+    ret = test6.HEPEVT_to_GenEvent(&evt6);
+    if (!ret) { std::cerr << "test6.HEPEVT_to_GenEvent with internal storage and non-default max number of entries failed. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return 1;}
 
 
     std::shared_ptr<WriterAscii> w1 = std::make_shared<WriterAscii>("testHEPEVTWrapper1output1.txt");

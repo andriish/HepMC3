@@ -224,6 +224,7 @@ void Print::line(std::ostream& os, const GenRunInfo::ToolInfo& t) {
     os << "GenRunInfo::ToolInfo " << t.name<< " " << t.version << " " << t.description;
 }
 
+/** @brief Print a vertex and its details, optionally including attributes. */
 template <class T>
 void line_v(std::ostream& os, T v, bool attributes) {
     if (!v) { os << "GenVertex: Empty" << std::endl; return;}
@@ -272,6 +273,7 @@ void Print::line(std::ostream& os, const FourVector& p) {
     os.precision(prec);
 }
 
+/** @brief Print a particle and its details, optionally including attributes. */
 template <class T>
 void line_p(std::ostream& os, T p, bool attributes) {
     if (!p) { os << "GenParticle: Empty" << std::endl; return;}
@@ -282,11 +284,11 @@ void line_p(std::ostream& os, T p, bool attributes) {
     os << p->pid();
 
     // Find the current stream state
-    std::ios_base::fmtflags orig = os.flags();
+    const std::ios_base::fmtflags orig = os.flags();
 
     os.setf(std::ios::scientific, std::ios::floatfield);
     os.setf(std::ios_base::showpos);
-    std::streamsize prec = os.precision();
+    const std::streamsize prec = os.precision();
 
     // Set precision
     os.precision(2);
@@ -304,9 +306,9 @@ void line_p(std::ostream& os, T p, bool attributes) {
 
     const ConstGenVertexPtr prod = p->production_vertex();
     const ConstGenVertexPtr end  = p->end_vertex();
-    int prod_vtx_id   = (prod) ? prod->id() : 0;
-    int end_vtx_id    = (end)  ? end->id()  : 0;
-    auto names        = p->attribute_names();
+    const int prod_vtx_id   = (prod) ? prod->id() : 0;
+    const int end_vtx_id    = (end)  ? end->id()  : 0;
+    const auto names        = p->attribute_names();
 
     os << " Stat: " << p->status()
        << " PV: " << prod_vtx_id

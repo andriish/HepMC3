@@ -154,7 +154,7 @@ void WriterAscii::write_event(const GenEvent &evt) {
     for ( const auto& vt1: evt.attributes() ) {
         for ( const auto& vt2: vt1.second ) {
             std::string st;
-            bool status = vt2.second->to_string(st);
+            const bool status = vt2.second->to_string(st);
 
             if ( !status ) {
                 HEPMC3_WARNING_LEVEL(300,"WriterAscii::write_event: problem serializing attribute: " << vt1.first)
@@ -266,7 +266,7 @@ inline void WriterAscii::flush() {
     // using WriterAscii::write_string) should not be larger than 256. This is a safe value as
     // we will not allow precision larger than 24 anyway
     if ( m_buffer + m_buffer_size < m_cursor + 512 ) {
-        std::ptrdiff_t length = m_cursor - m_buffer;
+        const std::ptrdiff_t length = m_cursor - m_buffer;
         m_stream->write(m_buffer, length);
         m_cursor = m_buffer;
     }
@@ -274,7 +274,7 @@ inline void WriterAscii::flush() {
 
 
 inline void WriterAscii::forced_flush() {
-    std::ptrdiff_t length = m_cursor - m_buffer;
+    const std::ptrdiff_t length = m_cursor - m_buffer;
     m_stream->write(m_buffer, length);
     m_cursor = m_buffer;
 }
@@ -300,7 +300,7 @@ void WriterAscii::write_run_info() {
     }
 
     for (const auto& tool: run_info()->tools()) {
-        std::string out = "T " + tool.name + "\n" + tool.version + "\n" + tool.description;
+        const std::string out = "T " + tool.name + "\n" + tool.version + "\n" + tool.description;
         write_string(escape(out));
         m_cursor += sprintf(m_cursor, "\n");
     }
