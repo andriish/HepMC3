@@ -227,6 +227,8 @@ if (${ver} STREQUAL 3)
   unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
   if (${verminor} STREQUAL X)
+    #PYTHON < 3.6 IS UNSUPPORTED by pybind11 2.12.0
+    #Python 3.6 is the python used by default on CentOS8/EPEL8, so the support is needed.
     find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module)
   else()
     find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module)
@@ -239,10 +241,13 @@ if (${ver} STREQUAL 3)
     SET( Python_SITEARCH      ${Python3_SITEARCH})
     SET( Python_EXECUTABLE    ${Python3_EXECUTABLE})
     SET( Python_INCLUDE_DIRS  ${Python3_INCLUDE_DIRS})
-    if (Python_VERSION VERSION_LESS "3.8")
-      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/2.5.2)
+    #PYTHON < 3.9 IS UNSUPPORTED by pybind11 3.1.0
+    if (Python_VERSION VERSION_LESS "3.9")
+      # De-facto this is for Python3.6-3.9
+      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../include/2.12.0)
     else()
-      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/3.0.3)
+      # For Python3.9+
+      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../include/3.1.0)
     endif()
     message(STATUS "HepMC3 python: Using pybind11 headers from ${PYBIND11_INCLUDE_DIR}")
     unset(_Python3_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
