@@ -1,5 +1,5 @@
 # One-page HepMC3 documentation
-  
+
 ## 1 Build instructions
 
 For the full list of the installation options, including the
@@ -940,9 +940,9 @@ See for example `examples/BasicExamples/basic_tree.cc`:
   for (ConstGenParticlePtr p : applyFilter( *abs(Selector::PDG_ID) <= 6, someParticles)) {
       Print::line(p);
   }
-```  
+```
 
-  
+
 ## 10 Python Bindings
 
 HepMC3 includes Python bindings codes suitable for compilation of
@@ -953,8 +953,8 @@ utility version 1.4.0 created by Sergey Lyskov (Johns Hopkins
 University) et al.  See - https://cppbinder.readthedocs.io/en/latest/
 for details.
 
-The binding codes use the pybind11 library version 2.6.0 by Wenzel
-Jakob, EPFL's School of Computer and Communication Sciences.  See -
+The binding codes use the `pybind11` library version 2.6.0 by Wenzel
+Jakob, EPFL's School of Computer and Communication Sciences.  See
 https://pybind11.readthedocs.io/en/master/ - Wenzel Jakob and Jason
 Rhinelander and Dean Moldovan, "pybind11 -- Seamless operability
 between C++11 and Python", 2017, https://github.com/pybind/pybind11
@@ -969,8 +969,8 @@ page](https://gitlab.cern.ch/hepmc/HepMC3) at CERN GitLab for details.
 
 ### 10.2 Installation from sources
 
-To turn on the compilation of bindings use -DHEPMC3_ENABLE_PYTHON =
-ON.  By default the Python modules will be generated for Python3 if
+To turn on the compilation of bindings use `-DHEPMC3_ENABLE_PYTHON=ON`.
+By default the Python modules will be generated for Python 3 if
 these are found in the system.  In case the test suite is enabled,
 tests of Python bindings with all the enabled versions will run as
 well.
@@ -988,12 +988,12 @@ option.
 In general, the syntax used in the Python bindings is exactly the same
 as in the C++ code.  However, some C++ classes and routines differ from
 their Python equivalents, namely:
- 
-  - The constructors of Readers/Writers with `ifstream`s/`ostream`s are not binded.
-  - The multithread reader `ReaderMT` is not binded. 
-  - The explicit readers and writers with compression support (`ReaderGZ`/`WriterGZ`) are not binded. 
+
+  - The constructors of Readers/Writers with `ifstream`s/`ostream`s are not bound.
+  - The multithread reader `ReaderMT` is not bound.
+  - The explicit readers and writers with compression support (`ReaderGZ`/`WriterGZ`) are not bound.
     It is recommended to use built-in Python compression modules in combination with the desired readers/writers.
-    The `deduce_reader` is binded and uses the internal Python compression libraries, i.e. it has no dependence on zlib, zstd etc.
+    The `deduce_reader` is binded and uses the internal Python compression libraries, i.e. it has no dependence on `zlib`, `zstd` etc.
     The only requirement is that the corresponding module is available.
   - A limited support for the ROOTTree format I/O with `uproot`
     (see [uproot](https://github.com/scikit-hep/uproot5)) is available if the `uproot` module is installed.
@@ -1002,9 +1002,9 @@ their Python equivalents, namely:
 
 ## 11 Handling Les Houches Event Files
 
-This module contains helper classes and Reader and Writer classes for
+This module contains helper classes and `Reader` and `Writer` classes for
 handling [Les Houches event files (LHEF)](https://arxiv.org/abs/hep-ph/0609017).
-  
+
 ### 11.1 Introduction
 
 The Les Houches accord on an event file format (LHEF) to be used for
@@ -1036,7 +1036,7 @@ still there after the updated versions 2 in 2009
 [arXiv:1405.1067](http://archive.org/abs/1405.1067), and in the
 current proposal developed at the Les Houches workshop on TeV
 Colliders 2015.
-  
+
 As the methods for combining MEGs and EGs has advanced since the first
 accord, from the tree-level merging methods and NLO matching at the
 turn of the millennium, to the multi-jet (N)NLO matching and merging
@@ -1045,13 +1045,14 @@ lot of optional information can be passed beyond the original common
 block structures. In the following all features included will be
 described, also those that were added a bit prematurely and later
 became deprecated.
-  
+
 ### 11.3 The basic structure
 
 The LHEF format is based on XML, but has some oddities that go
 beyond pure XML. As the name indicates, XML is extensible, and anyone
 writing a LHEF file can add whatever information she or he wants,
-however the following basic structure must be observed.  
+however the following basic structure must be observed:
+
 ```xml
   <LesHouchesEvents version="3.0">
   <!--
@@ -1076,7 +1077,7 @@ however the following basic structure must be observed.
   <!-- and as many events that you want, but ending with -->
   </LesHouchesEvents>
 ```
-  
+
 This looks like fairly normal XML tags, and indeed they are. The only
 addition to the structure is that the `init` and `event` (and their
 respective end tags) are required to be alone on a line, and the
@@ -1084,10 +1085,13 @@ content of these blocks are required to start with a number of lines
 on a specific format that follows exactly the structure of the fortran
 common block in original Les Houches Accord. This means that the first
 line in the `init` block must start with a line containing the numbers
+
 ```
   IDBMUP(1) IDBMUP(2) EBMUP(1) EBMUP(2) PDFGUP(1) PDFGUP(2) PDFSUP(1) PDFSUP(2) IDWTUP NPRUP
 ```
+
 and the following `NPRUP` lines should be numbers in the form
+
 ```
   XSECUP(IPR) XERRUP(IPR) XMAXUP(IPR) LPRUP(IPR)
 ```
@@ -1111,9 +1115,10 @@ and for each process `IPR`:
 
 In the LHEF::Reader and LHEF::Writer classes this information is
 available as the public `heprup` member of class LHEF::HEPRUP with
-public members mimicking the Fortran common-block variables.  
-    
+public members mimicking the Fortran common-block variables.
+
 Similarly, every `<event>` block must start with a line containing the numbers
+
 ```
   NUP IDPRUP XWGTUP SCALUP AQEDUP AQCDUP
 ```
@@ -1145,18 +1150,18 @@ and for each particle `I`:
 
 In the LHEF::Reader and LHEF::Writer classes this information is
 available as the public `hepeup` member of class LHEF::HEPEUP with
-public members mimicking the Fortran common block variables.
+public members mimicking the Fortran common-block variables.
 
 
 ### 11.4 Additional information
-  
-Over the years several additional XML-tags have been formalised to
+
+Over the years several additional XML tags have been formalised to
 specify information on top of what is given in the original Les
-Houches accord common block. These are listed below. In most cases the
+Houches Accord common block. These are listed below. In most cases the
 tag name corresponds to a class with a corresponding name available as
 suitably named public members in the LHEF::HEPRUP and LHEF::HEPEUP
-class respectively.
-  
+classes respectively.
+
 Note that a tag may contain attributes in the following ways:
 
 ```xml
@@ -1170,17 +1175,17 @@ optional with a default value (D).
 
 
 ### 11.5 Standardised tags in the init block
-  
+
 The `<init>` block contains information about the full run (similar to
 the information contained in HepMC3::GenRunInfo). The following tags
 are defined.
-  
+
   - `<generator` (optional, multiple, see LHEF::HEPRUP::generators):
   For easy access to the generator(s) used to generate this file. An
   optional attribute `version` can be given with a string containing a
   version string. The content of the tag can include any generator
   specific information.
-  
+
   - `<xsecinfo>`</b> (required, multiple, see LHEF::HEPRUP::xsecinfos):
   The information in the HEPRUP common block is in principle
   sufficient to figure out the cross sections of the processes
@@ -1252,7 +1257,7 @@ are defined.
         - "ETmiss": the norm of the vectorial sum of the pt of particles matching p1 and not matching p2.
         - "HT": the scalar sum of the transverse momentum of the particles matching p1 and not matching p2.
         - other values are allowed but are not included in the standard.
-     
+
   - `<procinfo>` (optional, multiple, see LHEF::HEPRUP::procinfo):
     For each process number used in the LPRUP variable in the HEPEUP
     common block we can have additional information given in the
@@ -1274,7 +1279,7 @@ are defined.
   - `<mergeinfo>` (DEPRECATED, multiple, see LHEF::HEPRUP::mergeinfo):
     For some merging schemes (eg. for CKKW) it is possible to reweight the
     the events with Sudakov form factors already in the MEG. If this has
-    been done the content of the mergetype tag for the corresponding
+    been done the content of the `mergetype` tag for the corresponding
     process should give a name corresponding to the scheme used. The
     attributes are:
      * `iproc` (D=0): The process number for which the information is given. "0" means all processes.
@@ -1301,7 +1306,7 @@ are defined.
     When using multiple weights for events, each weight is given an
     index and a name using the `weightinfo` tag. The default
     weight (as given by the LHEF:HEPEUP::XWGTUP variable) is always
-    treated as index 0 and given the name "Default", while the
+    treated as index `0` and given the name `Default`, while the
     additional weights are indexed by the order of
     the `weightinfo` tags. The attributes are:
       * `name` (R): the name of the weight (in the best of all
@@ -1334,17 +1339,17 @@ are defined.
 
 
 ### 11.6 Standardised tags in the events block.
-  
+
 After the `<init>` block any number of events can be given. In
 addition events can be given in separate files declared
 with `eventfile` tags in the `init` block.
-  
+
 The main tag here is simply called `event` and can (for
 statistics purposes) have an attribute `ntries` specifying how
 many attempts the generator needed to produce the event. Also other
 attributes can be given (and will be stored in the
 LHEF::HEPEUP::attributes member variable).
-  
+
 The `<event>` tags may be grouped together in a `<eventgroup>` tag. This
 is useful mainly for NLO generators that produces a (number of) "real"
 event(s) accompanied with a number of "counter" events, where these
@@ -1352,7 +1357,7 @@ events should be treated together for statistics purposes. For this
 reason the `eventgroup` tag can be provided with the optional tags
 `nreal` and `ncounter` to indicate the number of `event` tags included
 of each type.
-  
+
 As indicated above the block must start with required information
 corresponding to the original Les Houches Accord Fortran
 common-block. Here is a list of additional tags that may be provided:
@@ -1405,12 +1410,12 @@ The errors and warnings since HepMC 3.3.0 have the following categories:
  - 100: Generic I/O problem, i.e. cannot open a file, cannot import a python module from C++, etc.
  - 200: Buffer overflows
  - 300: Problem serializing attributes, problems with the momentum/lengths units
- - 400: Math error 
- - 500: Unsupported expression in the input 
+ - 400: Math error
+ - 500: Unsupported expression in the input
  - 600: Warious event inconsistencies
  - 700: Various operational warnings, e.g. adding a null particle to vertex
- - 800: GenCrossSection warnings 
- - 900: Outdate formats or objects 
+ - 800: GenCrossSection warnings
+ - 900: Outdate formats or objects
 
 The categories are numbered approximately according to their
 importance and if the current warning/error level is set below the
