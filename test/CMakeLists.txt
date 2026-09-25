@@ -484,5 +484,8 @@ if(MEMORYCHECK_COMMAND)
   endforeach()
 endif()
 
-## HepMC3-config test
-add_test(testHepMC3config ${CMAKE_CURRENT_SOURCE_DIR}/testHepMC3config)
+
+# HepMC3-config tests
+if(NOT WIN32)
+  add_test(NAME testHepMC3config COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/testHepMC3config ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR})
+endif()
