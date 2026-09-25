@@ -1,13 +1,10 @@
 #project(pyHepMC3 CXX)
 #Should be fixed
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.10.0...4.0.3)
 if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
   SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
 endif()
-if (${CMAKE_VERSION} VERSION_GREATER "3.8")
-  cmake_policy(SET CMP0069 NEW)
-  include(CheckIPOSupported)
-endif()
+include(CheckIPOSupported)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 option(USE_INSTALLED_HEPMC3 "Use HepMC3 bindings as a standalone package" OFF)
@@ -64,6 +61,9 @@ if (USE_INSTALLED_HEPMC3)
           if ("${fl}" MATCHES   ".*\\+\\+26$" OR "${fl}" MATCHES   ".*\\+\\+2c$" )
             set(HEPMC3_CXX_STANDARD 26)
           endif()
+          if ("${fl}" MATCHES   ".*\\+\\+29$" OR "${fl}" MATCHES   ".*\\+\\+2d$" )
+            set(HEPMC3_CXX_STANDARD 29)
+          endif()          
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
         endforeach(fl ${ROOT_CXX_FLAGS_LIST})
       endif()
@@ -128,13 +128,17 @@ set(BNrootIO ${autoBNrootIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/rootIObinders.cpp)
 set(BNsearch ${autoBNsearch} ${CMAKE_CURRENT_SOURCE_DIR}/src/searchbinders.cpp)
 set(BNprotobufIO ${autoBNprotobufIO} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobufIObinders.cpp)
 
+set_source_files_properties(${autoBN} ${autoBNrootIO} ${autoBNsearch} ${autoBNprotobufIO} ${BN} ${BNrootIO} ${BNsearch} ${BNprotobufIO} PROPERTIES SKIP_CLANG_TIDY ON)
+
 foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   if (${_comp} STREQUAL " ")
     set(_dotcomp "") 
   else()
     set(_dotcomp ".${_comp}")   
   endif()
-  configure_file("pyHepMC3${_dotcomp}.egg-info.in" "pyHepMC3${_dotcomp}.egg-info" IMMEDIATE @ONLY)
+  configure_file("pyHepMC3${_dotcomp}.metadata.in" "pyHepMC3${_dotcomp}.metadata" IMMEDIATE @ONLY)
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.record" "" )
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.installer" "cmake\n")
 endforeach()
 if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
@@ -197,6 +201,29 @@ if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   endif()
 endif()
 
+# Helper to compute the wheel platform tag
+function(compute_wheel_tag python_executable out_tag)
+    execute_process(
+        COMMAND ${python_executable} -c
+            "import sysconfig, platform
+s = sysconfig.get_platform().replace('-','_').replace('.','_')
+vi = sysconfig.get_config_var('py_version_nodot') or ''
+soabi = sysconfig.get_config_var('SOABI') or ''
+# Extract just the abi tag from SOABI (e.g. cp311-cp311 from cp311-cp311-linux_x86_64)
+parts = soabi.split('-')
+if len(parts) >= 2:
+    pytag = parts[0]
+    abitag = parts[1]
+else:
+    pytag = 'cp' + vi
+    abitag = pytag
+print(f'{pytag}-{abitag}-{s}')"
+        OUTPUT_VARIABLE _tag
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    set(${out_tag} "${_tag}" PARENT_SCOPE)
+endfunction()
+
 macro(bindings verin verminor)
 SET( Python_VERSION_MAJOR "0")
 SET( Python_VERSION_MINOR "0")
@@ -225,6 +252,8 @@ if (${ver} STREQUAL 3)
   unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
   if (${verminor} STREQUAL X)
+    #PYTHON < 3.6 IS UNSUPPORTED by pybind11 2.12.0
+    #Python 3.6 is the python used by default on CentOS8/EPEL8, so the support is needed.
     find_package (Python3 3.6 COMPONENTS  Interpreter Development.Module)
   else()
     find_package (Python3 3.${verminor} EXACT COMPONENTS  Interpreter Development.Module)
@@ -237,19 +266,30 @@ if (${ver} STREQUAL 3)
     SET( Python_SITEARCH      ${Python3_SITEARCH})
     SET( Python_EXECUTABLE    ${Python3_EXECUTABLE})
     SET( Python_INCLUDE_DIRS  ${Python3_INCLUDE_DIRS})
+    #PYTHON < 3.9 IS UNSUPPORTED by pybind11 3.1.0
+    if (Python_VERSION VERSION_LESS "3.9")
+      # De-facto this is for Python3.6-3.9
+      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../include/2.12.0)
+    else()
+      # For Python3.9+
+      set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../include/3.1.0)
+    endif()
+    message(STATUS "HepMC3 python: Using pybind11 headers from ${PYBIND11_INCLUDE_DIR}")
     unset(_Python3_EXECUTABLE CACHE) # Attempt to make FindPython reenterant
     unset(_Python3_INCLUDE_DIR CACHE) # Attempt to make FindPython reenterant
   unset(_Python3_INTERPRETER_PROPERTIES CACHE) # Attempt to make FindPython reenterant
 
   endif()
 endif()
-
+if (HEPMC3_${IMPL}_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
+  message(STATUS "HepMC3 python: variable HEPMC3_${IMPL}_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} will override HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
+  set (HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} "${HEPMC3_${IMPL}_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR}}")
+endif()
 
 if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     AND ((${Python_VERSION_MAJOR} STREQUAL ${ver} AND ${verminor} STREQUAL "X")
         OR "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}" STREQUAL "${ver}.${verminor}" ))
   message(STATUS "HepMC3 python: Python verson ${ver}.${verminor} found in ${Python_EXECUTABLE}. Python bindings generation is possible.")
-
   foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
     if (${_comp} STREQUAL " ")
       set(_comp "") 
@@ -257,16 +297,22 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     else()
       set(__comp HepMC3::${_comp})   
     endif()
-    if (${ver} STREQUAL 3)
+#See https://gitlab.kitware.com/cmake/cmake/-/work_items/24121
+    message(STATUS "HepMC3 python: Original Python_SOABI = ${Python_SOABI}")
+    if(CMAKE_VERSION VERSION_LESS 3.17)
+      execute_process(
+        COMMAND ${Python_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX').split('.')[1])"
+        OUTPUT_VARIABLE Python_SOABI
+        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
+      )
+  
       Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
+      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES PREFIX "" SUFFIX "${Python_SOABI}.${CMAKE_SHARED_MODULE_SUFFIX}" OUTPUT_NAME pyHepMC3${_comp})
+    else()
+      Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE WITH_SOABI ${BN${_comp}})
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     endif()
-    if (${verin} MATCHES pypy* )
-      execute_process( COMMAND ${Python_EXECUTABLE} -c "import  sys;v=sys.pypy_version_info;print(str(v[0])+str(v[1]))" 
-      OUTPUT_VARIABLE PyPy_PyPy_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-      set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
-      PROPERTIES PREFIX "" OUTPUT_NAME pyHepMC3${_comp}.pypy-${PyPy_PyPy_VERSION})
-    endif()
+    message(STATUS "HepMC3 python: Corrected Python_SOABI = ${Python_SOABI}")  
     if (RERUN_BINDER)
       add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
     endif()
@@ -279,7 +325,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     target_link_libraries(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PUBLIC  HepMC3::HepMC3 ${__comp} )
     target_include_directories(${IMPL}pyHepMC3${_comp}${Python_VERSION}
-        PUBLIC ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/../include  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../ )
+      PUBLIC ${Python_INCLUDE_DIRS} ${PYBIND11_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../include  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../ )
     add_custom_target(
         ${IMPL}foo${_comp}${Python_VERSION} ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/
@@ -287,8 +333,8 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
                 )
   endforeach()
 
-  message(STATUS "HepMC3 python: For this platforrm CMAKE_SHARED_LIBRARY_PREFIX=${CMAKE_SHARED_LIBRARY_PREFIX}, CMAKE_SHARED_LIBRARY_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}")
-  message(STATUS "HepMC3 python: For this platforrm CMAKE_IMPORT_LIBRARY_PREFIX=${CMAKE_IMPORT_LIBRARY_PREFIX}, CMAKE_IMPORT_LIBRARY_SUFFIX=${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+  message(STATUS "HepMC3 python: For this platform CMAKE_SHARED_LIBRARY_PREFIX=${CMAKE_SHARED_LIBRARY_PREFIX}, CMAKE_SHARED_LIBRARY_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  message(STATUS "HepMC3 python: For this platform CMAKE_IMPORT_LIBRARY_PREFIX=${CMAKE_IMPORT_LIBRARY_PREFIX}, CMAKE_IMPORT_LIBRARY_SUFFIX=${CMAKE_IMPORT_LIBRARY_SUFFIX}")
 
   if (WIN32)
 #Python is insane
@@ -311,7 +357,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
       endforeach()
     endif()
   endif()
-  message(STATUS "HepMC3 python: Tweak HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} option to set the installation path for the python${Python_VERSION_MAJOR}${Python_VERSION_MINOR} bindings.")
+  message(STATUS "HepMC3 python: Tweak HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} option to set the installation path for the python${Python_VERSION_MAJOR}${Python_VERSION_MINOR} bindings. Use HEPMC3_PyPy_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} and HEPMC3_CPython_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} to distinguish PyPy/CPython implementations.")
   if (WIN32)
     if (NOT HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
       set (HEPMC3_Python_SITEARCH ${CMAKE_INSTALL_LIBDIR}/${Python_VERSION})
@@ -334,7 +380,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     message(STATUS "HepMC3 python: WARNING: The installation path of the python modules is outside of the global instalation path CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}.")
     message(STATUS "HepMC3 python: WARNING: You can use the HEPMC3_Python_SITEARCH${Python_VERSION_MAJOR}${Python_VERSION_MINOR} variable to set the desired installation path for the Python${Python_VERSION_MAJOR}${Python_VERSION_MINOR} modules.")
   endif()
-
+    compute_wheel_tag(${Python_EXECUTABLE} PYTHON_WHEEL_TAG)
     foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
        if (${_comp} STREQUAL " ")
          set(_comp "") 
@@ -348,11 +394,30 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/${_comp}/__init__.py
       DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
       COMPONENT python${_comp})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.egg-info
-      DESTINATION  ${HEPMC3_Python_SITEARCH}
-      RENAME pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}-py${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.egg-info
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.metadata
+      DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}.dist-info
+      RENAME METADATA
       COMPONENT python${_comp})
-  endforeach()
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.installer"
+        DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}.dist-info
+        RENAME INSTALLER
+        COMPONENT python${_comp})
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/../pyHepMC3${_dotcomp}.record"
+        DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}.dist-info
+        RENAME RECORD
+        COMPONENT python${_comp})
+    #Wheel is version dependent
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.wheel" 
+"Wheel-Version: 1.0
+Generator: cmake
+Root-Is-Purelib: false
+Tag: ${PYTHON_WHEEL_TAG}
+")
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.wheel"
+        DESTINATION  ${HEPMC3_Python_SITEARCH}/pyHepMC3${_dotcomp}-${THIS_PROJECT_NAME_VERSION}.dist-info
+        RENAME WHEEL
+        COMPONENT python${_comp})
+        endforeach()
   set( HepMC_python_tests
         test_IO1
         test_IO3
@@ -367,7 +432,11 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         test_Units
         test_Attribute
         test_HEPEVT
+        test_IO10
   )
+  if (NOT "${IMPL}" STREQUAL "PyPy")
+    list(APPEND HepMC_python_tests test_IO8)
+  endif()
 #Workaround for nvc++ for this particular test
   if (${CMAKE_CXX_COMPILER_ID} MATCHES "PGI")
     list(REMOVE_ITEM HepMC_python_tests  test_Print)
