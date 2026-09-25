@@ -207,7 +207,7 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
     if (pi) {
         std::string st;
         // We use it here because the HepMC3 GenPdfInfo has the same format as in HepMC2 IO_GenEvent and get error handeling for free.
-        bool status = pi->to_string(st);
+        const bool status = pi->to_string(st);
         if ( !status )
         {
             HEPMC3_WARNING_LEVEL(300,"WriterAsciiHepMC2::write_event: problem serializing GenPdfInfo attribute")
@@ -341,7 +341,7 @@ inline void WriterAsciiHepMC2::flush()
     // we will not allow precision larger than 24 anyway
     if ( m_buffer + m_buffer_size < m_cursor + 512 )
     {
-        std::ptrdiff_t length = m_cursor - m_buffer;
+        const std::ptrdiff_t length = m_cursor - m_buffer;
         m_stream->write(m_buffer, length);
         m_cursor = m_buffer;
     }
@@ -350,7 +350,7 @@ inline void WriterAsciiHepMC2::flush()
 
 inline void WriterAsciiHepMC2::forced_flush()
 {
-    std::ptrdiff_t length = m_cursor - m_buffer;
+    const std::ptrdiff_t length = m_cursor - m_buffer;
     m_stream->write(m_buffer, length);
     m_cursor = m_buffer;
 }
@@ -361,7 +361,7 @@ void WriterAsciiHepMC2::write_run_info() {}
 void WriterAsciiHepMC2::write_particle(const ConstGenParticlePtr& p, int /*second_field*/)
 {
     flush();
-    m_cursor += sprintf(m_cursor, "P %i", int(10001+m_particle_counter));
+    m_cursor += sprintf(m_cursor, "P %i", static_cast<int>(10001 + m_particle_counter));
     m_particle_counter++;
     m_cursor += sprintf(m_cursor, " %i", p->pid() );
     m_cursor += sprintf(m_cursor, m_float_printf_specifier.c_str(), p->momentum().px() );

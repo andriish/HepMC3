@@ -1,11 +1,34 @@
 #Because of LZMA targets
 if (HEPMC3_TEST_LZMA)
-  cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
+  if(${CMAKE_VERSION} VERSION_LESS "3.14")
+    message(FATAL_ERROR "HepMC3: CMake >= 3.14 is required to use HEPMC3_TEST_LZMA=ON. Found ${CMAKE_VERSION}")
+  endif()
 endif()
 if (HEPMC3_TEST_BZIP2)
-  cmake_minimum_required(VERSION 3.12.0 FATAL_ERROR)
+  if(${CMAKE_VERSION} VERSION_LESS "3.12")
+    message(FATAL_ERROR "HepMC3: CMake >= 3.12 is required to use HEPMC3_TEST_BZIP2=ON. Found ${CMAKE_VERSION}")
+  endif()
 endif()
 
+macro(hepmc_set_test_environment testname path_prefix)
+  if(WIN32)
+    set(_hepmc_path_sep "\\;")
+  else()
+    set(_hepmc_path_sep ":")
+  endif()
+
+  set(_hepmc_env_path "PATH=${path_prefix}${_hepmc_path_sep}$ENV{PATH}")
+
+  if(WIN32)
+    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${_hepmc_env_path}")
+  elseif(APPLE)
+    set(_hepmc_env_dyld "DYLD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/${_hepmc_path_sep}$ENV{DYLD_LIBRARY_PATH}")
+    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${_hepmc_env_path};${_hepmc_env_dyld}")
+  else()
+    set(_hepmc_env_ld "LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/${_hepmc_path_sep}$ENV{LD_LIBRARY_PATH}")
+    set_tests_properties(${testname} PROPERTIES ENVIRONMENT "${_hepmc_env_path};${_hepmc_env_ld}")
+  endif()
+endmacro()
 
 macro( hepmc_test testname )
   message( STATUS "HepMC3 test: building ${testname} for ${testname}" )
@@ -18,10 +41,7 @@ macro( hepmc_test testname )
   set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
   set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
   add_test( ${testname} ${CMAKE_CURRENT_BINARY_DIR}/${testname} )
-  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{PATH}"
-  ENVIRONMENT "LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{LD_LIBRARY_PATH}"
-  ENVIRONMENT "DYLD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{DYLD_LIBRARY_PATH}"
-  )
+  hepmc_set_test_environment(${testname} "${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/")
   file(GLOB INPUT${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/input${testname}*" )
   file(COPY ${INPUT${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   string(REPLACE "test" "" ${testname} name)
@@ -48,10 +68,7 @@ macro( hepmc_unix_test testname )
   file(GLOB RUN${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/run${testname}*" )
   file(COPY ${RUN${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   add_test( NAME ${testname} COMMAND sh ${CMAKE_CURRENT_BINARY_DIR}/run${testname}.sh WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR}/;$ENV{PATH}"
-  ENVIRONMENT "LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{LD_LIBRARY_PATH}"
-  ENVIRONMENT "DYLD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{DYLD_LIBRARY_PATH}"
-  )
+  hepmc_set_test_environment(${testname} "${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_BINDIR}/")
 endmacro( hepmc_unix_test )
 
 
@@ -67,10 +84,7 @@ macro( hepmc_root_test testname )
   set(srcdir ${CMAKE_CURRENT_SOURCE_DIR} )
   set(builddir ${CMAKE_CURRENT_BINARY_DIR} )
   add_test( ${testname} ${testname} )
-  SET_TESTS_PROPERTIES( ${testname} PROPERTIES ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{PATH}"
-  ENVIRONMENT "LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{LD_LIBRARY_PATH}"
-  ENVIRONMENT "DYLD_LIBRARY_PATH=${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/;$ENV{DYLD_LIBRARY_PATH}"
-  )
+  hepmc_set_test_environment(${testname} "${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/")
   file(GLOB INPUT${testname}  "${CMAKE_CURRENT_SOURCE_DIR}/input${testname}*" )
   file(COPY ${INPUT${testname}} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   string(REPLACE "test" "" ${testname} name)
@@ -102,6 +116,16 @@ endmacro( hepmc_protobuf_test )
 
 set( CMAKE_INCLUDE_DIRECTORIES_BEFORE ON )
 cmake_policy(SET CMP0057 NEW)
+
+add_test(
+  NAME package-config-downstream-old-policy
+  COMMAND ${CMAKE_COMMAND}
+    -DHEPMC3_BINARY_DIR=${PROJECT_BINARY_DIR}
+    -DHEPMC3_INSTALL_DATADIR=${CMAKE_INSTALL_DATADIR}
+    -DHEPMC3_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+    -DHEPMC3_TEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/package-config-downstream
+    -DHEPMC3_TEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/package-config-downstream
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/test_package_config_downstream.cmake)
 
 option(HEPMC3_TEST_THREADS   "Use Threads in tests if available" ON)
 option(HEPMC3_TEST_HEPMC2    "Use HepMC2 in tests if available" ON)
@@ -141,6 +165,7 @@ file(COPY ${INPUTFILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 set( HepMC_tests
         testBoost
         testFourVector
+        testGenHeavyIon
         testMass
         testPrint
         testPrintBug
@@ -159,12 +184,15 @@ set( HepMC_tests
         testIO11
         testIO12
         testIO13
+        testIO30
+        testIO31
         testReaderFactory1
         testSingleVertexHepMC2
         testAttributes
         testHEPEVTWrapper1
         testOrder
         testVertexAttributes
+        testSherpa140Crash
          )
                  
 set( HepMC_unix_tests
@@ -255,6 +283,16 @@ foreach ( test ${HepMC_tests} )
   hepmc_test( ${test} )
   set_tests_properties(${test} PROPERTIES TIMEOUT 2000)  #Relevant for testLoops
 endforeach ( test ${HepMC_tests} )
+
+add_executable(testIO32 testIO32.cc)
+target_link_libraries(testIO32 PRIVATE HepMC3::HepMC3)
+file(GLOB inputIO32 "${CMAKE_CURRENT_SOURCE_DIR}/inputIO32*")
+file(COPY ${inputIO32} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+set(testIO32_cases positions reset truncated invalid missing_count roundtrip)
+foreach(case ${testIO32_cases})
+  add_test(NAME testIO32_${case} COMMAND testIO32 ${case})
+  hepmc_set_test_environment(testIO32_${case} "${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/")
+endforeach()
 
 if(HEPMC3_ENABLE_SEARCH )
   foreach ( test ${HepMC_search_tests} )
@@ -405,7 +443,7 @@ if(MEMORYCHECK_COMMAND)
      file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/intelHepMC3.supp" "{\n<HepMC3_at_Linux_with_Intel_1>\nMemcheck:Addr32\nfun:__intel_*\n}\n{\n<HepMC3_at_Linux_with_Intel_2>\nMemcheck:Cond\nfun:*strchr\n}\n"  )
      set( MEMORYCHECK_COMMAND_OPTIONS  "${MEMORYCHECK_COMMAND_OPTIONS} --suppressions=${CMAKE_CURRENT_BINARY_DIR}/IntelHepMC3.supp")
   endif()
-elseif()
+else()
   message(STATUS "HepMC3 test: valgrind package not found or disabled.  memory check tests disabled.")
 endif()
 
@@ -432,11 +470,18 @@ if(MEMORYCHECK_COMMAND)
     set( HepMC_memcheck_tests ${HepMC_memcheck_tests} ${HepMC_protobuf_tests} )
   endif()
   list(REMOVE_ITEM HepMC_memcheck_tests testFourVector )
-#The story behind is complicated. It seems that on some platforms valgind dislikes the comparison of infinities.
+  # The story behind this is complicated. It seems that on some platforms valgrind dislikes the comparison of infinities.
   foreach ( test ${HepMC_memcheck_tests} )
     add_memcheck_test( ${test} )
     set_tests_properties(memcheck_${test} PROPERTIES DEPENDS ${test})
   endforeach ( test ${HepMC_memcheck_tests} )
+  set(io32_memcheck_command "${MEMORYCHECK_COMMAND} ${MEMORYCHECK_COMMAND_OPTIONS}")
+  separate_arguments(io32_memcheck_command)
+  foreach(case ${testIO32_cases})
+    add_test(NAME memcheck_testIO32_${case} COMMAND ${io32_memcheck_command} $<TARGET_FILE:testIO32> ${case})
+    hepmc_set_test_environment(memcheck_testIO32_${case} "${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/")
+    set_tests_properties(memcheck_testIO32_${case} PROPERTIES DEPENDS testIO32_${case})
+  endforeach()
 endif()
 
 ## HepMC3-config test
