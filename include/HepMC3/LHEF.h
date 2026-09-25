@@ -26,6 +26,7 @@
 #include <cmath>
 #include <limits>
 #ifndef M_PI
+/** @brief Pi constant used when not defined by the system math headers. */
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
@@ -1156,6 +1157,7 @@ struct WeightGroup : public TagBase {
    */
   WeightGroup(const XMLTag & tag, int groupIndex, std::vector<WeightInfo> & wiv)
     : TagBase(tag.attr) {
+    getattr("name", name);
     getattr("type", type);
     getattr("combine", combine);
     for ( int i = 0, N = tag.tags.size(); i < N; ++i ) {
@@ -1169,7 +1171,13 @@ struct WeightGroup : public TagBase {
   }
 
   /**
+   * The name.
+   */
+  std::string name;
+
+  /**
    * The type.
+   * Deprecated legacy MadGraph 2 naming for weight groups.
    */
   std::string type;
 
@@ -1698,15 +1706,17 @@ public:
       if ( tag.name.empty() ) junk += tag.contents;
 
       if ( tag.name == "initrwgt" ) {
-        for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
-          if ( tag.tags[j]->name == "weightgroup" )
-            weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
-                                              weightinfo));
-          if ( tag.tags[j]->name == "weight" )
-            weightinfo.push_back(WeightInfo(*tag.tags[j]));
-
-        }
+        readInitrwgt(tag);
       }
+      //   for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
+      //     if ( tag.tags[j]->name == "weightgroup" )
+      //       weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
+      //                                         weightinfo));
+      //     if ( tag.tags[j]->name == "weight" )
+      //       weightinfo.push_back(WeightInfo(*tag.tags[j]));
+
+      //   }
+      // }
       if ( tag.name == "weightinfo" ) {
         weightinfo.push_back(WeightInfo(tag));
       }
@@ -1753,10 +1763,34 @@ public:
 
     }
 
+    mapWeightNames();
+
+  }
+
+
+  /**
+   * Create a map of all wewightnames to the corresponding indices in
+   * the weigthinfo.
+   */
+  void mapWeightNames() {
     weightmap.clear();
     for ( int i = 0, N = weightinfo.size(); i < N; ++i )
       weightmap[weightinfo[i].name] = i + 1;
+  }
 
+  /**
+   * Helper function to read in weight information if present.
+   */
+  void readInitrwgt(const XMLTag & tag) {
+    if ( tag.name == "initrwgt" ) {
+      for ( int j = 0, M = tag.tags.size(); j < M; ++j ) {
+        if ( tag.tags[j]->name == "weightgroup" )
+          weightgroup.push_back(WeightGroup(*tag.tags[j], weightgroup.size(),
+                                            weightinfo));
+        if ( tag.tags[j]->name == "weight" )
+          weightinfo.push_back(WeightInfo(*tag.tags[j]));   
+      }
+    }
   }
 
   /// @}
@@ -1771,7 +1805,7 @@ public:
     std::string name;
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
     if ( weightinfo[i].inGroup >= 0 )
-      name = weightgroup[weightinfo[i].inGroup].type + "/"
+      name = weightgroup[weightinfo[i].inGroup].name + "/"
         +  weightgroup[weightinfo[i].inGroup].combine + "/";
     name += weightinfo[i].name;
     return name;
@@ -2381,7 +2415,7 @@ public:
            << " " << std::setw(1) << VTIMUP[i]
            << " " << std::setw(1) << SPINUP[i] << std::endl;
 
-    if ( weights.size() > 0 ) {
+    if ( weights.size() > 1 ) {
       file << "<weights>";
       for ( int i = 1, N = weights.size(); i < N; ++i )
         file << " " << weights[i].first;
@@ -2871,6 +2905,24 @@ private:
         break;
       }
     XMLTag::deleteAll(tags);
+
+    // Check if there was any initrwgt tags found in the init block.
+    bool foundrwgt = false;
+    for ( auto wi : heprup.weightinfo )
+      if ( wi.isrwgt ) { foundrwgt = true; break; }
+    
+    // If that was not the case it is possible that it was instead placed in the header block by mistake.
+    if ( !foundrwgt ) {
+      tags = XMLTag::findXMLTags(headerBlock);
+      for ( auto & htag : tags )
+        if ( htag->name == "header" ) {
+          for ( auto & tag : htag->tags )
+            if ( tag->name == "initrwgt") heprup.readInitrwgt(*tag);
+          heprup.mapWeightNames();
+         break;
+        }
+      XMLTag::deleteAll(tags);
+    }
 
     if ( !heprup.eventfiles.empty() ) openeventfile(0);
 
@@ -3384,7 +3436,7 @@ private:
 
 }
 
-/** \example LHEFCat.cc This is a main function which simply reads a
+/** This is an example main function which simply reads a
     Les Houches Event File from the standard input and writes it again
     to the standard output.
     This file can be downloaded from
@@ -3394,7 +3446,7 @@ private:
     to try it on.
 */
 
-/**\mainpage Les Houches Event File
+/** \page LHEF_page Les Houches Event File
 
 Here are some example classes for reading and writing Les Houches
 Event Files according to the

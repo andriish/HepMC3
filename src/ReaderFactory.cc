@@ -16,13 +16,6 @@
 #include "HepMC3/ReaderFactory_fwd.h"
 
 namespace HepMC3 {
-/**
- *  @brief Class to hold generic information on the input
- *
- *  Class to hold generic information on the input.
- */
-
-/** @brief Constructor with filename*/
 InputInfo::InputInfo (const std::string &filename) {
 
     if (filename.find("http://") != std::string::npos)    m_remote = true;
@@ -33,10 +26,11 @@ InputInfo::InputInfo (const std::string &filename) {
     if (!m_remote)
     {
         struct stat   buffer {};
+        auto statresultvalid = (stat (filename.c_str(), &buffer) == 0);
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32)) && !defined(__CYGWIN__)
-        if (!(stat (filename.c_str(), &buffer) == 0))
+        if (!statresultvalid)
 #else
-        if (!(stat (filename.c_str(), &buffer) == 0 && (S_ISFIFO(buffer.st_mode) || S_ISREG(buffer.st_mode) || S_ISLNK(buffer.st_mode))))
+        if (!statresultvalid || (!S_ISFIFO(buffer.st_mode) && !S_ISREG(buffer.st_mode) && !S_ISLNK(buffer.st_mode)))
 #endif
         {
             HEPMC3_ERROR_LEVEL(100,"deduce_reader: file " << filename << " does not exist or is not a regular file/FIFO/link")
@@ -88,7 +82,10 @@ InputInfo::InputInfo (const std::string &filename) {
     m_init = true;
 }
 
-/** @brief  The actuall classification routine */
+/** @fn void InputInfo::classify()
+ *  @brief The actual classification routine
+ *  @memberof InputInfo
+ */
 void InputInfo::classify() {
 
     if ( strncmp(m_head.at(0).c_str(), "root", 4) == 0 ) m_root = true;
@@ -138,7 +135,7 @@ std::shared_ptr<Reader> deduce_reader(std::istream &stream)
         const char c = raw_header[i];
         if (c == '\0') break;
         if (c == '\n') {
-            if (head.back().length() != 0) {
+            if (!head.back().empty()) {
                 head.emplace_back("");
             }
         } else {
@@ -188,7 +185,7 @@ std::shared_ptr<Reader> deduce_reader(std::shared_ptr<std::istream> stream)
         const char c = raw_header[i];
         if (c == '\0') break;
         if (c == '\n') {
-            if (head.back().length() != 0) {
+            if (!head.back().empty()) {
                 head.emplace_back("");
             }
         } else {

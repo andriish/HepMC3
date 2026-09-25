@@ -56,7 +56,7 @@ void WriterHEPEVT::write_hepevt_particle(int index, bool iflong)
         cursor += sprintf(cursor, "% 8i% 8i", m_hepevt_interface.first_child(index), m_hepevt_interface.last_child(index));
         cursor += sprintf(cursor, "% 19.8E% 19.8E% 19.8E% 19.8E\n", m_hepevt_interface.px(index), m_hepevt_interface.py(index), m_hepevt_interface.pz(index), m_hepevt_interface.m(index));
     }
-    unsigned long length = cursor - buf.data();
+    const unsigned long length = cursor - buf.data();
     m_stream->write(buf.data(), length);
 }
 
@@ -65,7 +65,7 @@ void WriterHEPEVT::write_hepevt_event_header()
     std::array<char, 512> buf{};//Note: the format is fixed, so no reason for complicatied tratment
     char* cursor = buf.data();
     cursor += sprintf(cursor, "E% 8i %8i\n", m_hepevt_interface.event_number(), m_hepevt_interface.number_entries());
-    unsigned long length = cursor - buf.data();
+    const unsigned long length = cursor - buf.data();
     m_stream->write(buf.data(), length);
 }
 

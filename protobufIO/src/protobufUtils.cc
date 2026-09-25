@@ -19,12 +19,14 @@ namespace HepMC3 {
 
 namespace Serialize {
 
+/** @brief Convert a protobuf object to its string representation. */
 template <typename T> std::string PBObjToString(T const &o) {
     std::string ostr;
     o.SerializeToString(&ostr);
     return ostr;
 }
 
+/** @brief Serialize a GenRunInfo object into a protobuf string. */
 std::string GenRunInfo(HepMC3::GenRunInfo const &run_info) {
     GenRunInfoData data;
     run_info.write_data(data);
@@ -55,6 +57,7 @@ std::string GenRunInfo(HepMC3::GenRunInfo const &run_info) {
     return PBObjToString(gri_pb);
 }
 
+/** @brief Serialize a GenEvent object into a protobuf string. */
 std::string GenEvent(HepMC3::GenEvent const &evt) {
     GenEventData data;
     evt.write_data(data);
@@ -147,6 +150,7 @@ std::string GenEvent(HepMC3::GenEvent const &evt) {
 
 namespace Deserialize {
 
+/** @brief Populate a GenRunInfo object from protobuf data. */
 void FillGenRunInfo(HepMC3_pb::GenRunInfoData const &gri_pb,
                     std::shared_ptr<HepMC3::GenRunInfo> run_info) {
 
@@ -187,6 +191,7 @@ void FillGenRunInfo(HepMC3_pb::GenRunInfoData const &gri_pb,
     run_info->read_data(gridata);
 }
 
+/** @brief Parse a protobuf GenRunInfo message from a string. */
 bool GenRunInfo(std::string const &msg,
                 std::shared_ptr<HepMC3::GenRunInfo> run_info) {
     if (!run_info) { // elide work because we have nowhere to put it
@@ -203,6 +208,7 @@ bool GenRunInfo(std::string const &msg,
     return true;
 }
 
+/** @brief Populate a GenEvent object from protobuf data. */
 void FillGenEvent(HepMC3_pb::GenEventData const &ged_pb,
                   HepMC3::GenEvent &evt) {
 
@@ -319,6 +325,7 @@ void FillGenEvent(HepMC3_pb::GenEventData const &ged_pb,
     evt.read_data(evtdata);
 }
 
+/** @brief Parse a protobuf GenEvent message from a string. */
 bool GenEvent(std::string const &msg, HepMC3::GenEvent &evt) {
 
     HepMC3_pb::GenEventData ged_pb;
@@ -417,15 +424,15 @@ void GenEvent::read_data(HepMC3_pb::GenEventData const &data) {
     for (unsigned int i = 0; i < static_cast<unsigned int>(data.attribute_id_size()); ++i) {
         /// Disallow empty strings
         const std::string& name = data.attribute_name(i);
-        if (name.length() == 0) {continue;}
+        if (name.empty()) {continue;}
         const int id = data.attribute_id(i);
         if (m_attributes.count(name) == 0) { m_attributes[name] = std::map<int, std::shared_ptr<Attribute>>(); }
         auto att = std::make_shared<StringAttribute>(data.attribute_string(i));
         att->m_event = this;
-        if (id > 0 && id <= int(m_particles.size())) {
+        if (id > 0 && id <= static_cast<int>(m_particles.size())) {
             att->m_particle = m_particles[id - 1];
         }
-        if (id < 0 && -id <= int(m_vertices.size())) {
+        if (id < 0 && -id <= static_cast<int>(m_vertices.size())) {
             att->m_vertex = m_vertices[-id - 1];
         }
         m_attributes[name][id] = att;
