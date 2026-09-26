@@ -8,7 +8,7 @@
   or b) download the tarball with `wget` or any other tool:
   ```sh
   wget http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.Y.Z.tar.gz
-  tar -xzf HepMC3-3.*.tar.gz
+  tar -xzf HepMC3-3.Y.Z.tar.gz
   ln -s HepMC3-3.Y.Z HepMC3
   ```
   The final command here is not essential, it just allows us to write the rest
