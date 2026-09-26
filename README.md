@@ -158,9 +158,9 @@ even result in a functional installation!
         -DHEPMC3_BUILD_STATIC_LIBS:BOOL=OFF        \
         -DHEPMC3_BUILD_DOCS:BOOL=OFF     \
         -DHEPMC3_ENABLE_PYTHON:BOOL=ON   \
-        -DHEPMC3_PYTHON_VERSIONS=3.12     \
-        -DHEPMC3_Python_SITEARCH312=../hepmc3-install/lib/python3.14/site-packages \
-        ../HepMC3-3.*/
+        -DHEPMC3_PYTHON_VERSIONS=3.14     \
+        -DHEPMC3_Python_SITEARCH314=../hepmc3-install/lib/python3.14/site-packages \
+        ../HepMC3-3.Y.Z/
   make
   make install
   ```
