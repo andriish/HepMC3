@@ -1804,9 +1804,10 @@ public:
   std::string weightNameHepMC(int i) const {
     std::string name;
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
-    if ( weightinfo[i].inGroup >= 0 )
-      name = weightgroup[weightinfo[i].inGroup].name + "/"
-        +  weightgroup[weightinfo[i].inGroup].combine + "/";
+    if ( weightinfo[i].inGroup >= 0 ) {
+      name =  weightgroup[weightinfo[i].inGroup].name + "__";
+      name += weightgroup[weightinfo[i].inGroup].combine + "__";
+    }
     name += weightinfo[i].name;
     return name;
   }
