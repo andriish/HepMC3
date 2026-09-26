@@ -85,7 +85,7 @@
 
   - To build with PROTOBUF I/O put the following flags:
     ```sh
-    -D HEPMC3_ENABLE_PROTOBUF=ON
+    -D HEPMC3_ENABLE_PROTOBUFIO=ON
     ```
     Adjustment of `LD_LIBRARY_PATH`/`DYLD_LIBRARY_PATH` might be needed.
 
