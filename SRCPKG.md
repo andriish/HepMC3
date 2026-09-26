@@ -2,29 +2,31 @@
 
 The package sources are organized as follows:
 
-0. The topmost directory contains the
-README and AUTHORS files, short design description, the main CMake file `CMakeLists.txt`, the package license,
-the change log, and a template configuration file.
+0. The topmost directory contains documentation for users and developers,
+the contributing-author list, the main CMake build file `CMakeLists.txt`,
+the licence details, the change log, and a config-script template:
 ```
-./DESIGN
-./README-for-developers
-./COPYING
-./AUTHORS
-./LICENCE
-./HepMC3-config.in
 ./README.md
+./SRCBUILD.md
+./SRCPKG.md
+./DEVELOPMENT.md
+./AUTHORS.md
+./LICENCE.md
+./COPYING
+./HepMC3-config.in
 ./ChangeLog
+./CMakeLists.txt
 ```
 
-1. The subdirectory `src/` contains the core set of library sources while
-the corresponding headers are located in include/HepMC3 directory.
-The subdirectory `include/HepMC3/Data` includes headers with definitions of
-POD structures used in the library.
+1. The subdirectory `src/` contains the core set of library sources
+while the corresponding headers are located in include/HepMC3
+directory.  The subdirectory `include/HepMC3/Data` includes headers
+with definitions of POD structures used in the library.
 
 2. The subdirectory `search/src` contains a set of source files of the search
 sublibrary while the corresponding headers are located in
 the `search/include/HepMC3` directory. The `search/CMakeLists.txt` file is used by CMake
-to build  the search sublibrary.
+to build the search sublibrary.
 
 3. The subdirectory `rootIO/src` contains a set of source files of the rootIO
 sublibrary while the corresponding headers are located in
