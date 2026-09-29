@@ -26,6 +26,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <cctype>
 
 #ifndef M_PI
 /** @brief pi constant used when not defined by the system math headers. */
