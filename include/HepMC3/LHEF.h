@@ -25,8 +25,10 @@
 #include <cstdlib>
 #include <cmath>
 #include <limits>
+#include <algorithm>
+
 #ifndef M_PI
-/** @brief Pi constant used when not defined by the system math headers. */
+/** @brief pi constant used when not defined by the system math headers. */
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
@@ -1809,11 +1811,16 @@ public:
     /// @todo Flag an error, or is the empty return enough?
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
 
-    // Prefix with weight-group info if it exists
+    // Prefix with weight-group info if it exists, and combine is not None/none/NONE/...
     if ( weightinfo[i].inGroup >= 0 ) {
       const WeightGroup& wg = weightgroup[weightinfo[i].inGroup];
       if (!wg.name.empty()) name +=  wg.name + "__";
-      if (!wg.combine.empty()) name += wg.combine + "__";
+      if (!wg.combine.empty()) {
+        std::string comb_upper = wg.combine;
+        std::transform(comb_upper.begin(), comb_upper.end(), comb_upper.begin(),
+                       [](unsigned char c){ return std::toupper(c); });
+        if (comb_upper != "NONE") name += wg.combine + "__";
+      }
     }
 
     // Add the specific variation name
