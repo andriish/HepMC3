@@ -1814,12 +1814,12 @@ public:
     // Prefix with weight-group info if it exists, and combine is not None/none/NONE/...
     if ( weightinfo[i].inGroup >= 0 ) {
       const WeightGroup& wg = weightgroup[weightinfo[i].inGroup];
-      if (!wg.name.empty()) name +=  wg.name + "__";
+      if (!wg.name.empty()) name +=  "GROUP=" + wg.name + "__";
       if (!wg.combine.empty()) {
         std::string comb_upper = wg.combine;
         std::transform(comb_upper.begin(), comb_upper.end(), comb_upper.begin(),
                        [](unsigned char c){ return std::toupper(c); });
-        if (comb_upper != "NONE") name += wg.combine + "__";
+        if (comb_upper != "NONE") name += "COMBINE=" + wg.combine + "__";
       }
     }
 
