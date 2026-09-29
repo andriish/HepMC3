@@ -1177,7 +1177,8 @@ struct WeightGroup : public TagBase {
 
   /**
    * The type.
-   * Deprecated legacy MadGraph 2 naming for weight groups.
+   *
+   * @deprecated Legacy MadGraph 2 naming for weight groups.
    */
   std::string type;
 
@@ -1803,12 +1804,21 @@ public:
    */
   std::string weightNameHepMC(int i) const {
     std::string name;
+
+    // Return empty name if outside the range
+    /// @todo Flag an error, or is the empty return enough?
     if ( i < 0 || i >= static_cast<int>(weightinfo.size()) ) return name;
+
+    // Prefix with weight-group info if it exists
     if ( weightinfo[i].inGroup >= 0 ) {
-      name =  weightgroup[weightinfo[i].inGroup].name + "__";
-      name += weightgroup[weightinfo[i].inGroup].combine + "__";
+      const WeightGroup& wg = weightgroup[weightinfo[i].inGroup];
+      if (!wg.name.empty()) name +=  wg.name + "__";
+      if (!wg.combine.empty()) name += wg.combine + "__";
     }
+
+    // Add the specific variation name
     name += weightinfo[i].name;
+
     return name;
   }
 
