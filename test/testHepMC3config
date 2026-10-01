@@ -3,6 +3,7 @@
 BINDIR=${1:-..}
 
 set -e
+set -o pipefail
 
 tmp=$($BINDIR/HepMC3-config --prefix | tee testHepMC3configOutput1.txt)
 test -n "$tmp"
