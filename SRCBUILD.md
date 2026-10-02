@@ -1,5 +1,44 @@
 # HepMC3 source-build instructions
 
+## Requirements
+
+The minimal requirements are:
+
+- A C++ compiler with C++11 standard support.
+- CMake version >= 3.10.
+
+
+## Quick-start
+
+It is strongly recommended to read this documentation completely
+before the installation.  However, if for some reason that is not
+possible, here is a set of commands for the installation that can be
+copied and pasted into a Unix terminal (updating the HepMC version
+in the first line if needed):
+
+```sh
+  VERSION=3.3.2
+  PYVERSION=$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+  wget http://hepmc.web.cern.ch/hepmc/releases/HepMC3-$VERSION.tar.gz -O- | tar xz
+  mkdir hepmc3-build
+  cd hepmc3-build
+  cmake -DCMAKE_INSTALL_PREFIX=../hepmc3-install   \
+        -DHEPMC3_ENABLE_ROOTIO=OFF            \
+        -DHEPMC3_ENABLE_PROTOBUFIO=OFF        \
+        -DHEPMC3_ENABLE_TEST=OFF              \
+        -DHEPMC3_INSTALL_INTERFACES=ON        \
+        -DHEPMC3_BUILD_STATIC_LIBS=OFF        \
+        -DHEPMC3_BUILD_DOCS=OFF     \
+        -DHEPMC3_ENABLE_PYTHON=ON   \
+        -DHEPMC3_PYTHON_VERSIONS=$PYVERSION   \
+        -DHEPMC3_Python_SITEARCH${PYVERSION/./}=../hepmc3-install/lib/python$PYVERSION/site-packages \
+        ../HepMC3-$VERSION/
+  make
+  make install
+  ```
+
+## Detailed instructions
+
 1. The first step of the installation is to
   a) Check out HepMC3 from the `git` repository:
   ```sh
@@ -91,7 +130,7 @@
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/path/to/ROOT6/libraries/
     ```
 
-    To *disable* ROOT, add `-D HEPMC3_ENABLE_ROOTIO=ON` to the default
+    To *disable* ROOT, add `-D HEPMC3_ENABLE_ROOTIO=OFF` to the default
     `cmake` call.
 
   - To build with PROTOBUF I/O add the following flags:
@@ -125,7 +164,7 @@
   Only a limited support can be offered for these systems.
 
 
-## Non-system Python bindings
+## Installing non-system Python bindings
 
 HepMC3 is supplied with Python-binding codes that can be build on
 multiple systems.  The number of potential combinations of compiler
@@ -187,9 +226,7 @@ This also requires quite a recent CMake.
 HepMC3 is shipped with interfaces to some legacy MC event
 generators/codes located in the interfaces/ directory, to allow the
 usage of HepMC3 with codes that do not have native HepMC3
-interfaces. In the future the codes from the interfaces will be
-submitted to the upstream of corresponding projects and removed from
-HepMC3.
+interfaces.
 
 To enable the installation of interfaces use
 `-D HEPMC3_INSTALL_INTERFACES:BOOL=ON` option for `cmake`.
