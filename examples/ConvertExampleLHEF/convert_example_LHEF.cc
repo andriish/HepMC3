@@ -96,6 +96,7 @@ int main(int argc, char** argv)
         output_file->init();
     }
 
+    long int event_number = -1;
     while (true)
     {
         const bool res_read = input_file->readEvent();
@@ -104,8 +105,9 @@ int main(int argc, char** argv)
             printf("End of file reached. Exit.\n");
             break;
         }
-        if (input_file->currevent < first_event_number) continue;
-        if (input_file->currevent > last_event_number) continue;
+        ++event_number;
+        if (event_number < first_event_number) continue;
+        if (event_number > last_event_number) continue;
 
         if (!ignore_writer)
         {
