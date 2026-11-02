@@ -1,5 +1,0 @@
-@PACKAGE_INIT@
-include(CMakeFindDependencyMacro)
-find_dependency(HepMC3 ${PROJECT_VERSION})
-find_dependency(Protobuf REQUIRED)
-include("${CMAKE_CURRENT_LIST_DIR}/HepMC3protobufIOTargets.cmake")

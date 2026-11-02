@@ -93,19 +93,6 @@ if (HEPMC3_BUILD_STATIC_LIBS)
 endif()
 
 set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/HepMC3/cmake)
-
-include(CMakePackageConfigHelpers)
-
-configure_package_config_file(cmake/Templates/HepMC3protobufIOConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3protobufIOConfig.cmake
-  INSTALL_DESTINATION ${CONFIG_INSTALL_DIR}
-  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
-            CMAKE_INSTALL_LIBDIR)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/outputs/share/HepMC3/cmake/HepMC3protobufIOConfig.cmake
-  DESTINATION ${CONFIG_INSTALL_DIR}
-  COMPONENT protobufIOdevel)
-
 install(EXPORT HepMC3protobufIOTargets
   DESTINATION ${CONFIG_INSTALL_DIR}
   COMPONENT protobufIOlibs)
