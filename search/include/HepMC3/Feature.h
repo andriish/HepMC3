@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <limits>
+#include <utility>
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/Filter.h"
 
@@ -111,7 +112,7 @@ public:
 
 protected:
     /// Hide the constructor so no one can use GenericFeature directly
-    GenericFeature(Evaluator_type functor):m_internal(std::make_shared<Evaluator_type>(functor)) {}
+    GenericFeature(Evaluator_type functor):m_internal(std::make_shared<Evaluator_type>(std::move(functor))) {}
 
     /// Hide the copy constructor
     GenericFeature(const GenericFeature &copy) : m_internal(copy.m_internal) {}
@@ -182,7 +183,7 @@ public:
     using GenericFeature<Feature_type>::operator !=;
 
     /// @brief  Feature
-    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(functor) {}
+    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(std::move(functor)) {}
     /// @brief  Copy
     Feature(const Feature &copy) : GenericFeature<Feature_type>(copy) {}
     /** @brief Move constructor */
@@ -232,7 +233,7 @@ public:
     using GenericFeature<Feature_type>::m_internal;
 
     /// @brief  Feature
-    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(functor) {}
+    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(std::move(functor)) {}
     /// @brief  Feature
     Feature(const Feature &copy) : GenericFeature<Feature_type>(copy) {}
     /** @brief Move constructor */
@@ -307,7 +308,7 @@ public:
     using GenericFeature<Feature_type>::m_internal;
 
     /// @brief Feature
-    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(functor) {}
+    Feature(Evaluator_type functor) : GenericFeature<Feature_type>(std::move(functor)) {}
     /// @brief Copy
     Feature(const Feature &copy) : GenericFeature<Feature_type>(copy) {}
 

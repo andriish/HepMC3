@@ -42,7 +42,7 @@ private:
     }
 public:
     /// @brief Constructor
-    ReaderMT(const std::string& filename): m_go_try_cache(true), m_number_of_threads(number_of_threads) {
+    ReaderMT(const std::string& filename): m_number_of_threads(number_of_threads), m_go_try_cache(true) {
         m_events.reserve(m_number_of_threads);
         m_readers.reserve(m_number_of_threads);
         m_threads.reserve(m_number_of_threads);
@@ -52,7 +52,7 @@ public:
         }
     }
     template <typename U, typename std::enable_if<std::is_base_of<Reader, U>::value, int>::type = 0>
-    explicit ReaderMT(const std::vector<std::shared_ptr<U>>& readers): m_go_try_cache(true), m_number_of_threads(readers.size()) {
+    explicit ReaderMT(const std::vector<std::shared_ptr<U>>& readers): m_number_of_threads(readers.size()), m_go_try_cache(true) {
         m_events.reserve(m_number_of_threads);
         m_readers.reserve(m_number_of_threads);
         m_threads.reserve(m_number_of_threads);
