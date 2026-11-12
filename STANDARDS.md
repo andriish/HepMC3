@@ -40,7 +40,7 @@ for particle-species identification, for access via the
 
 `GenParticle` objects carry an integer status code, inherited and
 expanded from the legacy HEPEVT event record, and accessed via the
-`GenParticle::status()` member function.. These codes are crucial to
+`GenParticle::status()` member function. These codes are crucial to
 distinguish unphysical calculation artifacts from physical particles
 to be used downstream.
 
