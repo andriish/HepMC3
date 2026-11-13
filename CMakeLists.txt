@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0...4.0.3)
+cmake_minimum_required(VERSION 3.10...4.4)
 #----------------------------------------------------------------------------
 project(HepMC3 LANGUAGES CXX)
 set(PROJECT_VERSION 3.03.01)
@@ -217,8 +217,9 @@ set(Clang_CXX_FLAGS_TO_CHECK "-Wlto-type-mismatch;-Werror=lto-type-mismatch;-Wno
 set(AppleClang_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
 set(XL_CXX_FLAGS_TO_CHECK "-qsuppress=1500-030")
 foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
-  CHECK_CXX_COMPILER_FLAG(${fl} CXX_COMPILER_SUPPORTS_${fl})
-    if(CXX_COMPILER_SUPPORTS_${fl})
+  string(MAKE_C_IDENTIFIER "CXX_COMPILER_SUPPORTS_${fl}" flag_var)
+  CHECK_CXX_COMPILER_FLAG(${fl} ${flag_var})
+    if(${flag_var})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
 endforeach()
@@ -462,7 +463,7 @@ endif()
 #This is for developers only
 find_program (ASTYLE NAMES astyle)
 if (ASTYLE)
-  message(STATUS "HepMC3: Developers only: astyle found in ${ASTYLE}. Formating of C++ code is possible.")
+  message(STATUS "HepMC3: Developers only: astyle found in ${ASTYLE}. Formatting of C++ code is possible.")
   ADD_CUSTOM_TARGET(beauty
     COMMAND ${ASTYLE}  --keep-one-line-blocks
     src/*cc

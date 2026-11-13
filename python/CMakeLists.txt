@@ -1,6 +1,6 @@
 #project(pyHepMC3 CXX)
 #Should be fixed
-cmake_minimum_required(VERSION 3.10.0...4.0.3)
+cmake_minimum_required(VERSION 3.10...4.4)
 if(${CMAKE_VERSION} VERSION_LESS "3.14.00")
   SET_PROPERTY (GLOBAL PROPERTY CMAKE_ROLE "PROJECT")
 endif()
@@ -28,7 +28,7 @@ if (USE_INSTALLED_HEPMC3)
     list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
     list(APPEND CMAKE_PREFIX_PATH ${ROOT_DIR})
     find_package(ROOT REQUIRED COMPONENTS Core RIO Tree)
-    if(ROOT_FOUND)  
+    if(ROOT_FOUND)
       message(STATUS "HepMC3 python: ROOT_FOUND=${ROOT_FOUND}")
       message(STATUS "HepMC3 python: ROOT_USE_FILE=${ROOT_USE_FILE}")
       message(STATUS "HepMC3 python: ROOT_INCLUDE_DIRS=${ROOT_INCLUDE_DIRS}")
@@ -101,8 +101,9 @@ else()
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/)
 endif()
 foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
-  CHECK_CXX_COMPILER_FLAG(${fl} CXX_COMPILER_SUPPORTS_${fl})
-    if(CXX_COMPILER_SUPPORTS_${fl})
+  string(MAKE_C_IDENTIFIER "CXX_COMPILER_SUPPORTS_${fl}" flag_var)
+  CHECK_CXX_COMPILER_FLAG(${fl} ${flag_var})
+    if(${flag_var})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
 endforeach()
@@ -131,9 +132,9 @@ set_source_files_properties(${autoBN} ${autoBNrootIO} ${autoBNsearch} ${autoBNpr
 
 foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS})
   if (${_comp} STREQUAL " ")
-    set(_dotcomp "") 
+    set(_dotcomp "")
   else()
-    set(_dotcomp ".${_comp}")   
+    set(_dotcomp ".${_comp}")
   endif()
   configure_file("pyHepMC3${_dotcomp}.metadata.in" "pyHepMC3${_dotcomp}.metadata" IMMEDIATE @ONLY)
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pyHepMC3${_dotcomp}.record" "" )
@@ -142,7 +143,7 @@ endforeach()
 if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   find_program (BINDER binder HINTS $ENV{HOME}/bin /usr/bin)
 
-  execute_process(COMMAND ${BINDER} --version OUTPUT_VARIABLE BINDER_VERSION_STRING OUTPUT_STRIP_TRAILING_WHITESPACE) 
+  execute_process(COMMAND ${BINDER} --version OUTPUT_VARIABLE BINDER_VERSION_STRING OUTPUT_STRIP_TRAILING_WHITESPACE)
   string(REGEX REPLACE "[\r\n ]" ";" BINDER_VERSION_LIST "${BINDER_VERSION_STRING} foo 0.0.0")
   list(GET BINDER_VERSION_LIST 1 BINDER_VERSION)
   if (BINDER_VERSION VERSION_GREATER 1.4.0)
@@ -166,7 +167,7 @@ if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
     foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
       set(EARG "")
       if (${_comp} STREQUAL " ")
-        set(_comp "") 
+        set(_comp "")
       else()
         STRING(TOUPPER ${_comp} _COMP)
         set(EARG "--extra-arg=-DHEPMC3_${_COMP}")
@@ -179,7 +180,7 @@ if (RERUN_BINDER AND ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
                           --skip-line-number
                           --root-module pyHepMC3${_comp}
                           --prefix "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-                          --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder   
+                          --config ${CMAKE_CURRENT_SOURCE_DIR}/src/pyHepMC3${_comp}.binder
                             ${CMAKE_CURRENT_BINARY_DIR}/${_comp}includes.hpp
                           --extra-arg=-std=c++${HEPMC3_CXX_STANDARD}
                           --extra-arg=-I${PROJECT_SOURCE_DIR}/${_comp}/include
@@ -204,18 +205,20 @@ endif()
 function(compute_wheel_tag python_executable out_tag)
     execute_process(
         COMMAND ${python_executable} -c
-            "import sysconfig, platform
+            "import sys, sysconfig
 s = sysconfig.get_platform().replace('-','_').replace('.','_')
-vi = sysconfig.get_config_var('py_version_nodot') or ''
+vi = str(sys.version_info[0]) + str(sys.version_info[1])
+implementation = sys.implementation.name
+pytag = {'cpython': 'cp', 'pypy': 'pp'}.get(implementation, implementation) + vi
 soabi = sysconfig.get_config_var('SOABI') or ''
-# Extract just the abi tag from SOABI (e.g. cp311-cp311 from cp311-cp311-linux_x86_64)
-parts = soabi.split('-')
-if len(parts) >= 2:
-    pytag = parts[0]
-    abitag = parts[1]
+if soabi.startswith('cpython-'):
+    abitag = 'cp' + soabi.split('-')[1]
+elif soabi.startswith('cp'):
+    abitag = soabi.split('-')[0]
+elif soabi.startswith('pypy'):
+    abitag = '_'.join(soabi.split('-')[:2])
 else:
-    pytag = 'cp' + vi
-    abitag = pytag
+    abitag = soabi.replace('-','_').replace('.','_') or pytag
 print(f'{pytag}-{abitag}-{s}')"
         OUTPUT_VARIABLE _tag
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -231,7 +234,7 @@ if (${verin} MATCHES pypy* )
   set(Python3_FIND_IMPLEMENTATIONS PyPy)
   set(IMPL PyPy)
   if(NOT (${CMAKE_VERSION} VERSION_GREATER "3.17"))
-    message(STATUS "HepMC3 python: WARNING: Version of cmake ${CMAKE_VERSION} is too low to support PyPy. at least version 3.18 is required") 
+    message(STATUS "HepMC3 python: WARNING: Version of cmake ${CMAKE_VERSION} is too low to support PyPy. at least version 3.18 is required")
   endif()
 else()
   set(Python3_FIND_IMPLEMENTATIONS CPython)
@@ -291,12 +294,12 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
   message(STATUS "HepMC3 python: Python verson ${ver}.${verminor} found in ${Python_EXECUTABLE}. Python bindings generation is possible.")
   foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
     if (${_comp} STREQUAL " ")
-      set(_comp "") 
-      set(__comp "") 
+      set(_comp "")
+      set(__comp "")
     else()
-      set(__comp HepMC3::${_comp})   
+      set(__comp HepMC3::${_comp})
     endif()
-#See https://gitlab.kitware.com/cmake/cmake/-/work_items/24121
+    # See https://gitlab.kitware.com/cmake/cmake/-/work_items/24121
     message(STATUS "HepMC3 python: Original Python_SOABI = ${Python_SOABI}")
     if(CMAKE_VERSION VERSION_LESS 3.17)
       execute_process(
@@ -304,18 +307,18 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
         OUTPUT_VARIABLE Python_SOABI
         OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
       )
-  
+
       Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE ${BN${_comp}})
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES PREFIX "" SUFFIX "${Python_SOABI}.${CMAKE_SHARED_MODULE_SUFFIX}" OUTPUT_NAME pyHepMC3${_comp})
     else()
       Python3_add_library(${IMPL}pyHepMC3${_comp}${Python_VERSION} MODULE WITH_SOABI ${BN${_comp}})
       set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION} PROPERTIES  OUTPUT_NAME pyHepMC3${_comp})
     endif()
-    message(STATUS "HepMC3 python: Corrected Python_SOABI = ${Python_SOABI}")  
+    message(STATUS "HepMC3 python: Corrected Python_SOABI = ${Python_SOABI}")
     if (RERUN_BINDER)
       add_dependencies(${IMPL}pyHepMC3${_comp}${Python_VERSION} generate_${_comp})
     endif()
-  
+
     set_target_properties(${IMPL}pyHepMC3${_comp}${Python_VERSION}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/$<0:>
@@ -340,7 +343,7 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     if(HEPMC3_ENABLE_TEST)
     foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
        if (${_comp} STREQUAL " ")
-         set(_comp "") 
+         set(_comp "")
        endif()
         message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/${Python_VERSION}/pyHepMC3/${_comp}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX}")
         message(STATUS "HepMC3 python: copying ${HEPMC3_LOADABLE_LIBRARIES_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_CURRENT_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}HepMC3${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX}")
@@ -382,10 +385,10 @@ if ( Python_INCLUDE_DIRS AND Python_EXECUTABLE
     compute_wheel_tag(${Python_EXECUTABLE} PYTHON_WHEEL_TAG)
     foreach(_comp IN ITEMS " " ${HEPMC3_COMPONENTS} )
        if (${_comp} STREQUAL " ")
-         set(_comp "") 
-         set(_dotcomp "") 
+         set(_comp "")
+         set(_dotcomp "")
        else()
-         set(_dotcomp ".${_comp}")   
+         set(_dotcomp ".${_comp}")
        endif()
     install(TARGETS ${IMPL}pyHepMC3${_comp}${Python_VERSION}
       DESTINATION ${HEPMC3_Python_SITEARCH}/pyHepMC3/${_comp}
@@ -491,7 +494,7 @@ list(LENGTH TEMPVERSIONS LL)
 MATH(EXPR LL "${LL}-1")
 
 foreach( ind RANGE 0 ${LL})
-    LIST(GET TEMPVERSIONS ${ind} tempver_0) 
+    LIST(GET TEMPVERSIONS ${ind} tempver_0)
     if (tempver_0)
     LIST(GET NN ${ind} tempver_1)
     string(REPLACE "." ";" MAJMIN "${tempver_0}.X.Y")
