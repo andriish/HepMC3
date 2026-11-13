@@ -1,3 +1,6 @@
+--------------------------  HepMC4.0.0 --------------------------
+2026-11-13 Leif Lönnblad
+  * Removed all deprecated parts of the GenHeavyIon class.
 --------------------------  HepMC3.3.2 --------------------------
 2026-09-29 Andrii Verbytskyi
   * Add comments/documentation to C++ tests.
