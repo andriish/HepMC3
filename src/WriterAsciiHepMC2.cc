@@ -186,19 +186,29 @@ void WriterAsciiHepMC2::write_event(const GenEvent &evt)
 
     std::shared_ptr<GenHeavyIon> hi = evt.attribute<GenHeavyIon>("GenHeavyIon");
     if (hi) {
+        double eccentricity = 0.0;
+        auto eccit = hi->eccentricities.find(0);
+        if ( eccit != hi->eccentricities.end() ) eccentricity = eccit->second;
+        int nspecn = 0;
+        if ( hi->Nspec_proj_n >= 0 && hi->Nspec_targ_n >= 0 )
+          nspecn = hi->Nspec_proj_n + hi->Nspec_targ_n;
+        int nspecp = 0;
+        if ( hi->Nspec_proj_p >= 0 && hi->Nspec_targ_p >= 0 )
+          nspecp = hi->Nspec_proj_p + hi->Nspec_targ_p;
+
         m_cursor += sprintf(m_cursor, "H %i %i %i %i %i %i %i %i %i %e %e %e %e\n",
                             hi->Ncoll_hard,
                             hi->Npart_proj,
                             hi->Npart_targ,
                             hi->Ncoll,
-                            hi->spectator_neutrons,
-                            hi->spectator_protons,
+                            nspecn,
+                            nspecp,
                             hi->N_Nwounded_collisions,
                             hi->Nwounded_N_collisions,
                             hi->Nwounded_Nwounded_collisions,
                             hi->impact_parameter,
                             hi->event_plane_angle,
-                            hi->eccentricity,
+                            eccentricity,
                             hi->sigma_inel_NN);
         flush();
     }

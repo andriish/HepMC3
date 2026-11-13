@@ -658,6 +658,7 @@ bool ReaderAsciiHepMC2::parse_weight_names(const char *buf) {
 bool ReaderAsciiHepMC2::parse_heavy_ion(GenEvent &evt, const char *buf) {
     std::shared_ptr<GenHeavyIon>  hi     = std::make_shared<GenHeavyIon>();
     const char              *cursor = buf;
+    int dummy = 0;
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     hi->Ncoll_hard = atoi(cursor);
@@ -672,10 +673,10 @@ bool ReaderAsciiHepMC2::parse_heavy_ion(GenEvent &evt, const char *buf) {
     hi->Ncoll = atoi(cursor);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    hi->spectator_neutrons = atoi(cursor);
+    dummy = atoi(cursor);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    hi->spectator_protons = atoi(cursor);
+    dummy = atoi(cursor);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     hi->N_Nwounded_collisions = atoi(cursor);
@@ -693,13 +694,17 @@ bool ReaderAsciiHepMC2::parse_heavy_ion(GenEvent &evt, const char *buf) {
     hi->event_plane_angle = atof(cursor);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
-    hi->eccentricity = atof(cursor);
+    hi->eccentricities[0] = atof(cursor);
 
     if ( !(cursor = strchr(cursor+1, ' ')) ) return false;
     hi->sigma_inel_NN = atof(cursor);
 
     // Not in HepMC2:
-    hi->centrality = 0.0;
+    hi->centrality = -1.0;
+    hi->Nspec_proj_n = -1;
+    hi->Nspec_targ_n = -1;
+    hi->Nspec_proj_p = -1;
+    hi->Nspec_targ_p = -1;
 
     evt.add_attribute("GenHeavyIon", hi);
 

@@ -56,3 +56,4 @@ rootIO/rootIO_Classes.h
 __pycache__
 *.pyc
 *.dll
+cmake_uninstall.cmake

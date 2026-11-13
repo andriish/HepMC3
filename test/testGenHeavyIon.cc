@@ -14,18 +14,18 @@ int main() {
     HI1->Npart_proj = 2;
     HI1->Npart_targ = 3;
     HI1->Ncoll = 4;
-#ifndef HEPMC3_NO_DEPRECATED
-    HI1->spectator_neutrons = 5;
-    HI1->spectator_protons = 6;
-#endif
+// #ifndef HEPMC3_NO_DEPRECATED
+//     HI1->spectator_neutrons = 5;
+//     HI1->spectator_protons = 6;
+// #endif
     HI1->N_Nwounded_collisions = 7;
     HI1->Nwounded_N_collisions = 8;
     HI1->Nwounded_Nwounded_collisions = 9;
     HI1->impact_parameter = 10;
     HI1->event_plane_angle = 11;
-#ifndef HEPMC3_NO_DEPRECATED
-    HI1->eccentricity = 12;
-#endif
+// #ifndef HEPMC3_NO_DEPRECATED
+//     HI1->eccentricity = 12;
+// #endif
     HI1->sigma_inel_NN = 13;
     HI1->centrality = 14;
     HI1->user_cent_estimate = 15;

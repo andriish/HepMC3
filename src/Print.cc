@@ -336,19 +336,12 @@ void Print::line(std::ostream& os, std::shared_ptr<GenCrossSection> &cs) {
 
 void Print::line(std::ostream& os, std::shared_ptr<GenHeavyIon> &hi) {
     if (!hi) {os << " GenHeavyIon: Empty"; return;}
-    os << " GenHeavyIon: " << hi->Ncoll_hard
-       << " " << hi->Npart_proj
-       << " " << hi->Npart_targ
-       << " " << hi->Ncoll
-       << " " << hi->spectator_neutrons
-       << " " << hi->spectator_protons
-       << " " << hi->N_Nwounded_collisions
-       << " " << hi->Nwounded_N_collisions
-       << " " << hi->Nwounded_Nwounded_collisions
-       << " " << hi->impact_parameter
-       << " " << hi->event_plane_angle
-       << " " << hi->eccentricity
-       << " " << hi->sigma_inel_NN;
+
+    std::string srep;
+    if ( hi->to_string(srep) )
+      os << " GenHeavyIon: " << srep;
+    else
+      os << " GenHeavyIon: Corrupted"
 }
 
 void Print::line(std::ostream& os, std::shared_ptr<GenPdfInfo> &pi) {

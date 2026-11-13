@@ -30,15 +30,15 @@ public:
     /// Empty default constructor.
     GenHeavyIon()
         : Ncoll_hard(-1), Npart_proj(-1), Npart_targ(-1), Ncoll(-1),
-#ifndef HEPMC3_NO_DEPRECATED
-          spectator_neutrons(-1), spectator_protons(-1),
-#endif
+// #ifndef HEPMC3_NO_DEPRECATED
+//           spectator_neutrons(-1), spectator_protons(-1),
+// #endif
           N_Nwounded_collisions(-1), Nwounded_N_collisions(-1),
           Nwounded_Nwounded_collisions(-1), impact_parameter(-1.0),
           event_plane_angle(-1.0),
-#ifndef HEPMC3_NO_DEPRECATED
-          eccentricity(-1.0),
-#endif
+// #ifndef HEPMC3_NO_DEPRECATED
+//           eccentricity(-1.0),
+// #endif
           sigma_inel_NN(-1.0), centrality(-1.0), user_cent_estimate(-1.0),
           Nspec_proj_n(-1), Nspec_targ_n(-1),
           Nspec_proj_p(-1), Nspec_targ_p(-1), forceoldformat(false) {}
@@ -79,17 +79,17 @@ public:
     ///
     int    Ncoll;
 
-#ifndef HEPMC3_NO_DEPRECATED
-    /// @brief Total number of spectator neutrons.
-    ///
-    /// HEPMC3_DEPRECATED("Use Nspec_proj_n and Nspec_targ_n instead.")
-    int    spectator_neutrons;
+// #ifndef HEPMC3_NO_DEPRECATED
+//     /// @brief Total number of spectator neutrons.
+//     ///
+//     /// HEPMC3_DEPRECATED("Use Nspec_proj_n and Nspec_targ_n instead.")
+//     int    spectator_neutrons;
 
-    /// @brief Total number of spectator protons.
-    ///
-    /// HEPMC3_DEPRECATED("Use Nspec_proj_p and Nspec_targ_p instead.")
-    int    spectator_protons;
-#endif
+//     /// @brief Total number of spectator protons.
+//     ///
+//     /// HEPMC3_DEPRECATED("Use Nspec_proj_p and Nspec_targ_p instead.")
+//     int    spectator_protons;
+// #endif
 
     /// @brief Collisions with a diffractively excited target nucleon.
     ///
@@ -126,12 +126,12 @@ public:
     /// information is not available.
     double event_plane_angle;
 
-#ifndef HEPMC3_NO_DEPRECATED
-    /// @brief The eccentricity.
-    ///
-    /// HEPMC3_DEPRECATED("Use eccentricities insted.")
-    double eccentricity;
-#endif
+// #ifndef HEPMC3_NO_DEPRECATED
+//     /// @brief The eccentricity.
+//     ///
+//     /// HEPMC3_DEPRECATED("Use eccentricities insted.")
+//     double eccentricity;
+// #endif
 
     /// @brief The assumed inelastic nucleon-nucleon cross section
     ///
@@ -221,15 +221,15 @@ public:
     /// @brief Set all fields.
     ///
     /// HEPMC3_DEPRECATED("Set individual fields directly instead.")
-    /** @brief Set all fields */
-    void set( const int&nh, const int&np, const int&nt, const int&nc, const int&ns, const int&nsp,
-              const int&nnw=0, const int&nwn=0, const int&nwnw=0,
-              const double& im=0., const double& pl=0., const double& ec=0., const double& s=0., const double& cent=0., const double& usrcent=0. );
+    // /** @brief Set all fields */
+    // void set( const int&nh, const int&np, const int&nt, const int&nc, const int&ns, const int&nsp,
+    //           const int&nnw=0, const int&nwn=0, const int&nwnw=0,
+    //           const double& im=0., const double& pl=0., const double& ec=0., const double& s=0., const double& cent=0., const double& usrcent=0. );
     /// @brief Verify that the instance contains non-zero information.
     ///
     /// HEPMC3_DEPRECATED("Each filed now have default values meaning
     /// that they have not been set")
-    bool is_valid() const;
+    // bool is_valid() const;
 
     /// @brief force writing in old format for compatibility purposes.
     ///

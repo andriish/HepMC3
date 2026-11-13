@@ -85,7 +85,17 @@ int main()
                 // add some arbitrary HeavyIon information
                 std::shared_ptr< GenHeavyIon> ion = std::make_shared< GenHeavyIon>();
                 evt.add_attribute("GenHeavyIon",ion);
-                ion->set(23,11,12,15,3,5,0,0,0,0.0145,0.0,0.0,0.0,0.23);
+                //                ion->set(23,11,12,15,3,5,0,0,0,0.0145,0.0,0.0,0.0,0.23);
+                ion->Ncoll_hard         = 23;
+                ion->Npart_proj         = 11;
+                ion->Npart_targ         = 12;
+                ion->Ncoll              = 15;
+                ion->Nspec_proj_n       = 2;
+                ion->Nspec_targ_n       = 1;
+                ion->Nspec_proj_p       = 3;
+                ion->Nspec_targ_p       = 2;
+                ion->impact_parameter   = 0.0145;
+                ion->user_cent_estimate = 0.23;
             }
             std::cout << "saving Event " << evt.event_number() << std::endl;
             if( !evt.weights().empty() )
