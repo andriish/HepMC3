@@ -341,7 +341,7 @@ void Print::line(std::ostream& os, std::shared_ptr<GenHeavyIon> &hi) {
     if ( hi->to_string(srep) )
       os << " GenHeavyIon: " << srep;
     else
-      os << " GenHeavyIon: Corrupted"
+      os << " GenHeavyIon: Corrupted";
 }
 
 void Print::line(std::ostream& os, std::shared_ptr<GenPdfInfo> &pi) {

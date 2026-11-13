@@ -18,16 +18,9 @@
 namespace HepMC3 {
 
 bool GenHeavyIon::from_string(const std::string &att) {
-/// If HEPMC3_NO_DEPRECATED is not defined, those are member variables.
-// #ifdef HEPMC3_NO_DEPRECATED
-//     double spectator_neutrons, spectator_protons, eccentricity;
-// #endif
 
     std::istringstream is(att);
     std::string version;
-
-
-
 
     is >> version >> Ncoll_hard >> Npart_proj >> Npart_targ >> Ncoll
        >> N_Nwounded_collisions >> Nwounded_N_collisions
@@ -80,56 +73,5 @@ bool GenHeavyIon::to_string(std::string &att) const {
 
     return true;
 }
-
-
-#ifndef HEPMC3_NO_DEPRECATED
-
-// bool GenHeavyIon::operator==(const GenHeavyIon& a) const {
-//     return ( memcmp( static_cast<const void*>(this), static_cast<const void*>(&a), sizeof(class GenHeavyIon) ) == 0 );
-// }
-
-// bool GenHeavyIon::operator!=(const GenHeavyIon& a) const {
-//     return !( a == *this );
-// }
-
-// void GenHeavyIon::set(const int&nh, const int&np, const int&nt, const int&nc, const int&ns, const int&nsp,
-//                       const int&nnw, const int&nwn, const int&nwnw,
-//                       const double& im, const double& pl, const double& ec, const double& s, const double& cent, const double& usrcent) {
-//     Ncoll_hard                   = nh;
-//     Npart_proj                   = np;
-//     Npart_targ                   = nt;
-//     Ncoll                        = nc;
-//     spectator_neutrons           = ns;
-//     spectator_protons            = nsp;
-//     N_Nwounded_collisions        = nnw;
-//     Nwounded_N_collisions        = nwn;
-//     Nwounded_Nwounded_collisions = nwnw;
-//     impact_parameter             = im;
-//     event_plane_angle            = pl;
-//     eccentricities[0]            = ec;
-//     sigma_inel_NN                = s;
-//     centrality                   = cent;
-//     user_cent_estimate           = usrcent;
-// }
-
-// bool GenHeavyIon::is_valid() const {
-//     if ( Ncoll_hard                   != 0 ) { return true; }
-//     if ( Npart_proj                   != 0 ) { return true; }
-//     if ( Npart_targ                   != 0 ) { return true; }
-//     if ( Ncoll                        != 0 ) { return true; }
-//     if ( spectator_neutrons           != 0 ) { return true; }
-//     if ( spectator_protons            != 0 ) { return true; }
-//     if ( N_Nwounded_collisions        != 0 ) { return true; }
-//     if ( Nwounded_N_collisions        != 0 ) { return true; }
-//     if ( Nwounded_Nwounded_collisions != 0 ) { return true; }
-//     if ( impact_parameter             != 0 ) { return true; }
-//     if ( event_plane_angle            != 0 ) { return true; }
-//     //    if ( eccentricity                 != 0 ) { return true; }
-//     if ( sigma_inel_NN                != 0 ) { return true; }
-//     if ( centrality                   != 0 ) { return true; }
-//     return false;
-// }
-
-#endif
 
 } // namespace HepMC3
