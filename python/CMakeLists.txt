@@ -101,8 +101,9 @@ else()
   set (HEPMC3_LOADABLE_LIBRARIES_DIR ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/)
 endif()
 foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
-  CHECK_CXX_COMPILER_FLAG(${fl} CXX_COMPILER_SUPPORTS_${fl})
-    if(CXX_COMPILER_SUPPORTS_${fl})
+  string(MAKE_C_IDENTIFIER "CXX_COMPILER_SUPPORTS_${fl}" flag_var)
+  CHECK_CXX_COMPILER_FLAG(${fl} ${flag_var})
+    if(${flag_var})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
 endforeach()
@@ -204,18 +205,20 @@ endif()
 function(compute_wheel_tag python_executable out_tag)
     execute_process(
         COMMAND ${python_executable} -c
-            "import sysconfig, platform
+            "import sys, sysconfig
 s = sysconfig.get_platform().replace('-','_').replace('.','_')
-vi = sysconfig.get_config_var('py_version_nodot') or ''
+vi = str(sys.version_info[0]) + str(sys.version_info[1])
+implementation = sys.implementation.name
+pytag = {'cpython': 'cp', 'pypy': 'pp'}.get(implementation, implementation) + vi
 soabi = sysconfig.get_config_var('SOABI') or ''
-# Extract just the abi tag from SOABI (e.g. cp311-cp311 from cp311-cp311-linux_x86_64)
-parts = soabi.split('-')
-if len(parts) >= 2:
-    pytag = parts[0]
-    abitag = parts[1]
+if soabi.startswith('cpython-'):
+    abitag = 'cp' + soabi.split('-')[1]
+elif soabi.startswith('cp'):
+    abitag = soabi.split('-')[0]
+elif soabi.startswith('pypy'):
+    abitag = '_'.join(soabi.split('-')[:2])
 else:
-    pytag = 'cp' + vi
-    abitag = pytag
+    abitag = soabi.replace('-','_').replace('.','_') or pytag
 print(f'{pytag}-{abitag}-{s}')"
         OUTPUT_VARIABLE _tag
         OUTPUT_STRIP_TRAILING_WHITESPACE
