@@ -106,7 +106,7 @@ HepMC::GenEvent* ConvertHepMCGenEvent_3to2(const HepMC3::GenEvent& evt)
             std::shared_ptr<HepMC3::IntAttribute> p3_flow3=p3->attribute<HepMC3::IntAttribute>("flow3");
             if (p3_flow1) p2->set_flow(1,p3_flow1->value());
             if (p3_flow2) p2->set_flow(2,p3_flow2->value());
-            if (p3_flow3) p2->set_flow(3,p3_flow2->value());
+            if (p3_flow3) p2->set_flow(3,p3_flow3->value());
         }
     }
     std::vector<HepMC3::ConstGenParticlePtr> bms=evt.beams();
@@ -255,7 +255,7 @@ HepMC3::GenEvent*  ConvertHepMCGenEvent_2to3(const HepMC::GenEvent& evt, std::sh
         if (std::abs(p3_phi->value())>std::numeric_limits<double>::epsilon() || std::abs(p3_theta->value())>std::numeric_limits<double>::epsilon())
         {
             p3->add_attribute("theta",p3_theta);
-            p3->add_attribute("phi",p3_theta);
+            p3->add_attribute("phi",p3_phi);
         }
 
         std::vector<int> flv;
