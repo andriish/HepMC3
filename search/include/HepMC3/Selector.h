@@ -12,6 +12,7 @@
 
 #include <string>
 #include <memory>
+#include <utility>
 #include "HepMC3/Filter.h"
 #include "HepMC3/Feature.h"
 #include "HepMC3/AttributeFeature.h"
@@ -85,7 +86,7 @@ template<typename Feature_type>
 class SelectorWrapper : public Selector {
 public:
     /// @brief Constructor
-    SelectorWrapper(typename Feature<Feature_type>::Evaluator_type functor): m_internal(functor) {}
+    SelectorWrapper(typename Feature<Feature_type>::Evaluator_type functor): m_internal(std::move(functor)) {}
 
     /// @brief Operator >
     Filter operator > (int value) const override {

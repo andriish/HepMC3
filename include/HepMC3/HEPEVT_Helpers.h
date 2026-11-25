@@ -20,6 +20,7 @@
 #define HEPMC3_EXPORT_API
 #endif
 #include <algorithm>
+#include <cstddef>
 #include <map>
 
 #include "HepMC3/GenEvent.h"
@@ -189,7 +190,7 @@ bool HEPEVT_to_GenEvent_nonstatic(GenEvent* evt, T* A)
     evt->add_tree(final_particles);
 
     /* Check the number of particles*/
-    if (evt->particles().size() != ne) { std::cerr << "HEPEVT_to_GenEvent_nonstatic - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
+    if (evt->particles().size() != static_cast<std::size_t>(ne)) { std::cerr << "HEPEVT_to_GenEvent_nonstatic - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
 
     return true;
 }
@@ -354,7 +355,7 @@ bool HEPEVT_to_GenEvent_static(GenEvent* evt)
     evt->add_tree(final_particles);
 
     /* Check the number of particles*/
-    if (evt->particles().size() != ne) { std::cerr << "HEPEVT_to_GenEvent_static - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
+    if (evt->particles().size() != static_cast<std::size_t>(ne)) { std::cerr << "HEPEVT_to_GenEvent_static - number of particles (" << evt->particles().size() << ") in the event is different from the number of particles (" << ne << ") in the HEPEVT record. This should not happen. Check your HEPEVT record and make sure NMXHEP is used consistenlty." << std::endl; return false;}
 
     return true;
 }
