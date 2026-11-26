@@ -1,5 +1,7 @@
 --------------------------  HepMC3.3.2 --------------------------
 2026-11-25 Dmitri Konstantinov
+  * Fix parsing of UIntAttribute, ULongAttribute and ULongLongAttribute so values are always read as decimal.
+2026-11-25 Dmitri Konstantinov
   * Fix two typos in HepMCCompatibility.h: in the HepMC2 to HepMC3 conversion the phi polarization attribute was filled with theta, and in the HepMC3 to HepMC2 conversion colour flow 3 took its value from flow2.
 2026-10-16 Juan Miguel Carceller
   * Fix GenEvent::set_units to convert the event position when changing length units.

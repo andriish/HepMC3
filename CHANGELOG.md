@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Add `python/test/test_IO8.py` and `python/test/inputIO8.hepmc` to validate gzip round-trip support and install the new test. (Andrii Verbytskyi)
 
 ### Fixed
+- Fix parsing of `UIntAttribute`, `ULongAttribute` and `ULongLongAttribute` so values are always read as decimal. (Dmitri Konstantinov)
 - Fix two typos in `HepMCCompatibility.h`: in the HepMC2 to HepMC3 conversion the `phi` polarization attribute was filled with `theta`, and in the HepMC3 to HepMC2 conversion colour `flow3` took its value from `flow2`. (Dmitri Konstantinov)
 - Fix `GenEvent::set_units` to convert the event position when changing length units. (Juan Miguel Carceller)
 - Make the translation of LHE weight structure to HepMC weight names more compliant with the arXiv:2203.08230 standard and downstream tools. (Andy Buckley)
