@@ -20,6 +20,7 @@ changelog_check:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
         - ChangeLog
+        - CHANGELOG.md
       variables:
         CHANGELOG_CHANGED: "true"
       when: always
@@ -28,14 +29,14 @@ changelog_check:
   script:
     - |
       if [ "${CHANGELOG_CHANGED:-}" = "true" ]; then
-        echo "This merge request changes the ChangeLog."
+        echo "This merge request changes the change log."
       else
         case ",${CI_MERGE_REQUEST_LABELS:-}," in
           *,skip-changelog,*)
-            echo "This merge request has the skip-changelog label, so no ChangeLog change is needed."
+            echo "This merge request has the skip-changelog label, so no change-log change is needed."
             ;;
           *)
-            echo "ERROR: Add a ChangeLog entry, or add the skip-changelog label if no entry is needed."
+            echo "ERROR: Add a change-log entry, or add the skip-changelog label if no entry is needed."
             exit 1
             ;;
         esac
@@ -122,7 +123,7 @@ EDM4HEP-CVMFS:
       export LARG=" "
       export LARG="$LARG "-DHEPMC3_ENABLE_EDM4HEP:BOOL=ON
       py_major_v=$(python -c 'import sys; print(sys.version_info.major)')
-      py_minor_v=$(python -c 'import sys; print(sys.version_info.minor)')      
+      py_minor_v=$(python -c 'import sys; print(sys.version_info.minor)')
       export LARG="$LARG "-DHEPMC3_Python_SITEARCH${py_major_v}${py_minor_v}=$(pwd)/install/lib/python${py_major_v}.${py_minor_v}/site-packages
       mkdir BUILD
       cd BUILD
@@ -193,11 +194,11 @@ EDM4HEP-CVMFS:
     - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
-    - $CMAKE --build BUILD 
+    - $CMAKE --build BUILD
     - cd $TTOP
     - cd python
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON $CACHINGFLAGS
-    - $CMAKE --build BUILD 
+    - $CMAKE --build BUILD
     - cd BUILD
     - $CTEST -j 5 --output-on-failure
     - cd $TTOP
@@ -208,7 +209,7 @@ EDM4HEP-CVMFS:
     - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - mkdir -p BUILD
-    - cd BUILD 
+    - cd BUILD
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - make -j 4
     - cd $TTOP
@@ -216,7 +217,7 @@ EDM4HEP-CVMFS:
     - export TTOP=$(pwd)
     - cd python
     - mkdir -p BUILD
-    - cd BUILD 
+    - cd BUILD
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON $CACHINGFLAGS
     - make -j 4
     - $CTEST -j 5 --output-on-failure
@@ -229,7 +230,7 @@ EDM4HEP-CVMFS:
     - cd BUILD
     - $CTEST -j 5 --output-on-failure
     - cd ..
-    
+
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
@@ -419,7 +420,7 @@ build_image_CentOS10:
   extends: .build_image
   needs:
     - job: check_commit_CentOS10
-    
+
 build_image_CentOS9:
   variables: { OS: CentOS, FREL: 9}
   extends: .build_image
@@ -616,7 +617,40 @@ CentOS10-GNU-cmake-ranges:
   script:
       - *excmake
       - *cmake
-      - *standalone  
+      - *standalone
+
+
+# Build with the latest CMake release. CMake and all the dependencies come from
+# conda-forge (CI/conda-forge/pixi.toml) and are not locked, so this job follows
+# new CMake 4 releases without edits and tests the upper end of the policy range
+# given to cmake_minimum_required.
+conda-forge-GNU-cmake-latest:
+  variables: { OS: conda-forge, FREL: latest, TOOLSET: GNU,  EXTRACMAKEFLAGS: }
+  extends: .any
+  # Pull the image through the cache of the CERN registry.
+  # cf. https://kubernetes.docs.cern.ch/docs/registry/quickstart/#pull-through-caches
+  image: registry.cern.ch/ghcr.io/prefix-dev/pixi:latest
+  # The environment is not locked, so a new release of any dependency can break this job.
+  allow_failure: true
+  script:
+      # CMake rejects include directories of imported targets (e.g. ROOT) that are inside
+      # the source directory, so the environment cannot be in the default CI/conda-forge/.pixi.
+      - pixi config set --global detached-environments true
+      - eval "$(pixi shell-hook --manifest-path CI/conda-forge/pixi.toml)"
+      # FindPythia8.cmake looks in /usr unless told otherwise.
+      - export PYTHIA8_ROOT_DIR=$CONDA_PREFIX
+      - *ex
+      - *cmake
+      - *standalone
+
+
+# The same build on linux-aarch64. Pixi selects the platform of the runner.
+conda-forge-aarch64-GNU-cmake-latest:
+  extends: conda-forge-GNU-cmake-latest
+  # OS is part of the cache key, so the two architectures do not share a ccache.
+  variables: { OS: conda-forge-aarch64 }
+  tags:
+    - k8s-arm
 
 
 CentOS10-GNU-oldcmake-ranges:
@@ -679,7 +713,7 @@ Gentoo-Portage:
   stage: packaging
   # TODO remove this mirror
   image: gitlab-registry.cern.ch/hepmc/hepmc3:Gentoo_0
-  needs: 
+  needs:
     - job: build_image_Gentoo
 
   # We use ccache

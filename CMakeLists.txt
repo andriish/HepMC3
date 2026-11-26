@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0...4.0.3)
+cmake_minimum_required(VERSION 3.10...4.4)
 #----------------------------------------------------------------------------
 project(HepMC3 LANGUAGES CXX)
 set(PROJECT_VERSION 3.03.01)
@@ -200,8 +200,9 @@ set(Clang_CXX_FLAGS_TO_CHECK "-Wlto-type-mismatch;-Werror=lto-type-mismatch;-Wno
 set(AppleClang_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line-argument;-Wno-gnu-zero-variadic-macro-arguments;-Wno-deprecated-declarations")
 set(XL_CXX_FLAGS_TO_CHECK "-qsuppress=1500-030")
 foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
-  check_cxx_compiler_flag(${fl} CXX_COMPILER_SUPPORTS_${fl})
-    if(CXX_COMPILER_SUPPORTS_${fl})
+  string(MAKE_C_IDENTIFIER "CXX_COMPILER_SUPPORTS_${fl}" flag_var)
+  check_cxx_compiler_flag(${fl} ${flag_var})
+    if(${flag_var})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
 endforeach()

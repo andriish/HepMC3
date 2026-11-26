@@ -82,10 +82,10 @@ bool Readerprotobuf::read_file_start() {
 
     const void *MagicIntro = nullptr;
     int nbytes = 0;
-    m_in_zcstream->Next(&MagicIntro, &nbytes);
-
     // Check the first four bytes it should read "hmpb"
-    if (strncmp(static_cast<const char *>(MagicIntro),
+    if (!m_in_zcstream->Next(&MagicIntro, &nbytes) ||
+        nbytes < static_cast<int>(ProtobufMagicHeaderBytes) ||
+        strncmp(static_cast<const char *>(MagicIntro),
                 ProtobufMagicHeader.c_str(), ProtobufMagicHeaderBytes) != 0) {
         HEPMC3_ERROR_LEVEL(100,"Failed to find expected Magic first "<< ProtobufMagicHeaderBytes<< " bytes, is this really a hmpb file?")
         return false;
