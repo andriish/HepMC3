@@ -536,7 +536,7 @@ public:
 
     /** @brief Implementation of Attribute::from_string */
     bool from_string(const std::string &att)  override {
-        m_val = strtoul(att.c_str(), nullptr, 0);
+        m_val = strtoul(att.c_str(), nullptr, 10);
         set_is_parsed(true);
         return true;
     }
@@ -581,7 +581,7 @@ public:
 
     /** @brief Implementation of Attribute::from_string */
     bool from_string(const std::string &att)  override {
-        m_val = strtoul(att.c_str(), nullptr, 0);
+        m_val = strtoul(att.c_str(), nullptr, 10);
         set_is_parsed(true);
         return true;
     }
@@ -625,7 +625,7 @@ public:
 
     /** @brief Implementation of Attribute::from_string */
     bool from_string(const std::string &att)  override {
-        m_val = strtoull(att.c_str(), nullptr, 0);
+        m_val = strtoull(att.c_str(), nullptr, 10);
         set_is_parsed(true);
         return true;
     }
