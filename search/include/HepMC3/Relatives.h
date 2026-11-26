@@ -81,7 +81,7 @@ public:
 
     /** @brief  operator */
     template<typename GenObject_type, typename std::enable_if<std::is_same<GenVertex, typename std::remove_const<typename GenObject_type::element_type>::type>::value, int*>::type = nullptr>
-    GenParticles_type<GenObject_type> operator()(GenObject_type input) const {return input->particles_in();}
+    GenParticles_type<GenObject_type> operator()(GenObject_type input) const {return input ? input->particles_in() : GenParticles_type<GenObject_type>{}; }
 
     /** @brief  operator */
     template<typename GenObject_type, typename std::enable_if<std::is_same<GenParticle, typename std::remove_const<typename GenObject_type::element_type>::type>::value, int*>::type = nullptr>
@@ -89,7 +89,7 @@ public:
 
     /** @brief  vertex */
     template<typename GenObject_type>
-    GenVertex_type<GenObject_type> vertex(GenObject_type input) const {return input->production_vertex();}
+    GenVertex_type<GenObject_type> vertex(GenObject_type input) const {return input ? input->production_vertex() :  GenVertex_type<GenObject_type>{};}
 };
 
 /** @brief Provides operator to find the child particles of a Vertex or Particle
@@ -104,7 +104,7 @@ public:
 
     /// @brief operator
     template<typename GenObject_type, typename std::enable_if<std::is_same<GenVertex, typename std::remove_const<typename GenObject_type::element_type>::type>::value, int*>::type = nullptr>
-    GenParticles_type<GenObject_type> operator()(GenObject_type input) const {return input->particles_out();}
+    GenParticles_type<GenObject_type> operator()(GenObject_type input) const {return input ? input->particles_out() : GenParticles_type<GenObject_type>{};}
 
     /// @brief operator
     template<typename GenObject_type, typename std::enable_if<std::is_same<GenParticle, typename std::remove_const<typename GenObject_type::element_type>::type>::value, int*>::type = nullptr>
@@ -112,7 +112,7 @@ public:
 
     /// @brief operator
     template<typename GenObject_type>
-    GenVertex_type<GenObject_type> vertex(GenObject_type input) const {return input->end_vertex();}
+    GenVertex_type<GenObject_type> vertex(GenObject_type input) const {return input ? input->end_vertex() : GenVertex_type<GenObject_type>{};}
 };
 #ifdef _MSC_VER
 /// The thread_local will not work with DLLs, so the replacement should be thread-safe
