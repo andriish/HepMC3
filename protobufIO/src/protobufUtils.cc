@@ -21,9 +21,7 @@ namespace Serialize {
 
 /** @brief Convert a protobuf object to its string representation. */
 template <typename T> std::string PBObjToString(T const &o) {
-    std::string ostr;
-    o.SerializeToString(&ostr);
-    return ostr;
+    return o.SerializeAsString();
 }
 
 /** @brief Serialize a GenRunInfo object into a protobuf string. */
