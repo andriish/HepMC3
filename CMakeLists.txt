@@ -2,26 +2,25 @@ cmake_minimum_required(VERSION 3.10...4.4)
 #----------------------------------------------------------------------------
 project(HepMC3 LANGUAGES CXX)
 set(PROJECT_VERSION 3.03.01)
-SET(HEPMC3_VERSION 3.03.01)
-SET(HEPMC3_VERSION_MAJOR  3)
-SET(HEPMC3_VERSION_MINOR  3)
-SET(HEPMC3_VERSION_PATCH  1)
+set(HEPMC3_VERSION 3.03.01)
+set(HEPMC3_VERSION_MAJOR  3)
+set(HEPMC3_VERSION_MINOR  3)
+set(HEPMC3_VERSION_PATCH  1)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
 #This module respects HFS, e.g. defines lib or lib64 when it is needed.
 include("GNUInstallDirs")
 #---Setting HepMC3 Build type-----------------------------------------------
-if(CMAKE_BUILD_TYPE)
-  message(STATUS "HepMC3 Build type: ${CMAKE_BUILD_TYPE}")
-else(CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
   message(STATUS "HepMC3 Build type not specified, use: ${CMAKE_BUILD_TYPE}")
-endif(CMAKE_BUILD_TYPE)
+elseif(CMAKE_BUILD_TYPE)
+  message(STATUS "HepMC3 Build type: ${CMAKE_BUILD_TYPE}")
+endif()
 
 message(STATUS "HepMC3: CMAKE_VERSION=${CMAKE_VERSION}")
 include(CheckIPOSupported)
 
-string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" HEPMC3_BUILD_TYPE_UPPER)
 
 #-------------Options-------------------------------------------------------
 
@@ -37,23 +36,8 @@ option(HEPMC3_INSTALL_INTERFACES "Enables installation of HepMC3 interfaces to M
 option(HEPMC3_BUILD_STATIC_LIBS  "Enables building of static libraties." ON)
 option(HEPMC3_ENABLE_CLANG_TIDY  "Enables usage of clang-tidy." OFF)
 if (HEPMC3_ENABLE_CLANG_TIDY)
-  set(ct_1 "-altera*,-abseil*,-llvmlibc*,-fuchsia*,-android*,-boost*")
-  set(ct_2 "-cppcoreguidelines-pro-type-vararg,-modernize-loop-convert,-readability-identifier-length,-misc-const-correctness")  #one day
-  set(ct_3 "-readability-braces-around-statements,-google-readability-casting,-cppcoreguidelines-avoid-non-const-global-variables,-readability-duplicate-include,-cppcoreguidelines-pro-type-cstyle-cast") ##ADDITIONS FOR PYTHON
-  set(ct_4 "-modernize-make-unique,-modernize-use-nodiscard,-modernize-use-transparent-functors,-modernize-use-scoped-lock") # C++14/17  
-  set(ct_5 "-cert-err33-c,-cert-err34-c,-cert-err58-cpp,-cert-msc30-c,-cert-msc50-cpp")
-  set(ct_6 "-clang-analyzer-core.CallAndMessage,-clang-analyzer-optin.cplusplus.VirtualCall,-clang-analyzer-core.NonNullParamChecker")
-  set(ct_7 "-hicpp-vararg,-hicpp-avoid-c-arrays,-hicpp-no-array-decay,-hicpp-braces-around-statements")
-  set(ct_8 "-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-avoid-c-arrays")
-  set(ct_9 "-cppcoreguidelines-prefer-member-initializer,-cppcoreguidelines-narrowing-conversions,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index")
-  set(ct_10 "-readability-implicit-bool-conversion,-readability-magic-numbers,-readability-function-cognitive-complexity")
-  set(ct_11 "-readability-math-missing-parentheses,-readability-avoid-nested-conditional-operator,-readability-avoid-return-with-void-value")
-  set(ct_12 "-bugprone-assignment-in-if-condition,-bugprone-easily-swappable-parameters,-bugprone-narrowing-conversions,-bugprone-exception-escape,-bugprone-implicit-widening-of-multiplication-result")
-  set(ct_13 "-modernize-avoid-c-arrays,-modernize-use-trailing-return-type,-modernize-pass-by-value")
-  set(ct_14 "-misc-include-cleaner,-misc-no-recursion,-misc-use-internal-linkage,-misc-non-private-member-variables-in-classes,-misc-use-anonymous-namespace")
-  set(ct_15 "-performance-unnecessary-value-param,-performance-avoid-endl,-google-default-arguments,-llvm-prefer-static-over-anonymous-namespace,-llvm-include-order")
-  set(ct_16 "-google-build-using-namespace,-google-runtime-int,-concurrency-mt-unsafe")
-  set(CMAKE_CXX_CLANG_TIDY "clang-tidy;--checks=*,${ct_1},${ct_2},${ct_3},${ct_4},${ct_5},${ct_6},${ct_7},${ct_8},${ct_9},${ct_10},${ct_11},${ct_12},${ct_13},${ct_14},${ct_15},${ct_16}")
+  # Checks are configured in ${PROJECT_SOURCE_DIR}/.clang-tidy
+  set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 endif()
 
 if (NOT HEPMC3_PYTHON_VERSIONS)
@@ -62,6 +46,9 @@ endif()
 
 if (NOT HEPMC3_ROOTIO_INSTALL_LIBDIR)
   set(HEPMC3_ROOTIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+endif()
+if (NOT HEPMC3_ROOTIO_INSTALL_BINDIR)
+  set(HEPMC3_ROOTIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
 endif()
 
 message(STATUS "HepMC3: HEPMC3_ENABLE_SEARCH         ${HEPMC3_ENABLE_SEARCH}")
@@ -99,23 +86,23 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
 set(CMAKE_MACOSX_RPATH 1)
 
 # use, i.e. don't skip the full RPATH for the build tree
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+set(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
 # when building, don't use the install RPATH already
 # (but later on when installing)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # the RPATH to be used when installing, but only if it's not a system directory
-LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
-IF("${isSystemDir}" STREQUAL "-1")
-   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-ENDIF("${isSystemDir}" STREQUAL "-1")
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+else()
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+endif()
 
 
 #----------------------------------------------------
@@ -131,7 +118,6 @@ set(HEPMC3_COMPONENTS "")
 if(HEPMC3_ENABLE_ROOTIO)
   list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
   list(APPEND CMAKE_PREFIX_PATH ${ROOT_DIR})
-  set(ROOT_CXX_FLAGS_BEFORE_ROOT "${ROOT_CXX_FLAGS}")
   find_package(ROOT REQUIRED COMPONENTS Core RIO Tree)
   if(ROOT_FOUND)
     message(STATUS "HepMC3: ROOT_FOUND=${ROOT_FOUND}")
@@ -171,7 +157,7 @@ if(HEPMC3_ENABLE_ROOTIO)
           if ("${fl}" MATCHES   ".*\\+\\+29$" OR "${fl}" MATCHES   ".*\\+\\+2d$" )
             set(ROOT_CXX_STANDARD 29)
           endif()
-      endforeach(fl ${ROOT_CXX_FLAGS_LIST})
+      endforeach()
     endif()
     message(STATUS "HepMC3: ROOT_CXX_STANDARD=${ROOT_CXX_STANDARD}")
   else()
@@ -218,7 +204,7 @@ set(AppleClang_CXX_FLAGS_TO_CHECK "-Wno-strict-aliasing;-Wno-unused-command-line
 set(XL_CXX_FLAGS_TO_CHECK "-qsuppress=1500-030")
 foreach(fl ${${CMAKE_CXX_COMPILER_ID}_CXX_FLAGS_TO_CHECK})
   string(MAKE_C_IDENTIFIER "CXX_COMPILER_SUPPORTS_${fl}" flag_var)
-  CHECK_CXX_COMPILER_FLAG(${fl} ${flag_var})
+  check_cxx_compiler_flag(${fl} ${flag_var})
     if(${flag_var})
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fl}")
     endif()
@@ -226,7 +212,7 @@ endforeach()
 
 message(STATUS "HepMC3: HEPMC3_CXX_STANDARD ${HEPMC3_CXX_STANDARD} " )
 message(STATUS "HepMC3: CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID} " )
-message(STATUS "HepMC3: CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}  " )
+message(STATUS "HepMC3: CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${HEPMC3_BUILD_TYPE_UPPER}}  " )
 
 ########################################################################
 ## Core
@@ -261,7 +247,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(HepMC3 SHARED ${hepmc3core_sources})
 target_include_directories(HepMC3 PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 4
   CXX_STANDARD ${HEPMC3_CXX_STANDARD}
   CXX_STANDARD_REQUIRED ON
@@ -269,7 +255,7 @@ set_target_properties(HepMC3 PROPERTIES OUTPUT_NAME HepMC3 SOVERSION 4
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
   RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
-  EXPORT_NAME HepMC3::HepMC3)
+  EXPORT_NAME HepMC3)
 target_compile_features(HepMC3 PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
 
 # Alias for packages that include this as a sub-project but
@@ -279,15 +265,17 @@ target_link_libraries(HepMC3 PRIVATE ${CMAKE_DL_LIBS})
 #---Install build products---------------------------------------------------
 install(TARGETS HepMC3
   EXPORT HepMC3Targets
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  COMPONENT libs)
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libs
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libs
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libs
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 if (HEPMC3_BUILD_STATIC_LIBS)
   add_library(HepMC3_static STATIC ${hepmc3core_sources})
 
   target_include_directories(HepMC3_static PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   target_compile_definitions(HepMC3_static PRIVATE HEPMC3_NO_EXPORTS)
   set_target_properties(HepMC3_static PROPERTIES OUTPUT_NAME HepMC3-static
     CXX_STANDARD ${HEPMC3_CXX_STANDARD}
@@ -296,15 +284,15 @@ if (HEPMC3_BUILD_STATIC_LIBS)
     ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/outputs/${CMAKE_INSTALL_LIBDIR}/$<0:>
-    EXPORT_NAME HepMC3::HepMC3_static)
+    EXPORT_NAME HepMC3_static)
   target_compile_features(HepMC3_static PUBLIC cxx_std_${HEPMC3_CXX_STANDARD})
 
   target_link_libraries(HepMC3_static PRIVATE ${CMAKE_DL_LIBS})
 #---Install build products---------------------------------------------------
   install(TARGETS HepMC3_static
     EXPORT HepMC3Targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT libs)
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libs
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
   # Alias for packages that include this as a sub-project but
   # want to use the namespaced target names
   add_library(HepMC3::HepMC3_static ALIAS HepMC3_static)
@@ -348,7 +336,7 @@ if(Protobuf_FOUND)
   list(APPEND HEPMC3_FEATURES "protobufIO${Protobuf_VERSION}")
   if (HEPMC3_BUILD_STATIC_LIBS)
     list(APPEND HEPMC3_FEATURES "protobufIO_static")
-  endif()  
+  endif()
   list(APPEND HEPMC3_COMPONENTS "protobufIO")
 endif()
 
@@ -378,7 +366,7 @@ endif()
 
 #test suite
 if(HEPMC3_ENABLE_TEST)
-  ENABLE_TESTING()
+  enable_testing()
   add_subdirectory(test)
 endif()
 
@@ -388,7 +376,7 @@ if(HEPMC3_ENABLE_PYTHON)
   list(APPEND HEPMC3_FEATURES "python")
 endif()
 
-STRING(REPLACE ";" " " HEPMC3_FEATURES "${HEPMC3_FEATURES}")
+string(REPLACE ";" " " HEPMC3_FEATURES "${HEPMC3_FEATURES}")
 
 # Generate config CMake files to be used by other projects
 #
@@ -450,7 +438,7 @@ if(TARGET HepMC3All_static)
   message(STATUS "HepMC3::All_static contains: ${_allstatic}")
 endif()
 
-install(EXPORT HepMC3Targets DESTINATION ${CONFIG_INSTALL_DIR} COMPONENT devel)
+install(EXPORT HepMC3Targets NAMESPACE HepMC3:: DESTINATION ${CONFIG_INSTALL_DIR} COMPONENT devel)
 
 # uninstall target
 if(NOT TARGET uninstall)
@@ -464,7 +452,7 @@ endif()
 find_program (ASTYLE NAMES astyle)
 if (ASTYLE)
   message(STATUS "HepMC3: Developers only: astyle found in ${ASTYLE}. Formatting of C++ code is possible.")
-  ADD_CUSTOM_TARGET(beauty
+  add_custom_target(beauty
     COMMAND ${ASTYLE}  --keep-one-line-blocks
     src/*cc
     rootIO/src/*cc
@@ -489,12 +477,12 @@ endif()
 find_program (BLACK NAMES black)
 if (BLACK)
   message(STATUS "HepMC3: Developers only: black found in ${BLACK}. Formating of Python code is possible.")
-  ADD_CUSTOM_TARGET(beautypython COMMAND ${BLACK} -l 120  python/src/*py python/test/*py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
+  add_custom_target(beautypython COMMAND ${BLACK} -l 120  python/src/*py python/test/*py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
 endif()
 find_program (CPPCHECK NAMES cppcheck)
 if(CPPCHECK)
   message(STATUS "HepMC3: Developers only: cppcheck found in ${CPPCHECK}. Static analysis of C++ code is possible.")
-  ADD_CUSTOM_TARGET(staticcheck
+  add_custom_target(staticcheck
     COMMAND ${CPPCHECK} --force  --suppress=unusedFunction -v -x c++ --std=c++11 --enable=all
       -I./include -I./search/include -I./rootIO/include -I${ROOT_INCLUDE_DIRS}
       src/*.cc
@@ -516,25 +504,27 @@ endif()
 ## CPACK
 ########################################################################
 #General CPACK settings
-INCLUDE(InstallRequiredSystemLibraries)
+include(InstallRequiredSystemLibraries)
 
 set(CPACK_PACKAGE_NAME "HepMC3")
 set(CPACK_PACKAGE_VENDOR "HepMC3 Developers")
 #Should the version be defined above?
 set(CPACK_PACKAGE_VERSION 3)
-set(CPACK_PACKAGE_VERSION_MAJOR 3)
-set(CPACK_PACKAGE_VERSION_MINOR 3)
-set(CPACK_PACKAGE_VERSION_PATCH 1)
+set(CPACK_PACKAGE_VERSION_MAJOR ${HEPMC3_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${HEPMC3_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${HEPMC3_VERSION_PATCH})
 set(CPACK_PACKAGE_RELEASE 0)
 set(CPACK_PACKAGE_FILE_NAME "HepMC3")
 set(CPACK_PACKAGE_DESCRIPTION "Event record library for high energy physics Monte Carlo")
 
-set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
-SET(CPACK_INSTALL_PREFIX "/usr")
-SET(CPACK_OUTPUT_FILE_PREFIX binpackages)
+if(UNIX AND NOT APPLE)
+  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+  set(CPACK_INSTALL_PREFIX "/usr")
+endif()
+set(CPACK_OUTPUT_FILE_PREFIX binpackages)
 
 #NSIS-specific settings
-SET(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/COPYING)
+set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/COPYING)
 
 set(CPACK_COMPONENTS_ALL   devel libs   )
 
@@ -561,4 +551,4 @@ endif()
 if(Protobuf_FOUND)
   list(APPEND CPACK_COMPONENTS_ALL protobufIOdevel protobufIOlibs)
 endif()
-INCLUDE(CPack)
+include(CPack)
