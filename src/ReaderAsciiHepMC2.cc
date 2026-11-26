@@ -317,7 +317,7 @@ bool ReaderAsciiHepMC2::read_event(GenEvent &evt) {
                     std::shared_ptr<VectorDoubleAttribute>  casted = std::dynamic_pointer_cast<VectorDoubleAttribute>(f.second);
                     if (!casted) continue;//Should not happen
                     std::vector<double> this_v_weight = casted->value();
-                    for (size_t i = 0; i < this_v_weight.size(); i++) m_particle_cache[-f.first-1]->add_attribute("weight"+std::to_string(i), std::make_shared<DoubleAttribute>(this_v_weight[i]));
+                    for (size_t i = 0; i < this_v_weight.size(); i++) m_vertex_cache[-f.first-1]->add_attribute("weight"+std::to_string(i), std::make_shared<DoubleAttribute>(this_v_weight[i]));
                 }
             }
         }
