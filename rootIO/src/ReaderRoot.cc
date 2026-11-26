@@ -16,12 +16,12 @@ HEPMC3_DECLARE_READER_FILE(ReaderRoot)
 
 ReaderRoot::ReaderRoot(const std::string &filename) {
     m_file = TFile::Open(filename.c_str());
-    m_next = new TIter(m_file->GetListOfKeys());
-
-    if ( !m_file->IsOpen() ) {
+    // TFile::Open returns nullptr if the file cannot be opened (e.g. an inaccessible xrootd URL).
+    if ( failed() ) {
         HEPMC3_ERROR_LEVEL(100,"ReaderRoot: problem opening file: " << filename)
         return;
     }
+    m_next = new TIter(m_file->GetListOfKeys());
 
     std::shared_ptr<GenRunInfo> ri = std::make_shared<GenRunInfo>();
 
@@ -49,6 +49,7 @@ bool ReaderRoot::skip(const int n)
 bool ReaderRoot::read_event(GenEvent& evt) {
     // Skip object of different type than GenEventData
     GenEventData *data = nullptr;
+    if ( failed() ) return false;
 
     while (true) {
         TKey *key = dynamic_cast<TKey*>((*m_next)());
@@ -86,11 +87,11 @@ bool ReaderRoot::read_event(GenEvent& evt) {
 }
 
 void ReaderRoot::close() {
-    m_file->Close();
+    if (m_file) m_file->Close();
 }
 
 bool ReaderRoot::failed() {
-    return !m_file->IsOpen();
+    return !m_file || !m_file->IsOpen();
 }
 
 } // namespace HepMC3
