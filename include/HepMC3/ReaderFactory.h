@@ -29,7 +29,9 @@ inline std::shared_ptr<Reader> deduce_reader(const std::string &filename)
     if (input.m_init && !input.m_error && input.m_reader) return input.m_reader;
     if (input.m_root || input.m_remote) {
         HEPMC3_DEBUG(10, "deduce_reader: Attempt ReaderRootTree for " << filename);
-        return   std::make_shared<ReaderPlugin>(filename, libHepMC3rootIO, std::string("newReaderRootTreefile"));
+        auto reader = std::make_shared<ReaderPlugin>(filename, libHepMC3rootIO, std::string("newReaderRootTreefile"));
+        if (reader->failed()) return std::shared_ptr<Reader>(nullptr);
+        return reader;
     }
     if (input.m_protobuf) {
         HEPMC3_DEBUG(10, "deduce_reader: Attempt ProtobufIO for " << filename);

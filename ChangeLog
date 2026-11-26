@@ -1,4 +1,6 @@
 --------------------------  HepMC3.3.2 --------------------------
+2026-11-26 Dmitri Konstantinov
+  * Fix a crash in ReaderRootTree and ReaderRoot when ROOT cannot open the file, for example a wrong or not accessible root:// path. deduce_reader now returns nullptr in this case, as it does for a missing local file.
 2026-11-25 Dmitri Konstantinov
   * Fix parsing of UIntAttribute, ULongAttribute and ULongLongAttribute so values are always read as decimal.
 2026-11-25 Dmitri Konstantinov
