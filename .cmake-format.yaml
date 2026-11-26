@@ -1,0 +1,22 @@
+lint:
+  disabled_codes:
+    - C0301 # line too long
+    - C0307 # Bad indentation
+    - C0305 # too many newlines between statements
+    - C0103 # Invalid directory variable name
+    - C0113 # Missing docstring
+    - C0111 # Missing module docstring
+    - E1120 # No value for argument
+    - W0105 # String statement has no effect
+    - R0912 # Too many branches in function
+    - R0915 # Too many statements in function
+
+format:
+  line_width: 300      # the default is 80
+  tab_size: 2
+  dangle_parens: false
+  command_case: unchanged
+  keyword_case: unchanged
+markup:
+  enable_markup: false   # stops comment reformatting
+  canonicalize_hashrulers: false

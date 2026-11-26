@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [3.3.2] - Unreleased
 
 ### Added
+- Add `cmake-lint` and `cmake-format` CI jobs (new `lint` stage; `cmake-format` is non-blocking for now) with a `.cmake-format.yaml` configuration, and add a `.clang-tidy` configuration. (Andrii Verbytskyi)
 - Add a CI job that builds with the latest CMake release from conda-forge. (Matthew Feickert)
 - Add `ReaderAscii` tests for event positions, position reset, invalid headers, and read/write round trips. (Dmitri Konstantinov)
 - Add Python compressed I/O helpers `ReaderGZ` and `WriterGZ` for binding compressed input/output streams through Python compression modules. (Andrii Verbytskyi)
@@ -14,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Add `python/test/test_IO8.py` and `python/test/inputIO8.hepmc` to validate gzip round-trip support and install the new test. (Andrii Verbytskyi)
 
 ### Fixed
+- Fix typos in the CMake configuration: Python test inputs were collected with the wrong variable, the `PATH` in Python-test environments used `;` instead of `:` as separator, and protobuf tests did not use `hepmc_set_test_environment`. Compiler-flag checks now use sanitised result-variable names. (Andrii Verbytskyi)
+- Fixed the path installation of DLLs on Windows.
 - Fix a crash in `ReaderRootTree` and `ReaderRoot` when ROOT cannot open the file, for example a wrong or not accessible `root://` path. `deduce_reader` now returns `nullptr` in this case, as it does for a missing local file. (Dmitri Konstantinov)
 - Fix parsing of `UIntAttribute`, `ULongAttribute` and `ULongLongAttribute` so values are always read as decimal. (Dmitri Konstantinov)
 - Fix two typos in `HepMCCompatibility.h`: in the HepMC2 to HepMC3 conversion the `phi` polarization attribute was filled with `theta`, and in the HepMC3 to HepMC2 conversion colour `flow3` took its value from `flow2`. (Dmitri Konstantinov)
@@ -28,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fixes for `ReaderLHEF` to properly report beams from LHE init block instead of first particles in event record.  Now raise an error if there are fewer particles than beams in the event.
 
 ### Changed
+- Improvements of CMake: lint all `CMakeLists.txt`/`*.cmake` files, use lowercase command names, move the `clang-tidy` checks into `.clang-tidy`, and default `CMAKE_BUILD_TYPE` to `Release` only for single-config generators without upper-casing it. (Andrii Verbytskyi)
 - Allow for CMake policies to be in the range `3.10...4.4` for all uses of `cmake_minimum_required` with a policy range. (Matthew Feickert)
 - Update the logic of defining the C++ standard for each component. (Andrii Verbytskyi)
 - Report event-header parsing errors instead of returning an empty event as a success. (Dmitri Konstantinov)
