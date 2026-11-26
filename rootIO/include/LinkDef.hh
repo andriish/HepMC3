@@ -17,8 +17,6 @@
 #pragma link C++ typedef HepMC::GenRunInfoData+;
 #pragma link C++ typedef HepMC::GenParticleData+;
 #pragma link C++ typedef HepMC::GenVertexData+;
-#pragma link C++ typedef std::vector<HepMC::GenParticleData>+;
-#pragma link C++ typedef std::vector<HepMC::GenVertexData>+;
 #pragma link C++ typedef HepMC::FourVector+;
 #pragma link C++ typedef HepMC::Units+;
 #pragma link C++ typedef HepMC::Setup+;
