@@ -647,6 +647,7 @@ std::string ReaderAscii::unescape(const std::string& s) {
     for ( std::string::const_iterator it = s.begin(); it != s.end(); ++it ) {
         if ( *it == '\\' ) {
             ++it;
+            if (it == s.end()) break;
             if ( *it == '|' ) {
                 ret += '\n';
             }
