@@ -36,8 +36,7 @@ size_t write_message(std::ostream *out_stream, std::string const &msg_str,
     md.set_bytes(msg_str.size());
     md.set_message_type(type);
 
-    std::string md_str;
-    md.SerializeToString(&md_str);
+    const std::string md_str = md.SerializeAsString();
 
     if (md_str.size() != MDBytesLength) {
         HEPMC3_ERROR_LEVEL(100,"When writing protobuf message, the message digest was not the expected length ("<< MDBytesLength << " bytes), but was instead "<< md_str.size() << " bytes.")
@@ -110,8 +109,7 @@ void Writerprotobuf::start_file() {
     hdr.set_protobuf_version_min((GOOGLE_PROTOBUF_VERSION / 1000) % 1000);
     hdr.set_protobuf_version_patch(GOOGLE_PROTOBUF_VERSION % 1000);
 
-    std::string hdr_msg;
-    hdr.SerializeToString(&hdr_msg);
+    const std::string hdr_msg = hdr.SerializeAsString();
 
     write_message(m_out_stream, hdr_msg, HepMC3_pb::MessageDigest::Header);
 
@@ -141,8 +139,7 @@ void Writerprotobuf::close() {
     HepMC3_pb::Footer ftr;
     ftr.set_nevents(m_events_written);
     ftr.set_event_bytes_written(m_event_bytes_written);
-    std::string ftr_msg;
-    ftr.SerializeToString(&ftr_msg);
+    const std::string ftr_msg = ftr.SerializeAsString();
 
     write_message(m_out_stream, ftr_msg, HepMC3_pb::MessageDigest::Footer);
 

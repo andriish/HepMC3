@@ -55,6 +55,18 @@ Problems during the HepMC3 installation can potentially be caused by
    will only work with these compilers.
 
 
+## Event standardisation
+
+HepMC3 event objects can create very general event representations. In
+order to be directly useable by tools in the standard HEP MC
+ecosystem, events should also follow standards on structure and
+standard codes and naming of particle IDs, statuses, and
+event-weights.
+
+See the [standards](STANDARDS.md) page for full information on
+standard conventions that HepMC events are expected to respect.
+
+
 ##  Usage examples
 
 HepMC3 is shipped with multiple example programs, useful both to

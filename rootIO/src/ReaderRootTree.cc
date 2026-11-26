@@ -19,6 +19,11 @@ ReaderRootTree::ReaderRootTree(const std::string &filename):
     m_tree_name("hepmc3_tree"), m_branch_name("hepmc3_event")
 {
     m_file = TFile::Open(filename.c_str());
+    // TFile::Open returns nullptr if the file cannot be opened (e.g. an inaccessible xrootd URL).
+    if (!m_file) {
+        HEPMC3_ERROR_LEVEL(100,"ReaderRootTree: problem opening file: " << filename)
+        return;
+    }
     if (!init()) return;
 }
 
@@ -27,6 +32,11 @@ ReaderRootTree::ReaderRootTree(const std::string &filename, const std::string &t
     m_tree_name(treename), m_branch_name(branchname)
 {
     m_file = TFile::Open(filename.c_str());
+    // TFile::Open returns nullptr if the file cannot be opened (e.g. an inaccessible xrootd URL).
+    if (!m_file) {
+        HEPMC3_ERROR_LEVEL(100,"ReaderRootTree: problem opening file: " << filename)
+        return;
+    }
     if (!init()) return;
 }
 
@@ -75,12 +85,14 @@ bool ReaderRootTree::init()
 
 bool ReaderRootTree::skip(const int n)
 {
+    if (!m_tree) return false;
     m_events_count+=n;
     return m_events_count < m_tree->GetEntries();
 }
 
 bool ReaderRootTree::read_event(GenEvent& evt)
 {
+    if (!m_tree) return false;
     if (m_events_count >= m_tree->GetEntries()) { m_events_count++; return false;}
     m_event_data->particles.clear();
     m_event_data->vertices.clear();
@@ -109,6 +121,7 @@ bool ReaderRootTree::read_event(GenEvent& evt)
 
 bool ReaderRootTree::read_event_at_index(GenEvent& evt, const Long64_t index)
 {
+    if (!m_tree) return false;
 
     if(index >= m_tree->GetEntries()) return false;
 
@@ -143,12 +156,12 @@ bool ReaderRootTree::read_event_at_index(GenEvent& evt, const Long64_t index)
 
 void ReaderRootTree::close()
 {
-    m_file->Close();
+    if (m_file) m_file->Close();
 }
 
 bool ReaderRootTree::failed()
 {
-    if ( !m_file->IsOpen() ) return true;
+    if ( !m_file || !m_file->IsOpen() || !m_tree ) return true;
     if (m_events_count > m_tree->GetEntries()) return true;
     return false;
 }

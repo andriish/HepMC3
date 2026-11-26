@@ -6,6 +6,7 @@ stages:
   - changelog
   - check_if_dockerfile_updated
   - build_docker_image
+  - lint
   - build
   - LCG
   - packaging
@@ -19,6 +20,7 @@ changelog_check:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
         - ChangeLog
+        - CHANGELOG.md
       variables:
         CHANGELOG_CHANGED: "true"
       when: always
@@ -27,14 +29,14 @@ changelog_check:
   script:
     - |
       if [ "${CHANGELOG_CHANGED:-}" = "true" ]; then
-        echo "This merge request changes the ChangeLog."
+        echo "This merge request changes the change log."
       else
         case ",${CI_MERGE_REQUEST_LABELS:-}," in
           *,skip-changelog,*)
-            echo "This merge request has the skip-changelog label, so no ChangeLog change is needed."
+            echo "This merge request has the skip-changelog label, so no change-log change is needed."
             ;;
           *)
-            echo "ERROR: Add a ChangeLog entry, or add the skip-changelog label if no entry is needed."
+            echo "ERROR: Add a change-log entry, or add the skip-changelog label if no entry is needed."
             exit 1
             ;;
         esac
@@ -121,7 +123,7 @@ EDM4HEP-CVMFS:
       export LARG=" "
       export LARG="$LARG "-DHEPMC3_ENABLE_EDM4HEP:BOOL=ON
       py_major_v=$(python -c 'import sys; print(sys.version_info.major)')
-      py_minor_v=$(python -c 'import sys; print(sys.version_info.minor)')      
+      py_minor_v=$(python -c 'import sys; print(sys.version_info.minor)')
       export LARG="$LARG "-DHEPMC3_Python_SITEARCH${py_major_v}${py_minor_v}=$(pwd)/install/lib/python${py_major_v}.${py_minor_v}/site-packages
       mkdir BUILD
       cd BUILD
@@ -192,11 +194,11 @@ EDM4HEP-CVMFS:
     - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
-    - $CMAKE --build BUILD 
+    - $CMAKE --build BUILD
     - cd $TTOP
     - cd python
     - $CMAKE -S . -B BUILD -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON $CACHINGFLAGS
-    - $CMAKE --build BUILD 
+    - $CMAKE --build BUILD
     - cd BUILD
     - $CTEST -j 5 --output-on-failure
     - cd $TTOP
@@ -213,7 +215,7 @@ EDM4HEP-CVMFS:
     - cp -r INSTALL/share/doc/HepMC3/examples STANDALONE
     - cd STANDALONE/examples
     - mkdir -p BUILD
-    - cd BUILD 
+    - cd BUILD
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/
     - make -j 4
     - cd $TTOP
@@ -221,7 +223,7 @@ EDM4HEP-CVMFS:
     - export TTOP=$(pwd)
     - cd python
     - mkdir -p BUILD
-    - cd BUILD 
+    - cd BUILD
     - $CMAKE .. -DUSE_INSTALLED_HEPMC3=ON -DHepMC3_DIR=$TTOP/INSTALL/share/HepMC3/cmake/ -DHEPMC3_ENABLE_TEST=ON $CACHINGFLAGS
     - make -j 4
     - $CTEST -j 5 --output-on-failure
@@ -244,7 +246,7 @@ EDM4HEP-CVMFS:
     - cd BUILD
     - $CTEST -j 5 --output-on-failure
     - cd ..
-    
+
 .oldcmake: &oldcmake
     - mkdir -p BUILD
     - cd  BUILD
@@ -436,7 +438,7 @@ build_image_CentOS10:
   extends: .build_image
   needs:
     - job: check_commit_CentOS10
-    
+
 build_image_CentOS9:
   variables: { OS: CentOS, FREL: 9}
   extends: .build_image
@@ -633,7 +635,7 @@ CentOS10-GNU-cmake-ranges:
   script:
       - *excmake
       - *cmake
-      - *standalone  
+      - *standalone
 
 
 # Build with the latest CMake release. CMake and all the dependencies come from
@@ -690,11 +692,47 @@ CentOS10-GNU-oldcmake-ranges:
       - *oldstandalonepython
       - *oldstandalonerootIO
 
+cmake_lint:
+  stage: lint
+  variables: { OS: Fedora, FREL: 44 }
+  image: gitlab-registry.cern.ch/hepmc/hepmc3:${OS}_${FREL}
+  needs:
+    - job: build_image_Fedora44
+  only:
+    variables:
+     - $CI_SERVER_HOST=="gitlab.cern.ch"
+  script:
+    - |
+      if ! command -v cmake-lint >/dev/null 2>&1; then
+        echo "cmake-lint is not available, skipping."
+        exit 0
+      fi
+      git ls-files -z -- 'CMakeLists.txt' '*/CMakeLists.txt' '*.cmake' '*.cmake.in' | xargs -0 cmake-lint
+
+# Non-blocking until the tree is reformatted once with `cmake-format -i`.
+cmake_format:
+  stage: lint
+  variables: { OS: Fedora, FREL: 44 }
+  image: gitlab-registry.cern.ch/hepmc/hepmc3:${OS}_${FREL}
+  allow_failure: true
+  needs:
+    - job: build_image_Fedora44
+  only:
+    variables:
+     - $CI_SERVER_HOST=="gitlab.cern.ch"
+  script:
+    - |
+      if ! command -v cmake-format >/dev/null 2>&1; then
+        echo "cmake-format is not available, skipping."
+        exit 0
+      fi
+      git ls-files -z -- 'CMakeLists.txt' '*/CMakeLists.txt' '*.cmake' '*.cmake.in' | xargs -0 cmake-format --check
+
 Gentoo-Portage:
   stage: packaging
   # TODO remove this mirror
   image: gitlab-registry.cern.ch/hepmc/hepmc3:Gentoo_0
-  needs: 
+  needs:
     - job: build_image_Gentoo
 
   # We use ccache
