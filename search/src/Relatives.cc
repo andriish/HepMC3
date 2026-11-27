@@ -39,23 +39,23 @@ std::vector<HepMC3::ConstGenParticlePtr> children(const HepMC3::ConstGenVertexPt
 /// @brief Returns children of particle, i.e. the end vertex.
 std::vector<HepMC3::GenVertexPtr>        children(const HepMC3::GenParticlePtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O->end_vertex()) result.emplace_back(O->end_vertex());
+    if (O && O->end_vertex()) result.emplace_back(O->end_vertex());
     return result;
 }
 /// @brief Returns children of const particle, i.e. the end vertex.
 std::vector<HepMC3::ConstGenVertexPtr>   children(const HepMC3::ConstGenParticlePtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O->end_vertex()) result.emplace_back(O->end_vertex());
+    if (O && O->end_vertex()) result.emplace_back(O->end_vertex());
     return result;
 }
 /// @brief Returns grandchildren of particle, i.e. the outgoing particles of the end vertex.
 std::vector<HepMC3::GenParticlePtr>      grandchildren(const HepMC3::GenParticlePtr& O) {
-    if (O) if (O->end_vertex()) return O->end_vertex()->particles_out();
+    if (O && O->end_vertex()) return O->end_vertex()->particles_out();
     return {};
 }
 /// @brief Returns grandchildren of const particle, i.e. the outgoing particles of the end vertex.
 std::vector<HepMC3::ConstGenParticlePtr> grandchildren(const HepMC3::ConstGenParticlePtr& O) {
-    if (O) if (O->end_vertex()) return O->end_vertex()->particles_out();
+    if (O && O->end_vertex()) return O->end_vertex()->particles_out();
     return {};
 }
 /// @brief Returns grandchildren of vertex, i.e. the end vertices of the outgoing particles.
@@ -83,23 +83,23 @@ std::vector<HepMC3::ConstGenParticlePtr> parents(const HepMC3::ConstGenVertexPtr
 /// @brief Returns parents of particle, i.e. production vertex.
 std::vector<HepMC3::GenVertexPtr>        parents(const HepMC3::GenParticlePtr& O) {
     std::vector<HepMC3::GenVertexPtr> result;
-    if (O->production_vertex()) result.emplace_back(O->production_vertex());
+    if (O && O->production_vertex()) result.emplace_back(O->production_vertex());
     return result;
 }
 /// @brief Returns parents of const particle, i.e. production vertex.
 std::vector<HepMC3::ConstGenVertexPtr>   parents(const HepMC3::ConstGenParticlePtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O->production_vertex()) result.emplace_back(O->production_vertex());
+    if (O && O->production_vertex()) result.emplace_back(O->production_vertex());
     return result;
 }
 /// @brief Returns grandparents of particle, i.e. incoming particles of production vertex.
 std::vector<HepMC3::GenParticlePtr>      grandparents(const HepMC3::GenParticlePtr& O) {
-    if (O) if (O->production_vertex()) return O->production_vertex()->particles_in();
+    if (O && O->production_vertex()) return O->production_vertex()->particles_in();
     return {};
 }
 /// @brief Returns grandparents of const particle, i.e. incoming particles of production vertex.
 std::vector<HepMC3::ConstGenParticlePtr> grandparents(const HepMC3::ConstGenParticlePtr& O) {
-    if (O) if (O->production_vertex()) return O->production_vertex()->particles_in();
+    if (O && O->production_vertex()) return O->production_vertex()->particles_in();
     return {};
 }
 /// @brief Returns grandparents of vertex, i.e. production vertices of incoming particles.
@@ -111,7 +111,7 @@ std::vector<HepMC3::GenVertexPtr>        grandparents(const HepMC3::GenVertexPtr
 /// @brief Returns grandparents of const vertex, i.e. production vertices of incoming particles.
 std::vector<HepMC3::ConstGenVertexPtr>   grandparents(const HepMC3::ConstGenVertexPtr& O) {
     std::vector<HepMC3::ConstGenVertexPtr> result;
-    if (O)  for (const auto& o: O->particles_in()) if (o->end_vertex()) result.emplace_back(o->production_vertex());
+    if (O) for (const auto& o: O->particles_in()) if (o->end_vertex()) result.emplace_back(o->production_vertex());
     return result;
 }
 /// @brief Returns descendands of the same type, i.e. vertices for vertex and particles for particle
