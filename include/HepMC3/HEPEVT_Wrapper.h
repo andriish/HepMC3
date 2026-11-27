@@ -159,13 +159,13 @@ inline void HEPEVT_Wrapper::print_hepevt_particle( int index, std::ostream& ostr
 {
     char buf[255];//Note: the format is fixed, so no reason for complicated treatment
 
-    sprintf(buf,"%5i %6i",index,hepevtptr->idhep[index-1]);
+    snprintf(buf, 255,"%5i %6i",index,hepevtptr->idhep[index-1]);
     ostr << buf;
-    sprintf(buf,"%4i - %4i  ",hepevtptr->jmohep[index-1][0],hepevtptr->jmohep[index-1][1]);
+    snprintf(buf,255,"%4i - %4i  ",hepevtptr->jmohep[index-1][0],hepevtptr->jmohep[index-1][1]);
     ostr << buf;
-    sprintf(buf,"%4i - %4i ",hepevtptr->jdahep[index-1][0],hepevtptr->jdahep[index-1][1]);
+    snprintf(buf,255,"%4i - %4i ",hepevtptr->jdahep[index-1][0],hepevtptr->jdahep[index-1][1]);
     ostr << buf;
-    sprintf(buf,"%8.2f %8.2f %8.2f %8.2f %8.2f",hepevtptr->phep[index-1][0],hepevtptr->phep[index-1][1],hepevtptr->phep[index-1][2],hepevtptr->phep[index-1][3],hepevtptr->phep[index-1][4]);
+    snprintf(buf,255,"%8.2f %8.2f %8.2f %8.2f %8.2f",hepevtptr->phep[index-1][0],hepevtptr->phep[index-1][1],hepevtptr->phep[index-1][2],hepevtptr->phep[index-1][3],hepevtptr->phep[index-1][4]);
     ostr << buf << std::endl;
 }
 
