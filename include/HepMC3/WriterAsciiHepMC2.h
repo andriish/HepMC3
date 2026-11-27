@@ -120,7 +120,7 @@ private:
 
     std::ofstream m_file; //!< Output file
     std::shared_ptr<std::ostream> m_shared_stream;///< Output temp. stream
-    std::ostream* m_stream; //!< Output stream
+    std::ostream* m_stream = nullptr; //!< Output stream
     int m_precision = 16; //!< Output precision
     char* m_buffer = nullptr;  //!< Stream buffer
     char* m_cursor = nullptr;  //!< Cursor inside stream buffer

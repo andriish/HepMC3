@@ -101,7 +101,7 @@ private:
    * @details If constructed with the string constructor, this just points to
    * m_out_file.get())
    */
-  std::ostream *m_out_stream;
+  std::ostream *m_out_stream = nullptr;
 
   /** @brief The number of events written to the stream */
   size_t m_events_written;

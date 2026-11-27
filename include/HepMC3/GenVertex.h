@@ -136,7 +136,7 @@ private:
 
     /// @name Fields
     /// @{
-    GenEvent       *m_event;  //!< Parent event
+    GenEvent       *m_event= nullptr;  //!< Parent event
     int             m_id;     //!< Vertex id
     GenVertexData   m_data;   //!< Vertex data
 

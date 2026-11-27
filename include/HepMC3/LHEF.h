@@ -2704,7 +2704,7 @@ public:
   /**
    * The current weight info object.
    */
-  const WeightInfo * currentWeight;
+  const WeightInfo * currentWeight = nullptr;
 
   /**
    * The weights associated with this event
@@ -3062,12 +3062,12 @@ protected:
    * external stream or the internal intstream, or a separate event
    * file from a multi-file run
    */
-  std::istream * file;
+  std::istream * file = nullptr;
 
   /**
    * The original stream from where we read the init block.
    */
-  std::istream * initfile;
+  std::istream * initfile = nullptr;
 
   /**
    * A separate stream for reading multi-file runs.
@@ -3371,12 +3371,12 @@ protected:
    * The stream we are writing to. This may be a reference to an
    * external stream or the internal intstream.
    */
-  std::ostream * file;
+  std::ostream * file = nullptr;
 
   /**
    * The original stream from where we read the init block.
    */
-  std::ostream * initfile;
+  std::ostream * initfile = nullptr;
 
   /**
    * A separate stream for reading multi-file runs.

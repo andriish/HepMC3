@@ -142,7 +142,7 @@ protected:
 private:
     bool   m_is_parsed;             //!< Is this attribute parsed?
     std::string m_string;                //!< Raw (unparsed) string
-    const GenEvent * m_event;       //!< Possibility to be aware of the
+    const GenEvent * m_event = nullptr;       //!< Possibility to be aware of the
     //!  controlling GenEvent object.
     GenParticlePtr m_particle; //!< Particle to which assigned.
     GenVertexPtr m_vertex;      //!< Vertex to which assigned.
