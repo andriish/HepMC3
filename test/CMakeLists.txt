@@ -191,6 +191,7 @@ set( HepMC_tests
         testSingleVertexHepMC2
         testAttributes
         testAttributesFloats
+        testAttributesStrings
         testHEPEVTWrapper1
         testOrder
         testVertexAttributes
