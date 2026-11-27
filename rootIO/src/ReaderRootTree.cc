@@ -55,14 +55,14 @@ bool ReaderRootTree::init()
         HEPMC3_ERROR_LEVEL(100,"ReaderRootTree: problem opening tree:  " << m_tree_name)
         return false;
     }
-    m_event_data.reset(new GenEventData());
+    m_event_data = new GenEventData();
     int result = m_tree->SetBranchAddress(m_branch_name.c_str(), &m_event_data);
     if (result < 0)
     {
         HEPMC3_ERROR_LEVEL(100,"ReaderRootTree: problem reading branch tree:  " << m_tree_name)
         return false;
     }
-    m_run_info_data.reset(new GenRunInfoData());
+    m_run_info_data = new GenRunInfoData();
     result = m_tree->SetBranchAddress("GenRunInfo", &m_run_info_data);
     if (result < 0)
     {
@@ -147,6 +147,12 @@ bool ReaderRootTree::read_event_at_index(GenEvent& evt, const Long64_t index)
 
     return true;
 }
+
+
+
+
+
+
 
 void ReaderRootTree::close()
 {

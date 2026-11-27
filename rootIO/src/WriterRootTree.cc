@@ -65,8 +65,8 @@ bool WriterRootTree::init(std::shared_ptr<GenRunInfo> run )
         HEPMC3_ERROR_LEVEL(100,"WriterRootTree: problem opening file: " << m_file->GetName())
         return false;
     }
-    m_event_data.reset(new GenEventData());
-    m_run_info_data.reset(new GenRunInfoData());
+    m_event_data = new GenEventData();
+    m_run_info_data = new GenRunInfoData();
     set_run_info(run);
     if ( run_info() ) run_info()->write_data(*m_run_info_data);
 
@@ -118,8 +118,8 @@ bool WriterRootTree::init(std::shared_ptr<GenRunInfo> run )
         }
 
         m_tree = new TTree(m_tree_name.c_str(), "hepmc3_tree");
-        m_tree->Branch(m_branch_name.c_str(), m_event_data.get());
-        m_tree->Branch("GenRunInfo", m_run_info_data.get());
+        m_tree->Branch(m_branch_name.c_str(), m_event_data);
+        m_tree->Branch("GenRunInfo", m_run_info_data);
     }
     return true;
 }
@@ -159,6 +159,8 @@ void WriterRootTree::close()
 {
     m_file->WriteTObject(m_tree);
     m_file->Close();
+    delete m_event_data;
+    delete m_run_info_data;
 }
 
 bool WriterRootTree::failed()

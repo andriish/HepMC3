@@ -78,8 +78,8 @@ public:
     TTree* m_tree = nullptr;//!< Tree handler. Public to allow simple access, e.g. custom branches.
 private:
     int   m_events_count = 0; //!< Events count. Needed to read the tree
-    std::unique_ptr<GenEventData> m_event_data = nullptr; //!< Pointer to structure that holds event data
-    std::unique_ptr<GenRunInfoData> m_run_info_data = nullptr; //!< Pointer to structure that holds run info data
+    GenEventData* m_event_data = nullptr; //!< Pointer to structure that holds event data
+    GenRunInfoData* m_run_info_data = nullptr; //!< Pointer to structure that holds run info data
     std::string m_tree_name; //!< Name of TTree
     std::string m_branch_name; //!< Name of TBranch in TTree
 };
