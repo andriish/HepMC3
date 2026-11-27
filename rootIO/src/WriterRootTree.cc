@@ -60,13 +60,13 @@ WriterRootTree::WriterRootTree(const std::string &filename, const std::string &t
 
 bool WriterRootTree::init(std::shared_ptr<GenRunInfo> run )
 {
-    if ( !m_file->IsOpen() )
+    if ( !m_file || !m_file->IsOpen() )
     {
         HEPMC3_ERROR_LEVEL(100,"WriterRootTree: problem opening file: " << m_file->GetName())
         return false;
     }
-    m_event_data = new GenEventData();
-    m_run_info_data = new GenRunInfoData();
+    m_event_data.reset(new GenEventData());
+    m_run_info_data.reset(new GenRunInfoData());
     set_run_info(run);
     if ( run_info() ) run_info()->write_data(*m_run_info_data);
 
@@ -126,7 +126,7 @@ bool WriterRootTree::init(std::shared_ptr<GenRunInfo> run )
 
 void WriterRootTree::write_event(const GenEvent &evt)
 {
-    if ( !m_file->IsOpen() ) return;
+    if ( !m_file || !m_file->IsOpen() ) return;
     bool refill = false;
     if ( evt.run_info() && (!run_info() || (run_info() != evt.run_info())))  { set_run_info(evt.run_info()); refill = true;}
     if (refill)
@@ -159,13 +159,11 @@ void WriterRootTree::close()
 {
     m_file->WriteTObject(m_tree);
     m_file->Close();
-    delete m_event_data;
-    delete m_run_info_data;
 }
 
 bool WriterRootTree::failed()
 {
-    return !m_file->IsOpen();
+    return m_file ? !m_file->IsOpen() : true;
 }
 
 } // namespace HepMC3

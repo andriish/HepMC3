@@ -24,7 +24,7 @@ WriterRoot::WriterRoot(const std::string &filename, std::shared_ptr<GenRunInfo> 
     set_run_info(run);
 
     m_file = TFile::Open(filename.c_str(), "RECREATE");
-    if ( !m_file->IsOpen() ) {
+    if ( !m_file || !m_file->IsOpen() ) {
         HEPMC3_ERROR_LEVEL(100,"WriterRoot: problem opening file: " << filename)
         return;
     }
@@ -33,7 +33,7 @@ WriterRoot::WriterRoot(const std::string &filename, std::shared_ptr<GenRunInfo> 
 }
 
 void WriterRoot::write_event(const GenEvent &evt) {
-    if ( !m_file->IsOpen() ) return;
+    if ( !m_file || !m_file->IsOpen() ) return;
 
     if ( !run_info() ) {
         set_run_info(evt.run_info());
@@ -59,7 +59,7 @@ void WriterRoot::write_event(const GenEvent &evt) {
 }
 
 void WriterRoot::write_run_info() {
-    if ( !m_file->IsOpen() || !run_info() ) return;
+    if ( !m_file || !m_file->IsOpen() || !run_info() ) return;
 
     GenRunInfoData data;
     run_info()->write_data(data);
@@ -73,11 +73,11 @@ void WriterRoot::write_run_info() {
 }
 
 void WriterRoot::close() {
-    m_file->Close();
+    if (m_file) m_file->Close();
 }
 
 bool WriterRoot::failed() {
-    return !m_file->IsOpen();
+    return m_file ? !m_file->IsOpen() : true;
 }
 
 } // namespace HepMC3
