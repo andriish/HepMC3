@@ -194,6 +194,7 @@ set( HepMC_tests
         testOrder
         testVertexAttributes
         testSherpa140Crash
+        testRandomStates
          )
 
 set( HepMC_unix_tests
