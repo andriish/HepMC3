@@ -112,14 +112,17 @@ template <int max_particles, typename momentum_type>
 inline void HEPEVT_Wrapper_Template<max_particles, momentum_type>::print_hepevt_particle( int index, std::ostream& ostr )  const
 {
     char buf[255];//Note: the format is fixed, so no reason for complicated treatment
+    /// However, the usage of sprintf always triggers checkers, so let it be snprintf.
+    /// I really hope that most libraries put just one terminator in the end of the string as the standard says
+    // and don't fill blanks till the end.
 
-    sprintf(buf, "%5i %6i", index, m_hepevtptr->idhep[index-1]);
+    snprintf(buf, 255, "%5i %6i", index, m_hepevtptr->idhep[index-1]);
     ostr << buf;
-    sprintf(buf, "%4i - %4i  ", m_hepevtptr->jmohep[index-1][0], m_hepevtptr->jmohep[index-1][1]);
+    snprintf(buf, 255, "%4i - %4i  ", m_hepevtptr->jmohep[index-1][0], m_hepevtptr->jmohep[index-1][1]);
     ostr << buf;
-    sprintf(buf, "%4i - %4i ", m_hepevtptr->jdahep[index-1][0], m_hepevtptr->jdahep[index-1][1]);
+    snprintf(buf, 255, "%4i - %4i ", m_hepevtptr->jdahep[index-1][0], m_hepevtptr->jdahep[index-1][1]);
     ostr << buf;
-    sprintf(buf, "%8.2f %8.2f %8.2f %8.2f %8.2f", m_hepevtptr->phep[index-1][0], m_hepevtptr->phep[index-1][1], m_hepevtptr->phep[index-1][2], m_hepevtptr->phep[index-1][3], m_hepevtptr->phep[index-1][4]);
+    snprintf(buf, 255, "%8.2f %8.2f %8.2f %8.2f %8.2f", m_hepevtptr->phep[index-1][0], m_hepevtptr->phep[index-1][1], m_hepevtptr->phep[index-1][2], m_hepevtptr->phep[index-1][3], m_hepevtptr->phep[index-1][4]);
     ostr << buf << std::endl;
 }
 
