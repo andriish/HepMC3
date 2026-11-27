@@ -261,7 +261,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
         std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<double>::max_digits10)
+        oss << std::setprecision(std::numeric_limits<double>::digits10)
             << m_val;
         att = oss.str();
         return true;
@@ -308,7 +308,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
         std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<float>::max_digits10)
+        oss << std::setprecision(std::numeric_limits<float>::digits10)
             << m_val;
         att = oss.str();
         return true;
@@ -495,7 +495,7 @@ public:
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
         std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<long double>::max_digits10)
+        oss << std::setprecision(std::numeric_limits<long double>::digits10)
             << m_val;
         att = oss.str();
         return true;
@@ -771,11 +771,8 @@ public:
 
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
-        std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<float>::max_digits10);
-        bool first = true;       
-        for (const auto& a:  m_val) {if (!first) {oss << " ";} else {first = false;};  oss<<a;}
-        att = oss.str();
+        att.clear();
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -822,11 +819,8 @@ public:
 
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
-        std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<long double>::max_digits10);
-        bool first = true;       
-        for (const auto& a:  m_val) {if (!first) {oss << " ";} else {first = false;};  oss<<a;}
-        att = oss.str();
+        att.clear();
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
@@ -1158,11 +1152,8 @@ public:
 
     /** @brief Implementation of Attribute::to_string */
     bool to_string(std::string &att) const  override {
-        std::ostringstream oss;
-        oss << std::setprecision(std::numeric_limits<double>::max_digits10);
-        bool first = true;       
-        for (const auto& a:  m_val) {if (!first) {oss << " ";} else {first = false;};  oss<<a;}
-        att = oss.str();
+        att.clear();
+        for (const auto& a:  m_val) {if (att.length()) att+=" ";  att+=std::to_string(a);}
         return true;
     }
 
