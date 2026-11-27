@@ -41,8 +41,8 @@ WriterAscii::WriterAscii(const std::string &filename, std::shared_ptr<GenRunInfo
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier + " %i\n";
-    m_vertex_short_printf_specifier = "V %i %i [%s]\n";
-    m_vertex_long_printf_specifier = "V %i %i [%s] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
+    m_vertex_short_printf_specifier = "]\n";
+    m_vertex_long_printf_specifier = "] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
 }
 
 
@@ -60,8 +60,8 @@ WriterAscii::WriterAscii(std::ostream &stream, std::shared_ptr<GenRunInfo> run)
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier + " %i\n";
-    m_vertex_short_printf_specifier = "V %i %i [%s]\n";
-    m_vertex_long_printf_specifier = "V %i %i [%s] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
+    m_vertex_short_printf_specifier = "]\n";
+    m_vertex_long_printf_specifier = "] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
 }
 
 WriterAscii::WriterAscii(std::shared_ptr<std::ostream> s_stream, std::shared_ptr<GenRunInfo> run)
@@ -79,8 +79,8 @@ WriterAscii::WriterAscii(std::shared_ptr<std::ostream> s_stream, std::shared_ptr
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier + " %i\n";
-    m_vertex_short_printf_specifier = "V %i %i [%s]\n";
-    m_vertex_long_printf_specifier = "V %i %i [%s] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
+    m_vertex_short_printf_specifier = "]\n";
+    m_vertex_long_printf_specifier = "] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
 }
 
 WriterAscii::~WriterAscii() {
@@ -104,8 +104,8 @@ void WriterAscii::write_event(const GenEvent &evt) {
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier
                                   + m_float_printf_specifier + " %i\n";
-    m_vertex_short_printf_specifier = "V %i %i [%s]\n";
-    m_vertex_long_printf_specifier = "V %i %i [%s] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
+    m_vertex_short_printf_specifier = "]\n";
+    m_vertex_long_printf_specifier = "] @"+ m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + m_float_printf_specifier + "\n";
 
     // Make sure nothing was left from previous event
     flush();
@@ -252,10 +252,12 @@ void WriterAscii::write_vertex(const ConstGenVertexPtr& v) {
     for (const auto& p: pids) vlist.append( std::to_string(p).append(",") );
     if ( !pids.empty() ) vlist.pop_back();
     const FourVector &pos = v->position();
+    m_cursor += sprintf(m_cursor, "V %i %i [",  v->id(), v->status());
+    write_string(vlist);
     if ( !pos.is_zero() ) {
-        m_cursor += sprintf(m_cursor, m_vertex_long_printf_specifier.c_str(),  v->id(), v->status(), vlist.c_str(), pos.x(), pos.y(), pos.z(), pos.t() );
+        m_cursor += sprintf(m_cursor, m_vertex_long_printf_specifier.c_str() ,pos.x(), pos.y(), pos.z(), pos.t() );
     } else {
-        m_cursor += sprintf(m_cursor, m_vertex_short_printf_specifier.c_str(), v->id(), v->status(), vlist.c_str());
+        m_cursor += sprintf(m_cursor, m_vertex_short_printf_specifier.c_str());
     }
     flush();
 }

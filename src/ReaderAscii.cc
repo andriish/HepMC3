@@ -237,8 +237,12 @@ bool ReaderAscii::read_event(GenEvent &evt) {
       /// Insert the implicit vertices in the gaps of explicit vertices:
       /// Find the gaps looping over the explicit vertices
       int currid = -static_cast<int>(m_data.vertices.size());
+      std::cout << "ALL: " <<m_data.vertices.size() << std::endl;
+      std::cout << "ALL: " <<m_io_explicit_ids.size() << std::endl;
+      for (const auto& iofirst: m_io_explicit_ids) std::cout << "B:" <<iofirst << std::endl;
       auto fir = m_io_implicit_ids.rbegin();
       for (const auto& iofirst: m_io_explicit_ids) {
+          std::cout << iofirst << std::endl;
           for (; currid < iofirst; ++currid, ++fir) {
               if (fir == m_io_implicit_ids.rend()) {
                   HEPMC3_ERROR_LEVEL(600,"ReaderAscii: not enough implicit vertices")
