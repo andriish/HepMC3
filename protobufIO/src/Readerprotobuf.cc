@@ -56,7 +56,8 @@ Readerprotobuf::Readerprotobuf(const std::string &filename) {
 
     m_in_zcstream = m_inf_zcstream.get();
 
-    read_file_start();
+    bool file_init = read_file_start();
+    if (!file_init) m_inf_zcstream.reset();
 }
 
 Readerprotobuf::Readerprotobuf(std::istream &stream) : m_in_stream(&stream) {
@@ -70,7 +71,8 @@ Readerprotobuf::Readerprotobuf(std::istream &stream) : m_in_stream(&stream) {
                          new google::protobuf::io::IstreamInputStream(&stream));
     m_in_zcstream = m_in_zcistream.get();
 
-    read_file_start();
+    bool file_init = read_file_start();
+    if (!file_init) m_inf_zcstream.reset();
 }
 
 Readerprotobuf::Readerprotobuf(std::shared_ptr<std::istream> stream)

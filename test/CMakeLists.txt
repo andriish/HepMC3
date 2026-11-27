@@ -224,6 +224,7 @@ else()
         testIO27
         testIO28
         testIO29
+        testProtobufNull
         )
 endif()
 
@@ -450,7 +451,8 @@ if(MEMORYCHECK_COMMAND)
      file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/protobufHepMC3.supp"
 "{\n<HepMC3_protobuf_possibly_lost_1>\nMemcheck:Leak\nmatch-leak-kinds: possible\nfun:_Znwm\nobj:*libabsl_raw_hash_set*\nobj:*libabsl_raw_hash_set*\nfun:*MessageFactory*InternalRegisterGeneratedFile*\nobj:*libprotobuf*\nfun:call_init\nfun:call_init\nfun:_dl_init\nobj:*ld-linux*\n}\n\
 {\n<HepMC3_protobuf_possibly_lost_2>\nMemcheck:Leak\nmatch-leak-kinds: possible\nfun:_Znwm\nobj:*libprotobuf*\nfun:*DescriptorPool*Tables*C1Ev\nfun:*DescriptorPool*C1E*\nfun:*DescriptorPool*internal_generated_pool*\nfun:*DescriptorPool*InternalAddGeneratedFile*\nfun:*AddDescriptors*\nobj:*libprotobuf*\nfun:call_init\nfun:call_init\nfun:_dl_init\nobj:*ld-linux*\n}\n\
-{\n<HepMC3_protobuf_possibly_lost_3>\nMemcheck:Leak\nmatch-leak-kinds: possible\nfun:_Znwm\nobj:*libabsl_raw_hash_set*\nobj:*libabsl_raw_hash_set*\nfun:*DescriptorPool*Tables*C1Ev\nfun:*DescriptorPool*C1E*\nfun:*DescriptorPool*internal_generated_pool*\nfun:*DescriptorPool*InternalAddGeneratedFile*\nfun:*AddDescriptors*\nobj:*libprotobuf*\nfun:call_init\nfun:call_init\nfun:_dl_init\nobj:*ld-linux*\n}\n"
+{\n<HepMC3_protobuf_possibly_lost_3>\nMemcheck:Leak\nmatch-leak-kinds: possible\nfun:_Znwm\nobj:*libabsl_raw_hash_set*\nobj:*libabsl_raw_hash_set*\nfun:*DescriptorPool*Tables*C1Ev\nfun:*DescriptorPool*C1E*\nfun:*DescriptorPool*internal_generated_pool*\nfun:*DescriptorPool*InternalAddGeneratedFile*\nfun:*AddDescriptors*\nobj:*libprotobuf*\nfun:call_init\nfun:call_init\nfun:_dl_init\nobj:*ld-linux*\n}\n\
+{\n<HepMC3_protobuf_possibly_lost_4>\nMemcheck:Leak\nmatch-leak-kinds: possible\nfun:_Znwm\nfun:allocate\nfun:allocate\nfun:Allocate<8, std::allocator<char> >\nfun:AllocateBackingArray<8, std::allocator<char> >\nfun:*AllocBackingArray*\nfun:*GrowToNextCapacityAndPrepareInsert*\nfun:operator()\nfun:*find_or_prepare_insert_large*\nfun:*find_or_prepare_insert*\nfun:*DecomposePairImpl*\nfun:*DecomposePair*\nfun:*apply*\nfun:*apply*\nfun:*emplace*\nfun:*insert_range*\nfun:insert\nfun:*DescriptorPool*Tables*C1Ev\nfun:*DescriptorPool*C1E*\nfun:*DescriptorPool*internal_generated_pool*\nfun:*DescriptorPool*InternalAddGeneratedFile*\nfun:*AddDescriptors*\nobj:*libprotobuf*\nfun:call_init\nfun:call_init\nfun:_dl_init\nobj:*ld-linux*\n}\n"
      )
      set( MEMORYCHECK_COMMAND_OPTIONS  "${MEMORYCHECK_COMMAND_OPTIONS} --suppressions=${CMAKE_CURRENT_BINARY_DIR}/protobufHepMC3.supp")
   endif()
