@@ -203,6 +203,7 @@ set( HepMC_root_tests
         testIO2
         testIO4
         testReaderFactory2
+        testReaderFactory6
         testRoot300
         testRootTree300
         )
