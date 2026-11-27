@@ -17,5 +17,9 @@ int main() {
     auto p_DESCENDANTS = HepMC3::Relatives::DESCENDANTS(p);
     auto p_CHILDREN = HepMC3::Relatives::CHILDREN(p);
     auto p_PARENTS = HepMC3::Relatives::PARENTS(p);
+    auto v_ANCESTORS = HepMC3::Relatives::ANCESTORS(v);
+    auto v_DESCENDANTS = HepMC3::Relatives::DESCENDANTS(v);
+    auto v_CHILDREN = HepMC3::Relatives::CHILDREN(v);
+    auto v_PARENTS = HepMC3::Relatives::PARENTS(v);
     return 0;
 }
