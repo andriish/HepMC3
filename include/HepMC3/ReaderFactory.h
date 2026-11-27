@@ -38,13 +38,15 @@ inline std::shared_ptr<Reader> deduce_reader(const std::string &filename)
         return std::make_shared<ReaderPlugin>(filename, libHepMC3protobufIO, std::string("newReaderprotobuffile"));
     }
 #if HEPMC3_USE_COMPRESSION
-    HEPMC3_DEBUG(10, "Attempt ReaderGZ for " << filename);
-    char buf[6];
-    snprintf(buf, 6, "%s", input.m_head.at(0).c_str());
-    Compression det = detect_compression_type(buf, buf + 6);
-    if ( det != Compression::plaintext ) {
-        HEPMC3_DEBUG(10, "Detected supported compression: " << det);
-        return deduce_reader(std::shared_ptr< std::istream >(new ifstream(filename.c_str())));
+    if (!input.m_head.empty()) { /// We need some nonempty lines to check the compression type
+      HEPMC3_DEBUG(10, "Attempt ReaderGZ for " << filename);
+      char buf[6];
+      snprintf(buf, 6, "%s", input.m_head.at(0).c_str());
+      Compression det = detect_compression_type(buf, buf + 6);
+      if ( det != Compression::plaintext ) {
+          HEPMC3_DEBUG(10, "Detected supported compression: " << det);
+          return deduce_reader(std::shared_ptr< std::istream >(new ifstream(filename.c_str())));
+      }
     }
 #endif
     std::string f = filename;

@@ -246,7 +246,7 @@ endif()
 
 set(compress_tests testIO9)
 if(HEPMC3_ENABLE_PROTOBUFIO AND NOT WIN32)
-  list(APPEND compress_tests testReaderFactory4)
+  list(APPEND compress_tests testReaderFactory4  testReaderFactory7)
 endif()
 
 if ("zlib" IN_LIST HEPMC3_TEST_PACKAGES_LIST)
