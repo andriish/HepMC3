@@ -18,9 +18,13 @@ def test_IO7():
         import uproot
         import numpy
 
-        uprootversion = int(uproot.__version__.split(".")[2]) + int(uproot.__version__.split(".")[1]) * 100 + int(uproot.__version__.split(".")[0]) * 10000
-        print("uproot version: "+str(uprootversion))
-        if (uprootversion < 40000):
+        uprootversion = (
+            int(uproot.__version__.split(".")[2])
+            + int(uproot.__version__.split(".")[1]) * 100
+            + int(uproot.__version__.split(".")[0]) * 10000
+        )
+        print("uproot version: " + str(uprootversion))
+        if uprootversion < 40000:
             print("uproot version is too old. Exit.\n")
             return 0
     except ImportError as e:

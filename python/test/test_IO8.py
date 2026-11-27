@@ -4,7 +4,8 @@
 # back and writes it again as an uncompressed ASCII file. Finally it compares the
 # resulting file with the original to ensure lossless conversion.
 from pyHepMC3TestUtils import update_path, python_label
-#Round-trip conversion: ASCII files --> compressed ASCII --> ASCII files for multiple compression algorithms.
+
+# Round-trip conversion: ASCII files --> compressed ASCII --> ASCII files for multiple compression algorithms.
 import sys
 
 sys.path = update_path()
@@ -65,26 +66,29 @@ def test_IO82(ext, form):
 
 
 def available_formats():
-    formats = [('.gz', 'gzip')]
+    formats = [(".gz", "gzip")]
 
     try:
         import bz2  # noqa: F401
-        formats.append(('.bz2', 'bz2'))
+
+        formats.append((".bz2", "bz2"))
     except ImportError:
         pass
 
     try:
         import lzma  # noqa: F401
-        formats.append(('.lzma', 'lzma'))
+
+        formats.append((".lzma", "lzma"))
     except ImportError:
         pass
 
-# 
+    #
     try:
         import zstandard  # noqa: F401
+
         # zstandard is a third-party module; only add support if it exposes open()
-        if hasattr(zstandard, 'open'):
-            formats.append(('.z', 'zstandard'))
+        if hasattr(zstandard, "open"):
+            formats.append((".z", "zstandard"))
     except ImportError:
         pass
 
@@ -115,7 +119,7 @@ def test_IO8():
     return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     result = 1
     try:
         result = test_IO8()

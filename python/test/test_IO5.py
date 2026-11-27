@@ -28,10 +28,11 @@ def test_IO5():
     counter = 0
 
     while not inputA.failed():
-        if(counter >= nevents): break
+        if counter >= nevents:
+            break
         evt = hm.GenEvent()
         inputA.read_event(evt)
-        if(inputA.failed()):
+        if inputA.failed():
             print("End of file reached. Exit.\n")
             nevents = counter
             break
@@ -57,10 +58,11 @@ def test_IO5():
 
     counter = 0
     while not inputB.failed():
-        if(counter >= nevents - 1): break
+        if counter >= nevents - 1:
+            break
         evt = hm.GenEvent()
         inputB.read_event(evt)
-        if(inputB.failed()):
+        if inputB.failed():
             print("End of file reached. Exit.\n")
             break
 
@@ -77,29 +79,29 @@ def test_IO5():
     # write one more event
     evt = hm.GenEvent()
     inputB.read_event(evt)
-    if(inputB.failed()):
+    if inputB.failed():
         sys.exit(2)
 
     outputB.write_event(evt)
     outputB.close()
 
     # Step 3: To leverage the ASCII comparison, we convert both outputs to ASCII.
-    output_name_A_ascii = output_name_A.replace('.root','.hepmc')
-    output_name_B_ascii = output_name_B.replace('.root','.hepmc')
+    output_name_A_ascii = output_name_A.replace(".root", ".hepmc")
+    output_name_B_ascii = output_name_B.replace(".root", ".hepmc")
 
-    for input_name,output_name in zip([output_name_A,output_name_B],[output_name_A_ascii,output_name_B_ascii]):
+    for input_name, output_name in zip([output_name_A, output_name_B], [output_name_A_ascii, output_name_B_ascii]):
         input = hmrootIO.ReaderRootTree(input_name)
-        if(input.failed()):
+        if input.failed():
             sys.exit(2)
 
         output = hm.WriterAscii(output_name)
-        if(output.failed()):
+        if output.failed():
             sys.exit(2)
 
         while not input.failed():
             evt = hm.GenEvent()
             input.read_event(evt)
-            if(input.failed()):
+            if input.failed():
                 break
             output.write_event(evt)
             evt.clear()
@@ -109,6 +111,7 @@ def test_IO5():
     # Step 4: Compare the ASCII files.
     assert 0 == COMPARE_ASCII_FILES(output_name_A_ascii, output_name_B_ascii)
     return 0
+
 
 if __name__ == "__main__":
     result = 1

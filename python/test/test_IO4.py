@@ -6,7 +6,6 @@
 from pyHepMC3TestUtils import update_path, python_label
 import sys
 
-
 sys.path = update_path()
 
 from pyHepMC3TestUtils import COMPARE_ASCII_FILES
