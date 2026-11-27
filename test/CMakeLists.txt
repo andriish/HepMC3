@@ -190,6 +190,7 @@ set( HepMC_tests
         testReaderFactory1
         testSingleVertexHepMC2
         testAttributes
+        testAttributesFloats
         testHEPEVTWrapper1
         testOrder
         testVertexAttributes
