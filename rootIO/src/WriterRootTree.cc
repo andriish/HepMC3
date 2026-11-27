@@ -118,8 +118,8 @@ bool WriterRootTree::init(std::shared_ptr<GenRunInfo> run )
         }
 
         m_tree = new TTree(m_tree_name.c_str(), "hepmc3_tree");
-        m_tree->Branch(m_branch_name.c_str(), m_event_data);
-        m_tree->Branch("GenRunInfo", m_run_info_data);
+        m_tree->Branch(m_branch_name.c_str(), m_event_data.get());
+        m_tree->Branch("GenRunInfo", m_run_info_data.get());
     }
     return true;
 }
