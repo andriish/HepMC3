@@ -24,6 +24,7 @@ bool HEPRUPAttribute::from_string(const std::string &att) {
     clear();
     tags = LHEF::XMLTag::findXMLTags(att);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
+        if (!tags[i]) continue;
         if ( tags[i]->name == "init" ) {
             heprup = LHEF::HEPRUP(*tags[i], 3);
             found = true;
@@ -36,6 +37,7 @@ bool HEPRUPAttribute::to_string(std::string &att) const {
     std::ostringstream os;
     if ( heprup.NPRUP ) heprup.print(os);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
+        if (!tags[i]) continue;
         if ( heprup.NPRUP == 0 || tags[i]->name != "init" ) tags[i]->print(os);
     }
     att = os.str();
@@ -52,6 +54,7 @@ bool HEPEUPAttribute::from_string(const std::string &att) {
     clear();
     tags = LHEF::XMLTag::findXMLTags(att);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
+        if (!tags[i]) continue;
         if ( tags[i]->name == "event" || tags[i]->name == "eventgroup") {
             return true;
         }
@@ -63,6 +66,7 @@ bool HEPEUPAttribute::to_string(std::string &att) const {
     std::ostringstream os;
     if ( hepeup.heprup ) hepeup.print(os);
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
+        if (!tags[i]) continue;
         if ( !hepeup.heprup ||
                 (tags[i]->name != "event" && tags[i]->name != "eventgroup") ) {
             tags[i]->print(os);
@@ -73,10 +77,13 @@ bool HEPEUPAttribute::to_string(std::string &att) const {
 }
 
 bool HEPEUPAttribute::init() {
+    auto parent = event();
+    if (!parent) return false;
     std::shared_ptr<HEPRUPAttribute> hepr =
-        event()->attribute<HEPRUPAttribute>("HEPRUP");
+        parent->attribute<HEPRUPAttribute>("HEPRUP");
     bool found = false;
     for ( int i = 0, N = tags.size(); i < N; ++i ) {
+        if (!tags[i]) continue;
         if ( tags[i]->name == "event" || tags[i]->name == "eventgroup" ) {
             hepeup = LHEF::HEPEUP(*tags[i], hepr->heprup);
             found = true;
